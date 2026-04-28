@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PWR">
+<title>PWR / PEDRO</title>
+
+<!-- PWA Icon (SVG inline as data URI) -->
+<link rel="icon" href="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20512%20512%22%3E%3Crect%20width%3D%22512%22%20height%3D%22512%22%20fill%3D%22%230a0a0a%22%2F%3E%3Ctext%20x%3D%22256%22%20y%3D%22310%22%20font-family%3D%22Arial%20Black%2Csans-serif%22%20font-size%3D%22180%22%20font-weight%3D%22900%22%20fill%3D%22%23d4ff3e%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%228%22%3EPWR%3C%2Ftext%3E%3Crect%20x%3D%2260%22%20y%3D%22380%22%20width%3D%22392%22%20height%3D%2212%22%20fill%3D%22%23d4ff3e%22%2F%3E%3C%2Fsvg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20512%20512%22%3E%3Crect%20width%3D%22512%22%20height%3D%22512%22%20fill%3D%22%230a0a0a%22%2F%3E%3Ctext%20x%3D%22256%22%20y%3D%22310%22%20font-family%3D%22Arial%20Black%2Csans-serif%22%20font-size%3D%22180%22%20font-weight%3D%22900%22%20fill%3D%22%23d4ff3e%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%228%22%3EPWR%3C%2Ftext%3E%3Crect%20x%3D%2260%22%20y%3D%22380%22%20width%3D%22392%22%20height%3D%2212%22%20fill%3D%22%23d4ff3e%22%2F%3E%3C%2Fsvg%3E">
+
+<!-- Web App Manifest (inline as data URI) -->
+<link rel="manifest" href='data:application/manifest+json;charset=utf-8,{"name":"PWR / PEDRO","short_name":"PWR","description":"Programa de Powerlifting Híbrido","start_url":"./","display":"standalone","orientation":"portrait","background_color":"#0a0a0a","theme_color":"#0a0a0a","icons":[{"src":"data:image/svg%2Bxml;utf8,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 viewBox%3D%220 0 512 512%22%3E%3Crect width%3D%22512%22 height%3D%22512%22 fill%3D%22%230a0a0a%22%2F%3E%3Ctext x%3D%22256%22 y%3D%22310%22 font-family%3D%22Arial Black%2Csans-serif%22 font-size%3D%22180%22 font-weight%3D%22900%22 fill%3D%22%23d4ff3e%22 text-anchor%3D%22middle%22 letter-spacing%3D%228%22%3EPWR%3C%2Ftext%3E%3Crect x%3D%2260%22 y%3D%22380%22 width%3D%22392%22 height%3D%2212%22 fill%3D%22%23d4ff3e%22%2F%3E%3C%2Fsvg%3E","sizes":"any","type":"image/svg+xml","purpose":"any"}]}'>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  :root {
+    --bg: #0a0a0a;
+    --bg-elev: #141414;
+    --bg-card: #1a1a1a;
+    --bg-card-done: #0f0f0f;
+    --border: #262626;
+    --border-bright: #3a3a3a;
+    --text: #f5f5f0;
+    --text-2: #a8a8a8;
+    --text-3: #6a6a6a;
+    --accent: #d4ff3e;
+    --accent-dim: #8aa825;
+    --warn: #ff6b35;
+    --done: #4ade80;
+    --shadow: 0 1px 0 rgba(255,255,255,0.04), 0 8px 24px rgba(0,0,0,0.4);
+    
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 16px;
+    color: var(--text);
+    background: var(--bg);
+  }
+  
+  html, body {
+    background: var(--bg);
+    min-height: 100vh;
+    min-height: 100dvh;
+    overscroll-behavior-y: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    background-image: 
+      radial-gradient(circle at 0% 0%, rgba(212,255,62,0.04) 0%, transparent 40%),
+      radial-gradient(circle at 100% 100%, rgba(212,255,62,0.02) 0%, transparent 40%);
+    background-attachment: fixed;
+  }
+  
+  /* ============ HEADER ============ */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,10,10,0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px 10px;
+  }
+  
+  .logo {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 900;
+    font-size: 22px;
+    letter-spacing: 0.06em;
+    line-height: 1;
+  }
+  
+  .logo .slash { color: var(--accent); }
+  .logo .dim { color: var(--text-3); }
+  
+  .week-selector {
+    display: flex;
+    gap: 4px;
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    padding: 3px;
+    border-radius: 2px;
+  }
+  
+  .week-btn {
+    background: transparent;
+    color: var(--text-3);
+    border: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    padding: 6px 10px;
+    cursor: pointer;
+    border-radius: 1px;
+    transition: all 0.15s;
+    min-width: 34px;
+  }
+  
+  .week-btn.active {
+    background: var(--accent);
+    color: #000;
+  }
+  
+  .week-btn.deload.active {
+    background: var(--warn);
+    color: #fff;
+  }
+  
+  /* Day tabs */
+  .day-tabs {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+  }
+  
+  .day-tab {
+    background: transparent;
+    border: none;
+    border-right: 1px solid var(--border);
+    color: var(--text-3);
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    padding: 14px 0 10px;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.15s;
+  }
+  
+  .day-tab:last-child { border-right: none; }
+  
+  .day-tab.active {
+    color: var(--text);
+  }
+  
+  .day-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--accent);
+  }
+  
+  .day-tab.today::before {
+    content: '';
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  
+  .day-tab .trt-dot {
+    display: inline-block;
+    width: 4px;
+    height: 4px;
+    background: var(--accent-dim);
+    border-radius: 50%;
+    margin-left: 2px;
+    vertical-align: middle;
+    transform: translateY(-3px);
+  }
+  
+  .day-tab.active .trt-dot { background: var(--accent); }
+  
+  /* ============ DAY HEADER ============ */
+  main { padding-bottom: 100px; }
+  
+  .day-header {
+    padding: 24px 16px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .day-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  
+  .day-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--text-3);
+    text-transform: uppercase;
+  }
+  
+  .day-progress {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-2);
+    font-weight: 700;
+  }
+  
+  .day-progress .done { color: var(--accent); }
+  
+  .day-title {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 900;
+    font-size: 38px;
+    line-height: 0.95;
+    letter-spacing: 0.01em;
+    margin-bottom: 8px;
+  }
+  
+  .day-subtitle {
+    font-size: 13px;
+    color: var(--text-2);
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  
+  .day-subtitle .pill {
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    padding: 3px 8px;
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.06em;
+    color: var(--text-2);
+    text-transform: uppercase;
+  }
+  
+  .day-subtitle .pill.trt {
+    border-color: var(--accent-dim);
+    color: var(--accent);
+  }
+  
+  .day-subtitle .pill.deload {
+    border-color: var(--warn);
+    color: var(--warn);
+  }
+  
+  /* ============ EXERCISE CARDS ============ */
+  .exercises {
+    padding: 8px 0;
+  }
+  
+  .exercise {
+    display: flex;
+    align-items: stretch;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.2s, opacity 0.2s;
+    position: relative;
+  }
+  
+  .exercise.done {
+    background: var(--bg-card-done);
+  }
+  
+  .exercise.done .ex-name,
+  .exercise.done .ex-prescription {
+    opacity: 0.4;
+  }
+  
+  .exercise.done::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--accent);
+  }
+  
+  .exercise.primary {
+    background: linear-gradient(90deg, rgba(212,255,62,0.04) 0%, transparent 50%);
+  }
+  
+  .exercise.primary.done {
+    background: var(--bg-card-done);
+  }
+  
+  /* Checkbox */
+  .ex-check {
+    flex-shrink: 0;
+    width: 56px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 18px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  
+  .ex-check input {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 26px;
+    height: 26px;
+    border: 2px solid var(--border-bright);
+    background: var(--bg-elev);
+    cursor: pointer;
+    position: relative;
+    transition: all 0.15s;
+  }
+  
+  .ex-check input:checked {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  
+  .ex-check input:checked::after {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 2px;
+    width: 8px;
+    height: 14px;
+    border: solid #000;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+  }
+  
+  .ex-check input:active {
+    transform: scale(0.9);
+  }
+  
+  /* Body */
+  .ex-body {
+    flex: 1;
+    padding: 16px 16px 16px 0;
+    min-width: 0;
+  }
+  
+  .ex-name {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 800;
+    font-size: 19px;
+    line-height: 1.15;
+    letter-spacing: 0.01em;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  
+  .ex-name .ex-num {
+    color: var(--text-3);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    margin-right: 6px;
+    font-weight: 500;
+  }
+  
+  .ex-prescription {
+    display: flex;
+    gap: 18px;
+    margin-bottom: 6px;
+    align-items: baseline;
+  }
+  
+  .ex-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  
+  .ex-stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    color: var(--text-3);
+    text-transform: uppercase;
+  }
+  
+  .ex-stat-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+  }
+  
+  .ex-stat.rpe .ex-stat-value {
+    color: var(--accent);
+  }
+  
+  .ex-stat.intensity .ex-stat-value {
+    color: var(--accent);
+    font-size: 13px;
+    line-height: 1.2;
+  }
+  
+  /* Load tracker */
+  .ex-load {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--border);
+  }
+  
+  .ex-load-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--text-3);
+    text-transform: uppercase;
+  }
+  
+  .ex-load-input {
+    background: var(--bg-elev);
+    border: 1px solid var(--border-bright);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 6px 8px;
+    width: 80px;
+    text-align: center;
+    border-radius: 0;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  
+  .ex-load-input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  
+  .ex-load-unit {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-3);
+  }
+  
+  .ex-load-prev {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-3);
+    letter-spacing: 0.05em;
+  }
+  
+  /* Notes */
+  .ex-notes-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: none;
+    color: var(--text-3);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 8px 0 0;
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+  
+  .ex-notes-toggle:hover { color: var(--text-2); }
+  
+  .ex-notes-toggle .arrow {
+    transition: transform 0.2s;
+    display: inline-block;
+  }
+  
+  .ex-notes-toggle.open .arrow { transform: rotate(90deg); }
+  
+  .ex-notes {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.25s ease-out;
+    margin-top: 0;
+  }
+  
+  .ex-notes.open {
+    max-height: 400px;
+    margin-top: 8px;
+  }
+  
+  .ex-notes-content {
+    background: var(--bg-elev);
+    border-left: 2px solid var(--accent);
+    padding: 10px 12px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-2);
+  }
+  
+  /* ============ SPECIAL DAYS ============ */
+  .cardio-day {
+    padding: 24px 16px;
+  }
+  
+  .cardio-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: 20px;
+    margin-top: 16px;
+  }
+  
+  .cardio-card h3 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  
+  .cardio-card p {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-2);
+    margin-bottom: 8px;
+  }
+  
+  .cardio-card p:last-child { margin-bottom: 0; }
+  
+  .cardio-card strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+  
+  .rest-day {
+    padding: 80px 24px;
+    text-align: center;
+  }
+  
+  .rest-day .glyph {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 900;
+    font-size: 80px;
+    color: var(--border-bright);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  
+  .rest-day .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--text-3);
+    text-transform: uppercase;
+    margin-top: 16px;
+  }
+  
+  .rest-day .quote {
+    font-size: 14px;
+    color: var(--text-2);
+    margin-top: 24px;
+    line-height: 1.5;
+    max-width: 280px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  /* ============ DELOAD OVERRIDE ============ */
+  .deload-banner {
+    margin: 16px;
+    padding: 14px 16px;
+    background: rgba(255,107,53,0.08);
+    border: 1px solid var(--warn);
+    border-left-width: 3px;
+  }
+  
+  .deload-banner-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--warn);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    font-weight: 700;
+  }
+  
+  .deload-banner-text {
+    font-size: 13px;
+    color: var(--text-2);
+    line-height: 1.4;
+  }
+  
+  /* ============ FOOTER / FAB ============ */
+  .footer-actions {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    background: linear-gradient(180deg, transparent 0%, var(--bg) 30%);
+    pointer-events: none;
+    z-index: 50;
+  }
+  
+  .reset-btn {
+    pointer-events: auto;
+    width: 100%;
+    background: var(--bg-elev);
+    border: 1px solid var(--border-bright);
+    color: var(--text-2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    padding: 14px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.15s;
+  }
+  
+  .reset-btn:hover, .reset-btn:active {
+    border-color: var(--warn);
+    color: var(--warn);
+  }
+  
+  /* ============ DESKTOP BREAKPOINT ============ */
+  @media (min-width: 720px) {
+    .header-row { padding: 18px 24px 14px; }
+    .day-header { padding: 32px 24px 22px; }
+    .day-title { font-size: 56px; }
+    .ex-body { padding: 20px 24px 20px 0; }
+    .ex-check { width: 64px; padding-top: 22px; }
+    .ex-name { font-size: 22px; }
+    .footer-actions { padding-left: 24px; padding-right: 24px; }
+    .reset-btn { max-width: 320px; margin: 0 auto; display: block; }
+    .cardio-day { padding: 32px 24px; }
+  }
+  
+  /* ============ ANIMATIONS ============ */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .fade-in {
+    animation: fadeIn 0.2s ease-out;
+  }
+  
+  /* Hide number input arrows */
+  .ex-load-input::-webkit-outer-spin-button,
+  .ex-load-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .ex-load-input { -moz-appearance: textfield; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-row">
+    <div class="logo">PWR<span class="slash">/</span><span class="dim">PEDRO</span></div>
+    <div class="week-selector" id="weekSelector">
+      <button class="week-btn" data-week="1">W1</button>
+      <button class="week-btn" data-week="2">W2</button>
+      <button class="week-btn" data-week="3">W3</button>
+      <button class="week-btn deload" data-week="deload">DLD</button>
+    </div>
+  </div>
+  <nav class="day-tabs" id="dayTabs"></nav>
+</header>
+
+<main id="main"></main>
+
+<div class="footer-actions">
+  <button class="reset-btn" id="resetBtn">RESET DIA ATUAL</button>
+</div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const PROGRAM = {
+  seg: {
+    title: "SQUAT DAY",
+    eyebrow: "Força — Lower",
+    pills: ["TRT", "80–95min"],
+    trt: true,
+    exercises: [
+      {
+        id: "sq1", name: "Agachamento livre", primary: true,
+        sets: 4, reps: "4", rpeByWeek: { 1: "7", 2: "8", 3: "8.5" },
+        deload: { sets: 3, reps: "5", intensity: "60% 1RM", rpe: "6" },
+        notes: "Aquecimento progressivo até série de trabalho. Pausa no buraco opcional na semana 2. Bracing diafragmático antes de descer."
+      },
+      {
+        id: "sq2", name: "Agachamento frontal OU pause squat", primary: false,
+        sets: 3, reps: "5", rpe: "7",
+        deloadCut: true,
+        notes: "Variação técnica. Alternar semana a semana — frontal em ímpares, pause em pares. Reforça core e posição vertical."
+      },
+      {
+        id: "sq3", name: "Stiff / RDL", primary: false,
+        sets: 4, reps: "8", rpe: "7-8",
+        deloadCut: true,
+        notes: "Carga controlada, foco em estiramento e bracing. Quadril vai pra trás, joelho macio, barra rente à perna."
+      },
+      {
+        id: "sq4", name: "Búlgaro com halter", primary: false,
+        sets: 3, reps: "10/perna", rpe: "8",
+        deloadHalf: true,
+        notes: "Unilateral, corrige assimetrias, baixa carga axial. Pé de trás na bench, joelho da frente alinhado."
+      },
+      {
+        id: "sq5", name: "Mesa flexora (leg curl)", primary: false,
+        sets: 3, reps: "12", rpe: "8",
+        deloadHalf: true,
+        notes: "Isquios — antagonista crítico para joelho. Controle excêntrico de 2-3s."
+      },
+      {
+        id: "sq6", name: "Panturrilha em pé", primary: false,
+        sets: 4, reps: "12-15", rpe: "8",
+        deloadHalf: true,
+        notes: "Pausa de 1s no topo. ROM completo — desce abaixo do degrau, sobe até contração total."
+      },
+      {
+        id: "sq7", name: "Prancha lateral OU ab wheel", primary: false,
+        sets: 3, reps: "até falha técnica",
+        deloadHalf: true,
+        notes: "Core anti-rotação/anti-extensão. Alternar entre os dois ao longo das semanas."
+      }
+    ]
+  },
+  ter: {
+    title: "BENCH DAY",
+    eyebrow: "Força — Upper",
+    pills: ["80–90min"],
+    trt: false,
+    exercises: [
+      {
+        id: "be1", name: "Supino reto (barra)", primary: true,
+        sets: 4, reps: "4", rpeByWeek: { 1: "7", 2: "8", 3: "8.5" },
+        deload: { sets: 3, reps: "5", intensity: "60% 1RM", rpe: "6" },
+        notes: "Pés firmes no chão, escápulas retraídas e deprimidas, arco torácico controlado. Barra desce no peito baixo, sobe em curva leve."
+      },
+      {
+        id: "be2", name: "Supino com pausa OU close-grip", primary: false,
+        sets: 3, reps: "5", rpe: "7",
+        deloadCut: true,
+        notes: "Pause em ímpares, close-grip em pares. Pause = 2s parado no peito. Close-grip = mãos na largura dos ombros, foco tríceps."
+      },
+      {
+        id: "be3", name: "Supino inclinado halter", primary: false,
+        sets: 4, reps: "8-10", rpe: "8",
+        deloadCut: true,
+        notes: "Banco a 30°. Halteres descem no nível do peito, palmas se aproximam no topo (rotação leve para mais peitoral)."
+      },
+      {
+        id: "be4", name: "Paralelas com peso", primary: false,
+        sets: 3, reps: "8", rpe: "8",
+        deloadHalf: true,
+        notes: "Inclinar tronco para frente = mais peitoral. Tronco vertical = mais tríceps. Adicionar peso quando passar de 10 reps fácil."
+      },
+      {
+        id: "be5", name: "Remada curvada barra OU remada baixa", primary: false,
+        sets: 4, reps: "8", rpe: "8",
+        deloadHalf: true,
+        notes: "Antagonista, essencial para saúde do ombro. Cotovelos próximos do tronco, barra vai pro umbigo, escápulas se juntam no fim."
+      },
+      {
+        id: "be6", name: "Elevação lateral", primary: false,
+        sets: 4, reps: "12-15", rpe: "9",
+        deloadHalf: true,
+        notes: "Deltoide médio. Drop-set na última série (60%→40% do peso, sem descanso). Cotovelo levemente acima do punho."
+      },
+      {
+        id: "be7", name: "Tríceps corda + francês (bi-set)", primary: false,
+        sets: 3, reps: "12 cada", rpe: "8",
+        deloadHalf: true,
+        notes: "Bi-set, sem descanso entre os dois. Corda: abrir no fim. Francês: cotovelos fixos, descer atrás da cabeça."
+      },
+      {
+        id: "be8", name: "Face pull", primary: false,
+        sets: 3, reps: "15", rpe: "7",
+        deloadHalf: true,
+        notes: "Saúde do manguito, sempre. Cotovelos altos, puxar até as orelhas, rotação externa no fim."
+      }
+    ]
+  },
+  qua: {
+    title: "CARDIO Z2",
+    eyebrow: "Recovery + CV",
+    pills: ["TRT", "40–50min"],
+    trt: true,
+    cardio: true,
+    cardioContent: {
+      protocol: "ZONA 2",
+      heartRate: "125–140 bpm",
+      duration: "40min mínimo · 60min ideal",
+      modes: "Bike ergométrica · Esteira inclinada · Elíptico · Caminhada inclinada",
+      cue: "Você consegue conversar em frases completas, mas com leve desconforto.",
+      why: "Z2 melhora densidade mitocondrial, oxidação de gordura, sensibilidade à insulina e marcadores cardiovasculares — sem comprometer o recovery do treino de força. Diferente de HIIT, que canibaliza glicogênio e SNC."
+    }
+  },
+  qui: {
+    title: "DEADLIFT DAY",
+    eyebrow: "Força — Pull",
+    pills: ["85–100min"],
+    trt: false,
+    exercises: [
+      {
+        id: "dl1", name: "Levantamento terra convencional", primary: true,
+        sets: 4, reps: "3", rpeByWeek: { 1: "7", 2: "8", 3: "8.5" },
+        deload: { sets: 3, reps: "3", intensity: "60% 1RM", rpe: "6" },
+        notes: "Cada repetição como single — reset no chão, NÃO em rebote. Setup: barra sobre o meio do pé, ombros levemente à frente da barra, lats engajados."
+      },
+      {
+        id: "dl2", name: "Terra com déficit (5cm) OU paused deadlift", primary: false,
+        sets: 3, reps: "4", rpe: "7",
+        deloadCut: true,
+        notes: "Variação técnica para fortalecer pull do chão. Déficit em ímpares, paused (1s 2cm acima do chão) em pares."
+      },
+      {
+        id: "dl3", name: "Remada pendlay (Pendlay row)", primary: false,
+        sets: 4, reps: "6", rpe: "8",
+        deloadCut: true,
+        notes: "Explosiva, do chão. Tronco paralelo ao chão durante toda a série. Reforça lats e ereto-espinhal."
+      },
+      {
+        id: "dl4", name: "Barra fixa (pull-up)", primary: false,
+        sets: 4, reps: "até falha (AMRAP)",
+        deloadHalf: true,
+        notes: "Adicionar peso quando passar de 10 reps. Pegada pronada ombro+. Queixo passa da barra, descida controlada."
+      },
+      {
+        id: "dl5", name: "Hiperextensão 45°", primary: false,
+        sets: 3, reps: "12", rpe: "7-8",
+        deloadHalf: true,
+        notes: "Glúteo + lombar. Adicionar carga no peito quando ficar fácil. Não hiper-estender — terminar neutro."
+      },
+      {
+        id: "dl6", name: "Encolhimento (shrug)", primary: false,
+        sets: 3, reps: "10", rpe: "8",
+        deloadHalf: true,
+        notes: "Trapézio. Pausa de 1-2s no topo. Movimento puramente vertical — não rolar os ombros."
+      },
+      {
+        id: "dl7", name: "Rosca alternada halter", primary: false,
+        sets: 3, reps: "10", rpe: "8",
+        deloadHalf: true,
+        notes: "Volume mínimo de bíceps. Cotovelo fixo ao lado do tronco, supinação no caminho da subida."
+      },
+      {
+        id: "dl8", name: "Farmer's walk", primary: false,
+        sets: 3, reps: "30-40m", rpe: "Carga máx",
+        deloadHalf: true,
+        notes: "Grip + core + estabilidade total. Postura ereta, ombros para trás, passos curtos. Substitui qualquer 'core específico' do dia."
+      }
+    ]
+  },
+  sex: {
+    title: "UPPER HIPER",
+    eyebrow: "Hipertrofia + bench freq 2",
+    pills: ["TRT", "70–85min"],
+    trt: true,
+    deloadCutAll: true,
+    exercises: [
+      {
+        id: "fr1", name: "Supino reto (frequência 2)", primary: false,
+        sets: 5, reps: "5", intensity: "75–80% 1RM",
+        notes: "Velocidade de barra alta, NÃO RPE alto. Frequência 2 do supino — o objetivo é volume técnico, não esforço máximo. Sair com gás."
+      },
+      {
+        id: "fr2", name: "Desenvolvimento militar (OHP)", primary: false,
+        sets: 4, reps: "6-8", rpe: "8",
+        notes: "Em pé, barra. Trabalha estabilidade do core também. Glúteos contraídos, costelas pra dentro, barra passa rente ao rosto."
+      },
+      {
+        id: "fr3", name: "Remada cavalinho ou T-bar", primary: false,
+        sets: 4, reps: "10", rpe: "8",
+        notes: "Volume de costas para postura sob a barra. Cotovelos próximos do tronco, puxar com os lats (não com bíceps)."
+      },
+      {
+        id: "fr4", name: "Puxada alta (pulldown)", primary: false,
+        sets: 3, reps: "12", rpe: "8",
+        notes: "Pegada neutra ou supinada. Peito estufado, barra desce no esterno, contrair lats no fundo."
+      },
+      {
+        id: "fr5", name: "Crucifixo halter inclinado", primary: false,
+        sets: 3, reps: "12", rpe: "9",
+        notes: "Estiramento máximo, controle excêntrico de 3s. Banco a 30°, cotovelos levemente flexionados durante todo o movimento."
+      },
+      {
+        id: "fr6", name: "Elevação lateral sentado", primary: false,
+        sets: 4, reps: "15", rpe: "9",
+        notes: "Mais isolamento que em pé — elimina trapézio superior compensando. Subir até paralelo, não acima."
+      },
+      {
+        id: "fr7", name: "Rosca direta + tríceps testa (bi-set)", primary: false,
+        sets: 3, reps: "10 cada", rpe: "8",
+        notes: "Bi-set, sem descanso. Rosca: cotovelos fixos. Testa: cotovelos fixos apontando pro teto, barra desce até a testa."
+      }
+    ]
+  },
+  sab: {
+    title: "CARDIO Z2",
+    eyebrow: "Long slow distance",
+    pills: ["40–75min"],
+    trt: false,
+    cardio: true,
+    cardioContent: {
+      protocol: "ZONA 2 — sessão longa",
+      heartRate: "125–140 bpm",
+      duration: "40min mínimo · 60min ideal · até 75min se houver disposição",
+      modes: "Bike ergométrica · Esteira inclinada · Elíptico · Caminhada inclinada outdoor",
+      cue: "Mesmo cue da quarta — frase completa com leve desconforto.",
+      why: "Sessão mais longa que quarta para acumular volume mitocondrial. Opcional: substituir por squat leve + acessórios pernas se sentir que precisa de estímulo extra de hipertrofia para perna nessa semana."
+    }
+  },
+  dom: {
+    title: "REST",
+    eyebrow: "Recovery total",
+    pills: ["OFF"],
+    trt: false,
+    rest: true
+  }
+};
+
+const DAYS = ['seg','ter','qua','qui','sex','sab','dom'];
+const DAY_LABELS = { seg:'SEG', ter:'TER', qua:'QUA', qui:'QUI', sex:'SEX', sab:'SAB', dom:'DOM' };
+const JS_DAY_TO_KEY = ['dom','seg','ter','qua','qui','sex','sab']; // JS getDay() → 0=Sun
+
+// ============================================================
+// STATE & STORAGE
+// ============================================================
+const STATE = {
+  week: '1',
+  day: 'seg',
+  checks: {},
+  loads: {}
+};
+
+function loadState() {
+  try {
+    const checks = localStorage.getItem('pwr.checks');
+    const loads = localStorage.getItem('pwr.loads');
+    const week = localStorage.getItem('pwr.week');
+    if (checks) STATE.checks = JSON.parse(checks);
+    if (loads) STATE.loads = JSON.parse(loads);
+    if (week) STATE.week = week;
+  } catch(e) { console.warn('State load failed', e); }
+}
+
+function saveChecks() { localStorage.setItem('pwr.checks', JSON.stringify(STATE.checks)); }
+function saveLoads() { localStorage.setItem('pwr.loads', JSON.stringify(STATE.loads)); }
+function saveWeek() { localStorage.setItem('pwr.week', STATE.week); }
+
+function checkKey(week, day, exId) { return `${week}::${day}::${exId}`; }
+function loadKey(week, day, exId) { return `${week}::${day}::${exId}`; }
+
+function isChecked(week, day, exId) { return !!STATE.checks[checkKey(week, day, exId)]; }
+function setChecked(week, day, exId, val) {
+  const k = checkKey(week, day, exId);
+  if (val) STATE.checks[k] = true;
+  else delete STATE.checks[k];
+  saveChecks();
+}
+
+function getLoad(week, day, exId) { return STATE.loads[loadKey(week, day, exId)] || ''; }
+function setLoad(week, day, exId, val) {
+  const k = loadKey(week, day, exId);
+  if (val) STATE.loads[k] = val;
+  else delete STATE.loads[k];
+  saveLoads();
+}
+
+function getPrevLoad(week, day, exId) {
+  // Look at previous weeks for this exercise
+  const weeks = ['1','2','3'];
+  const currentIdx = weeks.indexOf(week);
+  if (currentIdx <= 0) return '';
+  for (let i = currentIdx - 1; i >= 0; i--) {
+    const v = STATE.loads[loadKey(weeks[i], day, exId)];
+    if (v) return `W${weeks[i]}: ${v}kg`;
+  }
+  return '';
+}
+
+// ============================================================
+// RENDERING
+// ============================================================
+function getRpe(ex, week) {
+  if (week === 'deload') return ex.deload?.rpe || ex.rpe || '6';
+  if (ex.rpeByWeek && ex.rpeByWeek[week]) return ex.rpeByWeek[week];
+  return ex.rpe || '';
+}
+
+function getPrescription(ex, week) {
+  if (week === 'deload') {
+    if (ex.deload) {
+      return { sets: ex.deload.sets, reps: ex.deload.reps, intensity: ex.deload.intensity, rpe: ex.deload.rpe };
+    }
+    return { sets: ex.sets, reps: ex.reps, rpe: getRpe(ex, week), intensity: ex.intensity };
+  }
+  return { sets: ex.sets, reps: ex.reps, rpe: getRpe(ex, week), intensity: ex.intensity };
+}
+
+function shouldHideOnDeload(ex) { return !!ex.deloadCut; }
+function shouldDimOnDeload(ex) { return !!ex.deloadHalf; }
+
+function renderDayTabs() {
+  const container = document.getElementById('dayTabs');
+  const todayKey = JS_DAY_TO_KEY[new Date().getDay()];
+  container.innerHTML = DAYS.map(d => {
+    const data = PROGRAM[d];
+    const isActive = STATE.day === d ? 'active' : '';
+    const isToday = todayKey === d ? 'today' : '';
+    const trtDot = data.trt ? '<span class="trt-dot"></span>' : '';
+    return `<button class="day-tab ${isActive} ${isToday}" data-day="${d}">${DAY_LABELS[d]}${trtDot}</button>`;
+  }).join('');
+  
+  container.querySelectorAll('.day-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      STATE.day = btn.dataset.day;
+      renderDayTabs();
+      renderMain();
+      window.scrollTo(0, 0);
+    });
+  });
+}
+
+function renderWeekSelector() {
+  document.querySelectorAll('.week-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.week === STATE.week);
+    btn.onclick = () => {
+      STATE.week = btn.dataset.week;
+      saveWeek();
+      renderWeekSelector();
+      renderMain();
+    };
+  });
+}
+
+function renderMain() {
+  const main = document.getElementById('main');
+  const day = PROGRAM[STATE.day];
+  const isDeload = STATE.week === 'deload';
+  
+  let html = '';
+  
+  // Day header
+  let pills = [...day.pills];
+  if (isDeload && (STATE.day === 'sex' || day.deloadCutAll)) {
+    pills = ['DELOAD', 'OFF / Cardio Z2'];
+  } else if (isDeload) {
+    pills = ['DELOAD', ...pills.filter(p => !p.includes('min'))];
+  }
+  
+  const pillsHtml = pills.map(p => {
+    let cls = 'pill';
+    if (p === 'TRT') cls += ' trt';
+    if (p === 'DELOAD') cls += ' deload';
+    return `<span class="${cls}">${p}</span>`;
+  }).join('');
+  
+  // Progress
+  let totalEx = 0, doneEx = 0;
+  if (day.exercises && !(isDeload && day.deloadCutAll)) {
+    day.exercises.forEach(ex => {
+      if (isDeload && shouldHideOnDeload(ex)) return;
+      totalEx++;
+      if (isChecked(STATE.week, STATE.day, ex.id)) doneEx++;
+    });
+  }
+  const progressHtml = totalEx > 0 ? 
+    `<div class="day-progress"><span class="done">${String(doneEx).padStart(2,'0')}</span> / ${String(totalEx).padStart(2,'0')}</div>` : '';
+  
+  html += `
+    <div class="day-header fade-in">
+      <div class="day-meta">
+        <div class="day-eyebrow">${day.eyebrow}</div>
+        ${progressHtml}
+      </div>
+      <h1 class="day-title">${day.title}</h1>
+      <div class="day-subtitle">${pillsHtml}</div>
+    </div>
+  `;
+  
+  // Deload special cases
+  if (isDeload && day.deloadCutAll) {
+    html += `
+      <div class="deload-banner fade-in">
+        <div class="deload-banner-title">SEMANA DE DELOAD</div>
+        <div class="deload-banner-text">Sexta-feira é cortada na semana de deload. Substituir por cardio Z2 leve ou descanso total. O objetivo é manutenção neural, não acúmulo.</div>
+      </div>
+      <div class="rest-day fade-in">
+        <div class="glyph">—</div>
+        <div class="label">Off / Cardio Z2 opcional</div>
+      </div>
+    `;
+    main.innerHTML = html;
+    return;
+  }
+  
+  if (day.cardio) {
+    const c = day.cardioContent;
+    html += `
+      <div class="cardio-day fade-in">
+        <div class="cardio-card">
+          <h3>${c.protocol}</h3>
+          <p><strong>FC alvo:</strong> ${c.heartRate}</p>
+          <p><strong>Duração:</strong> ${c.duration}</p>
+          <p><strong>Modalidades:</strong> ${c.modes}</p>
+        </div>
+        <div class="cardio-card">
+          <h3>Cue subjetivo</h3>
+          <p>${c.cue}</p>
+        </div>
+        <div class="cardio-card">
+          <h3>Por quê</h3>
+          <p>${c.why}</p>
+        </div>
+      </div>
+    `;
+    main.innerHTML = html;
+    return;
+  }
+  
+  if (day.rest) {
+    html += `
+      <div class="rest-day fade-in">
+        <div class="glyph">·</div>
+        <div class="label">Recovery total</div>
+        <div class="quote">Sono, hidratação, comida boa. O músculo cresce na recuperação, não no treino.</div>
+      </div>
+    `;
+    main.innerHTML = html;
+    return;
+  }
+  
+  // Deload banner for normal training days
+  if (isDeload) {
+    html += `
+      <div class="deload-banner fade-in">
+        <div class="deload-banner-title">SEMANA DE DELOAD</div>
+        <div class="deload-banner-text">Lift principal a 60% do 1RM, RPE 6. Acessórios cortados em volume. Variações técnicas pulam essa semana.</div>
+      </div>
+    `;
+  }
+  
+  // Exercises
+  html += '<div class="exercises">';
+  day.exercises.forEach((ex, idx) => {
+    if (isDeload && shouldHideOnDeload(ex)) return;
+    
+    const checked = isChecked(STATE.week, STATE.day, ex.id);
+    const presc = getPrescription(ex, STATE.week);
+    const load = getLoad(STATE.week, STATE.day, ex.id);
+    const prevLoad = getPrevLoad(STATE.week, STATE.day, ex.id);
+    
+    const classes = ['exercise'];
+    if (checked) classes.push('done');
+    if (ex.primary) classes.push('primary');
+    
+    // Build prescription stats
+    const stats = [];
+    stats.push(`<div class="ex-stat"><div class="ex-stat-label">Sets</div><div class="ex-stat-value">${String(presc.sets).padStart(2,'0')}</div></div>`);
+    stats.push(`<div class="ex-stat"><div class="ex-stat-label">Reps</div><div class="ex-stat-value">${presc.reps}</div></div>`);
+    if (presc.intensity) {
+      stats.push(`<div class="ex-stat intensity"><div class="ex-stat-label">Intens</div><div class="ex-stat-value">${presc.intensity}</div></div>`);
+    } else if (presc.rpe) {
+      stats.push(`<div class="ex-stat rpe"><div class="ex-stat-label">RPE</div><div class="ex-stat-value">${presc.rpe}</div></div>`);
+    }
+    
+    const num = String(idx + 1).padStart(2, '0');
+    
+    html += `
+      <div class="${classes.join(' ')}" data-ex-id="${ex.id}">
+        <label class="ex-check">
+          <input type="checkbox" ${checked ? 'checked' : ''} data-ex-id="${ex.id}">
+        </label>
+        <div class="ex-body">
+          <div class="ex-name"><span class="ex-num">${num}</span>${ex.name}</div>
+          <div class="ex-prescription">${stats.join('')}</div>
+          <div class="ex-load">
+            <span class="ex-load-label">Carga</span>
+            <input type="number" inputmode="decimal" step="0.5" class="ex-load-input" data-ex-id="${ex.id}" value="${load}" placeholder="—">
+            <span class="ex-load-unit">kg</span>
+            ${prevLoad ? `<span class="ex-load-prev">${prevLoad}</span>` : ''}
+          </div>
+          <button class="ex-notes-toggle" data-ex-id="${ex.id}">
+            <span class="arrow">▸</span> Notas
+          </button>
+          <div class="ex-notes" data-notes-for="${ex.id}">
+            <div class="ex-notes-content">${ex.notes}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  html += '</div>';
+  
+  main.innerHTML = html;
+  attachExerciseHandlers();
+}
+
+function attachExerciseHandlers() {
+  // Checkboxes
+  document.querySelectorAll('.ex-check input').forEach(input => {
+    input.addEventListener('change', (e) => {
+      const exId = e.target.dataset.exId;
+      setChecked(STATE.week, STATE.day, exId, e.target.checked);
+      // Update card visual
+      const card = e.target.closest('.exercise');
+      card.classList.toggle('done', e.target.checked);
+      // Update progress counter
+      updateProgress();
+      // Haptic feedback
+      if (e.target.checked && navigator.vibrate) navigator.vibrate(20);
+    });
+  });
+  
+  // Load inputs
+  document.querySelectorAll('.ex-load-input').forEach(input => {
+    input.addEventListener('change', (e) => {
+      setLoad(STATE.week, STATE.day, e.target.dataset.exId, e.target.value);
+    });
+    input.addEventListener('blur', (e) => {
+      setLoad(STATE.week, STATE.day, e.target.dataset.exId, e.target.value);
+    });
+  });
+  
+  // Notes toggle
+  document.querySelectorAll('.ex-notes-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const exId = btn.dataset.exId;
+      const notes = document.querySelector(`.ex-notes[data-notes-for="${exId}"]`);
+      btn.classList.toggle('open');
+      notes.classList.toggle('open');
+    });
+  });
+}
+
+function updateProgress() {
+  const day = PROGRAM[STATE.day];
+  const isDeload = STATE.week === 'deload';
+  if (!day.exercises) return;
+  
+  let total = 0, done = 0;
+  day.exercises.forEach(ex => {
+    if (isDeload && shouldHideOnDeload(ex)) return;
+    total++;
+    if (isChecked(STATE.week, STATE.day, ex.id)) done++;
+  });
+  
+  const el = document.querySelector('.day-progress');
+  if (el) {
+    el.innerHTML = `<span class="done">${String(done).padStart(2,'0')}</span> / ${String(total).padStart(2,'0')}`;
+  }
+}
+
+// Reset day
+document.getElementById('resetBtn').addEventListener('click', () => {
+  if (!confirm(`Resetar checkboxes de ${DAY_LABELS[STATE.day]} (Semana ${STATE.week.toUpperCase()})?`)) return;
+  const prefix = `${STATE.week}::${STATE.day}::`;
+  Object.keys(STATE.checks).forEach(k => {
+    if (k.startsWith(prefix)) delete STATE.checks[k];
+  });
+  saveChecks();
+  renderMain();
+  if (navigator.vibrate) navigator.vibrate([10, 30, 10]);
+});
+
+// ============================================================
+// INIT
+// ============================================================
+loadState();
+
+// Default to today
+const todayKey = JS_DAY_TO_KEY[new Date().getDay()];
+if (PROGRAM[todayKey]) STATE.day = todayKey;
+
+renderWeekSelector();
+renderDayTabs();
+renderMain();
+
+// Prevent accidental zoom on double-tap of inputs (iOS)
+document.addEventListener('dblclick', (e) => {
+  if (e.target.tagName !== 'INPUT') e.preventDefault();
+});
+</script>
+</body>
+</html>
