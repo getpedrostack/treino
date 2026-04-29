@@ -576,6 +576,258 @@
     margin-right: auto;
   }
   
+  /* Export button on Sunday */
+  .export-section {
+    margin-top: 48px;
+    padding: 0 16px;
+  }
+  
+  .export-divider {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--text-3);
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  
+  .export-divider::before,
+  .export-divider::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: calc(50% - 60px);
+    height: 1px;
+    background: var(--border);
+  }
+  .export-divider::before { left: 0; }
+  .export-divider::after { right: 0; }
+  
+  .export-btn {
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+    display: block;
+    background: transparent;
+    border: 1px solid var(--border-bright);
+    color: var(--text-2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    padding: 14px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.15s;
+  }
+  
+  .export-btn:hover, .export-btn:active {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  
+  .export-week-picker {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+  
+  .export-week-chip {
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    color: var(--text-3);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 6px 10px;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  
+  .export-week-chip.selected {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #000;
+  }
+  
+  .export-hint {
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-3);
+    margin-top: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.05em;
+    line-height: 1.5;
+  }
+  
+  /* Info button (RPE) */
+  .info-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-3);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 5px 8px;
+    cursor: pointer;
+    border-radius: 2px;
+    margin-left: 8px;
+    transition: all 0.15s;
+  }
+  
+  .info-btn:hover, .info-btn:active {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  
+  .header-row .right-cluster {
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Modal */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 200;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  
+  .modal-backdrop.open {
+    display: flex;
+    animation: fadeIn 0.18s ease-out;
+  }
+  
+  .modal {
+    background: var(--bg-elev);
+    border-top: 1px solid var(--border-bright);
+    border-radius: 16px 16px 0 0;
+    width: 100%;
+    max-width: 600px;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 24px 20px calc(24px + env(safe-area-inset-bottom));
+    animation: slideUp 0.22s ease-out;
+  }
+  
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  
+  .modal-handle {
+    width: 36px;
+    height: 4px;
+    background: var(--border-bright);
+    border-radius: 2px;
+    margin: -12px auto 16px;
+  }
+  
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+  }
+  
+  .modal-title {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 900;
+    font-size: 22px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  
+  .modal-close {
+    background: transparent;
+    border: none;
+    color: var(--text-2);
+    font-size: 24px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px 8px;
+  }
+  
+  .modal-intro {
+    font-size: 13px;
+    color: var(--text-2);
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+  
+  .rpe-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 16px;
+  }
+  
+  .rpe-table th {
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    color: var(--text-3);
+    text-transform: uppercase;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 700;
+  }
+  
+  .rpe-table td {
+    padding: 10px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--text-2);
+    vertical-align: top;
+  }
+  
+  .rpe-table tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .rpe-table .rpe-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--text);
+    width: 38px;
+  }
+  
+  .rpe-table tr.target .rpe-num {
+    color: var(--accent);
+  }
+  
+  .rpe-table tr.target td {
+    background: rgba(212,255,62,0.04);
+  }
+  
+  .modal-tip {
+    background: rgba(212,255,62,0.06);
+    border-left: 2px solid var(--accent);
+    padding: 12px 14px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-2);
+    margin-top: 8px;
+  }
+  
+  .modal-tip strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+  
   /* ============ DELOAD OVERRIDE ============ */
   .deload-banner {
     margin: 16px;
@@ -671,11 +923,14 @@
 <header>
   <div class="header-row">
     <div class="logo">PWR<span class="slash">/</span><span class="dim">PEDRO</span></div>
-    <div class="week-selector" id="weekSelector">
-      <button class="week-btn" data-week="1">W1</button>
-      <button class="week-btn" data-week="2">W2</button>
-      <button class="week-btn" data-week="3">W3</button>
-      <button class="week-btn deload" data-week="deload">DLD</button>
+    <div class="right-cluster">
+      <div class="week-selector" id="weekSelector">
+        <button class="week-btn" data-week="1">W1</button>
+        <button class="week-btn" data-week="2">W2</button>
+        <button class="week-btn" data-week="3">W3</button>
+        <button class="week-btn deload" data-week="deload">DLD</button>
+      </div>
+      <button class="info-btn" id="rpeInfoBtn" title="Escala RPE">RPE?</button>
     </div>
   </div>
   <nav class="day-tabs" id="dayTabs"></nav>
@@ -685,6 +940,77 @@
 
 <div class="footer-actions">
   <button class="reset-btn" id="resetBtn">RESET DIA ATUAL</button>
+</div>
+
+<!-- RPE Info Modal -->
+<div class="modal-backdrop" id="rpeModal">
+  <div class="modal" role="dialog" aria-labelledby="rpeModalTitle">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="rpeModalTitle">Escala RPE</div>
+      <button class="modal-close" id="rpeModalClose" aria-label="Fechar">×</button>
+    </div>
+    <p class="modal-intro">
+      <strong style="color:var(--text)">RPE</strong> = <em>Rate of Perceived Exertion</em>. Mede o esforço percebido na escala 1–10, ancorada em <strong style="color:var(--text)">RIR</strong> (Reps in Reserve — repetições que sobraram no tanque ao terminar a série).
+    </p>
+    <table class="rpe-table">
+      <thead>
+        <tr>
+          <th>RPE</th>
+          <th>RIR</th>
+          <th>Significado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="rpe-num">10</td>
+          <td>0</td>
+          <td>Falha total. Não conseguiria fazer nem mais 1 rep.</td>
+        </tr>
+        <tr>
+          <td class="rpe-num">9.5</td>
+          <td>0–1</td>
+          <td>Talvez 1 a mais — não tenho certeza.</td>
+        </tr>
+        <tr>
+          <td class="rpe-num">9</td>
+          <td>1</td>
+          <td>Mais 1 rep com certeza. Difícil, mas dava.</td>
+        </tr>
+        <tr class="target">
+          <td class="rpe-num">8.5</td>
+          <td>1–2</td>
+          <td>Pico do mesociclo (W3). Sobraram 1 a 2 reps.</td>
+        </tr>
+        <tr class="target">
+          <td class="rpe-num">8</td>
+          <td>2</td>
+          <td>Padrão de trabalho (W2). Sobraram 2 reps no tanque.</td>
+        </tr>
+        <tr class="target">
+          <td class="rpe-num">7</td>
+          <td>3</td>
+          <td>Acumulação (W1) e variações técnicas. 3 reps de reserva — barra ainda sobe rápida.</td>
+        </tr>
+        <tr class="target">
+          <td class="rpe-num">6</td>
+          <td>4</td>
+          <td>Deload. Carga leve, foco em técnica e recovery.</td>
+        </tr>
+        <tr>
+          <td class="rpe-num">5</td>
+          <td>5+</td>
+          <td>Aquecimento. Esforço mínimo.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="modal-tip">
+      <strong>Como calibrar:</strong> ao terminar a série, pergunte-se "quantas eu ainda faria?". Se a resposta é "umas 2", foi RPE 8. Se "talvez 1", foi RPE 9. Sub-estimar RPE (achar que foi mais leve) é o erro mais comum — quando em dúvida, considere meio ponto a mais.
+    </div>
+    <div class="modal-tip" style="margin-top:10px">
+      <strong>Por que usamos RPE em vez de %1RM:</strong> em dias de sono ruim, estresse ou nutrição comprometida, sua capacidade real do dia oscila ±10%. RPE autoregula automaticamente — você puxa o que dá hoje no esforço prescrito, sem forçar acima do que o corpo aguenta.
+    </div>
+  </div>
 </div>
 
 <script>
@@ -1144,8 +1470,24 @@ function renderMain() {
         <div class="label">Recovery total</div>
         <div class="quote">Sono, hidratação, comida boa. O músculo cresce na recuperação, não no treino.</div>
       </div>
+      <div class="export-section fade-in">
+        <div class="export-divider">Relatório semanal</div>
+        <div class="export-week-picker" id="exportWeekPicker">
+          <button class="export-week-chip" data-export-week="1">W1</button>
+          <button class="export-week-chip" data-export-week="2">W2</button>
+          <button class="export-week-chip" data-export-week="3">W3</button>
+          <button class="export-week-chip" data-export-week="deload">DLD</button>
+          <button class="export-week-chip selected" data-export-week="all">TUDO</button>
+        </div>
+        <button class="export-btn" id="exportBtn">EXPORTAR RELATÓRIO</button>
+        <div class="export-hint">
+          Gera arquivo .md com cargas,<br>
+          checks e observações da semana.
+        </div>
+      </div>
     `;
     main.innerHTML = html;
+    attachExportHandlers();
     return;
   }
   
@@ -1281,6 +1623,180 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   renderMain();
   if (navigator.vibrate) navigator.vibrate([10, 30, 10]);
 });
+
+// ============================================================
+// RPE INFO MODAL
+// ============================================================
+const rpeModal = document.getElementById('rpeModal');
+document.getElementById('rpeInfoBtn').addEventListener('click', () => {
+  rpeModal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+});
+document.getElementById('rpeModalClose').addEventListener('click', closeRpeModal);
+rpeModal.addEventListener('click', (e) => {
+  if (e.target === rpeModal) closeRpeModal();
+});
+function closeRpeModal() {
+  rpeModal.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ============================================================
+// EXPORT WEEKLY REPORT
+// ============================================================
+let exportSelectedWeek = 'all';
+
+function attachExportHandlers() {
+  const picker = document.getElementById('exportWeekPicker');
+  if (!picker) return;
+  picker.querySelectorAll('.export-week-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      picker.querySelectorAll('.export-week-chip').forEach(c => c.classList.remove('selected'));
+      chip.classList.add('selected');
+      exportSelectedWeek = chip.dataset.exportWeek;
+    });
+  });
+  document.getElementById('exportBtn').addEventListener('click', generateAndDownloadReport);
+}
+
+function formatDateBR(d) {
+  const dd = String(d.getDate()).padStart(2, '0');
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const yyyy = d.getFullYear();
+  return `${dd}/${mm}/${yyyy}`;
+}
+
+function buildWeekReport(week) {
+  const weekLabel = week === 'deload' ? 'DELOAD' : `W${week}`;
+  let md = `\n## Semana ${weekLabel}\n\n`;
+  
+  const trainingDays = ['seg', 'ter', 'qui', 'sex'];
+  const cardioDays = ['qua', 'sab'];
+  let totalExercises = 0, totalDone = 0, totalLoaded = 0;
+  
+  // Training days
+  trainingDays.forEach(dayKey => {
+    const day = PROGRAM[dayKey];
+    if (!day.exercises) return;
+    
+    // Skip Friday on deload
+    if (week === 'deload' && day.deloadCutAll) {
+      md += `### ${DAY_LABELS[dayKey]} — ${day.title}\n_Cortado na semana de deload._\n\n`;
+      return;
+    }
+    
+    md += `### ${DAY_LABELS[dayKey]} — ${day.title}\n`;
+    md += `_${day.eyebrow}_\n\n`;
+    
+    let dayDone = 0, dayTotal = 0;
+    const rows = [];
+    
+    day.exercises.forEach(ex => {
+      if (week === 'deload' && shouldHideOnDeload(ex)) return;
+      dayTotal++;
+      totalExercises++;
+      
+      const checked = isChecked(week, dayKey, ex.id);
+      const load = getLoad(week, dayKey, ex.id);
+      const presc = getPrescription(ex, week);
+      
+      if (checked) { dayDone++; totalDone++; }
+      if (load) totalLoaded++;
+      
+      const checkmark = checked ? '✅' : '⬜';
+      const loadStr = load ? `**${load}kg**` : '—';
+      const intensityStr = presc.intensity || (presc.rpe ? `RPE ${presc.rpe}` : '—');
+      
+      rows.push(`| ${checkmark} | ${ex.name} | ${presc.sets}×${presc.reps} | ${intensityStr} | ${loadStr} |`);
+    });
+    
+    md += `**Conclusão:** ${dayDone}/${dayTotal} exercícios\n\n`;
+    md += `| ✓ | Exercício | Sets×Reps | Intens. | Carga |\n`;
+    md += `|---|-----------|-----------|---------|-------|\n`;
+    md += rows.join('\n') + '\n\n';
+  });
+  
+  // Cardio days
+  const cardioStatus = cardioDays.map(d => {
+    // Cardio doesn't have checkboxes; we just label the day
+    return `${DAY_LABELS[d]}`;
+  });
+  md += `### Cardio Z2\n${cardioStatus.join(' · ')} — _registrar manualmente abaixo._\n\n`;
+  
+  return { md, totalExercises, totalDone, totalLoaded };
+}
+
+function generateAndDownloadReport() {
+  const now = new Date();
+  const dateStr = formatDateBR(now);
+  const weeks = exportSelectedWeek === 'all' ? ['1', '2', '3', 'deload'] : [exportSelectedWeek];
+  
+  let md = `# Relatório de Treino — Pedro\n`;
+  md += `**Data de exportação:** ${dateStr}\n`;
+  md += `**Programa:** Powerlifting Híbrido (força + hipertrofia)\n`;
+  md += `**Semanas incluídas:** ${weeks.map(w => w === 'deload' ? 'DELOAD' : 'W' + w).join(', ')}\n\n`;
+  md += `---\n`;
+  
+  let grandTotalEx = 0, grandTotalDone = 0, grandTotalLoaded = 0;
+  
+  weeks.forEach(w => {
+    const result = buildWeekReport(w);
+    md += result.md;
+    grandTotalEx += result.totalExercises;
+    grandTotalDone += result.totalDone;
+    grandTotalLoaded += result.totalLoaded;
+  });
+  
+  md += `---\n\n`;
+  md += `## Resumo agregado\n\n`;
+  md += `- **Exercícios prescritos:** ${grandTotalEx}\n`;
+  md += `- **Exercícios concluídos:** ${grandTotalDone} (${grandTotalEx ? Math.round(grandTotalDone/grandTotalEx*100) : 0}%)\n`;
+  md += `- **Cargas registradas:** ${grandTotalLoaded}\n\n`;
+  
+  md += `---\n\n`;
+  md += `## Notas livres do atleta\n\n`;
+  md += `_Preencha antes de enviar para análise:_\n\n`;
+  md += `**Sono médio (1-10):** \n\n`;
+  md += `**Libido (1-10):** \n\n`;
+  md += `**Energia geral (1-10):** \n\n`;
+  md += `**Peso atual (kg):** \n\n`;
+  md += `**Cintura (cm, umbigo):** \n\n`;
+  md += `**Sintomas notáveis (tontura, dor, fadiga, ginecomastia, retenção, etc.):**\n\n\n\n`;
+  md += `**Aderência à dieta (1-10) e observações:**\n\n\n\n`;
+  md += `**Cardio Z2 — duração e FC média de cada sessão:**\n- Quarta: \n- Sábado: \n\n`;
+  md += `**TRT — confirmar aplicação seg/qua/sex:** \n\n`;
+  md += `**Outras observações para o consultor:**\n\n\n\n`;
+  
+  md += `---\n\n`;
+  md += `_Gerado por PWR / Pedro · Pedro 37a · 108kg · TRT enantato 0,13ml 3×/sem_\n`;
+  
+  // Download
+  const fileName = `treino_pedro_${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}.md`;
+  const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 100);
+  
+  // Feedback
+  if (navigator.vibrate) navigator.vibrate([10, 30, 10]);
+  const btn = document.getElementById('exportBtn');
+  if (btn) {
+    const originalText = btn.textContent;
+    btn.textContent = '✓ ARQUIVO GERADO';
+    btn.style.borderColor = 'var(--accent)';
+    btn.style.color = 'var(--accent)';
+    setTimeout(() => {
+      btn.textContent = originalText;
+      btn.style.borderColor = '';
+      btn.style.color = '';
+    }, 2000);
+  }
+}
 
 // ============================================================
 // INIT
