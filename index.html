@@ -508,6 +508,92 @@
     color: var(--text-2);
   }
   
+  /* Swaps */
+  .ex-actions-row {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-top: 4px;
+  }
+  
+  .ex-swaps-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: none;
+    color: var(--text-3);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 8px 0 0;
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+  
+  .ex-swaps-toggle:hover { color: var(--text-2); }
+  .ex-swaps-toggle.open { color: var(--accent); }
+  
+  .ex-swaps-toggle .swap-icon {
+    font-size: 12px;
+    transition: transform 0.2s;
+    display: inline-block;
+  }
+  
+  .ex-swaps-toggle.open .swap-icon { transform: rotate(180deg); }
+  
+  .ex-swaps {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.25s ease-out;
+  }
+  
+  .ex-swaps.open {
+    max-height: 500px;
+    margin-top: 8px;
+  }
+  
+  .ex-swaps-content {
+    background: var(--bg-elev);
+    border-left: 2px solid #5a8aff;
+    padding: 10px 12px;
+  }
+  
+  .ex-swaps-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: #7da3ff;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  
+  .ex-swap-item {
+    padding: 6px 0;
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--text-2);
+    border-bottom: 1px dashed var(--border);
+  }
+  
+  .ex-swap-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .ex-swap-item:first-child { padding-top: 0; }
+  
+  .ex-swap-name {
+    color: var(--text);
+    font-weight: 500;
+  }
+  
+  .ex-swap-reason {
+    color: var(--text-3);
+    font-size: 12px;
+    display: block;
+    margin-top: 2px;
+    font-style: italic;
+  }
+  
   /* ============ SPECIAL DAYS ============ */
   .cardio-day {
     padding: 24px 16px;
@@ -828,8 +914,255 @@
     font-weight: 500;
   }
   
+  /* ============ SESSION SWAP / SCHEDULE ============ */
+  .day-title-btn {
+    background: transparent;
+    border: none;
+    color: inherit;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-align: left;
+    width: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .day-title-btn:active .day-title { opacity: 0.7; }
+  
+  .day-title-swap {
+    color: var(--text-3);
+    font-size: 18px;
+    transition: color 0.15s, transform 0.2s;
+    display: inline-block;
+  }
+  
+  .day-title-btn:hover .day-title-swap,
+  .day-title-btn:active .day-title-swap {
+    color: var(--accent);
+    transform: rotate(180deg);
+  }
+  
+  .custom-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: #000;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding: 2px 6px;
+    margin-left: 6px;
+    vertical-align: middle;
+    border-radius: 1px;
+  }
+  
+  .schedule-warning {
+    margin: 16px;
+    padding: 12px 14px;
+    background: rgba(255,107,53,0.08);
+    border: 1px solid var(--warn);
+    border-left-width: 3px;
+  }
+  
+  .schedule-warning-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--warn);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+  
+  .schedule-warning-item {
+    font-size: 12px;
+    color: var(--text-2);
+    line-height: 1.4;
+    margin-top: 4px;
+  }
+  
+  /* Swap modal options */
+  .swap-options {
+    display: grid;
+    gap: 6px;
+    margin: 12px 0 18px;
+  }
+  
+  .swap-option {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 12px 14px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s;
+    position: relative;
+    border-radius: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .swap-option:hover, .swap-option:active {
+    border-color: var(--accent);
+    background: rgba(212,255,62,0.04);
+  }
+  
+  .swap-option.current {
+    border-color: var(--accent);
+    background: rgba(212,255,62,0.08);
+    cursor: default;
+  }
+  
+  .swap-option-title {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  
+  .swap-option-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--text-3);
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+  
+  .swap-option-current {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  
+  .swap-divider {
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--text-3);
+    text-transform: uppercase;
+    margin: 18px 0 10px;
+    position: relative;
+  }
+  
+  .swap-divider::before, .swap-divider::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: calc(50% - 110px);
+    height: 1px;
+    background: var(--border);
+  }
+  .swap-divider::before { left: 0; }
+  .swap-divider::after { right: 0; }
+  
+  .swap-preview {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: 8px 0;
+    margin-bottom: 14px;
+  }
+  
+  .swap-preview-row {
+    display: flex;
+    align-items: baseline;
+    padding: 5px 14px;
+    border-bottom: 1px dashed var(--border);
+  }
+  .swap-preview-row:last-child { border-bottom: none; }
+  
+  .swap-preview-row.today {
+    background: rgba(212,255,62,0.06);
+  }
+  
+  .swap-preview-day {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--text-3);
+    width: 50px;
+    flex-shrink: 0;
+    font-weight: 700;
+  }
+  
+  .swap-preview-row.today .swap-preview-day { color: var(--accent); }
+  
+  .swap-preview-session {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  
+  .swap-preview-session.modified {
+    color: var(--accent);
+  }
+  
+  .swap-preview-session.modified::after {
+    content: ' ↻';
+    color: var(--accent);
+    font-size: 11px;
+  }
+  
+  .swap-warnings {
+    margin-top: 12px;
+  }
+  
+  .swap-warning-item {
+    font-size: 12px;
+    color: var(--warn);
+    line-height: 1.4;
+    padding: 6px 10px;
+    background: rgba(255,107,53,0.06);
+    border-left: 2px solid var(--warn);
+    margin-bottom: 4px;
+  }
+  
+  .swap-ok {
+    font-size: 12px;
+    color: var(--accent);
+    line-height: 1.4;
+    padding: 6px 10px;
+    background: rgba(212,255,62,0.05);
+    border-left: 2px solid var(--accent);
+  }
+  
+  .restore-btn {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--border-bright);
+    color: var(--text-3);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    padding: 12px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.15s;
+    margin-top: 16px;
+    border-radius: 0;
+  }
+  
+  .restore-btn:hover, .restore-btn:active {
+    border-color: var(--warn);
+    color: var(--warn);
+  }
+  
   /* ============ DELOAD OVERRIDE ============ */
-  .deload-banner {
     margin: 16px;
     padding: 14px 16px;
     background: rgba(255,107,53,0.08);
@@ -1013,258 +1346,455 @@
   </div>
 </div>
 
+<!-- Session Swap Modal -->
+<div class="modal-backdrop" id="swapModal">
+  <div class="modal" role="dialog">
+    <!-- Conteúdo populado dinamicamente -->
+  </div>
+</div>
+
 <script>
 // ============================================================
 // DATA
 // ============================================================
-const PROGRAM = {
-  seg: {
+// ============================================================
+// SESSIONS — biblioteca de sessões fixas em conteúdo
+// O calendário (qual sessão acontece em qual dia) é dinâmico.
+// ============================================================
+const SESSIONS = {};
+
+SESSIONS.squat = {
     title: "SQUAT DAY",
     eyebrow: "Força — Lower",
-    pills: ["TRT", "80–95min"],
-    trt: true,
+    pills: ["80–95min"],
+    type: "lower-heavy",
+    typeLabel: "Lower / Squat",
     exercises: [
       {
         id: "sq1", name: "Agachamento livre", primary: true,
         sets: 4, reps: "4", rpeByWeek: { 1: "7", 2: "8", 3: "8.5" },
         deload: { sets: 3, reps: "5", intensity: "60% 1RM", rpe: "6" },
-        notes: "Aquecimento progressivo até série de trabalho. Pausa no buraco opcional na semana 2. Bracing diafragmático antes de descer."
+        notes: "Aquecimento progressivo até série de trabalho. Pausa no buraco opcional na semana 2. Bracing diafragmático antes de descer.",
+        swaps: [
+          { name: "Hack squat (máquina)", reason: "Carga alta sem estresse axial. Bom em dia de fadiga lombar." },
+          { name: "Goblet squat com halter pesado", reason: "Se o rack estiver ocupado. Limitado pela carga do halter." },
+          { name: "Smith machine squat", reason: "Última opção — perde estabilidade, usar só se livre indisponível." }
+        ]
       },
       {
         id: "sq2", name: "Agachamento frontal OU pause squat", primary: false,
         sets: 3, reps: "5", rpe: "7",
         deloadCut: true,
-        notes: "Variação técnica. Alternar semana a semana — frontal em ímpares, pause em pares. Reforça core e posição vertical."
+        notes: "Variação técnica. Alternar semana a semana — frontal em ímpares, pause em pares. Reforça core e posição vertical.",
+        swaps: [
+          { name: "Máquina de agachamento sumô", reason: "Ataca quadríceps medial e adutores. Perfil diferente do livre." },
+          { name: "Goblet squat (halter no peito)", reason: "Reproduz a posição vertical do front squat sem mobilidade de punho." },
+          { name: "Zercher squat", reason: "Halter ou barra na dobra do cotovelo. Brutal pra core e upper back." }
+        ]
       },
       {
         id: "sq3", name: "Stiff / RDL", primary: false,
         sets: 4, reps: "8", rpe: "7-8",
         deloadCut: true,
-        notes: "Carga controlada, foco em estiramento e bracing. Quadril vai pra trás, joelho macio, barra rente à perna."
+        notes: "Carga controlada, foco em estiramento e bracing. Quadril vai pra trás, joelho macio, barra rente à perna.",
+        swaps: [
+          { name: "Good morning (barra nos ombros)", reason: "Mesmo padrão de quadril, menos demanda de grip." },
+          { name: "RDL com halteres", reason: "Se a barra olímpica estiver ocupada. Mais ROM em alguns casos." },
+          { name: "Single-leg RDL com halter", reason: "Versão unilateral. Bônus pra equilíbrio e glúteo médio." }
+        ]
       },
       {
         id: "sq4", name: "Búlgaro com halter", primary: false,
         sets: 3, reps: "10/perna", rpe: "8",
         deloadHalf: true,
-        notes: "Unilateral, corrige assimetrias, baixa carga axial. Pé de trás na bench, joelho da frente alinhado."
+        notes: "Unilateral, corrige assimetrias, baixa carga axial. Pé de trás na bench, joelho da frente alinhado.",
+        swaps: [
+          { name: "Leg press unilateral", reason: "Mesmo objetivo (corrigir assimetria), menos estabilização exigida." },
+          { name: "Walking lunges com halteres", reason: "Pegada dinâmica. Precisa de espaço no corredor." },
+          { name: "Step-up alto com halteres", reason: "Bench acima do joelho, foco em glúteo + quadríceps." }
+        ]
       },
       {
         id: "sq5", name: "Mesa flexora (leg curl)", primary: false,
         sets: 3, reps: "12", rpe: "8",
         deloadHalf: true,
-        notes: "Isquios — antagonista crítico para joelho. Controle excêntrico de 2-3s."
+        notes: "Isquios — antagonista crítico para joelho. Controle excêntrico de 2-3s.",
+        swaps: [
+          { name: "Cadeira flexora (sentado)", reason: "Mesmo músculo, ângulo diferente. Use se a mesa estiver ocupada." },
+          { name: "Nordic curl (assistido)", reason: "Excêntrico extremo. Use se acessar — superior pra hipertrofia." },
+          { name: "Glute-ham raise", reason: "Se a academia tiver GHD. Padrão-ouro pra posterior de coxa." }
+        ]
       },
       {
         id: "sq6", name: "Panturrilha em pé", primary: false,
         sets: 4, reps: "12-15", rpe: "8",
         deloadHalf: true,
-        notes: "Pausa de 1s no topo. ROM completo — desce abaixo do degrau, sobe até contração total."
+        notes: "Pausa de 1s no topo. ROM completo — desce abaixo do degrau, sobe até contração total.",
+        swaps: [
+          { name: "Panturrilha no leg press", reason: "Carga alta sem estresse de coluna. Boa alternativa em dia pesado." },
+          { name: "Panturrilha sentado (smith ou máquina)", reason: "Foco em sóleo (joelho dobrado). Complementa a versão em pé." },
+          { name: "Panturrilha unilateral com halter", reason: "Sem máquina disponível. Apoio numa mão, halter na outra." }
+        ]
       },
       {
         id: "sq7", name: "Prancha lateral OU ab wheel", primary: false,
         sets: 3, reps: "até falha técnica",
         deloadHalf: true,
-        notes: "Core anti-rotação/anti-extensão. Alternar entre os dois ao longo das semanas."
+        notes: "Core anti-rotação/anti-extensão. Alternar entre os dois ao longo das semanas.",
+        swaps: [
+          { name: "Pallof press (cabo ou banda)", reason: "Anti-rotação puro. Excelente complemento. 8-12 reps/lado." },
+          { name: "Hanging leg raise", reason: "Anti-extensão + core anterior. Suba pernas até paralelo ou acima." },
+          { name: "Dragon flag (avançado)", reason: "Versão extrema. Negativa primeiro, depois ROM completo." }
+        ]
       }
     ]
-  },
-  ter: {
+};
+
+// Sessão Bench
+SESSIONS.bench = {
     title: "BENCH DAY",
     eyebrow: "Força — Upper",
     pills: ["80–90min"],
-    trt: false,
+    type: "upper-heavy",
+    typeLabel: "Upper / Bench",
     exercises: [
       {
         id: "be1", name: "Supino reto (barra)", primary: true,
         sets: 4, reps: "4", rpeByWeek: { 1: "7", 2: "8", 3: "8.5" },
         deload: { sets: 3, reps: "5", intensity: "60% 1RM", rpe: "6" },
-        notes: "Pés firmes no chão, escápulas retraídas e deprimidas, arco torácico controlado. Barra desce no peito baixo, sobe em curva leve."
+        notes: "Pés firmes no chão, escápulas retraídas e deprimidas, arco torácico controlado. Barra desce no peito baixo, sobe em curva leve.",
+        swaps: [
+          { name: "Supino reto com halteres", reason: "Mais ROM e estabilização. Use se barra ocupada ou pra variar estímulo." },
+          { name: "Floor press com barra", reason: "ROM reduzido, foco em lockout e tríceps. Bom em dia de ombro sensível." },
+          { name: "Máquina chest press", reason: "Última opção. Útil se sentir desconforto agudo no ombro nesse dia." }
+        ]
       },
       {
         id: "be2", name: "Supino com pausa OU close-grip", primary: false,
         sets: 3, reps: "5", rpe: "7",
         deloadCut: true,
-        notes: "Pause em ímpares, close-grip em pares. Pause = 2s parado no peito. Close-grip = mãos na largura dos ombros, foco tríceps."
+        notes: "Pause em ímpares, close-grip em pares. Pause = 2s parado no peito. Close-grip = mãos na largura dos ombros, foco tríceps.",
+        swaps: [
+          { name: "Dips com peso", reason: "Substitui close-grip. Foco em tríceps + peitoral inferior." },
+          { name: "JM press (barra)", reason: "Híbrido entre supino e tríceps testa. Brutal pra tríceps." },
+          { name: "Supino reto pegada média (halter)", reason: "Versão com halteres do close-grip. Punhos mais confortáveis." }
+        ]
       },
       {
         id: "be3", name: "Supino inclinado halter", primary: false,
         sets: 4, reps: "8-10", rpe: "8",
         deloadCut: true,
-        notes: "Banco a 30°. Halteres descem no nível do peito, palmas se aproximam no topo (rotação leve para mais peitoral)."
+        notes: "Banco a 30°. Halteres descem no nível do peito, palmas se aproximam no topo (rotação leve para mais peitoral).",
+        swaps: [
+          { name: "Supino inclinado com barra", reason: "Mesma execução, sem precisar segurar 2 halteres pesados." },
+          { name: "Máquina supino inclinado", reason: "Foco em hipertrofia pura. Boa pra drop sets." },
+          { name: "Crucifixo inclinado", reason: "Se quiser priorizar estiramento ao invés de carga." }
+        ]
       },
       {
         id: "be4", name: "Paralelas com peso", primary: false,
         sets: 3, reps: "8", rpe: "8",
         deloadHalf: true,
-        notes: "Inclinar tronco para frente = mais peitoral. Tronco vertical = mais tríceps. Adicionar peso quando passar de 10 reps fácil."
+        notes: "Inclinar tronco para frente = mais peitoral. Tronco vertical = mais tríceps. Adicionar peso quando passar de 10 reps fácil.",
+        swaps: [
+          { name: "Dips na máquina assistida", reason: "Se ainda não consegue paralelas com peso ou fadiga acumulada." },
+          { name: "Supino declinado halter", reason: "Mesmo padrão de peitoral inferior, sem dependência de paralelas." },
+          { name: "Push-up com peso (anilha nas costas)", reason: "Backup se paralelas indisponíveis." }
+        ]
       },
       {
         id: "be5", name: "Remada curvada barra OU remada baixa", primary: false,
         sets: 4, reps: "8", rpe: "8",
         deloadHalf: true,
-        notes: "Antagonista, essencial para saúde do ombro. Cotovelos próximos do tronco, barra vai pro umbigo, escápulas se juntam no fim."
+        notes: "Antagonista, essencial para saúde do ombro. Cotovelos próximos do tronco, barra vai pro umbigo, escápulas se juntam no fim.",
+        swaps: [
+          { name: "Remada cavalinho (T-bar)", reason: "Carga alta, padrão de movimento similar à curvada." },
+          { name: "Chest-supported row", reason: "Elimina componente lombar. Foco puro em costas." },
+          { name: "Remada com halter unilateral", reason: "Excelente pra simetria. Apoio uma mão e joelho no banco." }
+        ]
       },
       {
         id: "be6", name: "Elevação lateral", primary: false,
         sets: 4, reps: "12-15", rpe: "9",
         deloadHalf: true,
-        notes: "Deltoide médio. Drop-set na última série (60%→40% do peso, sem descanso). Cotovelo levemente acima do punho."
+        notes: "Deltoide médio. Drop-set na última série (60%→40% do peso, sem descanso). Cotovelo levemente acima do punho.",
+        swaps: [
+          { name: "Elevação lateral no cabo (unilateral)", reason: "Tensão constante no ROM inteiro. Superior em hipertrofia." },
+          { name: "Elevação lateral na máquina", reason: "Padrão fixo. Bom pra falhar sem comprometer técnica." },
+          { name: "Lateral leg-out (deitado de lado)", reason: "Variação avançada. ROM grande, ataca fibras desativadas." }
+        ]
       },
       {
         id: "be7", name: "Tríceps corda + francês (bi-set)", primary: false,
         sets: 3, reps: "12 cada", rpe: "8",
         deloadHalf: true,
-        notes: "Bi-set, sem descanso entre os dois. Corda: abrir no fim. Francês: cotovelos fixos, descer atrás da cabeça."
+        notes: "Bi-set, sem descanso entre os dois. Corda: abrir no fim. Francês: cotovelos fixos, descer atrás da cabeça.",
+        swaps: [
+          { name: "Pushdown reto + tríceps testa", reason: "Mesma estrutura bi-set, exercícios alternativos." },
+          { name: "JM press + pushdown", reason: "Composto + isolamento. Mais estímulo de força no tríceps." },
+          { name: "Dips + pushdown", reason: "Pra dias de bíceps acumulado (paralelas serve dobrado)." }
+        ]
       },
       {
         id: "be8", name: "Face pull", primary: false,
         sets: 3, reps: "15", rpe: "7",
         deloadHalf: true,
-        notes: "Saúde do manguito, sempre. Cotovelos altos, puxar até as orelhas, rotação externa no fim."
+        notes: "Saúde do manguito, sempre. Cotovelos altos, puxar até as orelhas, rotação externa no fim.",
+        swaps: [
+          { name: "Reverse fly (halter ou máquina)", reason: "Foco em deltoide posterior. Complementa a saúde escapular." },
+          { name: "Band pull-apart", reason: "Versátil, faz onde quiser. 20+ reps." },
+          { name: "Rotação externa com halter (deitado)", reason: "Foco específico no infraespinhoso. 15 reps controladas." }
+        ]
       }
     ]
-  },
-  qua: {
+};
+
+// Sessão Cardio Z2 (médio)
+SESSIONS.cardio_mid = {
     title: "CARDIO Z2",
     eyebrow: "Recovery + CV",
-    pills: ["TRT", "40–50min"],
-    trt: true,
+    pills: ["40–50min"],
+    type: "cardio",
+    typeLabel: "Cardio Z2",
     cardio: true,
     cardioContent: {
       protocol: "ZONA 2",
       heartRate: "125–140 bpm",
       duration: "40min mínimo · 60min ideal",
-      modes: "Bike ergométrica · Esteira inclinada · Elíptico · Caminhada inclinada",
+      modes: "Bike ergométrica · Elíptico · Caminhada inclinada · <strong style=\"color:var(--accent)\">Forró ≥60min</strong> (com FC monitorada)",
       cue: "Você consegue conversar em frases completas, mas com leve desconforto.",
-      why: "Z2 melhora densidade mitocondrial, oxidação de gordura, sensibilidade à insulina e marcadores cardiovasculares — sem comprometer o recovery do treino de força. Diferente de HIIT, que canibaliza glicogênio e SNC."
+      why: "Z2 melhora densidade mitocondrial, oxidação de gordura, sensibilidade à insulina e marcadores cardiovasculares — sem comprometer o recovery do treino de força. <strong>Forró substitui completamente o cardio se for ≥60min contínuos com FC entre 115-145 bpm</strong>. Bônus: coordenação, propriocepção e regulação de cortisol crônico via exposição social. <strong>Evitar stairmaster nesse dia</strong> — pernas precisam de pause entre squat e deadlift."
     }
-  },
-  qui: {
+};
+
+// Sessão Deadlift
+SESSIONS.deadlift = {
     title: "DEADLIFT DAY",
     eyebrow: "Força — Pull",
     pills: ["85–100min"],
-    trt: false,
+    type: "lower-heavy",
+    typeLabel: "Lower / Pull",
     exercises: [
       {
         id: "dl1", name: "Levantamento terra convencional", primary: true,
         sets: 4, reps: "3", rpeByWeek: { 1: "7", 2: "8", 3: "8.5" },
         deload: { sets: 3, reps: "3", intensity: "60% 1RM", rpe: "6" },
-        notes: "Cada repetição como single — reset no chão, NÃO em rebote. Setup: barra sobre o meio do pé, ombros levemente à frente da barra, lats engajados."
+        notes: "Cada repetição como single — reset no chão, NÃO em rebote. Setup: barra sobre o meio do pé, ombros levemente à frente da barra, lats engajados.",
+        swaps: [
+          { name: "Terra sumô", reason: "Pegada mais ampla, menos demanda lombar. Bom em dia de fadiga acumulada." },
+          { name: "Trap bar deadlift", reason: "Híbrido squat-deadlift. Menor estresse na lombar, carga alta possível." },
+          { name: "Romanian deadlift pesado", reason: "Se a coluna pedir. Sem chão, foco em posterior. Última opção como substituto." }
+        ]
       },
       {
         id: "dl2", name: "Terra com déficit (5cm) OU paused deadlift", primary: false,
         sets: 3, reps: "4", rpe: "7",
         deloadCut: true,
-        notes: "Variação técnica para fortalecer pull do chão. Déficit em ímpares, paused (1s 2cm acima do chão) em pares."
+        notes: "Variação técnica para fortalecer pull do chão. Déficit em ímpares, paused (1s 2cm acima do chão) em pares.",
+        swaps: [
+          { name: "Rack pull (acima do joelho)", reason: "Se o ponto fraco for lockout, não pull do chão. Inverte a lógica." },
+          { name: "Snatch grip deadlift", reason: "Pegada larga aumenta ROM e ataca upper back." },
+          { name: "Block pull (3-5cm)", reason: "Se déficit for desconfortável. Mesmo objetivo, ROM ligeiramente reduzido." }
+        ]
       },
       {
         id: "dl3", name: "Remada pendlay (Pendlay row)", primary: false,
         sets: 4, reps: "6", rpe: "8",
         deloadCut: true,
-        notes: "Explosiva, do chão. Tronco paralelo ao chão durante toda a série. Reforça lats e ereto-espinhal."
+        notes: "Explosiva, do chão. Tronco paralelo ao chão durante toda a série. Reforça lats e ereto-espinhal.",
+        swaps: [
+          { name: "Chest-supported row", reason: "Sem demanda lombar (já cansada do terra). Foco em costas pura." },
+          { name: "Remada cavalinho (T-bar)", reason: "Carga alta, padrão similar mas com apoio." },
+          { name: "Remada com halter unilateral pesada", reason: "Apoio uma mão e joelho no banco. Excelente pra simetria." }
+        ]
       },
       {
         id: "dl4", name: "Barra fixa (pull-up)", primary: false,
         sets: 4, reps: "até falha (AMRAP)",
         deloadHalf: true,
-        notes: "Adicionar peso quando passar de 10 reps. Pegada pronada ombro+. Queixo passa da barra, descida controlada."
+        notes: "Adicionar peso quando passar de 10 reps. Pegada pronada ombro+. Queixo passa da barra, descida controlada.",
+        swaps: [
+          { name: "Puxada alta na polia (pulldown)", reason: "Mesmo padrão de movimento, escala bem em carga." },
+          { name: "Barra fixa assistida (máquina)", reason: "Se ainda não bater 8+ reps na barra livre." },
+          { name: "Remada alta (pegada larga)", reason: "Se a barra fixa estiver impraticável (ombro sensível)." }
+        ]
       },
       {
         id: "dl5", name: "Hiperextensão 45°", primary: false,
         sets: 3, reps: "12", rpe: "7-8",
         deloadHalf: true,
-        notes: "Glúteo + lombar. Adicionar carga no peito quando ficar fácil. Não hiper-estender — terminar neutro."
+        notes: "Glúteo + lombar. Adicionar carga no peito quando ficar fácil. Não hiper-estender — terminar neutro.",
+        swaps: [
+          { name: "Reverse hyper (se tiver)", reason: "Padrão-ouro pra glúteo + lombar sem compressão de coluna." },
+          { name: "Glute bridge com barra", reason: "Foco em glúteo isolado. Excelente pra quem tem glúteo dormente." },
+          { name: "Single-leg RDL com halter", reason: "Versão unilateral. Equilíbrio + posterior + glúteo médio." }
+        ]
       },
       {
         id: "dl6", name: "Encolhimento (shrug)", primary: false,
         sets: 3, reps: "10", rpe: "8",
         deloadHalf: true,
-        notes: "Trapézio. Pausa de 1-2s no topo. Movimento puramente vertical — não rolar os ombros."
+        notes: "Trapézio. Pausa de 1-2s no topo. Movimento puramente vertical — não rolar os ombros.",
+        swaps: [
+          { name: "Trap bar shrug", reason: "Carga alta sem demanda de grip extrema. Pegada neutra confortável." },
+          { name: "Shrug na máquina", reason: "Se halteres acabarem ou barra ocupada." },
+          { name: "Farmer hold (parado, halter pesado)", reason: "Estático. Trapézio + grip + core. Substitui shrug e farmer's walk juntos." }
+        ]
       },
       {
         id: "dl7", name: "Rosca alternada halter", primary: false,
         sets: 3, reps: "10", rpe: "8",
         deloadHalf: true,
-        notes: "Volume mínimo de bíceps. Cotovelo fixo ao lado do tronco, supinação no caminho da subida."
+        notes: "Volume mínimo de bíceps. Cotovelo fixo ao lado do tronco, supinação no caminho da subida.",
+        swaps: [
+          { name: "Rosca martelo (halter)", reason: "Foco em braquial e braquiorradial. Bom complemento." },
+          { name: "Rosca scott", reason: "Tensão na posição de estiramento. Excelente pra hipertrofia." },
+          { name: "Rosca direta com barra W", reason: "Carga maior, ambos os braços simultâneos. Mais eficiente em tempo." }
+        ]
       },
       {
         id: "dl8", name: "Farmer's walk", primary: false,
         sets: 3, reps: "30-40m", rpe: "Carga máx",
         deloadHalf: true,
-        notes: "Grip + core + estabilidade total. Postura ereta, ombros para trás, passos curtos. Substitui qualquer 'core específico' do dia."
+        notes: "Grip + core + estabilidade total. Postura ereta, ombros para trás, passos curtos. Substitui qualquer 'core específico' do dia.",
+        swaps: [
+          { name: "Suitcase hold (halter unilateral, 30-45s/lado)", reason: "Substituto principal. Mesmo estímulo de core anti-flexão lateral + grip, ESPAÇO FIXO. Use em academia cheia." },
+          { name: "Heavy dumbbell hold bilateral (30-60s)", reason: "Grip puro + traps. Perde anti-rotação, mas é prático." },
+          { name: "Dead hang em barra fixa (até falha)", reason: "Grip + decompressão de coluna pós-deadlift. Bônus pra ombros." }
+        ]
       }
     ]
-  },
-  sex: {
+};
+
+// Sessão Upper Hipertrofia
+SESSIONS.upper_hiper = {
     title: "UPPER HIPER",
     eyebrow: "Hipertrofia + bench freq 2",
-    pills: ["TRT", "70–85min"],
-    trt: true,
+    pills: ["70–85min"],
+    type: "upper-volume",
+    typeLabel: "Upper / Hiper",
     deloadCutAll: true,
     exercises: [
       {
         id: "fr1", name: "Supino reto (frequência 2)", primary: false,
         sets: 5, reps: "5", intensity: "75–80% 1RM",
-        notes: "Velocidade de barra alta, NÃO RPE alto. Frequência 2 do supino — o objetivo é volume técnico, não esforço máximo. Sair com gás."
+        notes: "Velocidade de barra alta, NÃO RPE alto. Frequência 2 do supino — o objetivo é volume técnico, não esforço máximo. Sair com gás.",
+        swaps: [
+          { name: "Supino com halteres", reason: "Mesma execução, mais ROM. Mantém a lógica de velocidade de barra." },
+          { name: "Supino reto na máquina (smith)", reason: "Backup se a barra estiver indisponível. Mantém o padrão." }
+        ]
       },
       {
         id: "fr2", name: "Desenvolvimento militar (OHP)", primary: false,
         sets: 4, reps: "6-8", rpe: "8",
-        notes: "Em pé, barra. Trabalha estabilidade do core também. Glúteos contraídos, costelas pra dentro, barra passa rente ao rosto."
+        notes: "Em pé, barra. Trabalha estabilidade do core também. Glúteos contraídos, costelas pra dentro, barra passa rente ao rosto.",
+        swaps: [
+          { name: "Push press (em pé)", reason: "Permite usar mais carga (impulso de pernas no início). Bom em dia de fadiga." },
+          { name: "Desenvolvimento sentado halter", reason: "Sem demanda de core. Foco puro em ombro." },
+          { name: "Máquina de desenvolvimento", reason: "Última opção. Útil se o ombro pedir movimento guiado." }
+        ]
       },
       {
         id: "fr3", name: "Remada cavalinho ou T-bar", primary: false,
         sets: 4, reps: "10", rpe: "8",
-        notes: "Volume de costas para postura sob a barra. Cotovelos próximos do tronco, puxar com os lats (não com bíceps)."
+        notes: "Volume de costas para postura sob a barra. Cotovelos próximos do tronco, puxar com os lats (não com bíceps).",
+        swaps: [
+          { name: "Remada baixa na polia", reason: "Ângulo similar, tensão constante. Bom pra hipertrofia." },
+          { name: "Chest-supported row", reason: "Elimina componente lombar. Foco puro em costas." },
+          { name: "Remada com halter unilateral", reason: "Excelente pra simetria. Apoio no banco." }
+        ]
       },
       {
         id: "fr4", name: "Puxada alta (pulldown)", primary: false,
         sets: 3, reps: "12", rpe: "8",
-        notes: "Pegada neutra ou supinada. Peito estufado, barra desce no esterno, contrair lats no fundo."
+        notes: "Pegada neutra ou supinada. Peito estufado, barra desce no esterno, contrair lats no fundo.",
+        swaps: [
+          { name: "Barra fixa (lastrada se possível)", reason: "Padrão-ouro. Use se já tiver bom volume na quinta." },
+          { name: "Pulldown unilateral", reason: "Corrige assimetria entre os lados. Bom em mesociclos de hipertrofia." },
+          { name: "Pulldown com pegada V (neutra fechada)", reason: "Foco em lats inferior. Variação útil." }
+        ]
       },
       {
         id: "fr5", name: "Crucifixo halter inclinado", primary: false,
         sets: 3, reps: "12", rpe: "9",
-        notes: "Estiramento máximo, controle excêntrico de 3s. Banco a 30°, cotovelos levemente flexionados durante todo o movimento."
+        notes: "Estiramento máximo, controle excêntrico de 3s. Banco a 30°, cotovelos levemente flexionados durante todo o movimento.",
+        swaps: [
+          { name: "Crucifixo no cabo (cross-over alto pra baixo)", reason: "Tensão constante no ROM inteiro. Superior pra hipertrofia." },
+          { name: "Peck deck (máquina)", reason: "Carga alta, padrão fixo. Bom pra falhar." },
+          { name: "Crucifixo reto halter", reason: "Foco em peitoral médio. Variação aceitável." }
+        ]
       },
       {
         id: "fr6", name: "Elevação lateral sentado", primary: false,
         sets: 4, reps: "15", rpe: "9",
-        notes: "Mais isolamento que em pé — elimina trapézio superior compensando. Subir até paralelo, não acima."
+        notes: "Mais isolamento que em pé — elimina trapézio superior compensando. Subir até paralelo, não acima.",
+        swaps: [
+          { name: "Lateral no cabo unilateral", reason: "Tensão constante. Padrão-ouro pra hipertrofia de deltoide médio." },
+          { name: "Lateral na máquina", reason: "Padrão fixo. Bom pra drop sets." },
+          { name: "Lateral leg-out (deitado de lado)", reason: "Variação avançada. ROM grande, ataca fibras desativadas." }
+        ]
       },
       {
         id: "fr7", name: "Rosca direta + tríceps testa (bi-set)", primary: false,
         sets: 3, reps: "10 cada", rpe: "8",
-        notes: "Bi-set, sem descanso. Rosca: cotovelos fixos. Testa: cotovelos fixos apontando pro teto, barra desce até a testa."
+        notes: "Bi-set, sem descanso. Rosca: cotovelos fixos. Testa: cotovelos fixos apontando pro teto, barra desce até a testa.",
+        swaps: [
+          { name: "Rosca scott + pushdown corda", reason: "Mesma estrutura bi-set. Foco em estiramento (rosca) e contração (pushdown)." },
+          { name: "Rosca martelo + JM press", reason: "Variação focada em braquial e tríceps medial." },
+          { name: "Rosca alternada halter + tríceps unilateral cabo", reason: "Unilateral, corrige assimetria. Mais demorado." }
+        ]
       }
     ]
-  },
-  sab: {
+};
+
+// Sessão Cardio Z2 (longo)
+SESSIONS.cardio_long = {
     title: "CARDIO Z2",
     eyebrow: "Long slow distance",
     pills: ["40–75min"],
-    trt: false,
+    type: "cardio",
+    typeLabel: "Cardio Z2 longo",
     cardio: true,
     cardioContent: {
       protocol: "ZONA 2 — sessão longa",
       heartRate: "125–140 bpm",
       duration: "40min mínimo · 60min ideal · até 75min se houver disposição",
-      modes: "Bike ergométrica · Esteira inclinada · Elíptico · Caminhada inclinada outdoor",
+      modes: "<strong style=\"color:var(--accent)\">Stairmaster (preferencial)</strong> · Bike ergométrica · Elíptico · Caminhada inclinada outdoor",
       cue: "Mesmo cue da quarta — frase completa com leve desconforto.",
-      why: "Sessão mais longa que quarta para acumular volume mitocondrial. Opcional: substituir por squat leve + acessórios pernas se sentir que precisa de estímulo extra de hipertrofia para perna nessa semana."
+      why: "<strong>Stairmaster é ideal aqui</strong>: ativa cadeia posterior (glúteo, isquios, panturrilha) sem carga axial, força postura ereta. Cadência baixa-média (50-65 passos/min), apoio leve nas alças, sem segurar. Sessão mais longa que quarta pra acumular volume mitocondrial. Opcional: substituir por squat leve + acessórios pernas se sentir que precisa de estímulo extra de hipertrofia."
     }
-  },
-  dom: {
+};
+
+// Sessão Rest
+SESSIONS.rest = {
     title: "REST",
     eyebrow: "Recovery total",
     pills: ["OFF"],
-    trt: false,
+    type: "rest",
+    typeLabel: "Rest / Off",
     rest: true
-  }
 };
+
+// Ordem de prioridade visual no menu de troca
+const SESSION_ORDER = ['squat', 'bench', 'deadlift', 'upper_hiper', 'cardio_mid', 'cardio_long', 'rest'];
+
+// Schedule padrão — o que existia antes, agora explícito
+const DEFAULT_SCHEDULE = {
+  seg: 'squat',
+  ter: 'bench',
+  qua: 'cardio_mid',
+  qui: 'deadlift',
+  sex: 'upper_hiper',
+  sab: 'cardio_long',
+  dom: 'rest'
+};
+
+// Dias em que TRT é aplicada (sempre seg/qua/sex, independe do treino do dia)
+const TRT_DAYS = ['seg', 'qua', 'sex'];
 
 const DAYS = ['seg','ter','qua','qui','sex','sab','dom'];
 const DAY_LABELS = { seg:'SEG', ter:'TER', qua:'QUA', qui:'QUI', sex:'SEX', sab:'SAB', dom:'DOM' };
+const DAY_LABELS_FULL = { seg:'Segunda', ter:'Terça', qua:'Quarta', qui:'Quinta', sex:'Sexta', sab:'Sábado', dom:'Domingo' };
 const JS_DAY_TO_KEY = ['dom','seg','ter','qua','qui','sex','sab']; // JS getDay() → 0=Sun
 
 // ============================================================
@@ -1274,7 +1804,8 @@ const STATE = {
   week: '1',
   day: 'seg',
   checks: {},
-  loads: {}
+  loads: {},
+  schedules: {} // { '1': {...}, '2': {...}, '3': {...}, 'deload': {...} }
 };
 
 function loadState() {
@@ -1282,15 +1813,121 @@ function loadState() {
     const checks = localStorage.getItem('pwr.checks');
     const loads = localStorage.getItem('pwr.loads');
     const week = localStorage.getItem('pwr.week');
+    const schedules = localStorage.getItem('pwr.schedules');
     if (checks) STATE.checks = JSON.parse(checks);
     if (loads) STATE.loads = JSON.parse(loads);
     if (week) STATE.week = week;
+    if (schedules) STATE.schedules = JSON.parse(schedules);
   } catch(e) { console.warn('State load failed', e); }
 }
 
 function saveChecks() { localStorage.setItem('pwr.checks', JSON.stringify(STATE.checks)); }
 function saveLoads() { localStorage.setItem('pwr.loads', JSON.stringify(STATE.loads)); }
 function saveWeek() { localStorage.setItem('pwr.week', STATE.week); }
+function saveSchedules() { localStorage.setItem('pwr.schedules', JSON.stringify(STATE.schedules)); }
+
+// Schedule helpers
+function getCurrentSchedule() {
+  return STATE.schedules[STATE.week] || { ...DEFAULT_SCHEDULE };
+}
+
+function getSessionForDay(dayKey, weekOverride) {
+  const week = weekOverride || STATE.week;
+  const schedule = STATE.schedules[week] || { ...DEFAULT_SCHEDULE };
+  const sessionKey = schedule[dayKey] || DEFAULT_SCHEDULE[dayKey];
+  return SESSIONS[sessionKey];
+}
+
+function getSessionKeyForDay(dayKey, weekOverride) {
+  const week = weekOverride || STATE.week;
+  const schedule = STATE.schedules[week] || { ...DEFAULT_SCHEDULE };
+  return schedule[dayKey] || DEFAULT_SCHEDULE[dayKey];
+}
+
+function setSessionForDay(dayKey, sessionKey) {
+  if (!STATE.schedules[STATE.week]) {
+    STATE.schedules[STATE.week] = { ...DEFAULT_SCHEDULE };
+  }
+  STATE.schedules[STATE.week][dayKey] = sessionKey;
+  saveSchedules();
+}
+
+function isCustomSchedule() {
+  const sched = STATE.schedules[STATE.week];
+  if (!sched) return false;
+  return DAYS.some(d => sched[d] !== DEFAULT_SCHEDULE[d]);
+}
+
+function restoreDefaultSchedule() {
+  delete STATE.schedules[STATE.week];
+  saveSchedules();
+}
+
+// Validação de espaçamento entre sessões
+// Retorna array de warnings (vazio se tudo OK)
+function validateSchedule(schedule) {
+  const warnings = [];
+  // Sessões "pesadas" que demandam recovery entre si
+  const heavyTypes = {
+    squat: ['lower-heavy', 'cadeia posterior + quadríceps'],
+    deadlift: ['lower-heavy', 'cadeia posterior + grip'],
+    bench: ['upper-push', 'peitoral + tríceps + ombro anterior'],
+    upper_hiper: ['upper-push', 'peitoral + ombro + tríceps']
+  };
+  
+  // Cria lista circular dos dias com suas sessões
+  const sequence = DAYS.map(d => ({ day: d, session: schedule[d] }));
+  
+  for (let i = 0; i < sequence.length; i++) {
+    const curr = sequence[i];
+    const next = sequence[(i + 1) % sequence.length];
+    
+    if (!heavyTypes[curr.session] || !heavyTypes[next.session]) continue;
+    
+    const currCat = heavyTypes[curr.session][0];
+    const nextCat = heavyTypes[next.session][0];
+    
+    // Mesma categoria pesada em dias consecutivos
+    if (currCat === nextCat) {
+      warnings.push({
+        type: 'consecutive',
+        day1: curr.day,
+        day2: next.day,
+        session1: curr.session,
+        session2: next.session,
+        message: `${SESSIONS[curr.session].title} e ${SESSIONS[next.session].title} em dias consecutivos — mesma cadeia muscular sem 48h de pause.`
+      });
+    }
+  }
+  
+  // Validação especial: squat e deadlift muito próximos (mesmo não consecutivos, ≤48h é arriscado)
+  // Já coberto pelo "consecutive" acima quando estão lado a lado.
+  
+  // Sem dias de descanso suficientes (idealmente ≥1 rest e ≥2 cardio)
+  let restCount = 0, cardioCount = 0, heavyCount = 0;
+  DAYS.forEach(d => {
+    const s = schedule[d];
+    if (s === 'rest') restCount++;
+    else if (s === 'cardio_mid' || s === 'cardio_long') cardioCount++;
+    else heavyCount++;
+  });
+  
+  if (heavyCount > 5) {
+    warnings.push({
+      type: 'overload',
+      message: `${heavyCount} dias de treino pesado — sem recovery suficiente. Ideal: 4 sessões de força + 2 cardios + 1 rest.`
+    });
+  }
+  
+  if (restCount === 0) {
+    warnings.push({
+      type: 'no-rest',
+      message: 'Nenhum dia de descanso completo na semana.'
+    });
+  }
+  
+  return warnings;
+}
 
 function checkKey(week, day, exId) { return `${week}::${day}::${exId}`; }
 function loadKey(week, day, exId) { return `${week}::${day}::${exId}`; }
@@ -1349,10 +1986,11 @@ function renderDayTabs() {
   const container = document.getElementById('dayTabs');
   const todayKey = JS_DAY_TO_KEY[new Date().getDay()];
   container.innerHTML = DAYS.map(d => {
-    const data = PROGRAM[d];
+    const session = getSessionForDay(d);
     const isActive = STATE.day === d ? 'active' : '';
     const isToday = todayKey === d ? 'today' : '';
-    const trtDot = data.trt ? '<span class="trt-dot"></span>' : '';
+    const isTrtDay = TRT_DAYS.includes(d);
+    const trtDot = isTrtDay ? '<span class="trt-dot"></span>' : '';
     return `<button class="day-tab ${isActive} ${isToday}" data-day="${d}">${DAY_LABELS[d]}${trtDot}</button>`;
   }).join('');
   
@@ -1380,17 +2018,23 @@ function renderWeekSelector() {
 
 function renderMain() {
   const main = document.getElementById('main');
-  const day = PROGRAM[STATE.day];
+  const day = getSessionForDay(STATE.day);
+  const sessionKey = getSessionKeyForDay(STATE.day);
   const isDeload = STATE.week === 'deload';
+  const isCustom = isCustomSchedule();
+  const isTrtDay = TRT_DAYS.includes(STATE.day);
+  const isModifiedDay = (STATE.schedules[STATE.week] && STATE.schedules[STATE.week][STATE.day] !== DEFAULT_SCHEDULE[STATE.day]);
   
   let html = '';
   
   // Day header
   let pills = [...day.pills];
-  if (isDeload && (STATE.day === 'sex' || day.deloadCutAll)) {
+  if (isTrtDay) pills.unshift('TRT');
+  if (isDeload && (sessionKey === 'upper_hiper' || day.deloadCutAll)) {
     pills = ['DELOAD', 'OFF / Cardio Z2'];
+    if (isTrtDay) pills.unshift('TRT');
   } else if (isDeload) {
-    pills = ['DELOAD', ...pills.filter(p => !p.includes('min'))];
+    pills = [...(isTrtDay ? ['TRT'] : []), 'DELOAD', ...day.pills.filter(p => !p.includes('min'))];
   }
   
   const pillsHtml = pills.map(p => {
@@ -1412,23 +2056,41 @@ function renderMain() {
   const progressHtml = totalEx > 0 ? 
     `<div class="day-progress"><span class="done">${String(doneEx).padStart(2,'0')}</span> / ${String(totalEx).padStart(2,'0')}</div>` : '';
   
+  const customBadge = isModifiedDay ? '<span class="custom-badge" title="Sessão movida">REORG</span>' : '';
+  
   html += `
     <div class="day-header fade-in">
       <div class="day-meta">
-        <div class="day-eyebrow">${day.eyebrow}</div>
+        <div class="day-eyebrow">${day.eyebrow} ${customBadge}</div>
         ${progressHtml}
       </div>
-      <h1 class="day-title">${day.title}</h1>
+      <button class="day-title-btn" id="dayTitleBtn" aria-label="Trocar sessão deste dia">
+        <h1 class="day-title">${day.title}</h1>
+        <span class="day-title-swap">⇄</span>
+      </button>
       <div class="day-subtitle">${pillsHtml}</div>
     </div>
   `;
   
-  // Deload special cases
+  // Schedule warning banner if applicable
+  if (isCustom && STATE.day === todayKeyForBanner()) {
+    const warnings = validateSchedule(getCurrentSchedule());
+    if (warnings.length > 0) {
+      html += `
+        <div class="schedule-warning fade-in">
+          <div class="schedule-warning-title">⚠ Atenção ao recovery</div>
+          ${warnings.map(w => `<div class="schedule-warning-item">${w.message}</div>`).join('')}
+        </div>
+      `;
+    }
+  }
+  
+  // Deload special cases (apenas se ainda for upper_hiper na sexta)
   if (isDeload && day.deloadCutAll) {
     html += `
       <div class="deload-banner fade-in">
         <div class="deload-banner-title">SEMANA DE DELOAD</div>
-        <div class="deload-banner-text">Sexta-feira é cortada na semana de deload. Substituir por cardio Z2 leve ou descanso total. O objetivo é manutenção neural, não acúmulo.</div>
+        <div class="deload-banner-text">A sessão de Upper Hipertrofia é cortada na semana de deload. Substituir por cardio Z2 leve ou descanso total. O objetivo é manutenção neural, não acúmulo.</div>
       </div>
       <div class="rest-day fade-in">
         <div class="glyph">—</div>
@@ -1541,12 +2203,32 @@ function renderMain() {
             <span class="ex-load-unit">kg</span>
             ${prevLoad ? `<span class="ex-load-prev">${prevLoad}</span>` : ''}
           </div>
-          <button class="ex-notes-toggle" data-ex-id="${ex.id}">
-            <span class="arrow">▸</span> Notas
-          </button>
+          <div class="ex-actions-row">
+            <button class="ex-notes-toggle" data-ex-id="${ex.id}">
+              <span class="arrow">▸</span> Notas
+            </button>
+            ${ex.swaps && ex.swaps.length ? `
+              <button class="ex-swaps-toggle" data-ex-id="${ex.id}">
+                <span class="swap-icon">⇄</span> Substituir
+              </button>
+            ` : ''}
+          </div>
           <div class="ex-notes" data-notes-for="${ex.id}">
             <div class="ex-notes-content">${ex.notes}</div>
           </div>
+          ${ex.swaps && ex.swaps.length ? `
+            <div class="ex-swaps" data-swaps-for="${ex.id}">
+              <div class="ex-swaps-content">
+                <div class="ex-swaps-title">Alternativas equivalentes</div>
+                ${ex.swaps.map(s => `
+                  <div class="ex-swap-item">
+                    <span class="ex-swap-name">${s.name}</span>
+                    <span class="ex-swap-reason">${s.reason}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
         </div>
       </div>
     `;
@@ -1592,10 +2274,20 @@ function attachExerciseHandlers() {
       notes.classList.toggle('open');
     });
   });
+  
+  // Swaps toggle
+  document.querySelectorAll('.ex-swaps-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const exId = btn.dataset.exId;
+      const swaps = document.querySelector(`.ex-swaps[data-swaps-for="${exId}"]`);
+      btn.classList.toggle('open');
+      swaps.classList.toggle('open');
+    });
+  });
 }
 
 function updateProgress() {
-  const day = PROGRAM[STATE.day];
+  const day = getSessionForDay(STATE.day);
   const isDeload = STATE.week === 'deload';
   if (!day.exercises) return;
   
@@ -1670,16 +2362,38 @@ function buildWeekReport(week) {
   const weekLabel = week === 'deload' ? 'DELOAD' : `W${week}`;
   let md = `\n## Semana ${weekLabel}\n\n`;
   
-  const trainingDays = ['seg', 'ter', 'qui', 'sex'];
-  const cardioDays = ['qua', 'sab'];
+  // Reflete o schedule customizado da semana, se houver
+  const weekSchedule = STATE.schedules[week] || { ...DEFAULT_SCHEDULE };
+  const isCustomWeek = DAYS.some(d => weekSchedule[d] !== DEFAULT_SCHEDULE[d]);
+  
+  if (isCustomWeek) {
+    md += `> **Reorganização ativa nesta semana:**\n`;
+    DAYS.forEach(d => {
+      if (weekSchedule[d] !== DEFAULT_SCHEDULE[d]) {
+        const orig = SESSIONS[DEFAULT_SCHEDULE[d]];
+        const novo = SESSIONS[weekSchedule[d]];
+        md += `> - ${DAY_LABELS_FULL[d]}: ${orig.title} → ${novo.title}\n`;
+      }
+    });
+    md += `\n`;
+  }
+  
+  const trainingDays = [];
+  const cardioDays = [];
+  DAYS.forEach(d => {
+    const sk = weekSchedule[d];
+    if (sk === 'cardio_mid' || sk === 'cardio_long') cardioDays.push(d);
+    else if (sk !== 'rest') trainingDays.push(d);
+  });
+  
   let totalExercises = 0, totalDone = 0, totalLoaded = 0;
   
   // Training days
   trainingDays.forEach(dayKey => {
-    const day = PROGRAM[dayKey];
-    if (!day.exercises) return;
+    const day = SESSIONS[weekSchedule[dayKey]];
+    if (!day || !day.exercises) return;
     
-    // Skip Friday on deload
+    // Skip Friday (or whichever day has upper_hiper) on deload
     if (week === 'deload' && day.deloadCutAll) {
       md += `### ${DAY_LABELS[dayKey]} — ${day.title}\n_Cortado na semana de deload._\n\n`;
       return;
@@ -1798,6 +2512,122 @@ function generateAndDownloadReport() {
   }
 }
 
+// Helper para o banner — dia "ativo" no momento (não necessariamente hoje)
+function todayKeyForBanner() { return STATE.day; }
+
+// ============================================================
+// SESSION SWAP MODAL
+// ============================================================
+function openSessionSwapModal() {
+  const currentSession = getSessionKeyForDay(STATE.day);
+  const currentSessionData = SESSIONS[currentSession];
+  
+  // Build options
+  const options = SESSION_ORDER.map(key => {
+    const s = SESSIONS[key];
+    const isCurrent = key === currentSession;
+    return `
+      <button class="swap-option ${isCurrent ? 'current' : ''}" data-session-key="${key}">
+        <div class="swap-option-title">${s.title}</div>
+        <div class="swap-option-meta">${s.typeLabel}</div>
+        ${isCurrent ? '<div class="swap-option-current">Atual</div>' : ''}
+      </button>
+    `;
+  }).join('');
+  
+  // Status do schedule
+  const isCustom = isCustomSchedule();
+  const restoreBtn = isCustom ? `
+    <button class="restore-btn" id="restoreScheduleBtn">↻ RESTAURAR PADRÃO DA SEMANA</button>
+  ` : '';
+  
+  // Preview do schedule atual
+  const currentSchedule = getCurrentSchedule();
+  const previewRows = DAYS.map(d => {
+    const sk = currentSchedule[d];
+    const s = SESSIONS[sk];
+    const modified = sk !== DEFAULT_SCHEDULE[d];
+    const today = d === STATE.day ? 'today' : '';
+    return `
+      <div class="swap-preview-row ${today}">
+        <span class="swap-preview-day">${DAY_LABELS[d]}</span>
+        <span class="swap-preview-session ${modified ? 'modified' : ''}">${s.title}</span>
+      </div>
+    `;
+  }).join('');
+  
+  const modalHtml = `
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title">Trocar sessão · ${DAY_LABELS_FULL[STATE.day]}</div>
+      <button class="modal-close" id="swapModalClose" aria-label="Fechar">×</button>
+    </div>
+    <p class="modal-intro">
+      Move uma sessão de treino para este dia. As outras sessões ficam onde estão — você reorganiza manualmente cada dia que quiser mexer.
+    </p>
+    <div class="swap-options">${options}</div>
+    <div class="swap-divider">Calendário desta semana</div>
+    <div class="swap-preview">${previewRows}</div>
+    <div class="swap-warnings" id="swapWarnings"></div>
+    ${restoreBtn}
+  `;
+  
+  const modal = document.getElementById('swapModal');
+  modal.querySelector('.modal').innerHTML = modalHtml;
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  
+  // Render warnings
+  renderSwapWarnings();
+  
+  // Wire up
+  document.getElementById('swapModalClose').addEventListener('click', closeSwapModal);
+  modal.addEventListener('click', (e) => { if (e.target === modal) closeSwapModal(); });
+  
+  document.querySelectorAll('.swap-option').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const newSession = btn.dataset.sessionKey;
+      if (newSession === getSessionKeyForDay(STATE.day)) {
+        closeSwapModal();
+        return;
+      }
+      setSessionForDay(STATE.day, newSession);
+      if (navigator.vibrate) navigator.vibrate(15);
+      closeSwapModal();
+      renderDayTabs();
+      renderMain();
+    });
+  });
+  
+  if (isCustom) {
+    document.getElementById('restoreScheduleBtn').addEventListener('click', () => {
+      if (!confirm('Restaurar o calendário padrão desta semana? Os checkboxes e cargas que você já marcou ficam intactos (continuam ligados ao exercício, não ao dia).')) return;
+      restoreDefaultSchedule();
+      if (navigator.vibrate) navigator.vibrate([10, 30, 10]);
+      closeSwapModal();
+      renderDayTabs();
+      renderMain();
+    });
+  }
+}
+
+function closeSwapModal() {
+  const modal = document.getElementById('swapModal');
+  modal.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function renderSwapWarnings() {
+  const el = document.getElementById('swapWarnings');
+  if (!el) return;
+  const warnings = validateSchedule(getCurrentSchedule());
+  if (warnings.length === 0) {
+    el.innerHTML = '<div class="swap-ok">✓ Calendário com recovery adequado.</div>';
+  } else {
+    el.innerHTML = warnings.map(w => `<div class="swap-warning-item">⚠ ${w.message}</div>`).join('');
+  }
+}
+
 // ============================================================
 // INIT
 // ============================================================
@@ -1805,11 +2635,17 @@ loadState();
 
 // Default to today
 const todayKey = JS_DAY_TO_KEY[new Date().getDay()];
-if (PROGRAM[todayKey]) STATE.day = todayKey;
+if (DAYS.includes(todayKey)) STATE.day = todayKey;
 
 renderWeekSelector();
 renderDayTabs();
 renderMain();
+
+// Wire up session swap (delegated, since the button is inside main which re-renders)
+document.body.addEventListener('click', (e) => {
+  const btn = e.target.closest('#dayTitleBtn');
+  if (btn) openSessionSwapModal();
+});
 
 // Prevent accidental zoom on double-tap of inputs (iOS)
 document.addEventListener('dblclick', (e) => {
