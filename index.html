@@ -571,19 +571,61 @@
   }
   
   .ex-swap-item {
-    padding: 6px 0;
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed var(--border);
+    padding: 10px 8px;
+    margin: 0;
     font-size: 13px;
     line-height: 1.4;
     color: var(--text-2);
-    border-bottom: 1px dashed var(--border);
+    cursor: pointer;
+    transition: background 0.15s, padding-left 0.15s;
+    -webkit-tap-highlight-color: transparent;
+    border-radius: 0;
+    font-family: inherit;
   }
   
-  .ex-swap-item:last-child { border-bottom: none; padding-bottom: 0; }
-  .ex-swap-item:first-child { padding-top: 0; }
+  .ex-swap-item:hover, .ex-swap-item:active {
+    background: rgba(122,163,255,0.06);
+    padding-left: 12px;
+  }
+  
+  .ex-swap-item.active {
+    background: rgba(122,163,255,0.1);
+    border-left: 3px solid #7da3ff;
+    padding-left: 10px;
+  }
+  
+  .ex-swap-item.active:hover, .ex-swap-item.active:active {
+    padding-left: 12px;
+  }
+  
+  .ex-swap-item.ex-swap-original {
+    background: rgba(212,255,62,0.04);
+    border-left: 3px solid var(--accent);
+    padding-left: 10px;
+    margin-bottom: 4px;
+  }
+  
+  .ex-swap-item.ex-swap-original:hover {
+    background: rgba(212,255,62,0.1);
+    padding-left: 12px;
+  }
+  
+  .ex-swap-item.ex-swap-original .ex-swap-name {
+    color: var(--accent);
+  }
+  
+  .ex-swap-item:last-child { border-bottom: none; }
   
   .ex-swap-name {
     color: var(--text);
     font-weight: 500;
+    display: block;
   }
   
   .ex-swap-reason {
@@ -592,6 +634,64 @@
     display: block;
     margin-top: 2px;
     font-style: italic;
+  }
+  
+  /* Indicador "substituindo" acima do nome */
+  .exercise.swapped .ex-name {
+    color: #7da3ff;
+  }
+  
+  .ex-swap-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(122,163,255,0.08);
+    border-left: 2px solid #7da3ff;
+    padding: 5px 10px;
+    margin-bottom: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.05em;
+  }
+  
+  .ex-swap-indicator-label {
+    color: #7da3ff;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 9px;
+    flex-shrink: 0;
+  }
+  
+  .ex-swap-indicator-orig {
+    color: var(--text-3);
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 11px;
+  }
+  
+  .ex-swap-revert {
+    background: transparent;
+    border: 1px solid var(--border-bright);
+    color: var(--text-3);
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s;
+    border-radius: 0;
+  }
+  
+  .ex-swap-revert:hover, .ex-swap-revert:active {
+    border-color: var(--accent);
+    color: var(--accent);
   }
   
   /* ============ SPECIAL DAYS ============ */
@@ -914,6 +1014,316 @@
     font-weight: 500;
   }
   
+  /* ============ SKIP DAY ============ */
+  .skip-day {
+    padding: 60px 24px 40px;
+    text-align: center;
+  }
+  
+  .skip-day .glyph {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 900;
+    font-size: 96px;
+    color: var(--warn);
+    line-height: 1;
+    opacity: 0.6;
+  }
+  
+  .skip-day .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--warn);
+    text-transform: uppercase;
+    margin-top: 12px;
+    font-weight: 700;
+  }
+  
+  .skip-explain {
+    font-size: 13px;
+    color: var(--text-3);
+    margin-top: 12px;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.4;
+  }
+  
+  .skip-justification {
+    margin: 28px auto 0;
+    max-width: 360px;
+    padding: 16px;
+    text-align: left;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+  }
+  
+  .skip-justification.pending {
+    border-color: var(--warn);
+    border-left-width: 3px;
+    background: rgba(255,107,53,0.05);
+  }
+  
+  .skip-justification.existing {
+    border-color: var(--accent-dim);
+    border-left-width: 3px;
+    background: rgba(212,255,62,0.04);
+  }
+  
+  .skip-just-warning {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--warn);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  
+  .skip-just-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  
+  .skip-just-reason {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    margin-bottom: 8px;
+  }
+  
+  .skip-just-note {
+    font-size: 13px;
+    color: var(--text-2);
+    line-height: 1.4;
+    font-style: italic;
+    padding: 8px 10px;
+    background: var(--bg-elev);
+    border-left: 2px solid var(--border);
+    margin-top: 4px;
+  }
+  
+  .skip-add-btn, .skip-edit-btn {
+    width: 100%;
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border-bright);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    padding: 12px;
+    cursor: pointer;
+    text-transform: uppercase;
+    margin-top: 12px;
+    border-radius: 0;
+    transition: all 0.15s;
+  }
+  
+  .skip-add-btn:hover, .skip-add-btn:active {
+    border-color: var(--warn);
+    color: var(--warn);
+  }
+  
+  .skip-edit-btn:hover, .skip-edit-btn:active {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  
+  /* Skip Modal */
+  .skip-modal-section {
+    margin: 14px 0;
+  }
+  
+  .skip-modal-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  
+  .skip-modal-optional {
+    color: var(--text-3);
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    font-style: italic;
+  }
+  
+  .skip-reasons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  
+  .skip-reason-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-2);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 10px 12px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s;
+    border-radius: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .skip-reason-btn:hover, .skip-reason-btn:active {
+    border-color: var(--border-bright);
+    color: var(--text);
+  }
+  
+  .skip-reason-btn.selected {
+    background: rgba(212,255,62,0.1);
+    border-color: var(--accent);
+    color: var(--accent);
+    font-weight: 700;
+  }
+  
+  .skip-note-input {
+    width: 100%;
+    background: var(--bg-elev);
+    border: 1px solid var(--border-bright);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    padding: 10px 12px;
+    resize: vertical;
+    min-height: 70px;
+    border-radius: 0;
+    line-height: 1.5;
+  }
+  
+  .skip-note-input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  
+  .skip-save-btn {
+    width: 100%;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    padding: 14px;
+    cursor: pointer;
+    text-transform: uppercase;
+    margin-top: 12px;
+    border-radius: 0;
+    transition: all 0.15s;
+  }
+  
+  .skip-save-btn:hover, .skip-save-btn:active {
+    background: #b8e028;
+  }
+  
+  /* Indicador de SKIP nas tabs */
+  .day-tab.skip-marked::before {
+    background: var(--warn) !important;
+  }
+  
+  /* ============ GYM HOURS TABLE ============ */
+  .gym-table {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    margin-top: 8px;
+  }
+  
+  .gym-row {
+    display: flex;
+    align-items: baseline;
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .gym-row:last-child { border-bottom: none; }
+  
+  .gym-row.header {
+    background: var(--bg-elev);
+    padding: 8px 14px;
+  }
+  
+  .gym-col-name {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text);
+    flex: 1;
+  }
+  
+  .gym-col-hours {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  
+  .gym-row.header .gym-col-name,
+  .gym-row.header .gym-col-hours {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-weight: 700;
+  }
+  
+  .gym-row.gym-group {
+    background: rgba(212,255,62,0.04);
+    border-top: 1px solid var(--accent-dim);
+    padding: 10px 14px 6px;
+  }
+  
+  .gym-row.gym-group .gym-col-name {
+    color: var(--accent);
+    font-size: 15px;
+  }
+  
+  .gym-row.gym-sub {
+    padding: 5px 14px 5px 24px;
+    border-bottom: 1px dashed var(--border);
+  }
+  
+  .gym-row.gym-sub:last-of-type { border-bottom: none; }
+  
+  .gym-day {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-3);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 700;
+    flex-shrink: 0;
+    width: 90px;
+  }
+  
+  .gym-hours {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  
   /* ============ SESSION SWAP / SCHEDULE ============ */
   .day-title-btn {
     background: transparent;
@@ -1162,6 +1572,62 @@
     color: var(--warn);
   }
   
+  .restore-section { margin-top: 16px; }
+  
+  .restore-confirm {
+    background: var(--bg-card);
+    border: 1px solid var(--warn);
+    border-left-width: 3px;
+    padding: 14px;
+  }
+  
+  .restore-confirm-text {
+    font-size: 13px;
+    color: var(--text-2);
+    line-height: 1.4;
+    margin-bottom: 12px;
+  }
+  
+  .restore-confirm-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  
+  .restore-confirm-yes, .restore-confirm-no {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    padding: 10px;
+    cursor: pointer;
+    text-transform: uppercase;
+    border-radius: 0;
+    transition: all 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .restore-confirm-yes {
+    background: var(--warn);
+    border: 1px solid var(--warn);
+    color: #fff;
+  }
+  
+  .restore-confirm-yes:hover, .restore-confirm-yes:active {
+    background: #ff8553;
+  }
+  
+  .restore-confirm-no {
+    background: transparent;
+    border: 1px solid var(--border-bright);
+    color: var(--text-2);
+  }
+  
+  .restore-confirm-no:hover, .restore-confirm-no:active {
+    border-color: var(--text);
+    color: var(--text);
+  }
+  
   /* ============ DELOAD OVERRIDE ============ */
     margin: 16px;
     padding: 14px 16px;
@@ -1219,6 +1685,28 @@
     color: var(--warn);
   }
   
+  .reset-btn.confirming {
+    background: var(--warn);
+    border-color: var(--warn);
+    color: #fff;
+    animation: pulse 1s ease-in-out infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.85; }
+  }
+  
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+  }
+  
+  .shake {
+    animation: shake 0.4s ease-in-out 2;
+  }
+  
   /* ============ DESKTOP BREAKPOINT ============ */
   @media (min-width: 720px) {
     .header-row { padding: 18px 24px 14px; }
@@ -1264,6 +1752,7 @@
         <button class="week-btn deload" data-week="deload">DLD</button>
       </div>
       <button class="info-btn" id="rpeInfoBtn" title="Escala RPE">RPE?</button>
+      <button class="info-btn" id="gymInfoBtn" title="Horários das academias">GYM</button>
     </div>
   </div>
   <nav class="day-tabs" id="dayTabs"></nav>
@@ -1350,6 +1839,86 @@
 <div class="modal-backdrop" id="swapModal">
   <div class="modal" role="dialog">
     <!-- Conteúdo populado dinamicamente -->
+  </div>
+</div>
+
+<!-- Gym Hours Modal -->
+<div class="modal-backdrop" id="gymModal">
+  <div class="modal" role="dialog">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title">Horários das academias · Macaé</div>
+      <button class="modal-close" id="gymModalClose" aria-label="Fechar">×</button>
+    </div>
+    <p class="modal-intro">Comparativo rápido. Atualizar manualmente se algum mudar.</p>
+    <div class="gym-table">
+      <div class="gym-row header">
+        <span class="gym-col-name">Academia</span>
+        <span class="gym-col-hours">Horário</span>
+      </div>
+      
+      <div class="gym-row gym-group">
+        <span class="gym-col-name">Macforma</span>
+        <span class="gym-col-hours"></span>
+      </div>
+      <div class="gym-row gym-sub"><span class="gym-day">Seg–Sex</span><span class="gym-hours">06h às 23h</span></div>
+      <div class="gym-row gym-sub"><span class="gym-day">Sábado</span><span class="gym-hours">08h às 18h</span></div>
+      <div class="gym-row gym-sub"><span class="gym-day">Domingo</span><span class="gym-hours">09h às 14h</span></div>
+      <div class="gym-row gym-sub"><span class="gym-day">Feriado</span><span class="gym-hours">08h às 20h</span></div>
+      
+      <div class="gym-row gym-group">
+        <span class="gym-col-name">Mais Fitness</span>
+        <span class="gym-col-hours"></span>
+      </div>
+      <div class="gym-row gym-sub"><span class="gym-day">Seg–Sex</span><span class="gym-hours">05h às 22h</span></div>
+      <div class="gym-row gym-sub"><span class="gym-day">Sábado</span><span class="gym-hours">08h–13h / 16h–19h</span></div>
+      <div class="gym-row gym-sub"><span class="gym-day">Domingo</span><span class="gym-hours">08h às 13h</span></div>
+      <div class="gym-row gym-sub"><span class="gym-day">Feriado</span><span class="gym-hours">07h às 15h</span></div>
+      
+      <div class="gym-row gym-group">
+        <span class="gym-col-name">Panobianco</span>
+        <span class="gym-col-hours"></span>
+      </div>
+      <div class="gym-row gym-sub"><span class="gym-day">Seg–Qui</span><span class="gym-hours">05h às 23h</span></div>
+      <div class="gym-row gym-sub"><span class="gym-day">Sexta</span><span class="gym-hours">05h às 22h</span></div>
+      <div class="gym-row gym-sub"><span class="gym-day">Sábado</span><span class="gym-hours">07h às 15h</span></div>
+      <div class="gym-row gym-sub"><span class="gym-day">Domingo</span><span class="gym-hours">08h às 14h</span></div>
+      <div class="gym-row gym-sub"><span class="gym-day">Feriado</span><span class="gym-hours">08h às 14h</span></div>
+      
+      <div class="gym-row gym-group">
+        <span class="gym-col-name">Infinity</span>
+        <span class="gym-col-hours"></span>
+      </div>
+      <div class="gym-row gym-sub"><span class="gym-day">Seg–Sex</span><span class="gym-hours">06h às 22h</span></div>
+      <div class="gym-row gym-sub"><span class="gym-day">Sábado</span><span class="gym-hours">08h às 12h</span></div>
+      <div class="gym-row gym-sub"><span class="gym-day">Domingo</span><span class="gym-hours">08h às 12h</span></div>
+      <div class="gym-row gym-sub"><span class="gym-day">Feriado</span><span class="gym-hours">08h às 12h</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Skip Justification Modal -->
+<div class="modal-backdrop" id="skipModal">
+  <div class="modal" role="dialog">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="skipModalTitle">Justificar dia sem treino</div>
+      <button class="modal-close" id="skipModalClose" aria-label="Fechar">×</button>
+    </div>
+    <p class="modal-intro">
+      Registre o motivo pra acompanhamento longitudinal. Categoria + observação opcional.
+    </p>
+    <div class="skip-modal-section">
+      <div class="skip-modal-label">Categoria</div>
+      <div class="skip-reasons" id="skipReasons">
+        <!-- populado dinamicamente -->
+      </div>
+    </div>
+    <div class="skip-modal-section">
+      <div class="skip-modal-label">Observação <span class="skip-modal-optional">(opcional)</span></div>
+      <textarea class="skip-note-input" id="skipNoteInput" rows="3" placeholder="Ex: viagem a trabalho de 3 dias, ou febre 38.5, ou ombro travado desde quarta..."></textarea>
+    </div>
+    <button class="skip-save-btn" id="skipSaveBtn">SALVAR JUSTIFICATIVA</button>
   </div>
 </div>
 
@@ -1765,7 +2334,7 @@ SESSIONS.cardio_long = {
     }
 };
 
-// Sessão Rest
+// Sessão Rest (planejado)
 SESSIONS.rest = {
     title: "REST",
     eyebrow: "Recovery total",
@@ -1775,8 +2344,34 @@ SESSIONS.rest = {
     rest: true
 };
 
+// Sessão Skip (dia sem treino — não planejado)
+// Diferente de Rest: Skip indica que o dia DEVERIA ter treino mas foi pulado.
+// Importante pra cálculo de aderência (skip conta no denominador, rest não).
+SESSIONS.skip = {
+    title: "SKIP",
+    eyebrow: "Dia sem treino",
+    pills: ["SKIP"],
+    type: "skip",
+    typeLabel: "Sem treino (skip)",
+    skip: true,
+    needsJustification: true
+};
+
+// Categorias estruturadas pra justificativa de skip
+const SKIP_REASONS = [
+  { key: 'travel', label: 'Viagem' },
+  { key: 'illness', label: 'Doença / mal-estar' },
+  { key: 'injury', label: 'Dor / lesão' },
+  { key: 'pip', label: 'PIP (aplicação TRT)' },
+  { key: 'work', label: 'Trabalho / compromisso' },
+  { key: 'fatigue', label: 'Fadiga extrema / sono ruim' },
+  { key: 'gym-closed', label: 'Academia fechada / sem acesso' },
+  { key: 'mental', label: 'Saúde mental / motivação' },
+  { key: 'other', label: 'Outro motivo' }
+];
+
 // Ordem de prioridade visual no menu de troca
-const SESSION_ORDER = ['squat', 'bench', 'deadlift', 'upper_hiper', 'cardio_mid', 'cardio_long', 'rest'];
+const SESSION_ORDER = ['squat', 'bench', 'deadlift', 'upper_hiper', 'cardio_mid', 'cardio_long', 'rest', 'skip'];
 
 // Schedule padrão — o que existia antes, agora explícito
 const DEFAULT_SCHEDULE = {
@@ -1805,7 +2400,10 @@ const STATE = {
   day: 'seg',
   checks: {},
   loads: {},
-  schedules: {} // { '1': {...}, '2': {...}, '3': {...}, 'deload': {...} }
+  schedules: {}, // { '1': {...}, '2': {...}, '3': {...}, 'deload': {...} }
+  exerciseSwaps: {}, // { 'week::day::exId': { name, reason, swapIndex } }
+  skipJustifications: {}, // { 'week::day': { reasonKey, reasonLabel, note, timestamp } }
+  weeklyNotes: {} // { 'week': { sleep, libido, energy, weight, waist, notes, timestamp } }
 };
 
 function loadState() {
@@ -1814,10 +2412,16 @@ function loadState() {
     const loads = localStorage.getItem('pwr.loads');
     const week = localStorage.getItem('pwr.week');
     const schedules = localStorage.getItem('pwr.schedules');
+    const exSwaps = localStorage.getItem('pwr.exerciseSwaps');
+    const skipJust = localStorage.getItem('pwr.skipJustifications');
+    const wNotes = localStorage.getItem('pwr.weeklyNotes');
     if (checks) STATE.checks = JSON.parse(checks);
     if (loads) STATE.loads = JSON.parse(loads);
     if (week) STATE.week = week;
     if (schedules) STATE.schedules = JSON.parse(schedules);
+    if (exSwaps) STATE.exerciseSwaps = JSON.parse(exSwaps);
+    if (skipJust) STATE.skipJustifications = JSON.parse(skipJust);
+    if (wNotes) STATE.weeklyNotes = JSON.parse(wNotes);
   } catch(e) { console.warn('State load failed', e); }
 }
 
@@ -1825,6 +2429,65 @@ function saveChecks() { localStorage.setItem('pwr.checks', JSON.stringify(STATE.
 function saveLoads() { localStorage.setItem('pwr.loads', JSON.stringify(STATE.loads)); }
 function saveWeek() { localStorage.setItem('pwr.week', STATE.week); }
 function saveSchedules() { localStorage.setItem('pwr.schedules', JSON.stringify(STATE.schedules)); }
+function saveExerciseSwaps() { localStorage.setItem('pwr.exerciseSwaps', JSON.stringify(STATE.exerciseSwaps)); }
+function saveSkipJustifications() { localStorage.setItem('pwr.skipJustifications', JSON.stringify(STATE.skipJustifications)); }
+function saveWeeklyNotes() { localStorage.setItem('pwr.weeklyNotes', JSON.stringify(STATE.weeklyNotes)); }
+
+// Skip justification helpers
+function skipKey(week, day) { return `${week}::${day}`; }
+
+function getSkipJustification(week, day) {
+  return STATE.skipJustifications[skipKey(week, day)] || null;
+}
+
+function setSkipJustification(week, day, reasonKey, reasonLabel, note) {
+  STATE.skipJustifications[skipKey(week, day)] = {
+    reasonKey,
+    reasonLabel,
+    note: note || '',
+    timestamp: new Date().toISOString()
+  };
+  saveSkipJustifications();
+}
+
+function clearSkipJustification(week, day) {
+  delete STATE.skipJustifications[skipKey(week, day)];
+  saveSkipJustifications();
+}
+
+// Weekly notes helpers
+function getWeeklyNotes(week) {
+  return STATE.weeklyNotes[week] || null;
+}
+
+function setWeeklyNotes(week, data) {
+  STATE.weeklyNotes[week] = {
+    ...data,
+    timestamp: new Date().toISOString()
+  };
+  saveWeeklyNotes();
+}
+
+// Exercise swap helpers
+function exerciseSwapKey(week, day, exId) { return `${week}::${day}::${exId}`; }
+
+function getExerciseSwap(week, day, exId) {
+  return STATE.exerciseSwaps[exerciseSwapKey(week, day, exId)] || null;
+}
+
+function setExerciseSwap(week, day, exId, swapData) {
+  const k = exerciseSwapKey(week, day, exId);
+  if (swapData) {
+    STATE.exerciseSwaps[k] = swapData;
+  } else {
+    delete STATE.exerciseSwaps[k];
+  }
+  saveExerciseSwaps();
+}
+
+function clearExerciseSwap(week, day, exId) {
+  setExerciseSwap(week, day, exId, null);
+}
 
 // Schedule helpers
 function getCurrentSchedule() {
@@ -2125,6 +2788,35 @@ function renderMain() {
     return;
   }
   
+  if (day.skip) {
+    const justification = getSkipJustification(STATE.week, STATE.day);
+    const justHtml = justification ? `
+      <div class="skip-justification existing">
+        <div class="skip-just-label">Motivo registrado</div>
+        <div class="skip-just-reason">${justification.reasonLabel}</div>
+        ${justification.note ? `<div class="skip-just-note">"${justification.note}"</div>` : ''}
+        <button class="skip-edit-btn" id="skipEditBtn">Editar justificativa</button>
+      </div>
+    ` : `
+      <div class="skip-justification pending">
+        <div class="skip-just-warning">⚠ Justificativa pendente</div>
+        <button class="skip-add-btn" id="skipAddBtn">Adicionar motivo</button>
+      </div>
+    `;
+    
+    html += `
+      <div class="skip-day fade-in">
+        <div class="glyph">⊘</div>
+        <div class="label">Dia sem treino</div>
+        <div class="skip-explain">Marcado como pulado. Conta no histórico de aderência.</div>
+        ${justHtml}
+      </div>
+    `;
+    main.innerHTML = html;
+    attachSkipHandlers();
+    return;
+  }
+  
   if (day.rest) {
     html += `
       <div class="rest-day fade-in">
@@ -2133,18 +2825,14 @@ function renderMain() {
         <div class="quote">Sono, hidratação, comida boa. O músculo cresce na recuperação, não no treino.</div>
       </div>
       <div class="export-section fade-in">
-        <div class="export-divider">Relatório semanal</div>
-        <div class="export-week-picker" id="exportWeekPicker">
-          <button class="export-week-chip" data-export-week="1">W1</button>
-          <button class="export-week-chip" data-export-week="2">W2</button>
-          <button class="export-week-chip" data-export-week="3">W3</button>
-          <button class="export-week-chip" data-export-week="deload">DLD</button>
-          <button class="export-week-chip selected" data-export-week="all">TUDO</button>
-        </div>
-        <button class="export-btn" id="exportBtn">EXPORTAR RELATÓRIO</button>
+        <div class="export-divider">Backup completo</div>
+        <button class="export-btn" id="exportBtn">EXPORTAR BACKUP</button>
         <div class="export-hint">
-          Gera arquivo .md com cargas,<br>
-          checks e observações da semana.
+          Gera arquivo único com TODO o histórico:<br>
+          cargas, checks, substituições, skips com<br>
+          justificativa, notas semanais, métricas de<br>
+          aderência. Formato .md humano + JSON<br>
+          estruturado pra análise programática.
         </div>
       </div>
     `;
@@ -2172,10 +2860,12 @@ function renderMain() {
     const presc = getPrescription(ex, STATE.week);
     const load = getLoad(STATE.week, STATE.day, ex.id);
     const prevLoad = getPrevLoad(STATE.week, STATE.day, ex.id);
+    const activeSwap = getExerciseSwap(STATE.week, STATE.day, ex.id);
     
     const classes = ['exercise'];
     if (checked) classes.push('done');
     if (ex.primary) classes.push('primary');
+    if (activeSwap) classes.push('swapped');
     
     // Build prescription stats
     const stats = [];
@@ -2189,13 +2879,24 @@ function renderMain() {
     
     const num = String(idx + 1).padStart(2, '0');
     
+    // Display name: swap se ativo, original caso contrário
+    const displayName = activeSwap ? activeSwap.name : ex.name;
+    const originalIndicator = activeSwap ? `
+      <div class="ex-swap-indicator">
+        <span class="ex-swap-indicator-label">↻ Substituindo</span>
+        <span class="ex-swap-indicator-orig">${ex.name}</span>
+        <button class="ex-swap-revert" data-ex-id="${ex.id}" aria-label="Voltar ao original">×</button>
+      </div>
+    ` : '';
+    
     html += `
       <div class="${classes.join(' ')}" data-ex-id="${ex.id}">
         <label class="ex-check">
           <input type="checkbox" ${checked ? 'checked' : ''} data-ex-id="${ex.id}">
         </label>
         <div class="ex-body">
-          <div class="ex-name"><span class="ex-num">${num}</span>${ex.name}</div>
+          ${originalIndicator}
+          <div class="ex-name"><span class="ex-num">${num}</span>${displayName}</div>
           <div class="ex-prescription">${stats.join('')}</div>
           <div class="ex-load">
             <span class="ex-load-label">Carga</span>
@@ -2209,7 +2910,7 @@ function renderMain() {
             </button>
             ${ex.swaps && ex.swaps.length ? `
               <button class="ex-swaps-toggle" data-ex-id="${ex.id}">
-                <span class="swap-icon">⇄</span> Substituir
+                <span class="swap-icon">⇄</span> ${activeSwap ? 'Trocar de novo' : 'Substituir'}
               </button>
             ` : ''}
           </div>
@@ -2219,13 +2920,21 @@ function renderMain() {
           ${ex.swaps && ex.swaps.length ? `
             <div class="ex-swaps" data-swaps-for="${ex.id}">
               <div class="ex-swaps-content">
-                <div class="ex-swaps-title">Alternativas equivalentes</div>
-                ${ex.swaps.map(s => `
-                  <div class="ex-swap-item">
-                    <span class="ex-swap-name">${s.name}</span>
+                <div class="ex-swaps-title">Toque pra usar uma alternativa</div>
+                ${activeSwap ? `
+                  <button class="ex-swap-item ex-swap-original" data-ex-id="${ex.id}" data-swap-action="revert">
+                    <span class="ex-swap-name">↻ Voltar para: ${ex.name}</span>
+                    <span class="ex-swap-reason">Exercício original do programa</span>
+                  </button>
+                ` : ''}
+                ${ex.swaps.map((s, swapIdx) => {
+                  const isActive = activeSwap && activeSwap.swapIndex === swapIdx;
+                  return `
+                  <button class="ex-swap-item ${isActive ? 'active' : ''}" data-ex-id="${ex.id}" data-swap-idx="${swapIdx}">
+                    <span class="ex-swap-name">${s.name}${isActive ? ' ✓' : ''}</span>
                     <span class="ex-swap-reason">${s.reason}</span>
-                  </div>
-                `).join('')}
+                  </button>
+                `;}).join('')}
               </div>
             </div>
           ` : ''}
@@ -2238,6 +2947,79 @@ function renderMain() {
   main.innerHTML = html;
   attachExerciseHandlers();
 }
+
+function attachSkipHandlers() {
+  const addBtn = document.getElementById('skipAddBtn');
+  const editBtn = document.getElementById('skipEditBtn');
+  if (addBtn) addBtn.addEventListener('click', () => openSkipModal());
+  if (editBtn) editBtn.addEventListener('click', () => openSkipModal());
+}
+
+let skipSelectedReason = null;
+
+function openSkipModal() {
+  const existing = getSkipJustification(STATE.week, STATE.day);
+  skipSelectedReason = existing ? existing.reasonKey : null;
+  
+  const reasonsContainer = document.getElementById('skipReasons');
+  reasonsContainer.innerHTML = SKIP_REASONS.map(r => `
+    <button class="skip-reason-btn ${skipSelectedReason === r.key ? 'selected' : ''}" data-reason-key="${r.key}" data-reason-label="${r.label}">
+      ${r.label}
+    </button>
+  `).join('');
+  
+  document.getElementById('skipNoteInput').value = existing ? (existing.note || '') : '';
+  document.getElementById('skipModalTitle').textContent = existing 
+    ? `Editar justificativa · ${DAY_LABELS_FULL[STATE.day]}` 
+    : `Justificar ${DAY_LABELS_FULL[STATE.day]} sem treino`;
+  
+  reasonsContainer.querySelectorAll('.skip-reason-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      skipSelectedReason = btn.dataset.reasonKey;
+      reasonsContainer.querySelectorAll('.skip-reason-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    });
+  });
+  
+  const modal = document.getElementById('skipModal');
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSkipModal() {
+  document.getElementById('skipModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('skipModalClose').addEventListener('click', closeSkipModal);
+document.getElementById('skipModal').addEventListener('click', (e) => {
+  if (e.target.id === 'skipModal') closeSkipModal();
+});
+
+document.getElementById('skipSaveBtn').addEventListener('click', () => {
+  const saveBtn = document.getElementById('skipSaveBtn');
+  if (!skipSelectedReason) {
+    // Feedback visual em vez de alert() (que pode falhar em PWA standalone)
+    saveBtn.classList.add('shake');
+    saveBtn.textContent = 'SELECIONE UMA CATEGORIA';
+    saveBtn.style.background = 'var(--warn)';
+    saveBtn.style.color = '#fff';
+    setTimeout(() => {
+      saveBtn.classList.remove('shake');
+      saveBtn.textContent = 'SALVAR JUSTIFICATIVA';
+      saveBtn.style.background = '';
+      saveBtn.style.color = '';
+    }, 1800);
+    if (navigator.vibrate) navigator.vibrate([30, 60, 30]);
+    return;
+  }
+  const reasonObj = SKIP_REASONS.find(r => r.key === skipSelectedReason);
+  const note = document.getElementById('skipNoteInput').value.trim();
+  setSkipJustification(STATE.week, STATE.day, reasonObj.key, reasonObj.label, note);
+  if (navigator.vibrate) navigator.vibrate(20);
+  closeSkipModal();
+  renderMain();
+});
 
 function attachExerciseHandlers() {
   // Checkboxes
@@ -2284,6 +3066,57 @@ function attachExerciseHandlers() {
       swaps.classList.toggle('open');
     });
   });
+  
+  // Aplicar swap (clicar num item da lista)
+  document.querySelectorAll('.ex-swap-item[data-swap-idx]').forEach(item => {
+    item.addEventListener('click', () => {
+      const exId = item.dataset.exId;
+      const swapIdx = parseInt(item.dataset.swapIdx, 10);
+      
+      // Encontra o exercício e o swap
+      const day = getSessionForDay(STATE.day);
+      const ex = day.exercises.find(e => e.id === exId);
+      if (!ex || !ex.swaps || !ex.swaps[swapIdx]) return;
+      
+      const swap = ex.swaps[swapIdx];
+      
+      // Se já está aplicado, remove
+      const current = getExerciseSwap(STATE.week, STATE.day, exId);
+      if (current && current.swapIndex === swapIdx) {
+        clearExerciseSwap(STATE.week, STATE.day, exId);
+      } else {
+        setExerciseSwap(STATE.week, STATE.day, exId, {
+          name: swap.name,
+          reason: swap.reason,
+          swapIndex: swapIdx
+        });
+      }
+      
+      if (navigator.vibrate) navigator.vibrate(15);
+      renderMain();
+    });
+  });
+  
+  // Voltar ao original (botão dentro da lista expandida)
+  document.querySelectorAll('.ex-swap-item[data-swap-action="revert"]').forEach(item => {
+    item.addEventListener('click', () => {
+      const exId = item.dataset.exId;
+      clearExerciseSwap(STATE.week, STATE.day, exId);
+      if (navigator.vibrate) navigator.vibrate(15);
+      renderMain();
+    });
+  });
+  
+  // Botão × no indicador acima do nome — também volta ao original
+  document.querySelectorAll('.ex-swap-revert').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const exId = btn.dataset.exId;
+      clearExerciseSwap(STATE.week, STATE.day, exId);
+      if (navigator.vibrate) navigator.vibrate(15);
+      renderMain();
+    });
+  });
 }
 
 function updateProgress() {
@@ -2304,16 +3137,41 @@ function updateProgress() {
   }
 }
 
-// Reset day
+// Reset day — confirmação por duplo toque (não usa confirm() que falha em PWA)
+let resetConfirmTimer = null;
 document.getElementById('resetBtn').addEventListener('click', () => {
-  if (!confirm(`Resetar checkboxes de ${DAY_LABELS[STATE.day]} (Semana ${STATE.week.toUpperCase()})?`)) return;
-  const prefix = `${STATE.week}::${STATE.day}::`;
-  Object.keys(STATE.checks).forEach(k => {
-    if (k.startsWith(prefix)) delete STATE.checks[k];
-  });
-  saveChecks();
-  renderMain();
-  if (navigator.vibrate) navigator.vibrate([10, 30, 10]);
+  const btn = document.getElementById('resetBtn');
+  
+  // Se já está em estado de confirmação, executa
+  if (btn.classList.contains('confirming')) {
+    clearTimeout(resetConfirmTimer);
+    btn.classList.remove('confirming');
+    btn.textContent = 'RESET DIA ATUAL';
+    
+    const prefix = `${STATE.week}::${STATE.day}::`;
+    Object.keys(STATE.checks).forEach(k => {
+      if (k.startsWith(prefix)) delete STATE.checks[k];
+    });
+    saveChecks();
+    renderMain();
+    if (navigator.vibrate) navigator.vibrate([10, 30, 10]);
+    
+    // Feedback de sucesso
+    btn.textContent = '✓ RESET CONCLUÍDO';
+    setTimeout(() => { btn.textContent = 'RESET DIA ATUAL'; }, 1500);
+    return;
+  }
+  
+  // Primeiro toque: pede confirmação
+  btn.classList.add('confirming');
+  btn.textContent = `TOQUE NOVAMENTE PRA CONFIRMAR · ${DAY_LABELS[STATE.day]} W${STATE.week}`;
+  if (navigator.vibrate) navigator.vibrate(15);
+  
+  // Auto-cancela depois de 3 segundos
+  resetConfirmTimer = setTimeout(() => {
+    btn.classList.remove('confirming');
+    btn.textContent = 'RESET DIA ATUAL';
+  }, 3000);
 });
 
 // ============================================================
@@ -2334,21 +3192,30 @@ function closeRpeModal() {
 }
 
 // ============================================================
+// GYM HOURS MODAL
+// ============================================================
+const gymModal = document.getElementById('gymModal');
+document.getElementById('gymInfoBtn').addEventListener('click', () => {
+  gymModal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+});
+document.getElementById('gymModalClose').addEventListener('click', closeGymModal);
+gymModal.addEventListener('click', (e) => {
+  if (e.target === gymModal) closeGymModal();
+});
+function closeGymModal() {
+  gymModal.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ============================================================
 // EXPORT WEEKLY REPORT
 // ============================================================
 let exportSelectedWeek = 'all';
 
 function attachExportHandlers() {
-  const picker = document.getElementById('exportWeekPicker');
-  if (!picker) return;
-  picker.querySelectorAll('.export-week-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      picker.querySelectorAll('.export-week-chip').forEach(c => c.classList.remove('selected'));
-      chip.classList.add('selected');
-      exportSelectedWeek = chip.dataset.exportWeek;
-    });
-  });
-  document.getElementById('exportBtn').addEventListener('click', generateAndDownloadReport);
+  const btn = document.getElementById('exportBtn');
+  if (btn) btn.addEventListener('click', generateAndDownloadReport);
 }
 
 function formatDateBR(d) {
@@ -2413,6 +3280,7 @@ function buildWeekReport(week) {
       const checked = isChecked(week, dayKey, ex.id);
       const load = getLoad(week, dayKey, ex.id);
       const presc = getPrescription(ex, week);
+      const activeSwap = STATE.exerciseSwaps[exerciseSwapKey(week, dayKey, ex.id)];
       
       if (checked) { dayDone++; totalDone++; }
       if (load) totalLoaded++;
@@ -2421,7 +3289,12 @@ function buildWeekReport(week) {
       const loadStr = load ? `**${load}kg**` : '—';
       const intensityStr = presc.intensity || (presc.rpe ? `RPE ${presc.rpe}` : '—');
       
-      rows.push(`| ${checkmark} | ${ex.name} | ${presc.sets}×${presc.reps} | ${intensityStr} | ${loadStr} |`);
+      // Nome do exercício: se houve swap, mostrar nome novo + indicação do original
+      const nameCell = activeSwap 
+        ? `${activeSwap.name} _(substituiu: ${ex.name})_`
+        : ex.name;
+      
+      rows.push(`| ${checkmark} | ${nameCell} | ${presc.sets}×${presc.reps} | ${intensityStr} | ${loadStr} |`);
     });
     
     md += `**Conclusão:** ${dayDone}/${dayTotal} exercícios\n\n`;
@@ -2440,53 +3313,347 @@ function buildWeekReport(week) {
   return { md, totalExercises, totalDone, totalLoaded };
 }
 
-function generateAndDownloadReport() {
-  const now = new Date();
-  const dateStr = formatDateBR(now);
-  const weeks = exportSelectedWeek === 'all' ? ['1', '2', '3', 'deload'] : [exportSelectedWeek];
+function buildFullBackup() {
+  // Backup estruturado JSON — fonte de verdade para análise longitudinal
+  const exportDate = new Date().toISOString();
   
-  let md = `# Relatório de Treino — Pedro\n`;
-  md += `**Data de exportação:** ${dateStr}\n`;
-  md += `**Programa:** Powerlifting Híbrido (força + hipertrofia)\n`;
-  md += `**Semanas incluídas:** ${weeks.map(w => w === 'deload' ? 'DELOAD' : 'W' + w).join(', ')}\n\n`;
-  md += `---\n`;
+  const backup = {
+    meta: {
+      app: "PWR / PEDRO",
+      version: "2026-04-29",
+      exportedAt: exportDate,
+      athlete: {
+        name: "Pedro",
+        age: 37,
+        weight: 108,
+        height: 180,
+        program: "Powerlifting Híbrido (força + hipertrofia)",
+        trt: "Enantato 0,13ml SC, 3×/sem (seg/qua/sex)",
+        cardiovascularRisk: "elevated (ApoB, histórico desde infância)"
+      }
+    },
+    
+    program: {
+      sessions: {},
+      defaultSchedule: { ...DEFAULT_SCHEDULE },
+      trtDays: [...TRT_DAYS],
+      mesocycleStructure: {
+        "W1": { rpe: 7, focus: "acumulação técnica", volume: 100 },
+        "W2": { rpe: 8, focus: "intensificação", volume: 100 },
+        "W3": { rpe: 8.5, focus: "pico do mesociclo", volume: 95 },
+        "deload": { rpe: 6, focus: "recovery neural", volume: 55 }
+      }
+    },
+    
+    weeks: {}
+  };
   
-  let grandTotalEx = 0, grandTotalDone = 0, grandTotalLoaded = 0;
-  
-  weeks.forEach(w => {
-    const result = buildWeekReport(w);
-    md += result.md;
-    grandTotalEx += result.totalExercises;
-    grandTotalDone += result.totalDone;
-    grandTotalLoaded += result.totalLoaded;
+  // Sessions summary (só metadados — exercícios completos seriam redundantes)
+  Object.keys(SESSIONS).forEach(key => {
+    const s = SESSIONS[key];
+    backup.program.sessions[key] = {
+      title: s.title,
+      type: s.type,
+      typeLabel: s.typeLabel,
+      cardio: !!s.cardio,
+      rest: !!s.rest,
+      skip: !!s.skip,
+      exerciseCount: s.exercises ? s.exercises.length : 0
+    };
   });
   
+  // Dados por semana
+  const allWeeks = ['1', '2', '3', 'deload'];
+  allWeeks.forEach(week => {
+    const schedule = STATE.schedules[week] || { ...DEFAULT_SCHEDULE };
+    const isCustomWeek = DAYS.some(d => schedule[d] !== DEFAULT_SCHEDULE[d]);
+    
+    const weekData = {
+      schedule: { ...schedule },
+      scheduleCustomized: isCustomWeek,
+      scheduleChanges: [],
+      adherence: { planned: 0, completed: 0, skipped: 0, exercisesPlanned: 0, exercisesDone: 0 },
+      days: {},
+      weeklyNotes: getWeeklyNotes(week)
+    };
+    
+    if (isCustomWeek) {
+      DAYS.forEach(d => {
+        if (schedule[d] !== DEFAULT_SCHEDULE[d]) {
+          weekData.scheduleChanges.push({
+            day: d,
+            from: DEFAULT_SCHEDULE[d],
+            fromTitle: SESSIONS[DEFAULT_SCHEDULE[d]].title,
+            to: schedule[d],
+            toTitle: SESSIONS[schedule[d]].title
+          });
+        }
+      });
+    }
+    
+    DAYS.forEach(dayKey => {
+      const sessionKey = schedule[dayKey];
+      const session = SESSIONS[sessionKey];
+      
+      const dayData = {
+        sessionKey,
+        sessionTitle: session.title,
+        sessionType: session.type,
+        sessionEyebrow: session.eyebrow,
+        isTrtDay: TRT_DAYS.includes(dayKey),
+        isCustomDay: schedule[dayKey] !== DEFAULT_SCHEDULE[dayKey]
+      };
+      
+      // Skip com justificativa
+      if (session.skip) {
+        const just = getSkipJustification(week, dayKey);
+        dayData.skip = true;
+        dayData.justification = just || { reasonKey: null, reasonLabel: 'NÃO JUSTIFICADO', note: '', timestamp: null };
+        weekData.adherence.skipped++;
+        weekData.adherence.planned++;
+      } else if (session.rest) {
+        dayData.rest = true;
+      } else if (session.cardio) {
+        dayData.cardio = true;
+        dayData.cardioContent = {
+          protocol: session.cardioContent.protocol,
+          heartRate: session.cardioContent.heartRate,
+          duration: session.cardioContent.duration
+        };
+      } else if (session.exercises) {
+        // Dia de treino
+        dayData.exercises = [];
+        let dayDone = 0, dayTotal = 0;
+        
+        session.exercises.forEach(ex => {
+          if (week === 'deload' && shouldHideOnDeload(ex)) return;
+          dayTotal++;
+          
+          const checked = isChecked(week, dayKey, ex.id);
+          const load = getLoad(week, dayKey, ex.id);
+          const swap = STATE.exerciseSwaps[exerciseSwapKey(week, dayKey, ex.id)] || null;
+          const presc = getPrescription(ex, week);
+          
+          if (checked) dayDone++;
+          
+          dayData.exercises.push({
+            id: ex.id,
+            originalName: ex.name,
+            displayName: swap ? swap.name : ex.name,
+            swapped: !!swap,
+            swap: swap ? { name: swap.name, reason: swap.reason, swapIndex: swap.swapIndex } : null,
+            isPrimary: !!ex.primary,
+            prescription: {
+              sets: presc.sets,
+              reps: presc.reps,
+              rpe: presc.rpe || null,
+              intensity: presc.intensity || null
+            },
+            completed: checked,
+            loadKg: load ? parseFloat(load) : null
+          });
+          
+          weekData.adherence.exercisesPlanned++;
+          if (checked) weekData.adherence.exercisesDone++;
+        });
+        
+        dayData.completedExercises = dayDone;
+        dayData.totalExercises = dayTotal;
+        dayData.completionPct = dayTotal ? Math.round(dayDone/dayTotal*100) : 0;
+        
+        weekData.adherence.planned++;
+        if (dayDone > 0) weekData.adherence.completed++;
+      }
+      
+      weekData.days[dayKey] = dayData;
+    });
+    
+    // Aderência percentual
+    weekData.adherence.completionRate = weekData.adherence.planned 
+      ? Math.round((weekData.adherence.completed / weekData.adherence.planned) * 100) 
+      : 0;
+    weekData.adherence.exerciseRate = weekData.adherence.exercisesPlanned
+      ? Math.round((weekData.adherence.exercisesDone / weekData.adherence.exercisesPlanned) * 100)
+      : 0;
+    
+    backup.weeks[week] = weekData;
+  });
+  
+  // Resumo agregado entre semanas
+  backup.summary = {
+    totalExercisesPlanned: 0,
+    totalExercisesCompleted: 0,
+    totalDaysPlanned: 0,
+    totalDaysCompleted: 0,
+    totalDaysSkipped: 0,
+    skipsByReason: {},
+    swapsByExercise: {}
+  };
+  
+  Object.values(backup.weeks).forEach(w => {
+    backup.summary.totalExercisesPlanned += w.adherence.exercisesPlanned;
+    backup.summary.totalExercisesCompleted += w.adherence.exercisesDone;
+    backup.summary.totalDaysPlanned += w.adherence.planned;
+    backup.summary.totalDaysCompleted += w.adherence.completed;
+    backup.summary.totalDaysSkipped += w.adherence.skipped;
+    
+    Object.values(w.days).forEach(d => {
+      if (d.skip && d.justification && d.justification.reasonKey) {
+        backup.summary.skipsByReason[d.justification.reasonLabel] = 
+          (backup.summary.skipsByReason[d.justification.reasonLabel] || 0) + 1;
+      }
+      if (d.exercises) {
+        d.exercises.forEach(ex => {
+          if (ex.swapped) {
+            const key = `${ex.originalName} → ${ex.swap.name}`;
+            backup.summary.swapsByExercise[key] = (backup.summary.swapsByExercise[key] || 0) + 1;
+          }
+        });
+      }
+    });
+  });
+  
+  backup.summary.overallExerciseRate = backup.summary.totalExercisesPlanned 
+    ? Math.round((backup.summary.totalExercisesCompleted / backup.summary.totalExercisesPlanned) * 100)
+    : 0;
+  backup.summary.overallDayRate = backup.summary.totalDaysPlanned
+    ? Math.round((backup.summary.totalDaysCompleted / backup.summary.totalDaysPlanned) * 100)
+    : 0;
+  
+  return backup;
+}
+
+function buildHumanReadableSummary(backup) {
+  // Markdown legível, complementar ao JSON
+  let md = `# Backup PWR / Pedro\n\n`;
+  md += `**Exportado em:** ${formatDateBR(new Date(backup.meta.exportedAt))}\n`;
+  md += `**Atleta:** ${backup.meta.athlete.name}, ${backup.meta.athlete.age} anos, ${backup.meta.athlete.weight}kg\n`;
+  md += `**Programa:** ${backup.meta.athlete.program}\n`;
+  md += `**TRT:** ${backup.meta.athlete.trt}\n\n`;
   md += `---\n\n`;
+  
   md += `## Resumo agregado\n\n`;
-  md += `- **Exercícios prescritos:** ${grandTotalEx}\n`;
-  md += `- **Exercícios concluídos:** ${grandTotalDone} (${grandTotalEx ? Math.round(grandTotalDone/grandTotalEx*100) : 0}%)\n`;
-  md += `- **Cargas registradas:** ${grandTotalLoaded}\n\n`;
+  md += `- **Aderência geral (dias):** ${backup.summary.overallDayRate}% (${backup.summary.totalDaysCompleted}/${backup.summary.totalDaysPlanned})\n`;
+  md += `- **Aderência geral (exercícios):** ${backup.summary.overallExerciseRate}% (${backup.summary.totalExercisesCompleted}/${backup.summary.totalExercisesPlanned})\n`;
+  md += `- **Dias pulados (skip):** ${backup.summary.totalDaysSkipped}\n\n`;
+  
+  if (Object.keys(backup.summary.skipsByReason).length > 0) {
+    md += `**Skips por motivo:**\n`;
+    Object.entries(backup.summary.skipsByReason).forEach(([reason, count]) => {
+      md += `- ${reason}: ${count}\n`;
+    });
+    md += `\n`;
+  }
+  
+  if (Object.keys(backup.summary.swapsByExercise).length > 0) {
+    md += `**Substituições de exercício mais frequentes:**\n`;
+    Object.entries(backup.summary.swapsByExercise)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10)
+      .forEach(([swap, count]) => {
+        md += `- ${swap}: ${count}×\n`;
+      });
+    md += `\n`;
+  }
   
   md += `---\n\n`;
-  md += `## Notas livres do atleta\n\n`;
-  md += `_Preencha antes de enviar para análise:_\n\n`;
-  md += `**Sono médio (1-10):** \n\n`;
-  md += `**Libido (1-10):** \n\n`;
-  md += `**Energia geral (1-10):** \n\n`;
-  md += `**Peso atual (kg):** \n\n`;
-  md += `**Cintura (cm, umbigo):** \n\n`;
-  md += `**Sintomas notáveis (tontura, dor, fadiga, ginecomastia, retenção, etc.):**\n\n\n\n`;
-  md += `**Aderência à dieta (1-10) e observações:**\n\n\n\n`;
-  md += `**Cardio Z2 — duração e FC média de cada sessão:**\n- Quarta: \n- Sábado: \n\n`;
-  md += `**TRT — confirmar aplicação seg/qua/sex:** \n\n`;
-  md += `**Outras observações para o consultor:**\n\n\n\n`;
   
-  md += `---\n\n`;
-  md += `_Gerado por PWR / Pedro · Pedro 37a · 108kg · TRT enantato 0,13ml 3×/sem_\n`;
+  // Detalhamento por semana
+  Object.entries(backup.weeks).forEach(([weekKey, w]) => {
+    const label = weekKey === 'deload' ? 'DELOAD' : `W${weekKey}`;
+    md += `## Semana ${label}\n\n`;
+    md += `**Aderência:** ${w.adherence.completionRate}% dos dias · ${w.adherence.exerciseRate}% dos exercícios\n\n`;
+    
+    if (w.scheduleCustomized) {
+      md += `> **Reorganização ativa:**\n`;
+      w.scheduleChanges.forEach(c => {
+        md += `> - ${DAY_LABELS_FULL[c.day]}: ${c.fromTitle} → ${c.toTitle}\n`;
+      });
+      md += `\n`;
+    }
+    
+    DAYS.forEach(dayKey => {
+      const d = w.days[dayKey];
+      const dayLabel = DAY_LABELS_FULL[dayKey];
+      
+      if (d.skip) {
+        const j = d.justification;
+        md += `### ${dayLabel} — SKIP ⊘\n`;
+        md += `- **Motivo:** ${j.reasonLabel}\n`;
+        if (j.note) md += `- **Nota:** "${j.note}"\n`;
+        md += `\n`;
+        return;
+      }
+      
+      if (d.rest) {
+        md += `### ${dayLabel} — REST (planejado)\n\n`;
+        return;
+      }
+      
+      if (d.cardio) {
+        md += `### ${dayLabel} — ${d.sessionTitle}\n`;
+        md += `_Cardio Z2 — registrar manualmente_\n\n`;
+        return;
+      }
+      
+      if (d.exercises) {
+        md += `### ${dayLabel} — ${d.sessionTitle}\n`;
+        md += `_${d.sessionEyebrow}_ · **${d.completedExercises}/${d.totalExercises}** (${d.completionPct}%)\n\n`;
+        
+        md += `| ✓ | Exercício | Sets×Reps | Intens. | Carga |\n`;
+        md += `|---|-----------|-----------|---------|-------|\n`;
+        d.exercises.forEach(ex => {
+          const check = ex.completed ? '✅' : '⬜';
+          const name = ex.swapped 
+            ? `${ex.displayName} _(substituiu: ${ex.originalName})_`
+            : ex.displayName;
+          const intens = ex.prescription.intensity || (ex.prescription.rpe ? `RPE ${ex.prescription.rpe}` : '—');
+          const load = ex.loadKg !== null ? `**${ex.loadKg}kg**` : '—';
+          md += `| ${check} | ${name} | ${ex.prescription.sets}×${ex.prescription.reps} | ${intens} | ${load} |\n`;
+        });
+        md += `\n`;
+      }
+    });
+    
+    if (w.weeklyNotes) {
+      md += `**Notas livres da semana:**\n`;
+      const wn = w.weeklyNotes;
+      if (wn.sleep) md += `- Sono médio: ${wn.sleep}/10\n`;
+      if (wn.libido) md += `- Libido: ${wn.libido}/10\n`;
+      if (wn.energy) md += `- Energia: ${wn.energy}/10\n`;
+      if (wn.weight) md += `- Peso: ${wn.weight}kg\n`;
+      if (wn.waist) md += `- Cintura: ${wn.waist}cm\n`;
+      if (wn.notes) md += `- Observações: ${wn.notes}\n`;
+      md += `\n`;
+    }
+    
+    md += `---\n\n`;
+  });
   
-  // Download
-  const fileName = `treino_pedro_${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}.md`;
-  const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+  md += `\n## Para análise do consultor\n\n`;
+  md += `Este backup contém o estado completo do app. O arquivo JSON anexo tem a estrutura completa pra cruzamento de dados. Este markdown é o resumo legível.\n\n`;
+  md += `**Pontos para análise sugeridos:**\n`;
+  md += `- Aderência por dia da semana (qual dia mais é pulado?)\n`;
+  md += `- Skips por categoria (padrões de viagem? doença recorrente? PIP?)\n`;
+  md += `- Evolução de carga nos lifts principais (Squat, Bench, Deadlift) entre semanas\n`;
+  md += `- Exercícios substituídos com frequência (candidatos a swap permanente)\n`;
+  md += `- Correlação entre notas semanais subjetivas e performance\n`;
+  
+  return md;
+}
+
+function generateAndDownloadReport() {
+  const now = new Date();
+  const backup = buildFullBackup();
+  const md = buildHumanReadableSummary(backup);
+  
+  // Combina os dois num único arquivo .md — o JSON vai num bloco no fim
+  const combined = md + 
+    `\n\n---\n\n## Backup JSON (para análise programática)\n\n` +
+    `\`\`\`json\n${JSON.stringify(backup, null, 2)}\n\`\`\`\n`;
+  
+  const fileName = `pwr_backup_${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}.md`;
+  const blob = new Blob([combined], { type: 'text/markdown;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
@@ -2501,7 +3668,7 @@ function generateAndDownloadReport() {
   const btn = document.getElementById('exportBtn');
   if (btn) {
     const originalText = btn.textContent;
-    btn.textContent = '✓ ARQUIVO GERADO';
+    btn.textContent = '✓ BACKUP GERADO';
     btn.style.borderColor = 'var(--accent)';
     btn.style.color = 'var(--accent)';
     setTimeout(() => {
@@ -2518,6 +3685,8 @@ function todayKeyForBanner() { return STATE.day; }
 // ============================================================
 // SESSION SWAP MODAL
 // ============================================================
+let swapModalListenersWired = false;
+
 function openSessionSwapModal() {
   const currentSession = getSessionKeyForDay(STATE.day);
   const currentSessionData = SESSIONS[currentSession];
@@ -2538,7 +3707,16 @@ function openSessionSwapModal() {
   // Status do schedule
   const isCustom = isCustomSchedule();
   const restoreBtn = isCustom ? `
-    <button class="restore-btn" id="restoreScheduleBtn">↻ RESTAURAR PADRÃO DA SEMANA</button>
+    <div class="restore-section" id="restoreSection">
+      <button class="restore-btn" id="restoreScheduleBtn" type="button">↻ RESTAURAR PADRÃO DA SEMANA</button>
+      <div class="restore-confirm" id="restoreConfirm" style="display:none;">
+        <div class="restore-confirm-text">Restaurar o calendário padrão? Cargas e checks ficam intactos.</div>
+        <div class="restore-confirm-actions">
+          <button class="restore-confirm-yes" id="restoreConfirmYes" type="button">SIM, RESTAURAR</button>
+          <button class="restore-confirm-no" id="restoreConfirmNo" type="button">CANCELAR</button>
+        </div>
+      </div>
+    </div>
   ` : '';
   
   // Preview do schedule atual
@@ -2560,7 +3738,7 @@ function openSessionSwapModal() {
     <div class="modal-handle"></div>
     <div class="modal-header">
       <div class="modal-title">Trocar sessão · ${DAY_LABELS_FULL[STATE.day]}</div>
-      <button class="modal-close" id="swapModalClose" aria-label="Fechar">×</button>
+      <button class="modal-close" id="swapModalClose" type="button" aria-label="Fechar">×</button>
     </div>
     <p class="modal-intro">
       Move uma sessão de treino para este dia. As outras sessões ficam onde estão — você reorganiza manualmente cada dia que quiser mexer.
@@ -2577,12 +3755,20 @@ function openSessionSwapModal() {
   modal.classList.add('open');
   document.body.style.overflow = 'hidden';
   
+  // Listeners do backdrop são anexados UMA VEZ só (evita leak)
+  if (!swapModalListenersWired) {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeSwapModal();
+    });
+    swapModalListenersWired = true;
+  }
+  
   // Render warnings
   renderSwapWarnings();
   
-  // Wire up
-  document.getElementById('swapModalClose').addEventListener('click', closeSwapModal);
-  modal.addEventListener('click', (e) => { if (e.target === modal) closeSwapModal(); });
+  // Wire up listeners dos elementos dinâmicos (recriados a cada abertura)
+  const closeBtn = document.getElementById('swapModalClose');
+  if (closeBtn) closeBtn.addEventListener('click', closeSwapModal);
   
   document.querySelectorAll('.swap-option').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -2591,23 +3777,53 @@ function openSessionSwapModal() {
         closeSwapModal();
         return;
       }
+      // Se ao sair de skip pra outra sessão, limpa justificativa
+      const prevSession = getSessionKeyForDay(STATE.day);
+      if (prevSession === 'skip' && newSession !== 'skip') {
+        clearSkipJustification(STATE.week, STATE.day);
+      }
       setSessionForDay(STATE.day, newSession);
       if (navigator.vibrate) navigator.vibrate(15);
       closeSwapModal();
       renderDayTabs();
       renderMain();
+      // Se trocou pra skip, abre modal de justificativa automaticamente
+      if (newSession === 'skip' && !getSkipJustification(STATE.week, STATE.day)) {
+        setTimeout(() => openSkipModal(), 300);
+      }
     });
   });
   
   if (isCustom) {
-    document.getElementById('restoreScheduleBtn').addEventListener('click', () => {
-      if (!confirm('Restaurar o calendário padrão desta semana? Os checkboxes e cargas que você já marcou ficam intactos (continuam ligados ao exercício, não ao dia).')) return;
-      restoreDefaultSchedule();
-      if (navigator.vibrate) navigator.vibrate([10, 30, 10]);
-      closeSwapModal();
-      renderDayTabs();
-      renderMain();
-    });
+    const restoreBtnEl = document.getElementById('restoreScheduleBtn');
+    const restoreConfirmEl = document.getElementById('restoreConfirm');
+    const restoreYesEl = document.getElementById('restoreConfirmYes');
+    const restoreNoEl = document.getElementById('restoreConfirmNo');
+    
+    if (restoreBtnEl) {
+      restoreBtnEl.addEventListener('click', () => {
+        // Toggle confirmação inline (sem usar confirm() que falha em PWA standalone)
+        restoreBtnEl.style.display = 'none';
+        if (restoreConfirmEl) restoreConfirmEl.style.display = 'block';
+      });
+    }
+    
+    if (restoreYesEl) {
+      restoreYesEl.addEventListener('click', () => {
+        restoreDefaultSchedule();
+        if (navigator.vibrate) navigator.vibrate([10, 30, 10]);
+        closeSwapModal();
+        renderDayTabs();
+        renderMain();
+      });
+    }
+    
+    if (restoreNoEl) {
+      restoreNoEl.addEventListener('click', () => {
+        if (restoreBtnEl) restoreBtnEl.style.display = '';
+        if (restoreConfirmEl) restoreConfirmEl.style.display = 'none';
+      });
+    }
   }
 }
 
