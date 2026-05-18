@@ -154,12 +154,13 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 /* View switcher — segmented control */
 .view-switch {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   background: var(--surface-1);
   border: 1px solid var(--border);
   padding: 4px;
   border-radius: var(--r-md);
   gap: 2px;
+  position: relative;
 }
 .view-switch button {
   background: transparent;
@@ -1054,6 +1055,525 @@ section.collapsed .section-header { padding-bottom: var(--s-4); }
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   REVIEW VIEW — ritual semanal
+═══════════════════════════════════════════════════════════════ */
+#reviewView { display: none; animation: viewFadeIn 320ms cubic-bezier(0.16, 1, 0.3, 1); }
+#reviewView.active { display: block; }
+
+@keyframes viewFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+#dashboardView.active { animation: viewFadeIn 320ms cubic-bezier(0.16, 1, 0.3, 1); }
+#trackerView:not(.hidden) { animation: viewFadeIn 320ms cubic-bezier(0.16, 1, 0.3, 1); }
+
+/* Review header card — premium hero */
+.review-header-card {
+  background: var(--surface-1);
+  border-radius: var(--r-lg);
+  padding: var(--s-6) var(--s-5);
+  margin-bottom: var(--s-3);
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(
+    ellipse at top right,
+    rgba(212, 165, 116, 0.08) 0%,
+    var(--surface-1) 60%
+  );
+  border: 1px solid var(--border);
+}
+.review-header-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 40%, var(--brand-tint) 100%);
+  opacity: 0.4;
+  pointer-events: none;
+}
+.review-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--brand);
+  margin-bottom: var(--s-2);
+  position: relative;
+}
+.review-title {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-1);
+  line-height: 1.1;
+  margin-bottom: var(--s-2);
+  position: relative;
+}
+.review-subtitle {
+  font-size: 14px;
+  color: var(--text-3);
+  line-height: 1.5;
+  margin-bottom: var(--s-5);
+  position: relative;
+  max-width: 480px;
+}
+
+.review-import-zone {
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  gap: var(--s-3);
+  align-items: center;
+  padding: var(--s-3) var(--s-4);
+  background: var(--surface-2);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--r-md);
+  position: relative;
+  transition: all var(--t-base);
+}
+.review-import-zone:hover {
+  border-color: var(--brand);
+  background: var(--surface-3);
+}
+.import-zone-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r-sm);
+  display: grid;
+  place-items: center;
+  background: var(--brand-tint);
+  color: var(--brand);
+  font-size: 20px;
+  font-weight: 600;
+}
+.import-zone-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.import-zone-text strong {
+  font-size: 14px;
+  color: var(--text-1);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+.import-zone-text span {
+  font-size: 12px;
+  color: var(--text-3);
+  line-height: 1.4;
+}
+.review-import-zone.imported {
+  border-color: var(--success);
+  border-style: solid;
+  background: var(--success-tint);
+}
+.review-import-zone.imported .import-zone-icon {
+  background: var(--success-tint);
+  color: var(--success);
+}
+.review-import-zone.imported .import-zone-text strong { color: var(--success); }
+
+/* Review sections */
+.review-section {
+  background: var(--surface-1);
+  border-radius: var(--r-lg);
+  margin-bottom: var(--s-3);
+  overflow: hidden;
+  border: 1px solid transparent;
+  transition: border-color var(--t-base);
+}
+
+.review-section-header {
+  padding: var(--s-4) var(--s-4) var(--s-3);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--s-3);
+}
+.review-section-header h2 {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text-1);
+}
+.review-section-body { padding: 0 var(--s-4) var(--s-4); }
+
+.btn-inline {
+  background: var(--brand-tint);
+  color: var(--brand);
+  border: 1px solid transparent;
+  padding: 8px var(--s-3);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: all var(--t-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  letter-spacing: -0.005em;
+}
+.btn-inline:hover {
+  background: var(--brand);
+  color: var(--surface-0);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(212, 165, 116, 0.3);
+}
+.btn-inline:active { transform: translateY(0); }
+.btn-inline:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Goals score badge */
+.goals-score {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-1);
+  background: var(--surface-3);
+  padding: 4px var(--s-2);
+  border-radius: var(--r-sm);
+  min-width: 56px;
+  text-align: center;
+}
+.goals-score.good { background: var(--success-tint); color: var(--success); }
+.goals-score.warn { background: var(--warn-tint); color: var(--warn); }
+.goals-score.bad { background: var(--danger-tint); color: var(--danger); }
+
+/* Goal evaluation cards */
+.goals-eval-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+.goal-eval {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  gap: var(--s-3);
+  align-items: center;
+  padding: var(--s-3) var(--s-3);
+  background: var(--surface-2);
+  border-radius: var(--r-md);
+  border-left: 3px solid var(--text-4);
+  transition: all var(--t-base);
+}
+.goal-eval.achieved {
+  border-left-color: var(--success);
+  background: linear-gradient(90deg, var(--success-tint) 0%, var(--surface-2) 100%);
+}
+.goal-eval.missed {
+  border-left-color: var(--danger);
+}
+.goal-eval-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--surface-3);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-3);
+}
+.goal-eval.achieved .goal-eval-icon { background: var(--success); color: white; }
+.goal-eval.missed .goal-eval-icon { background: var(--danger); color: white; }
+.goal-eval-text {
+  font-size: 14px;
+  color: var(--text-1);
+  font-weight: 500;
+  line-height: 1.4;
+}
+.goal-eval-meta {
+  font-size: 11px;
+  color: var(--text-3);
+  margin-top: 2px;
+  font-family: var(--font-mono);
+}
+.goal-eval-actual {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+  text-align: right;
+  min-width: 60px;
+}
+.goal-eval.achieved .goal-eval-actual { color: var(--success); }
+.goal-eval.missed .goal-eval-actual { color: var(--danger); }
+
+/* Week summary stat grid */
+.week-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--s-2);
+}
+.week-stat {
+  background: var(--surface-2);
+  border-radius: var(--r-md);
+  padding: var(--s-3);
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--t-base);
+}
+.week-stat:hover {
+  transform: translateY(-1px);
+}
+.week-stat-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-3);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.week-stat-value {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-1);
+  margin-top: 4px;
+  letter-spacing: -0.02em;
+}
+.week-stat-meta {
+  font-size: 11px;
+  color: var(--text-3);
+  margin-top: 2px;
+}
+.week-stat-value.good { color: var(--success); }
+.week-stat-value.warn { color: var(--warn); }
+.week-stat-value.bad { color: var(--danger); }
+
+/* Goals editor list */
+.goals-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+.goals-empty {
+  padding: var(--s-5) var(--s-4);
+  text-align: center;
+  background: var(--surface-2);
+  border-radius: var(--r-md);
+  color: var(--text-3);
+  font-size: 13px;
+  line-height: 1.6;
+  border: 1px dashed var(--border);
+}
+.goals-empty strong { color: var(--text-2); font-weight: 600; }
+
+.goal-card {
+  background: var(--surface-2);
+  border-radius: var(--r-md);
+  padding: var(--s-3);
+  display: grid;
+  grid-template-columns: 4px 1fr 32px;
+  gap: var(--s-3);
+  align-items: center;
+  position: relative;
+  border: 1px solid transparent;
+  transition: all var(--t-base);
+  animation: goalSlideIn 280ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation-fill-mode: backwards;
+}
+@keyframes goalSlideIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.goal-card:hover {
+  border-color: var(--border-strong);
+  background: var(--surface-3);
+}
+.goal-priority-bar {
+  width: 4px;
+  height: 100%;
+  min-height: 32px;
+  border-radius: 2px;
+  background: var(--text-4);
+}
+.goal-card[data-priority="high"] .goal-priority-bar { background: var(--danger); }
+.goal-card[data-priority="medium"] .goal-priority-bar { background: var(--warn); }
+.goal-card[data-priority="low"] .goal-priority-bar { background: var(--info); }
+
+.goal-content { min-width: 0; flex: 1; }
+.goal-category-tag {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.goal-category-tag::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--category-color, var(--text-4));
+}
+.goal-card[data-category="foundation"] { --category-color: var(--p-foundation); }
+.goal-card[data-category="construction"] { --category-color: var(--p-construction); }
+.goal-card[data-category="vitality"] { --category-color: var(--p-vitality); }
+.goal-card[data-category="culture"] { --category-color: var(--p-culture); }
+.goal-card[data-category="awareness"] { --category-color: var(--p-awareness); }
+
+.goal-text-input {
+  background: transparent;
+  border: none;
+  color: var(--text-1);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  width: 100%;
+  padding: 2px 0;
+  letter-spacing: -0.005em;
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--t-fast);
+}
+.goal-text-input:focus {
+  outline: none;
+  border-bottom-color: var(--border-focus);
+}
+
+.goal-remove {
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  color: var(--text-4);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  font-size: 18px;
+  display: grid;
+  place-items: center;
+  transition: all var(--t-fast);
+}
+.goal-remove:hover {
+  background: var(--danger-tint);
+  color: var(--danger);
+}
+
+.btn-add-goal {
+  width: 100%;
+  background: transparent;
+  border: 1px dashed var(--border-strong);
+  color: var(--text-3);
+  padding: var(--s-3);
+  border-radius: var(--r-md);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: var(--s-2);
+  transition: all var(--t-fast);
+}
+.btn-add-goal:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+  background: var(--brand-tint);
+}
+
+.review-hint {
+  margin-top: var(--s-3);
+  padding: var(--s-2) var(--s-3);
+  font-size: 12px;
+  color: var(--text-3);
+  text-align: center;
+  background: var(--surface-2);
+  border-radius: var(--r-sm);
+}
+.review-hint strong { color: var(--text-2); font-weight: 600; }
+
+/* ═══════════════════════════════════════════════════════════════
+   PREMIUM REFINEMENTS — animations, shadows, micro-interactions
+═══════════════════════════════════════════════════════════════ */
+
+/* Smoother scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--surface-3);
+  border-radius: 4px;
+  transition: background var(--t-fast);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--border-strong); }
+
+/* Selection */
+::selection { background: var(--brand-tint-strong); color: var(--text-1); }
+
+/* Sections subtle hover lift */
+section:hover { transition: transform var(--t-base), box-shadow var(--t-base); }
+
+/* Pillar cards entry animation */
+.pillar-card {
+  animation: pillarFadeIn 400ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation-fill-mode: backwards;
+  transition: transform var(--t-base), box-shadow var(--t-base);
+}
+.pillar-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+@keyframes pillarFadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.pillar-card:nth-child(1) { animation-delay: 0ms; }
+.pillar-card:nth-child(2) { animation-delay: 60ms; }
+.pillar-card:nth-child(3) { animation-delay: 120ms; }
+.pillar-card:nth-child(4) { animation-delay: 180ms; }
+.pillar-card:nth-child(5) { animation-delay: 240ms; }
+.pillar-card:nth-child(6) { animation-delay: 300ms; }
+
+/* App header — stronger glassmorphism */
+.app-header {
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  background: linear-gradient(to bottom, rgba(10, 12, 16, 0.9) 60%, rgba(10, 12, 16, 0.6) 100%);
+}
+
+/* Better button hover with subtle elevation */
+.btn:not(.primary):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+.btn.primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(212, 165, 116, 0.35);
+}
+
+/* Habit hover with subtle lift */
+.habit:hover {
+  background: var(--surface-2);
+  transform: translateX(2px);
+  transition: background var(--t-fast), transform var(--t-fast);
+}
+
+/* Section hover */
+section {
+  transition: transform var(--t-base), box-shadow var(--t-base);
+}
+
+/* Score cards animated counter feel */
+.score-value {
+  transition: color var(--t-base), transform var(--t-base);
+}
+
+/* Mobile adjustments for review */
+@media (max-width: 480px) {
+  .review-title { font-size: 22px; }
+  .review-import-zone {
+    grid-template-columns: 36px 1fr;
+    grid-template-rows: auto auto;
+  }
+  .review-import-zone .btn {
+    grid-column: 1 / -1;
+  }
+  .goal-eval { grid-template-columns: 24px 1fr auto; }
+  .goal-eval-icon { width: 24px; height: 24px; font-size: 12px; }
+  .week-stat-value { font-size: 18px; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
    MODAL
 ═══════════════════════════════════════════════════════════════ */
 .modal-bg {
@@ -1179,6 +1699,7 @@ body.sabbath section:not(.keystone-section):not(.reflection-section):not(.histor
     <div class="view-switch" role="tablist">
       <button class="active" data-view="tracker" onclick="switchView('tracker')" role="tab">Hoje</button>
       <button data-view="dashboard" onclick="switchView('dashboard')" role="tab">Progresso</button>
+      <button data-view="review" onclick="switchView('review')" role="tab">Revisão</button>
     </div>
 
     <div id="trackerHeaderBlock">
@@ -1374,10 +1895,6 @@ body.sabbath section:not(.keystone-section):not(.reflection-section):not(.histor
       </div>
       <div class="section-body">
         <div class="history-strip" id="historyStrip"></div>
-        <div class="btn-row">
-          <button class="btn ghost" onclick="exportMarkdown()">Export markdown</button>
-          <button class="btn primary" onclick="exportWeekly()">Review da semana</button>
-        </div>
       </div>
     </section>
 
@@ -1399,6 +1916,98 @@ body.sabbath section:not(.keystone-section):not(.reflection-section):not(.histor
     </div>
 
     <div id="dashboardContent"></div>
+  </div>
+
+  <!-- ══════════ REVIEW VIEW ══════════ -->
+  <div id="reviewView">
+
+    <!-- Step 1: Status & Importação -->
+    <section class="review-header-card">
+      <div class="review-eyebrow">Ritual semanal</div>
+      <div class="review-title" id="reviewWeekTitle">Semana —</div>
+      <div class="review-subtitle" id="reviewWeekSubtitle">Domingo é o dia de olhar para trás e desenhar a próxima semana</div>
+
+      <div class="review-import-zone" id="reviewImportZone">
+        <div class="import-zone-icon">↓</div>
+        <div class="import-zone-text">
+          <strong>Importar review da semana passada</strong>
+          <span>Carrega metas anteriores e calcula cumprimento automaticamente</span>
+        </div>
+        <button class="btn primary" onclick="document.getElementById('reviewImportInput').click()">Importar JSON</button>
+        <input type="file" id="reviewImportInput" accept=".json,application/json" style="display:none" onchange="importReview(event)">
+      </div>
+    </section>
+
+    <!-- Step 2: Avaliação metas anteriores (só se importou) -->
+    <section class="review-section" id="prevGoalsSection" style="display:none;">
+      <div class="review-section-header">
+        <h2>Metas da semana passada</h2>
+        <span class="goals-score" id="goalsScore">0/0</span>
+      </div>
+      <div class="review-section-body">
+        <div class="goals-eval-list" id="goalsEvalList"></div>
+      </div>
+    </section>
+
+    <!-- Step 3: Resumo da semana atual -->
+    <section class="review-section" id="weekSummarySection">
+      <div class="review-section-header">
+        <h2>Como foi sua semana</h2>
+        <span class="section-count" style="background:transparent;" id="weekDateRange">—</span>
+      </div>
+      <div class="review-section-body" id="weekSummaryBody">
+        <!-- Preenchido dinamicamente -->
+      </div>
+    </section>
+
+    <!-- Step 4: Geração de metas próxima semana -->
+    <section class="review-section">
+      <div class="review-section-header">
+        <h2>Metas para a próxima semana</h2>
+        <button class="btn-inline" onclick="generateGoals()" id="generateGoalsBtn">
+          <span>Gerar com base nos dados</span>
+        </button>
+      </div>
+      <div class="review-section-body">
+        <div class="goals-list" id="goalsList">
+          <div class="goals-empty">
+            Clique em <strong>"Gerar com base nos dados"</strong> para o sistema sugerir metas calibradas à sua execução real.
+          </div>
+        </div>
+        <button class="btn-add-goal" onclick="addManualGoal()" id="addGoalBtn" style="display:none;">+ Adicionar meta manual</button>
+      </div>
+    </section>
+
+    <!-- Step 5: Reflexão semanal -->
+    <section class="review-section">
+      <div class="review-section-header">
+        <h2>Reflexão da semana</h2>
+      </div>
+      <div class="review-section-body">
+        <div class="reflection-block">
+          <label for="reviewPattern">Padrão observado</label>
+          <textarea id="reviewPattern" class="expanded" placeholder="O que se repetiu? O que ficou claro? Onde houve drift?"></textarea>
+        </div>
+        <div class="reflection-block">
+          <label for="reviewFocus">Foco prioritário</label>
+          <textarea id="reviewFocus" class="expanded" placeholder="Uma frente prioritária para a próxima semana. Não três."></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- Step 6: Export -->
+    <section class="review-section">
+      <div class="review-section-body">
+        <div class="btn-row">
+          <button class="btn ghost" onclick="exportReviewMarkdown()">Markdown (Obsidian)</button>
+          <button class="btn primary" onclick="exportReviewJSON()">Salvar review (JSON)</button>
+        </div>
+        <div class="review-hint">
+          <strong>JSON</strong> é o que você vai importar no próximo domingo · <strong>Markdown</strong> vai pro vault como nota
+        </div>
+      </div>
+    </section>
+
   </div>
 
 </div>
@@ -1550,8 +2159,10 @@ function switchView(view) {
     t.classList.toggle('active', t.dataset.view === view));
   document.getElementById('trackerView').classList.toggle('hidden', view !== 'tracker');
   document.getElementById('dashboardView').classList.toggle('active', view === 'dashboard');
+  document.getElementById('reviewView').classList.toggle('active', view === 'review');
   document.getElementById('trackerHeaderBlock').style.display = view === 'tracker' ? 'block' : 'none';
   if (view === 'dashboard') renderDashboard();
+  if (view === 'review') renderReview();
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -2803,6 +3414,612 @@ function downloadModal() {
   URL.revokeObjectURL(url);
 }
 
+/* ═══════════════════════════════════════════════════════
+   REVIEW VIEW — ritual semanal estratégico
+═══════════════════════════════════════════════════════ */
+
+let reviewState = {
+  prevReview: null,
+  currentGoals: [],
+  pattern: '',
+  focusNext: ''
+};
+
+function renderReview() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const dowToday = today.getDay();
+  const daysUntilSunday = dowToday === 0 ? 0 : 7 - dowToday;
+  const weekEnd = new Date(today);
+  weekEnd.setDate(today.getDate() + daysUntilSunday);
+  const weekStart = new Date(weekEnd);
+  weekStart.setDate(weekEnd.getDate() - 6);
+  const weekNum = getISOWeek(weekEnd);
+
+  document.getElementById('reviewWeekTitle').textContent = `Semana ${weekNum}`;
+  document.getElementById('weekDateRange').textContent =
+    `${weekStart.getDate()} ${MONTH_NAMES[weekStart.getMonth()]} → ${weekEnd.getDate()} ${MONTH_NAMES[weekEnd.getMonth()]}`;
+
+  const weekDates = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(weekEnd);
+    d.setDate(weekEnd.getDate() - i);
+    weekDates.push(d);
+  }
+  const weekAgg = aggregateData(weekDates);
+  const weekStats = computeAllStats(weekAgg);
+
+  renderPrevGoalsEvaluation(weekStats);
+  renderWeekSummary(weekStats);
+  renderGoalsList();
+
+  document.getElementById('reviewPattern').value = reviewState.pattern;
+  document.getElementById('reviewFocus').value = reviewState.focusNext;
+}
+
+function renderPrevGoalsEvaluation(weekStats) {
+  const section = document.getElementById('prevGoalsSection');
+  if (!reviewState.prevReview || !reviewState.prevReview.goals) {
+    section.style.display = 'none';
+    return;
+  }
+  section.style.display = 'block';
+
+  const evaluated = evaluateGoals(reviewState.prevReview.goals, weekStats);
+  const measurable = evaluated.filter(g => g.achieved !== null);
+  const achieved = measurable.filter(g => g.achieved).length;
+  const total = measurable.length;
+  const pct = total > 0 ? Math.round((achieved / total) * 100) : 0;
+
+  const scoreEl = document.getElementById('goalsScore');
+  scoreEl.textContent = `${achieved}/${total}`;
+  scoreEl.className = 'goals-score ' + (pct >= 70 ? 'good' : pct >= 40 ? 'warn' : 'bad');
+
+  const list = document.getElementById('goalsEvalList');
+  list.innerHTML = '';
+
+  evaluated.forEach(goal => {
+    const card = document.createElement('div');
+    const status = goal.achieved === true ? 'achieved' : goal.achieved === false ? 'missed' : '';
+    card.className = 'goal-eval ' + status;
+    const icon = goal.achieved === true ? '✓' : goal.achieved === false ? '×' : '○';
+    card.innerHTML = `
+      <div class="goal-eval-icon">${icon}</div>
+      <div>
+        <div class="goal-eval-text">${escapeHtml(goal.text)}</div>
+        <div class="goal-eval-meta">${goalCategoryLabel(goal.category)} · ${goalTypeLabel(goal.type)}</div>
+      </div>
+      <div class="goal-eval-actual">${formatActual(goal)}</div>
+    `;
+    list.appendChild(card);
+  });
+}
+
+function goalCategoryLabel(cat) {
+  return ({
+    foundation: 'Fundação',
+    construction: 'Construção',
+    vitality: 'Vitalidade',
+    culture: 'Cultura',
+    awareness: 'Consciência'
+  })[cat] || cat;
+}
+
+function goalTypeLabel(type) {
+  return ({
+    recovery: 'recuperação',
+    increase: 'aumento',
+    stabilize: 'estabilização',
+    rebalance: 'rebalanceamento',
+    coverage: 'cobertura',
+    maintenance: 'manutenção'
+  })[type] || type;
+}
+
+function formatActual(goal) {
+  if (goal.actual === null || goal.actual === undefined) return '—';
+  if (typeof goal.actual === 'number') {
+    if (goal.metric === 'sleep_mean' || goal.metric === 'sleep_std') return goal.actual.toFixed(1) + 'h';
+    if (goal.metric === 'music_avg') return Math.round(goal.actual) + 'min';
+    return goal.actual + (goal.target ? `/${goal.target}` : '');
+  }
+  if (Array.isArray(goal.actual)) return `${goal.actual.length}/${goal.target.length}`;
+  return String(goal.actual);
+}
+
+function renderWeekSummary(stats) {
+  const body = document.getElementById('weekSummaryBody');
+  const meanSleep = stats.vitality.meanSleep;
+  const musicAvg = (stats.culture.totalMinutes / 7).toFixed(0);
+
+  body.innerHTML = `
+    <div class="week-stats">
+      <div class="week-stat">
+        <div class="week-stat-label">Score médio</div>
+        <div class="week-stat-value ${stats.avgPct >= 70 ? 'good' : stats.avgPct >= 50 ? 'warn' : 'bad'}">${stats.avgPct}%</div>
+      </div>
+      <div class="week-stat">
+        <div class="week-stat-label">Keystones</div>
+        <div class="week-stat-value ${stats.foundation.pct >= 80 ? 'good' : stats.foundation.pct >= 60 ? 'warn' : 'bad'}">${stats.foundation.pct}%</div>
+        <div class="week-stat-meta">${stats.foundation.days4of4} dias 4/4</div>
+      </div>
+      <div class="week-stat">
+        <div class="week-stat-label">Streak</div>
+        <div class="week-stat-value">${stats.foundation.streakNow}</div>
+        <div class="week-stat-meta">dias</div>
+      </div>
+      <div class="week-stat">
+        <div class="week-stat-label">Sono médio</div>
+        <div class="week-stat-value ${meanSleep >= 7 ? 'good' : meanSleep >= 6 ? 'warn' : meanSleep > 0 ? 'bad' : ''}">${meanSleep ? meanSleep.toFixed(1) + 'h' : '—'}</div>
+        <div class="week-stat-meta">±${stats.vitality.sleepStd.toFixed(1)}h</div>
+      </div>
+      <div class="week-stat">
+        <div class="week-stat-label">Música</div>
+        <div class="week-stat-value">${stats.culture.totalMinutes}<small style="font-size:13px;color:var(--text-3);">min</small></div>
+        <div class="week-stat-meta">${musicAvg}min/dia · ${stats.culture.tonesRecent}/12 tons</div>
+      </div>
+      <div class="week-stat">
+        <div class="week-stat-label">Reflexão</div>
+        <div class="week-stat-value ${stats.awareness.pct >= 70 ? 'good' : stats.awareness.pct >= 40 ? 'warn' : 'bad'}">${stats.awareness.pct}%</div>
+        <div class="week-stat-meta">${stats.awareness.reflFull} completas</div>
+      </div>
+    </div>
+  `;
+
+  if (stats.driftAlerts.length > 0) {
+    const driftDiv = document.createElement('div');
+    driftDiv.style.marginTop = 'var(--s-3)';
+    stats.driftAlerts.forEach(d => {
+      const callout = renderCallout(
+        d.critical ? 'danger' : 'warn',
+        'warning',
+        `<strong>${d.label}</strong> sem registro há ${d.days} dias`
+      );
+      driftDiv.appendChild(callout);
+    });
+    body.appendChild(driftDiv);
+  }
+}
+
+function generateGoalsForNextWeek(stats) {
+  const goals = [];
+  const days = 7;
+
+  KEYSTONES.forEach(k => {
+    const freq = stats.foundation.byHabit[k];
+    const pct = freq / days;
+    if (pct < 0.5) {
+      const target = Math.min(freq + 2, 5);
+      goals.push({
+        category: 'foundation', priority: 'high',
+        text: `Recuperar ${LABELS[k]} — meta ${target} dias na semana`,
+        metric: k, target: target, type: 'recovery'
+      });
+    } else if (pct >= 0.5 && pct < 0.85) {
+      goals.push({
+        category: 'foundation', priority: 'medium',
+        text: `${LABELS[k]} em ${freq + 1} dias (era ${freq})`,
+        metric: k, target: freq + 1, type: 'increase'
+      });
+    }
+  });
+
+  WORK.forEach(w => {
+    const freq = stats.construction.byHabit[w];
+    if (freq === 0) {
+      goals.push({
+        category: 'construction', priority: 'high',
+        text: `Voltar a praticar ${LABELS[w]} — pelo menos 2 dias`,
+        metric: w, target: 2, type: 'recovery'
+      });
+    } else if (freq <= 1 && stats.daysWithData >= 5) {
+      goals.push({
+        category: 'construction', priority: 'medium',
+        text: `${LABELS[w]} em ${freq + 1} dias`,
+        metric: w, target: freq + 1, type: 'increase'
+      });
+    }
+  });
+
+  if (stats.construction.balance < 50 && stats.construction.activeFronts >= 2) {
+    const dominant = Object.entries(stats.construction.byHabit).sort((a, b) => b[1] - a[1])[0];
+    goals.push({
+      category: 'construction', priority: 'low',
+      text: `Equilibrar frentes — abrir espaço além de ${LABELS[dominant[0]]}`,
+      metric: 'balance', target: 60, type: 'rebalance'
+    });
+  }
+
+  if (stats.vitality.meanSleep > 0 && stats.vitality.meanSleep < 6.5) {
+    const target = Math.min(stats.vitality.meanSleep + 0.5, 7.5);
+    goals.push({
+      category: 'vitality', priority: 'high',
+      text: `Sono médio ${target.toFixed(1)}h (atual ${stats.vitality.meanSleep.toFixed(1)}h)`,
+      metric: 'sleep_mean', target: target, type: 'increase'
+    });
+  } else if (stats.vitality.meanSleep >= 6.5 && stats.vitality.meanSleep < 7) {
+    goals.push({
+      category: 'vitality', priority: 'medium',
+      text: `Sono médio 7h+ (atual ${stats.vitality.meanSleep.toFixed(1)}h)`,
+      metric: 'sleep_mean', target: 7, type: 'increase'
+    });
+  }
+
+  if (stats.vitality.sleepStd > 1.2) {
+    goals.push({
+      category: 'vitality', priority: 'medium',
+      text: `Estabilizar sono — variabilidade abaixo de 1h`,
+      metric: 'sleep_std', target: 1.0, type: 'stabilize'
+    });
+  }
+
+  if (stats.vitality.academiaCount < 3 && stats.daysWithData >= 5) {
+    goals.push({
+      category: 'vitality', priority: 'medium',
+      text: `Academia ${stats.vitality.academiaCount + 1}x na semana (atual ${stats.vitality.academiaCount}x)`,
+      metric: 'b_academia', target: stats.vitality.academiaCount + 1, type: 'increase'
+    });
+  }
+
+  if (stats.culture.tonesRecent < 8 && stats.culture.totalMinutes > 30) {
+    const missing = stats.culture.untouchedTones.slice(0, 3);
+    goals.push({
+      category: 'culture', priority: 'medium',
+      text: `Cobrir tons não trabalhados: ${missing.join(', ')}`,
+      metric: 'tones', target: missing, type: 'coverage'
+    });
+  }
+
+  const avgMin = stats.culture.totalMinutes / days;
+  if (avgMin < 15 && stats.daysWithData >= 5) {
+    const target = Math.min(Math.round(avgMin + 5), 25);
+    goals.push({
+      category: 'culture', priority: 'low',
+      text: `Música média ${target}min/dia (atual ${avgMin.toFixed(0)}min)`,
+      metric: 'music_avg', target: target, type: 'increase'
+    });
+  }
+
+  if (stats.awareness.pct < 50 && stats.daysWithData >= 5) {
+    const target = Math.min(stats.awareness.reflDays + 2, 5);
+    goals.push({
+      category: 'awareness', priority: 'medium',
+      text: `Reflexão escrita em ${target} dias (atual ${stats.awareness.reflDays})`,
+      metric: 'reflection_days', target: target, type: 'increase'
+    });
+  } else if (stats.awareness.pct >= 50 && stats.awareness.reflFull < 4) {
+    goals.push({
+      category: 'awareness', priority: 'low',
+      text: `Reflexão completa (3 campos) em ${Math.min(stats.awareness.reflFull + 2, 5)} dias`,
+      metric: 'reflection_complete', target: Math.min(stats.awareness.reflFull + 2, 5), type: 'increase'
+    });
+  }
+
+  const priorityOrder = { high: 0, medium: 1, low: 2 };
+  return goals
+    .sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority])
+    .slice(0, 7)
+    .map((g, i) => ({ ...g, id: 'g_' + Date.now() + '_' + i }));
+}
+
+function generateGoals() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const dowToday = today.getDay();
+  const daysUntilSunday = dowToday === 0 ? 0 : 7 - dowToday;
+  const weekEnd = new Date(today);
+  weekEnd.setDate(today.getDate() + daysUntilSunday);
+
+  const weekDates = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(weekEnd);
+    d.setDate(weekEnd.getDate() - i);
+    weekDates.push(d);
+  }
+  const stats = computeAllStats(aggregateData(weekDates));
+
+  reviewState.currentGoals = generateGoalsForNextWeek(stats);
+  renderGoalsList();
+  if (reviewState.currentGoals.length === 0) {
+    showToast('Sem dados suficientes para gerar metas');
+  } else {
+    showToast(`${reviewState.currentGoals.length} metas geradas`);
+  }
+}
+
+function renderGoalsList() {
+  const list = document.getElementById('goalsList');
+  const addBtn = document.getElementById('addGoalBtn');
+
+  if (reviewState.currentGoals.length === 0) {
+    list.innerHTML = `<div class="goals-empty">
+      Clique em <strong>"Gerar com base nos dados"</strong> para o sistema sugerir metas calibradas à sua execução real.
+    </div>`;
+    addBtn.style.display = 'none';
+    return;
+  }
+
+  list.innerHTML = '';
+  addBtn.style.display = 'block';
+
+  reviewState.currentGoals.forEach((goal, idx) => {
+    const card = document.createElement('div');
+    card.className = 'goal-card';
+    card.dataset.priority = goal.priority || 'medium';
+    card.dataset.category = goal.category;
+    card.style.animationDelay = (idx * 50) + 'ms';
+    card.innerHTML = `
+      <div class="goal-priority-bar"></div>
+      <div class="goal-content">
+        <div class="goal-category-tag">${goalCategoryLabel(goal.category)} · ${goal.priority}</div>
+        <input class="goal-text-input" value="${escapeAttr(goal.text)}" data-id="${goal.id}">
+      </div>
+      <button class="goal-remove" data-id="${goal.id}" aria-label="Remover meta">×</button>
+    `;
+    list.appendChild(card);
+  });
+
+  list.querySelectorAll('.goal-text-input').forEach(input => {
+    input.addEventListener('change', e => {
+      const id = e.target.dataset.id;
+      const goal = reviewState.currentGoals.find(g => g.id === id);
+      if (goal) goal.text = e.target.value;
+    });
+  });
+  list.querySelectorAll('.goal-remove').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const id = e.target.dataset.id;
+      reviewState.currentGoals = reviewState.currentGoals.filter(g => g.id !== id);
+      renderGoalsList();
+    });
+  });
+}
+
+function addManualGoal() {
+  const newGoal = {
+    id: 'g_manual_' + Date.now(),
+    category: 'foundation', priority: 'medium',
+    text: '', metric: 'manual', target: null, type: 'maintenance'
+  };
+  reviewState.currentGoals.push(newGoal);
+  renderGoalsList();
+  setTimeout(() => {
+    const inputs = document.querySelectorAll('.goal-text-input');
+    if (inputs.length) inputs[inputs.length - 1].focus();
+  }, 50);
+}
+
+function escapeAttr(s) {
+  return String(s).replace(/"/g, '&quot;').replace(/</g, '&lt;');
+}
+
+function evaluateGoals(goals, weekStats) {
+  if (!Array.isArray(goals)) return [];
+
+  return goals.map(goal => {
+    let achieved = false;
+    let actual = null;
+
+    if (goal.metric === 'manual' || !goal.target) {
+      return { ...goal, achieved: null, actual: null };
+    }
+
+    if (KEYSTONES.includes(goal.metric)) {
+      actual = weekStats.foundation.byHabit[goal.metric] || 0;
+      achieved = actual >= goal.target;
+    } else if (WORK.includes(goal.metric)) {
+      actual = weekStats.construction.byHabit[goal.metric] || 0;
+      achieved = actual >= goal.target;
+    } else if (goal.metric === 'b_academia') {
+      actual = weekStats.vitality.academiaCount;
+      achieved = actual >= goal.target;
+    } else if (goal.metric === 'b_mobilidade') {
+      actual = weekStats.vitality.mobilidadeCount;
+      achieved = actual >= goal.target;
+    } else if (goal.metric === 'sleep_mean') {
+      actual = weekStats.vitality.meanSleep;
+      achieved = actual >= goal.target;
+    } else if (goal.metric === 'sleep_std') {
+      actual = weekStats.vitality.sleepStd;
+      achieved = actual > 0 && actual <= goal.target;
+    } else if (goal.metric === 'music_avg') {
+      actual = weekStats.culture.totalMinutes / 7;
+      achieved = actual >= goal.target;
+    } else if (goal.metric === 'reflection_days') {
+      actual = weekStats.awareness.reflDays;
+      achieved = actual >= goal.target;
+    } else if (goal.metric === 'reflection_complete') {
+      actual = weekStats.awareness.reflFull;
+      achieved = actual >= goal.target;
+    } else if (goal.metric === 'tones' && Array.isArray(goal.target)) {
+      const tonesCoveredInWeek = new Set();
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+      const dowToday = today.getDay();
+      const daysUntilSunday = dowToday === 0 ? 0 : 7 - dowToday;
+      const weekEnd = new Date(today); weekEnd.setDate(today.getDate() + daysUntilSunday);
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(weekEnd); d.setDate(weekEnd.getDate() - i);
+        const data = loadDay(d);
+        if (data.music.tone) tonesCoveredInWeek.add(data.music.tone.trim());
+      }
+      actual = goal.target.filter(t => tonesCoveredInWeek.has(t));
+      achieved = actual.length === goal.target.length;
+    } else if (goal.metric === 'balance') {
+      actual = weekStats.construction.balance;
+      achieved = actual >= goal.target;
+    }
+
+    return { ...goal, achieved, actual };
+  });
+}
+
+function importReview(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (data.type !== 'weekly_review') {
+        showToast('Arquivo não é um review semanal', true);
+        return;
+      }
+      reviewState.prevReview = data;
+      const zone = document.getElementById('reviewImportZone');
+      zone.classList.add('imported');
+      zone.querySelector('.import-zone-icon').textContent = '✓';
+      zone.querySelector('.import-zone-text strong').textContent = `Review importado · semana ${data.week_number || '?'}`;
+      zone.querySelector('.import-zone-text span').textContent =
+        `${(data.goals || []).length} metas serão avaliadas vs sua execução real`;
+      zone.querySelector('button').textContent = 'Trocar arquivo';
+      renderReview();
+      showToast('Review importado · metas avaliadas');
+    } catch (err) {
+      showToast('Erro ao ler review: ' + err.message, true);
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function buildReviewJSON() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const dowToday = today.getDay();
+  const daysUntilSunday = dowToday === 0 ? 0 : 7 - dowToday;
+  const weekEnd = new Date(today);
+  weekEnd.setDate(today.getDate() + daysUntilSunday);
+  const weekNum = getISOWeek(weekEnd);
+
+  const weekDates = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(weekEnd);
+    d.setDate(weekEnd.getDate() - i);
+    weekDates.push(d);
+  }
+  const stats = computeAllStats(aggregateData(weekDates));
+
+  reviewState.pattern = document.getElementById('reviewPattern').value;
+  reviewState.focusNext = document.getElementById('reviewFocus').value;
+
+  return {
+    type: 'weekly_review',
+    version: 1,
+    exported_at: new Date().toISOString(),
+    week_ending: dateKey(weekEnd),
+    week_number: weekNum,
+    summary: {
+      score_avg: stats.avgPct,
+      keystones_pct: stats.foundation.pct,
+      days_4of4: stats.foundation.days4of4,
+      streak: stats.foundation.streakNow,
+      construction_pct: stats.construction.pctActive,
+      balance: stats.construction.balance,
+      sleep_mean: stats.vitality.meanSleep,
+      sleep_std: stats.vitality.sleepStd,
+      academia: stats.vitality.academiaCount,
+      music_minutes: stats.culture.totalMinutes,
+      tones_recent: stats.culture.tonesRecent,
+      reflection_pct: stats.awareness.pct
+    },
+    goals: reviewState.currentGoals,
+    reflection: {
+      pattern: reviewState.pattern,
+      focus_next: reviewState.focusNext
+    },
+    prev_goals_eval: reviewState.prevReview && reviewState.prevReview.goals
+      ? evaluateGoals(reviewState.prevReview.goals, stats).map(g => ({
+          text: g.text, category: g.category, achieved: g.achieved, actual: g.actual, target: g.target
+        }))
+      : null
+  };
+}
+
+function exportReviewJSON() {
+  const review = buildReviewJSON();
+  const blob = new Blob([JSON.stringify(review, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `review-${review.week_ending}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  localStorage.setItem('review_' + review.week_ending, JSON.stringify(review));
+  showToast('Review salvo · use no próximo domingo');
+}
+
+function exportReviewMarkdown() {
+  const review = buildReviewJSON();
+  const lines = [];
+  lines.push(`# Review · Semana ${review.week_number}`);
+  lines.push(``);
+  lines.push(`> Semana terminando em ${review.week_ending}`);
+  lines.push(`> Gerado em ${new Date().toISOString().slice(0, 16).replace('T', ' ')}`);
+  lines.push(``);
+  lines.push(`## Sumário`);
+  lines.push(``);
+  lines.push(`- Score médio: **${review.summary.score_avg}%**`);
+  lines.push(`- Keystones: ${review.summary.keystones_pct}% · ${review.summary.days_4of4} dias 4/4 · streak ${review.summary.streak}`);
+  lines.push(`- Construção: ${review.summary.construction_pct}% dias ativos · balanço ${review.summary.balance}/100`);
+  lines.push(`- Sono: ${review.summary.sleep_mean ? review.summary.sleep_mean.toFixed(1) + 'h ±' + review.summary.sleep_std.toFixed(1) + 'h' : '—'}`);
+  lines.push(`- Academia: ${review.summary.academia} dias`);
+  lines.push(`- Música: ${review.summary.music_minutes}min · ${review.summary.tones_recent}/12 tons cobertos`);
+  lines.push(`- Reflexão: ${review.summary.reflection_pct}%`);
+  lines.push(``);
+
+  if (review.prev_goals_eval && review.prev_goals_eval.length > 0) {
+    lines.push(`## Cumprimento das metas anteriores`);
+    lines.push(``);
+    const measurable = review.prev_goals_eval.filter(g => g.achieved !== null);
+    const achieved = measurable.filter(g => g.achieved).length;
+    lines.push(`**${achieved}/${measurable.length} metas cumpridas**`);
+    lines.push(``);
+    review.prev_goals_eval.forEach(g => {
+      const icon = g.achieved === true ? '✓' : g.achieved === false ? '✗' : '○';
+      lines.push(`- ${icon} ${g.text}`);
+    });
+    lines.push(``);
+  }
+
+  if (review.reflection.pattern || review.reflection.focus_next) {
+    lines.push(`## Reflexão`);
+    lines.push(``);
+    if (review.reflection.pattern) {
+      lines.push(`### Padrão observado`);
+      lines.push(review.reflection.pattern);
+      lines.push(``);
+    }
+    if (review.reflection.focus_next) {
+      lines.push(`### Foco prioritário`);
+      lines.push(review.reflection.focus_next);
+      lines.push(``);
+    }
+  }
+
+  if (review.goals && review.goals.length > 0) {
+    lines.push(`## Metas para a próxima semana`);
+    lines.push(``);
+    const byCat = {};
+    review.goals.forEach(g => {
+      if (!byCat[g.category]) byCat[g.category] = [];
+      byCat[g.category].push(g);
+    });
+    Object.entries(byCat).forEach(([cat, items]) => {
+      lines.push(`### ${goalCategoryLabel(cat)}`);
+      items.forEach(g => {
+        lines.push(`- [ ] ${g.text} *(${g.priority || 'medium'})*`);
+      });
+      lines.push(``);
+    });
+  }
+
+  lines.push(`---`);
+  lines.push(``);
+  lines.push(`*Review do tracker · próximo domingo, importe \`review-${review.week_ending}.json\` para ver cumprimento*`);
+
+  showModal(`Review · Semana ${review.week_number}`, lines.join('\n'), `review-${review.week_ending}.md`);
+}
+
 /* INIT */
 render();
 
@@ -2811,7 +4028,11 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'ArrowLeft') changeDay(-1);
   if (e.key === 'ArrowRight') changeDay(1);
   if (e.key === 't') goToday();
-  if (e.key === 'd') switchView(currentView === 'tracker' ? 'dashboard' : 'tracker');
+  if (e.key === 'd') {
+    const order = ['tracker', 'dashboard', 'review'];
+    const next = order[(order.indexOf(currentView) + 1) % order.length];
+    switchView(next);
+  }
 });
 </script>
 
