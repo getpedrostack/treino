@@ -1574,6 +1574,279 @@ section {
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   COMPACT TEXT CARDS — preview + tap to expand
+═══════════════════════════════════════════════════════════════ */
+.text-card {
+  margin: 0 var(--s-3) var(--s-2);
+  background: var(--surface-2);
+  border-radius: var(--r-md);
+  padding: var(--s-3) var(--s-4);
+  cursor: pointer;
+  transition: background var(--t-fast), border-color var(--t-fast), transform var(--t-fast);
+  border: 1px solid transparent;
+  position: relative;
+  min-height: 64px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  user-select: none;
+}
+.text-card:hover {
+  background: var(--surface-3);
+  border-color: var(--border);
+  transform: translateY(-1px);
+}
+.text-card:active { transform: translateY(0); }
+.text-card:focus-visible { outline-offset: 2px; }
+
+.text-card-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-2);
+}
+.text-card-label::after {
+  content: "›";
+  font-size: 18px;
+  color: var(--text-4);
+  font-weight: 300;
+  transition: transform var(--t-fast), color var(--t-fast);
+  line-height: 1;
+}
+.text-card:hover .text-card-label::after {
+  transform: translateX(2px);
+  color: var(--text-2);
+}
+
+.text-card-preview {
+  font-size: 14px;
+  color: var(--text-1);
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  letter-spacing: -0.005em;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+.text-card.empty .text-card-preview {
+  color: var(--text-4);
+  font-style: italic;
+}
+.text-card.filled {
+  border-left: 3px solid var(--p-awareness);
+  padding-left: calc(var(--s-4) - 3px);
+}
+.text-card.filled .text-card-label {
+  color: var(--p-awareness);
+}
+.text-card.cat-brand.filled {
+  border-left-color: var(--brand);
+}
+.text-card.cat-brand.filled .text-card-label {
+  color: var(--brand);
+}
+.review-section-body .text-card {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DRAWER — bottom sheet for expanded editing
+═══════════════════════════════════════════════════════════════ */
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--t-base);
+  z-index: 150;
+}
+.drawer-backdrop.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.drawer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--surface-1);
+  border-top-left-radius: var(--r-xl);
+  border-top-right-radius: var(--r-xl);
+  z-index: 160;
+  transform: translateY(100%);
+  transition: transform 340ms cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 -12px 48px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  max-height: 92vh;
+  max-height: 92dvh;
+  padding-bottom: env(safe-area-inset-bottom);
+  border: 1px solid var(--border);
+  border-bottom: none;
+}
+.drawer.show {
+  transform: translateY(0);
+}
+
+@media (min-width: 640px) {
+  .drawer {
+    left: 50%;
+    right: auto;
+    bottom: 24px;
+    width: min(640px, calc(100vw - 32px));
+    transform: translate(-50%, calc(100% + 32px));
+    border-radius: var(--r-xl);
+    border: 1px solid var(--border);
+    max-height: 86vh;
+  }
+  .drawer.show {
+    transform: translate(-50%, 0);
+  }
+}
+
+.drawer-handle {
+  width: 36px;
+  height: 4px;
+  background: var(--border-strong);
+  border-radius: 2px;
+  margin: var(--s-2) auto var(--s-1);
+  flex-shrink: 0;
+}
+
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--s-2) var(--s-5) var(--s-3);
+  gap: var(--s-3);
+  flex-shrink: 0;
+}
+
+.drawer-title-block { min-width: 0; flex: 1; }
+.drawer-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.drawer-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-1);
+  letter-spacing: -0.01em;
+  margin-top: 2px;
+}
+
+.drawer-close {
+  width: 36px;
+  height: 36px;
+  background: var(--surface-2);
+  border: none;
+  border-radius: 50%;
+  color: var(--text-2);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  transition: all var(--t-fast);
+  flex-shrink: 0;
+}
+.drawer-close:hover {
+  background: var(--surface-3);
+  color: var(--text-1);
+}
+.drawer-close:active { transform: scale(0.94); }
+
+.drawer-body {
+  padding: 0 var(--s-5) var(--s-4);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.drawer-textarea {
+  flex: 1;
+  width: 100%;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-1);
+  padding: var(--s-4);
+  border-radius: var(--r-md);
+  font-family: inherit;
+  font-size: 16px;
+  line-height: 1.55;
+  resize: none;
+  letter-spacing: -0.005em;
+  min-height: 200px;
+  transition: border-color var(--t-fast), background var(--t-fast);
+  -webkit-appearance: none;
+}
+.drawer-textarea::placeholder { color: var(--text-4); }
+.drawer-textarea:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  background: var(--surface-3);
+}
+
+.drawer-footer {
+  padding: var(--s-3) var(--s-5) var(--s-4);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--s-3);
+  flex-shrink: 0;
+  border-top: 1px solid var(--border);
+}
+.drawer-counter {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-4);
+}
+.drawer-btn-done {
+  background: var(--brand);
+  color: var(--surface-0);
+  border: none;
+  padding: var(--s-3) var(--s-5);
+  border-radius: var(--r-md);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--t-fast);
+  min-height: 44px;
+  letter-spacing: -0.005em;
+}
+.drawer-btn-done:hover {
+  background: var(--brand-bright);
+  box-shadow: 0 4px 16px rgba(212, 165, 116, 0.35);
+}
+.drawer-btn-done:active { transform: scale(0.98); }
+
+body.drawer-open { overflow: hidden; }
+
+@media (max-width: 480px) {
+  .drawer-header { padding-left: var(--s-4); padding-right: var(--s-4); }
+  .drawer-body { padding-left: var(--s-4); padding-right: var(--s-4); }
+  .drawer-footer { padding-left: var(--s-4); padding-right: var(--s-4); }
+  .drawer-title { font-size: 16px; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
    MODAL
 ═══════════════════════════════════════════════════════════════ */
 .modal-bg {
@@ -1854,17 +2127,32 @@ body.sabbath section:not(.keystone-section):not(.reflection-section):not(.histor
         <span class="section-count" style="background:transparent;">→ obsidian</span>
       </div>
       <div class="section-body">
-        <div class="reflection-block">
-          <label for="reflAvancei">Avancei</label>
-          <textarea id="reflAvancei" placeholder="O que avançou hoje? Qual frente caminhou?" onchange="saveData()"></textarea>
+        <div class="text-card empty"
+             data-key="reflAvancei"
+             data-label="Avancei"
+             data-eyebrow="Reflexão diária"
+             data-placeholder="O que avançou hoje? Qual frente caminhou?"
+             onclick="openTextDrawer(this)" role="button" tabindex="0">
+          <div class="text-card-label"><span>Avancei</span></div>
+          <div class="text-card-preview">Toque para escrever…</div>
         </div>
-        <div class="reflection-block">
-          <label for="reflTravei">Travei</label>
-          <textarea id="reflTravei" placeholder="Onde travei? Que padrão se repetiu?" onchange="saveData()"></textarea>
+        <div class="text-card empty"
+             data-key="reflTravei"
+             data-label="Travei"
+             data-eyebrow="Reflexão diária"
+             data-placeholder="Onde travei? Que padrão se repetiu?"
+             onclick="openTextDrawer(this)" role="button" tabindex="0">
+          <div class="text-card-label"><span>Travei</span></div>
+          <div class="text-card-preview">Toque para escrever…</div>
         </div>
-        <div class="reflection-block">
-          <label for="reflProximo">Próximo passo</label>
-          <textarea id="reflProximo" placeholder="Amanhã, o primeiro movimento concreto é..." onchange="saveData()"></textarea>
+        <div class="text-card empty"
+             data-key="reflProximo"
+             data-label="Próximo passo"
+             data-eyebrow="Reflexão diária"
+             data-placeholder="Amanhã, o primeiro movimento concreto é..."
+             onclick="openTextDrawer(this)" role="button" tabindex="0">
+          <div class="text-card-label"><span>Próximo passo</span></div>
+          <div class="text-card-preview">Toque para escrever…</div>
         </div>
       </div>
     </section>
@@ -1966,13 +2254,23 @@ body.sabbath section:not(.keystone-section):not(.reflection-section):not(.histor
         <h2>Reflexão da semana</h2>
       </div>
       <div class="review-section-body">
-        <div class="reflection-block">
-          <label for="reviewPattern">Padrão observado</label>
-          <textarea id="reviewPattern" class="expanded" placeholder="O que se repetiu? O que ficou claro? Onde houve drift?"></textarea>
+        <div class="text-card cat-brand empty"
+             data-key="reviewPattern"
+             data-label="Padrão observado"
+             data-eyebrow="Reflexão semanal"
+             data-placeholder="O que se repetiu? O que ficou claro? Onde houve drift?"
+             onclick="openTextDrawer(this)" role="button" tabindex="0">
+          <div class="text-card-label"><span>Padrão observado</span></div>
+          <div class="text-card-preview">Toque para escrever…</div>
         </div>
-        <div class="reflection-block">
-          <label for="reviewFocus">Foco prioritário</label>
-          <textarea id="reviewFocus" class="expanded" placeholder="Uma frente prioritária para a próxima semana. Não três."></textarea>
+        <div class="text-card cat-brand empty"
+             data-key="reviewFocus"
+             data-label="Foco prioritário"
+             data-eyebrow="Reflexão semanal"
+             data-placeholder="Uma frente prioritária para a próxima semana. Não três."
+             onclick="openTextDrawer(this)" role="button" tabindex="0">
+          <div class="text-card-label"><span>Foco prioritário</span></div>
+          <div class="text-card-preview">Toque para escrever…</div>
         </div>
       </div>
     </section>
@@ -1992,6 +2290,28 @@ body.sabbath section:not(.keystone-section):not(.reflection-section):not(.histor
 
   </div>
 
+</div>
+
+<!-- Drawer (bottom sheet) for expanded text editing -->
+<div class="drawer-backdrop" id="drawerBackdrop" onclick="closeTextDrawer()"></div>
+<div class="drawer" id="textDrawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+  <div class="drawer-handle"></div>
+  <div class="drawer-header">
+    <div class="drawer-title-block">
+      <div class="drawer-eyebrow" id="drawerEyebrow">—</div>
+      <div class="drawer-title" id="drawerTitle">—</div>
+    </div>
+    <button class="drawer-close" onclick="closeTextDrawer()" aria-label="Fechar">×</button>
+  </div>
+  <div class="drawer-body">
+    <textarea class="drawer-textarea" id="drawerTextarea"
+              autocomplete="off" autocorrect="on" autocapitalize="sentences"
+              spellcheck="true"></textarea>
+  </div>
+  <div class="drawer-footer">
+    <span class="drawer-counter" id="drawerCounter">0 caracteres</span>
+    <button class="drawer-btn-done" onclick="closeTextDrawer()">Concluir</button>
+  </div>
 </div>
 
 <!-- Toast -->
@@ -2211,9 +2531,9 @@ function render() {
     btn.classList.toggle('active', parseInt(btn.dataset.val) === day.metrics.focus);
   });
 
-  document.getElementById('reflAvancei').value = day.reflection.avancei || '';
-  document.getElementById('reflTravei').value = day.reflection.travei || '';
-  document.getElementById('reflProximo').value = day.reflection.proximo || '';
+  updateTextCard('reflAvancei', day.reflection.avancei || '');
+  updateTextCard('reflTravei', day.reflection.travei || '');
+  updateTextCard('reflProximo', day.reflection.proximo || '');
 
   updateScores(day);
   renderHistory();
@@ -2336,9 +2656,9 @@ function saveData() {
   day.music.rhythm = document.getElementById('musicRhythm').value;
   day.music.minutes = document.getElementById('musicMinutes').value;
   day.metrics.sleep = document.getElementById('sleepHours').value;
-  day.reflection.avancei = document.getElementById('reflAvancei').value;
-  day.reflection.travei = document.getElementById('reflTravei').value;
-  day.reflection.proximo = document.getElementById('reflProximo').value;
+  day.reflection.avancei = getTextCardValue('reflAvancei');
+  day.reflection.travei = getTextCardValue('reflTravei');
+  day.reflection.proximo = getTextCardValue('reflProximo');
   saveDay(currentDate, day);
 }
 
@@ -3421,8 +3741,8 @@ function renderReview() {
   renderWeekSummary(weekStats);
   renderGoalsList();
 
-  document.getElementById('reviewPattern').value = reviewState.pattern;
-  document.getElementById('reviewFocus').value = reviewState.focusNext;
+  updateTextCard('reviewPattern', reviewState.pattern);
+  updateTextCard('reviewFocus', reviewState.focusNext);
 }
 
 function renderPrevGoalsEvaluation(weekStats) {
@@ -3867,8 +4187,8 @@ function buildReviewJSON() {
   }
   const stats = computeAllStats(aggregateData(weekDates));
 
-  reviewState.pattern = document.getElementById('reviewPattern').value;
-  reviewState.focusNext = document.getElementById('reviewFocus').value;
+  reviewState.pattern = getTextCardValue('reviewPattern');
+  reviewState.focusNext = getTextCardValue('reviewFocus');
 
   return {
     type: 'weekly_review',
@@ -3988,10 +4308,131 @@ function exportReviewMarkdown() {
   showModal(`Review · Semana ${review.week_number}`, lines.join('\n'), `review-${review.week_ending}.md`);
 }
 
+/* ═══════════════════════════════════════════════════════
+   TEXT CARDS + DRAWER — mobile-friendly text editing
+═══════════════════════════════════════════════════════ */
+
+function getTextCard(key) {
+  return document.querySelector('.text-card[data-key="' + key + '"]');
+}
+
+function getTextCardValue(key) {
+  const card = getTextCard(key);
+  return card && card.dataset.value ? card.dataset.value : '';
+}
+
+function updateTextCard(key, value) {
+  const card = getTextCard(key);
+  if (!card) return;
+  const safe = value || '';
+  card.dataset.value = safe;
+  const preview = card.querySelector('.text-card-preview');
+  if (!preview) return;
+  if (safe.trim() === '') {
+    card.classList.add('empty');
+    card.classList.remove('filled');
+    preview.textContent = 'Toque para escrever…';
+  } else {
+    card.classList.remove('empty');
+    card.classList.add('filled');
+    preview.textContent = safe;
+  }
+}
+
+let drawerActiveKey = null;
+let drawerSaveContext = null;  // 'daily' or 'weekly'
+
+function openTextDrawer(cardEl) {
+  const key = cardEl.dataset.key;
+  const label = cardEl.dataset.label;
+  const eyebrow = cardEl.dataset.eyebrow;
+  const placeholder = cardEl.dataset.placeholder;
+  const currentValue = cardEl.dataset.value || '';
+
+  drawerActiveKey = key;
+  drawerSaveContext = key.startsWith('refl') ? 'daily' : 'weekly';
+
+  document.getElementById('drawerEyebrow').textContent = eyebrow;
+  document.getElementById('drawerTitle').textContent = label;
+  const ta = document.getElementById('drawerTextarea');
+  ta.placeholder = placeholder;
+  ta.value = currentValue;
+  updateDrawerCounter();
+
+  document.getElementById('drawerBackdrop').classList.add('show');
+  document.getElementById('textDrawer').classList.add('show');
+  document.body.classList.add('drawer-open');
+
+  setTimeout(() => {
+    ta.focus();
+    const len = ta.value.length;
+    try { ta.setSelectionRange(len, len); } catch (e) {}
+  }, 80);
+}
+
+function closeTextDrawer() {
+  if (!drawerActiveKey) return;
+
+  const ta = document.getElementById('drawerTextarea');
+  const value = ta.value;
+  updateTextCard(drawerActiveKey, value);
+
+  if (drawerSaveContext === 'daily') {
+    saveData();
+  } else if (drawerSaveContext === 'weekly') {
+    if (drawerActiveKey === 'reviewPattern') reviewState.pattern = value;
+    if (drawerActiveKey === 'reviewFocus') reviewState.focusNext = value;
+  }
+
+  document.getElementById('drawerBackdrop').classList.remove('show');
+  document.getElementById('textDrawer').classList.remove('show');
+  document.body.classList.remove('drawer-open');
+
+  drawerActiveKey = null;
+  drawerSaveContext = null;
+}
+
+function updateDrawerCounter() {
+  const ta = document.getElementById('drawerTextarea');
+  const counter = document.getElementById('drawerCounter');
+  const len = ta.value.length;
+  counter.textContent = len === 1 ? '1 caractere' : len + ' caracteres';
+}
+
+// Live save while typing
+document.getElementById('drawerTextarea').addEventListener('input', () => {
+  updateDrawerCounter();
+  if (!drawerActiveKey) return;
+  const value = document.getElementById('drawerTextarea').value;
+  updateTextCard(drawerActiveKey, value);
+  if (drawerSaveContext === 'daily') {
+    saveData();
+  } else if (drawerSaveContext === 'weekly') {
+    if (drawerActiveKey === 'reviewPattern') reviewState.pattern = value;
+    if (drawerActiveKey === 'reviewFocus') reviewState.focusNext = value;
+  }
+});
+
+// Keyboard: Enter/Space on text cards opens drawer
+document.addEventListener('keydown', (e) => {
+  if (e.target && e.target.classList && e.target.classList.contains('text-card')) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      openTextDrawer(e.target);
+    }
+  }
+});
+
 /* INIT */
 render();
 
 document.addEventListener('keydown', (e) => {
+  // Esc closes drawer (from anywhere)
+  if (e.key === 'Escape' && drawerActiveKey) {
+    e.preventDefault();
+    closeTextDrawer();
+    return;
+  }
   if (['TEXTAREA','INPUT','SELECT'].includes(e.target.tagName)) return;
   if (e.key === 'ArrowLeft') changeDay(-1);
   if (e.key === 'ArrowRight') changeDay(1);
