@@ -1869,24 +1869,6 @@ body.sabbath section:not(.keystone-section):not(.reflection-section):not(.histor
       </div>
     </section>
 
-    <!-- DOMINGO REVIEW -->
-    <section class="reflection-section" id="weeklyReviewSection" style="display:none;">
-      <div class="section-header" onclick="toggleSection(this)">
-        <h2>Review semanal</h2>
-        <span class="section-count" style="background:transparent;">domingo</span>
-      </div>
-      <div class="section-body">
-        <div class="reflection-block">
-          <label for="weekPattern">Padrão da semana</label>
-          <textarea id="weekPattern" class="expanded" placeholder="O que se repetiu? O que ficou claro? Onde houve drift?" onchange="saveData()"></textarea>
-        </div>
-        <div class="reflection-block">
-          <label for="weekNext">Foco da próxima semana</label>
-          <textarea id="weekNext" class="expanded" placeholder="Uma frente prioritária. Não três." onchange="saveData()"></textarea>
-        </div>
-      </div>
-    </section>
-
     <!-- HISTÓRICO -->
     <section class="history-section">
       <div class="section-header">
@@ -2208,7 +2190,6 @@ function render() {
   }
 
   document.body.classList.toggle('sabbath', isSaturday);
-  document.getElementById('weeklyReviewSection').style.display = isSunday ? 'block' : 'none';
 
   document.getElementById('sugTone').textContent = tone.tone;
   document.getElementById('sugRhythm').textContent = rhythm;
@@ -2233,8 +2214,6 @@ function render() {
   document.getElementById('reflAvancei').value = day.reflection.avancei || '';
   document.getElementById('reflTravei').value = day.reflection.travei || '';
   document.getElementById('reflProximo').value = day.reflection.proximo || '';
-  document.getElementById('weekPattern').value = day.weekly.pattern || '';
-  document.getElementById('weekNext').value = day.weekly.next || '';
 
   updateScores(day);
   renderHistory();
@@ -2360,8 +2339,6 @@ function saveData() {
   day.reflection.avancei = document.getElementById('reflAvancei').value;
   day.reflection.travei = document.getElementById('reflTravei').value;
   day.reflection.proximo = document.getElementById('reflProximo').value;
-  day.weekly.pattern = document.getElementById('weekPattern').value;
-  day.weekly.next = document.getElementById('weekNext').value;
   saveDay(currentDate, day);
 }
 
@@ -3326,15 +3303,6 @@ ${day.reflection.travei || '—'}
 
 **Próximo passo:**
 ${day.reflection.proximo || '—'}
-${dow === 0 ? `
-## Review semanal
-
-**Padrão da semana:**
-${day.weekly.pattern || '—'}
-
-**Foco da próxima semana:**
-${day.weekly.next || '—'}
-` : ''}
 `;
 
   showModal('Export · ' + dateKey(currentDate), md, dateKey(currentDate) + '.md');
