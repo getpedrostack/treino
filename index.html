@@ -241,18 +241,7 @@
     50% { opacity: 1; }
   }
   
-  .day-tab.today::before {
-    content: '';
-    position: absolute;
-    top: 6px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--gold-bright);
-    box-shadow: 0 0 8px var(--gold), 0 0 2px var(--gold-bright);
-  }
+  /* Indicador "hoje" no day-tab — removido (redundante com heatmap e barra ativa) */
   
   .day-tab .trt-dot {
     display: inline-block;
@@ -477,18 +466,61 @@
     box-shadow: 
       inset 0 2px 4px rgba(0,0,0,0.6),
       0 2px 4px rgba(0,0,0,0.3);
-    overflow: hidden;
+    /* overflow visible para o forge ring aparecer fora */
+    overflow: visible;
   }
   
+  /* === FORGE METER === Ring conic preenchendo conforme séries */
   .set-tracker::before {
     content: '';
     position: absolute;
-    inset: -2px;
+    inset: -3px;
     border-radius: 50%;
-    background: conic-gradient(from -90deg, var(--gold-bright) calc(var(--progress, 0) * 1%), transparent calc(var(--progress, 0) * 1%));
+    background: conic-gradient(
+      from -90deg, 
+      var(--gold-bright) 0deg, 
+      var(--gold) calc(var(--progress, 0) * 3.6deg), 
+      transparent calc(var(--progress, 0) * 3.6deg + 1deg), 
+      transparent 360deg
+    );
+    -webkit-mask: radial-gradient(circle, transparent 50%, #000 53%, #000 58%, transparent 60%);
+            mask: radial-gradient(circle, transparent 50%, #000 53%, #000 58%, transparent 60%);
     opacity: 0;
-    transition: opacity 0.3s;
-    z-index: -1;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    z-index: 0;
+    filter: drop-shadow(0 0 4px rgba(200,155,60,0.5));
+  }
+  
+  .set-tracker.active::before {
+    opacity: 1;
+  }
+  
+  /* Glow interno que aumenta com o progresso — efeito "forja aquecendo" */
+  .set-tracker::after {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,68,68,0.15) 0%, rgba(200,155,60,0.08) 50%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    pointer-events: none;
+    z-index: 0;
+    transform: scale(0.6);
+  }
+  
+  .set-tracker.active::after {
+    opacity: calc(var(--progress, 0) / 100);
+    transform: scale(1);
+  }
+  
+  /* Z-index do conteúdo acima do glow */
+  .set-tracker-counter,
+  .set-tracker-dots,
+  .set-tracker-laurel {
+    position: relative;
+    z-index: 1;
   }
   
   .set-tracker.active {
@@ -2309,6 +2341,616 @@
     animation: shake 0.4s ease-in-out 2;
   }
   
+  /* ============ BOSS FIGHT MODE — DEADLIFT DAY ============ */
+  /* Ativa quando body.boss-fight: atmosfera mais intensa, brasa, sangue + dourado */
+  
+  body.boss-fight {
+    background:
+      /* Vinhetagem dramática nas bordas */
+      radial-gradient(ellipse 90% 60% at 50% 50%, transparent 40%, rgba(0,0,0,0.5) 100%),
+      /* Brasa superior — luz quente */
+      radial-gradient(ellipse 80% 40% at 50% -10%, rgba(255,68,68,0.06) 0%, rgba(200,155,60,0.04) 30%, transparent 70%),
+      /* Abismo inferior reforçado */
+      radial-gradient(ellipse 100% 50% at 50% 110%, rgba(0,0,0,0.8) 0%, transparent 50%),
+      /* Base ainda mais escura */
+      linear-gradient(180deg, #0a0604 0%, #060403 100%);
+  }
+  
+  /* Linha superior em sangue + dourado */
+  body.boss-fight::before {
+    background: linear-gradient(90deg, transparent 0%, var(--blood) 30%, var(--gold-bright) 50%, var(--blood) 70%, transparent 100%);
+    opacity: 0.5;
+    box-shadow: 0 0 16px var(--blood), 0 0 32px rgba(200,155,60,0.4);
+  }
+  
+  /* Header dramático */
+  body.boss-fight header {
+    background: linear-gradient(180deg, rgba(15,8,6,0.98) 0%, rgba(10,6,5,0.95) 100%);
+    border-image: linear-gradient(90deg, transparent 0%, var(--blood) 30%, var(--gold-bright) 50%, var(--blood) 70%, transparent 100%) 1;
+    box-shadow: 0 4px 40px rgba(168,50,50,0.2), 0 2px 16px rgba(0,0,0,0.6);
+  }
+  
+  body.boss-fight .logo {
+    color: var(--gold-bright);
+    text-shadow: 
+      0 0 16px rgba(240,198,116,0.6),
+      0 0 4px rgba(255,68,68,0.4),
+      0 0 1px var(--gold-bright);
+  }
+  
+  /* Boss eyebrow — banner antes do título */
+  .boss-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+    animation: bossEyebrowEnter 0.6s ease-out;
+  }
+  
+  @keyframes bossEyebrowEnter {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .boss-eyebrow-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--blood), var(--gold-bright), var(--blood), transparent);
+    box-shadow: 0 0 8px var(--blood);
+    opacity: 0.7;
+  }
+  
+  .boss-eyebrow-text {
+    font-family: 'Cinzel', Georgia, serif;
+    font-weight: 900;
+    font-size: 11px;
+    letter-spacing: 0.4em;
+    color: var(--gold-bright);
+    text-transform: uppercase;
+    padding: 0 4px;
+    text-shadow: 
+      0 0 12px var(--blood),
+      0 0 6px var(--gold-bright),
+      0 1px 0 rgba(0,0,0,0.4);
+    animation: bossPulse 2.5s ease-in-out infinite;
+    white-space: nowrap;
+  }
+  
+  @keyframes bossPulse {
+    0%, 100% { 
+      text-shadow: 0 0 12px var(--blood), 0 0 6px var(--gold-bright), 0 1px 0 rgba(0,0,0,0.4);
+    }
+    50% { 
+      text-shadow: 0 0 20px var(--blood), 0 0 12px var(--gold-bright), 0 1px 0 rgba(0,0,0,0.4);
+    }
+  }
+  
+  /* Day header boss fight */
+  body.boss-fight .day-header {
+    background: 
+      radial-gradient(ellipse 80% 100% at 50% 0%, rgba(168,50,50,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 50% 0%, rgba(200,155,60,0.06) 0%, transparent 70%),
+      linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.4) 100%);
+    border-bottom-color: var(--gold-deep);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  body.boss-fight .day-header::after {
+    background: linear-gradient(90deg, transparent 0%, var(--blood) 20%, var(--gold-bright) 50%, var(--blood) 80%, transparent 100%);
+    opacity: 0.6;
+    box-shadow: 0 0 12px var(--blood);
+  }
+  
+  /* Título "DEADLIFT DAY" forjado */
+  body.boss-fight .day-title {
+    font-size: 42px;
+    background: linear-gradient(180deg, var(--gold-bright) 0%, var(--gold) 50%, var(--gold-deep) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 
+      0 4px 16px rgba(0,0,0,0.8),
+      0 0 32px rgba(200,155,60,0.4),
+      0 0 12px rgba(255,68,68,0.3);
+    letter-spacing: 0.06em;
+    filter: drop-shadow(0 0 8px rgba(200,155,60,0.3));
+    animation: bossTitleEnter 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  @keyframes bossTitleEnter {
+    from { 
+      opacity: 0; 
+      transform: scale(0.92);
+      filter: drop-shadow(0 0 0 rgba(200,155,60,0));
+    }
+    to { 
+      opacity: 1; 
+      transform: scale(1);
+      filter: drop-shadow(0 0 8px rgba(200,155,60,0.3));
+    }
+  }
+  
+  /* Partículas de brasa subindo */
+  .boss-particles {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  
+  .ember {
+    position: absolute;
+    bottom: -10px;
+    width: 3px;
+    height: 3px;
+    background: radial-gradient(circle, var(--gold-bright) 0%, var(--blood) 60%, transparent 100%);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--gold-bright), 0 0 16px rgba(255,68,68,0.5);
+    opacity: 0;
+    animation: emberRise linear infinite;
+  }
+  
+  @keyframes emberRise {
+    0% { 
+      transform: translateY(0) translateX(0); 
+      opacity: 0;
+    }
+    10% { 
+      opacity: 1;
+    }
+    100% { 
+      transform: translateY(-180px) translateX(var(--drift, 10px)); 
+      opacity: 0;
+    }
+  }
+  
+  .ember.e1 { left: 8%;  animation-duration: 5s;   animation-delay: 0s;   --drift: 15px; }
+  .ember.e2 { left: 22%; animation-duration: 6.5s; animation-delay: 1.2s; --drift: -10px; }
+  .ember.e3 { left: 35%; animation-duration: 4.8s; animation-delay: 2.4s; --drift: 8px; }
+  .ember.e4 { left: 48%; animation-duration: 7s;   animation-delay: 0.6s; --drift: -18px; }
+  .ember.e5 { left: 62%; animation-duration: 5.5s; animation-delay: 3s;   --drift: 12px; }
+  .ember.e6 { left: 75%; animation-duration: 6s;   animation-delay: 1.8s; --drift: -8px; }
+  .ember.e7 { left: 88%; animation-duration: 4.5s; animation-delay: 2.8s; --drift: 14px; }
+  .ember.e8 { left: 55%; animation-duration: 8s;   animation-delay: 4s;   --drift: -20px; width: 2px; height: 2px; }
+  
+  /* Pills no boss fight ganham mais peso */
+  body.boss-fight .day-subtitle .pill.trt {
+    border-color: var(--blood);
+    color: var(--blood-glow);
+    background: linear-gradient(180deg, rgba(168,50,50,0.12) 0%, rgba(200,155,60,0.06) 100%);
+    box-shadow: 
+      inset 0 1px 0 rgba(255,68,68,0.15),
+      0 0 16px rgba(168,50,50,0.25);
+  }
+  
+  /* Exercise cards mais "forjados" no boss fight */
+  body.boss-fight .exercise {
+    border-bottom-color: var(--gold-deep);
+  }
+  
+  body.boss-fight .exercise.primary {
+    background: 
+      linear-gradient(90deg, rgba(168,50,50,0.05) 0%, transparent 30%),
+      linear-gradient(90deg, rgba(200,155,60,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 30% 100% at 0% 50%, rgba(200,155,60,0.05) 0%, transparent 100%);
+  }
+  
+  body.boss-fight .exercise.primary::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 8px; bottom: 8px;
+    width: 2px;
+    background: linear-gradient(180deg, transparent 0%, var(--blood) 15%, var(--gold-bright) 50%, var(--blood) 85%, transparent 100%);
+    box-shadow: 0 0 12px var(--gold), 0 0 4px var(--blood);
+  }
+  
+  body.boss-fight .exercise.done::before {
+    background: linear-gradient(180deg, transparent 0%, var(--gold-bright) 15%, var(--blood-glow) 50%, var(--gold-bright) 85%, transparent 100%);
+    box-shadow: 0 0 16px var(--gold-bright), 0 0 8px var(--blood);
+  }
+  
+  /* Set tracker boss-fight: anel de energia */
+  body.boss-fight .set-tracker.active {
+    border-color: var(--gold);
+    box-shadow: 
+      inset 0 0 16px rgba(255,68,68,0.15),
+      0 0 16px rgba(200,155,60,0.3),
+      0 0 4px rgba(255,68,68,0.3),
+      0 2px 6px rgba(0,0,0,0.5);
+  }
+  
+  body.boss-fight .set-tracker.active::after {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    border: 1px solid transparent;
+    background: 
+      conic-gradient(from 0deg, transparent 0%, var(--gold-bright) 25%, var(--blood) 50%, var(--gold-bright) 75%, transparent 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: bossRingSpin 3s linear infinite;
+    opacity: 0.7;
+    pointer-events: none;
+  }
+  
+  @keyframes bossRingSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  
+  body.boss-fight .set-tracker.complete {
+    background: 
+      radial-gradient(circle at 30% 30%, rgba(240,198,116,0.4) 0%, rgba(200,155,60,0.2) 50%, transparent 100%),
+      linear-gradient(180deg, rgba(200,155,60,0.3) 0%, rgba(168,50,50,0.2) 100%);
+    box-shadow: 
+      inset 0 0 24px rgba(240,198,116,0.4),
+      0 0 32px rgba(200,155,60,0.6),
+      0 0 16px rgba(255,68,68,0.3),
+      0 2px 12px rgba(0,0,0,0.5);
+  }
+  
+  /* Exercise name no boss fight */
+  body.boss-fight .ex-name {
+    text-shadow: 0 0 1px var(--gold), 0 1px 2px rgba(0,0,0,0.6);
+  }
+  
+  body.boss-fight .ex-stat.rpe .ex-stat-value,
+  body.boss-fight .ex-stat.intensity .ex-stat-value {
+    text-shadow: 0 0 10px rgba(240,198,116,0.5), 0 0 4px rgba(255,68,68,0.2);
+  }
+  
+  /* ============ ASCENDED MODE — Treino totalmente concluído ============ */
+  /* Aura sutil em todo o dia quando todas as séries foram feitas */
+  
+  body.ascended .day-header {
+    background: 
+      radial-gradient(ellipse 60% 100% at 50% 0%, rgba(240,198,116,0.1) 0%, transparent 70%),
+      linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.2) 100%);
+  }
+  
+  body.ascended .day-title {
+    animation: ascendedTitleGlow 4s ease-in-out infinite;
+  }
+  
+  @keyframes ascendedTitleGlow {
+    0%, 100% { 
+      filter: drop-shadow(0 0 8px rgba(200,155,60,0.2));
+    }
+    50% { 
+      filter: drop-shadow(0 0 16px rgba(240,198,116,0.5));
+    }
+  }
+  
+  /* Seção de ascensão no fim da lista */
+  .ascended-section {
+    padding: 60px 24px 80px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    margin-top: 20px;
+    border-top: 1px solid var(--gold-deep);
+    background: 
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(200,155,60,0.08) 0%, transparent 70%),
+      linear-gradient(180deg, rgba(200,155,60,0.04) 0%, transparent 100%);
+  }
+  
+  body.boss-fight .ascended-section {
+    border-top-color: var(--blood);
+    background: 
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,68,68,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(200,155,60,0.1) 0%, transparent 70%),
+      linear-gradient(180deg, rgba(168,50,50,0.04) 0%, transparent 100%);
+  }
+  
+  .ascended-aura {
+    position: absolute;
+    top: -50px; left: 50%;
+    transform: translateX(-50%);
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background: 
+      radial-gradient(circle, rgba(240,198,116,0.15) 0%, rgba(200,155,60,0.06) 40%, transparent 70%);
+    pointer-events: none;
+    animation: auraExpand 4s ease-in-out infinite;
+    z-index: 0;
+  }
+  
+  body.boss-fight .ascended-aura {
+    background: 
+      radial-gradient(circle, rgba(255,68,68,0.08) 0%, rgba(240,198,116,0.15) 30%, rgba(200,155,60,0.06) 60%, transparent 80%);
+  }
+  
+  @keyframes auraExpand {
+    0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.8; }
+    50% { transform: translateX(-50%) scale(1.08); opacity: 1; }
+  }
+  
+  .ascended-icon {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+    filter: drop-shadow(0 0 24px rgba(240,198,116,0.5)) drop-shadow(0 0 8px rgba(200,155,60,0.4));
+    animation: ascendedIconFloat 5s ease-in-out infinite, ascendedSpin 30s linear infinite;
+  }
+  
+  @keyframes ascendedIconFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+  
+  @keyframes ascendedSpin {
+    from { transform: translateY(0) rotate(0deg); }
+    to { transform: translateY(0) rotate(360deg); }
+  }
+  
+  .ascended-title {
+    font-family: 'Cinzel', Georgia, serif;
+    font-weight: 900;
+    font-size: 32px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    background: linear-gradient(180deg, var(--gold-bright) 0%, var(--gold) 60%, var(--gold-deep) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 40px rgba(240,198,116,0.3);
+    filter: drop-shadow(0 0 16px rgba(200,155,60,0.4));
+    position: relative;
+    z-index: 1;
+    animation: ascendedTitleEnter 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-bottom: 14px;
+  }
+  
+  @keyframes ascendedTitleEnter {
+    from { 
+      opacity: 0; 
+      letter-spacing: 0.05em;
+      transform: scale(0.94);
+    }
+    to { 
+      opacity: 1; 
+      letter-spacing: 0.2em;
+      transform: scale(1);
+    }
+  }
+  
+  body.boss-fight .ascended-title {
+    background: linear-gradient(180deg, var(--gold-bright) 0%, var(--blood-glow) 50%, var(--gold-deep) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 16px rgba(255,68,68,0.4)) drop-shadow(0 0 8px rgba(200,155,60,0.5));
+  }
+  
+  .ascended-subtitle {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--gold-pale);
+    line-height: 1.55;
+    max-width: 320px;
+    margin: 0 auto 22px;
+    position: relative;
+    z-index: 1;
+    letter-spacing: 0.02em;
+    text-shadow: 0 0 12px rgba(0,0,0,0.6);
+    animation: fadeIn 1.2s ease-out 0.3s both;
+  }
+  
+  .ascended-laurel {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    justify-content: center;
+    max-width: 200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    animation: fadeIn 1.2s ease-out 0.6s both;
+  }
+  
+  .laurel-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    box-shadow: 0 0 4px var(--gold);
+  }
+  
+  .laurel-glyph {
+    font-size: 16px;
+    color: var(--gold-bright);
+    text-shadow: 0 0 12px var(--gold), 0 0 4px var(--gold-bright);
+    animation: laurelGlyphPulse 3s ease-in-out infinite;
+  }
+  
+  @keyframes laurelGlyphPulse {
+    0%, 100% { transform: scale(1); text-shadow: 0 0 12px var(--gold), 0 0 4px var(--gold-bright); }
+    50% { transform: scale(1.1); text-shadow: 0 0 20px var(--gold-bright), 0 0 8px var(--gold); }
+  }
+  
+  /* ============ HEATMAP SEMANAL ============ */
+  /* Faixa fina abaixo das day-tabs mostrando status visual de cada dia */
+  .heatmap {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    padding: 6px 16px 8px;
+    background: rgba(0,0,0,0.3);
+    border-top: 1px solid var(--border);
+  }
+  
+  .heat-cell {
+    height: 4px;
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: 1px;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+  
+  /* Estados */
+  .heat-cell.heat-empty {
+    background: var(--bg-elev);
+    border-color: var(--border);
+  }
+  
+  .heat-cell.heat-partial {
+    background: linear-gradient(90deg, var(--bronze) 0%, var(--gold-deep) 100%);
+    border-color: var(--gold-deep);
+    box-shadow: 0 0 4px rgba(184,118,60,0.3);
+  }
+  
+  .heat-cell.heat-complete {
+    background: linear-gradient(90deg, var(--gold) 0%, var(--gold-bright) 100%);
+    border-color: var(--gold-bright);
+    box-shadow: 0 0 8px rgba(200,155,60,0.6), 0 0 2px var(--gold-bright);
+  }
+  
+  .heat-cell.heat-rest {
+    background: var(--bg-card);
+    border-color: var(--gold-deep);
+    border-style: dashed;
+    opacity: 0.5;
+  }
+  
+  .heat-cell.heat-cardio {
+    background: linear-gradient(90deg, transparent 0%, var(--gold-deep) 50%, transparent 100%);
+    border-color: var(--gold-deep);
+    opacity: 0.6;
+  }
+  
+  .heat-cell.heat-skip-justified {
+    background: linear-gradient(90deg, transparent 0%, var(--blood) 50%, transparent 100%);
+    border-color: var(--blood);
+    opacity: 0.7;
+  }
+  
+  .heat-cell.heat-skip-unjustified {
+    background: transparent;
+    border: 1px dashed var(--blood);
+  }
+  
+  /* Hoje: pequeno destaque no topo */
+  /* Indicador "hoje" no heatmap — removido a pedido do usuário */
+  
+  /* Dia ativo (selecionado) — fica visualmente "aceso" */
+  .heat-cell.active {
+    transform: scaleY(2);
+    transform-origin: bottom;
+  }
+  
+  .heat-cell.active.heat-complete,
+  .heat-cell.active.heat-partial {
+    box-shadow: 0 0 12px rgba(240,198,116,0.7);
+  }
+  
+  /* Boss fight: heatmap ganha tom mais quente */
+  body.boss-fight .heatmap {
+    background: rgba(15,8,6,0.6);
+    border-top-color: var(--gold-deep);
+  }
+  
+  body.boss-fight .heat-cell.heat-complete {
+    background: linear-gradient(90deg, var(--gold) 0%, var(--blood-glow) 100%);
+    box-shadow: 0 0 10px var(--gold), 0 0 4px var(--blood);
+  }
+  
+  /* ============ PR CROWN ============ */
+  /* ⚜ aparece quando carga atual ≥ PR do exercício */
+  .ex-load-pr {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 6px;
+    font-size: 16px;
+    color: var(--gold-bright);
+    text-shadow: 
+      0 0 12px var(--gold-bright),
+      0 0 4px var(--gold),
+      0 1px 0 rgba(0,0,0,0.4);
+    animation: prCrownPulse 3s ease-in-out infinite;
+    cursor: help;
+  }
+  
+  @keyframes prCrownPulse {
+    0%, 100% { 
+      filter: drop-shadow(0 0 4px rgba(240,198,116,0.4));
+      transform: scale(1);
+    }
+    50% { 
+      filter: drop-shadow(0 0 10px rgba(240,198,116,0.7));
+      transform: scale(1.08);
+    }
+  }
+  
+  /* PR info — mostra o PR atual quando carga digitada é menor */
+  .ex-load-pr-info {
+    display: inline-flex;
+    align-items: center;
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--gold-deep);
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 3px 7px;
+    background: linear-gradient(180deg, rgba(200,155,60,0.06) 0%, rgba(200,155,60,0.02) 100%);
+    border: 1px solid var(--gold-deep);
+    border-radius: 0;
+    opacity: 0.7;
+  }
+  
+  /* ============ FORGE BUMP ANIMATION ============ */
+  /* Quando salva carga maior que sessão anterior: flash dourado + bounce */
+  .ex-load-input.forge-bump {
+    animation: forgeBump 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  
+  @keyframes forgeBump {
+    0% { 
+      transform: scale(1);
+      background: linear-gradient(180deg, var(--bg-card-done) 0%, var(--bg-elev) 100%);
+      border-color: var(--border-bright);
+      color: var(--gold-pale);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+    }
+    25% { 
+      transform: scale(1.18);
+      background: linear-gradient(180deg, rgba(255,68,68,0.2) 0%, rgba(200,155,60,0.3) 100%);
+      border-color: var(--gold-bright);
+      color: var(--gold-bright);
+      box-shadow: 
+        0 0 24px rgba(240,198,116,0.6),
+        0 0 12px rgba(255,68,68,0.3),
+        inset 0 0 8px rgba(240,198,116,0.3);
+      text-shadow: 0 0 8px var(--gold-bright);
+    }
+    60% {
+      transform: scale(0.96);
+      border-color: var(--gold);
+      box-shadow: 
+        0 0 16px rgba(240,198,116,0.4),
+        inset 0 0 4px rgba(240,198,116,0.2);
+    }
+    100% { 
+      transform: scale(1);
+      background: linear-gradient(180deg, var(--bg-card-done) 0%, var(--bg-elev) 100%);
+      border-color: var(--border-bright);
+      color: var(--gold-pale);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+      text-shadow: none;
+    }
+  }
+  
   /* ============ DESKTOP BREAKPOINT ============ */
   @media (min-width: 720px) {
     .header-row { padding: 18px 24px 14px; }
@@ -2358,6 +3000,7 @@
     </div>
   </div>
   <nav class="day-tabs" id="dayTabs"></nav>
+  <div class="heatmap" id="heatmap" aria-label="Progresso da semana"></div>
 </header>
 
 <main id="main"></main>
@@ -3006,7 +3649,8 @@ const STATE = {
   exerciseSwaps: {}, // { 'week::day::exId': { name, reason, swapIndex } }
   skipJustifications: {}, // { 'week::day': { reasonKey, reasonLabel, note, timestamp } }
   weeklyNotes: {}, // { 'week': { sleep, libido, energy, weight, waist, notes, timestamp } }
-  setProgress: {} // { 'week::day::exId': number_of_completed_sets }
+  setProgress: {}, // { 'week::day::exId': number_of_completed_sets }
+  prHistory: {} // { exId: maxLoad } — recorde absoluto por exercício
 };
 
 function loadState() {
@@ -3019,6 +3663,7 @@ function loadState() {
     const skipJust = localStorage.getItem('pwr.skipJustifications');
     const wNotes = localStorage.getItem('pwr.weeklyNotes');
     const sets = localStorage.getItem('pwr.setProgress');
+    const pr = localStorage.getItem('pwr.prHistory');
     if (checks) STATE.checks = JSON.parse(checks);
     if (loads) STATE.loads = JSON.parse(loads);
     if (week) STATE.week = week;
@@ -3027,6 +3672,20 @@ function loadState() {
     if (skipJust) STATE.skipJustifications = JSON.parse(skipJust);
     if (wNotes) STATE.weeklyNotes = JSON.parse(wNotes);
     if (sets) STATE.setProgress = JSON.parse(sets);
+    if (pr) STATE.prHistory = JSON.parse(pr);
+    else {
+      // Primeira execução: reconstrói PR history a partir das cargas existentes
+      Object.keys(STATE.loads).forEach(k => {
+        const exId = k.split('::')[2];
+        const v = parseFloat(STATE.loads[k]);
+        if (!isNaN(v)) {
+          if (!STATE.prHistory[exId] || v > STATE.prHistory[exId]) {
+            STATE.prHistory[exId] = v;
+          }
+        }
+      });
+      savePrHistory();
+    }
   } catch(e) { console.warn('State load failed', e); }
 }
 
@@ -3038,6 +3697,7 @@ function saveExerciseSwaps() { localStorage.setItem('pwr.exerciseSwaps', JSON.st
 function saveSkipJustifications() { localStorage.setItem('pwr.skipJustifications', JSON.stringify(STATE.skipJustifications)); }
 function saveWeeklyNotes() { localStorage.setItem('pwr.weeklyNotes', JSON.stringify(STATE.weeklyNotes)); }
 function saveSetProgress() { localStorage.setItem('pwr.setProgress', JSON.stringify(STATE.setProgress)); }
+function savePrHistory() { localStorage.setItem('pwr.prHistory', JSON.stringify(STATE.prHistory)); }
 
 // Set progress helpers
 function setProgressKey(week, day, exId) { return `${week}::${day}::${exId}`; }
@@ -3061,6 +3721,12 @@ function incrementSetProgress(week, day, exId, maxSets) {
     if (STATE.setProgress[k] >= maxSets) {
       STATE.checks[k] = true;
       saveChecks();
+      // PR é commitado apenas quando o exercício é EFETIVAMENTE completado
+      // (todas as séries marcadas), não só ao digitar a carga
+      const currentLoad = parseFloat(getLoad(week, day, exId));
+      if (!isNaN(currentLoad) && currentLoad > 0) {
+        updatePrHistory(exId, currentLoad);
+      }
     }
   }
   saveSetProgress();
@@ -3072,6 +3738,22 @@ function resetSetProgress(week, day, exId) {
   delete STATE.checks[k];
   saveSetProgress();
   saveChecks();
+}
+
+// Verifica se TODOS os exercícios do dia estão completos (ascensão)
+function isDayFullyComplete(week, day) {
+  const session = getSessionForDay(day);
+  if (!session || !session.exercises || session.exercises.length === 0) return false;
+  const isDeload = week === 'deload';
+  
+  let total = 0, done = 0;
+  session.exercises.forEach(ex => {
+    if (isDeload && shouldHideOnDeload(ex)) return;
+    total++;
+    const maxSets = parseInt(getPrescription(ex, week).sets, 10) || 3;
+    if (getSetProgress(week, day, ex.id) >= maxSets) done++;
+  });
+  return total > 0 && done === total;
 }
 
 // Skip justification helpers
@@ -3250,6 +3932,45 @@ function setLoad(week, day, exId, val) {
   if (val) STATE.loads[k] = val;
   else delete STATE.loads[k];
   saveLoads();
+  // NOTA: PR só é commitado quando exercício é EFETIVAMENTE completado
+  // (todas as séries marcadas no set tracker). Ver incrementSetProgress.
+  // Aqui só salvamos a carga digitada — a coroa visual aparece via isPrLoad()
+  // se a carga atual >= PR histórico, mas só vira PR oficial após execução.
+}
+
+// === PR (Personal Record) tracking ===
+// Mantém max load por exId acumulado entre todas as semanas/dias
+function updatePrHistory(exId, loadValue) {
+  if (!loadValue || isNaN(loadValue)) return;
+  const current = STATE.prHistory[exId] || 0;
+  if (loadValue > current) {
+    STATE.prHistory[exId] = loadValue;
+    savePrHistory();
+  }
+}
+
+function getPr(exId) {
+  return STATE.prHistory[exId] || 0;
+}
+
+// Recalcula PR de um exercício varrendo todas as cargas (usado quando carga é apagada/diminuída)
+function recalculatePr(exId) {
+  let max = 0;
+  Object.keys(STATE.loads).forEach(k => {
+    const parts = k.split('::');
+    if (parts[2] === exId) {
+      const v = parseFloat(STATE.loads[k]);
+      if (!isNaN(v) && v > max) max = v;
+    }
+  });
+  if (max > 0) STATE.prHistory[exId] = max;
+  else delete STATE.prHistory[exId];
+  savePrHistory();
+}
+
+function isPrLoad(exId, loadValue) {
+  if (!loadValue || isNaN(loadValue)) return false;
+  return loadValue >= (STATE.prHistory[exId] || 0) && loadValue > 0;
 }
 
 function getPrevLoad(week, day, exId) {
@@ -3262,6 +3983,18 @@ function getPrevLoad(week, day, exId) {
     if (v) return `W${weeks[i]}: ${v}kg`;
   }
   return '';
+}
+
+// Versão numérica do prevLoad, para comparação no forge effect
+function getPrevLoadNumeric(week, day, exId) {
+  const weeks = ['1','2','3'];
+  const currentIdx = weeks.indexOf(week);
+  if (currentIdx <= 0) return 0;
+  for (let i = currentIdx - 1; i >= 0; i--) {
+    const v = STATE.loads[loadKey(weeks[i], day, exId)];
+    if (v) return parseFloat(v) || 0;
+  }
+  return 0;
 }
 
 // ============================================================
@@ -3303,9 +4036,60 @@ function renderDayTabs() {
       STATE.day = btn.dataset.day;
       renderDayTabs();
       renderMain();
+      renderHeatmap();
       window.scrollTo(0, 0);
     });
   });
+}
+
+// === HEATMAP semanal — status visual de cada dia da semana atual ===
+// Estados: empty, partial, complete, rest, skip-justified, skip-unjustified
+function getDayHeatStatus(week, day) {
+  const session = getSessionForDay(day, week);
+  const sessionKey = getSessionKeyForDay(day, week);
+  
+  // REST não conta como "vazio" — é planejado
+  if (session.rest) return 'rest';
+  
+  // SKIP: justified vs unjustified
+  if (session.skip) {
+    return getSkipJustification(week, day) ? 'skip-justified' : 'skip-unjustified';
+  }
+  
+  // CARDIO não tem exercícios marcáveis — só estados visualmente neutros
+  if (session.cardio) return 'cardio';
+  
+  // Exercícios: contagem
+  if (!session.exercises || session.exercises.length === 0) return 'empty';
+  const isDeload = week === 'deload';
+  let total = 0, done = 0, anyProgress = false;
+  session.exercises.forEach(ex => {
+    if (isDeload && shouldHideOnDeload(ex)) return;
+    total++;
+    const maxSets = parseInt(getPrescription(ex, week).sets, 10) || 3;
+    const cur = getSetProgress(week, day, ex.id);
+    if (cur >= maxSets) done++;
+    if (cur > 0) anyProgress = true;
+  });
+  
+  if (total === 0) return 'empty';
+  if (done === total) return 'complete';
+  if (anyProgress) return 'partial';
+  return 'empty';
+}
+
+function renderHeatmap() {
+  const container = document.getElementById('heatmap');
+  if (!container) return;
+  
+  const todayKey = JS_DAY_TO_KEY[new Date().getDay()];
+  
+  container.innerHTML = DAYS.map(d => {
+    const status = getDayHeatStatus(STATE.week, d);
+    const isToday = todayKey === d ? 'today' : '';
+    const isActive = STATE.day === d ? 'active' : '';
+    return `<span class="heat-cell heat-${status} ${isToday} ${isActive}" title="${DAY_LABELS_FULL[d]}: ${status}"></span>`;
+  }).join('');
 }
 
 function renderWeekSelector() {
@@ -3328,6 +4112,16 @@ function renderMain() {
   const isCustom = isCustomSchedule();
   const isTrtDay = TRT_DAYS.includes(STATE.day);
   const isModifiedDay = (STATE.schedules[STATE.week] && STATE.schedules[STATE.week][STATE.day] !== DEFAULT_SCHEDULE[STATE.day]);
+  
+  // === Modos visuais especiais ===
+  const isBossFight = sessionKey === 'deadlift' && !isDeload;
+  const isAscended = isDayFullyComplete(STATE.week, STATE.day);
+  
+  document.body.classList.toggle('boss-fight', isBossFight);
+  document.body.classList.toggle('ascended', isAscended);
+  
+  // Atualiza heatmap (estado dos dias da semana)
+  renderHeatmap();
   
   let html = '';
   
@@ -3364,6 +4158,7 @@ function renderMain() {
   
   html += `
     <div class="day-header fade-in">
+      ${isBossFight ? '<div class="boss-eyebrow"><span class="boss-eyebrow-line"></span><span class="boss-eyebrow-text">⚔ BOSS FIGHT ⚔</span><span class="boss-eyebrow-line"></span></div>' : ''}
       <div class="day-meta">
         <div class="day-eyebrow">${day.eyebrow} ${customBadge}</div>
         ${progressHtml}
@@ -3373,6 +4168,13 @@ function renderMain() {
         <span class="day-title-swap">⇄</span>
       </button>
       <div class="day-subtitle">${pillsHtml}</div>
+      ${isBossFight ? `
+        <div class="boss-particles">
+          <span class="ember e1"></span><span class="ember e2"></span><span class="ember e3"></span>
+          <span class="ember e4"></span><span class="ember e5"></span><span class="ember e6"></span>
+          <span class="ember e7"></span><span class="ember e8"></span>
+        </div>
+      ` : ''}
     </div>
   `;
   
@@ -3540,7 +4342,11 @@ function renderMain() {
     }).join('');
     
     const setTrackerHtml = `
-      <button class="set-tracker ${checked ? 'complete' : ''} ${setsCompleted > 0 && !checked ? 'active' : ''}" data-ex-id="${ex.id}" data-max-sets="${maxSets}" aria-label="Marcar série">
+      <button class="set-tracker ${checked ? 'complete' : ''} ${setsCompleted > 0 && !checked ? 'active' : ''}" 
+              data-ex-id="${ex.id}" 
+              data-max-sets="${maxSets}" 
+              style="--progress: ${Math.round((setsCompleted / maxSets) * 100)}"
+              aria-label="Marcar série">
         <div class="set-tracker-counter">
           <span class="set-tracker-current">${setsCompleted}</span>
           <span class="set-tracker-divider">/</span>
@@ -3565,7 +4371,16 @@ function renderMain() {
             <span class="ex-load-label">Carga</span>
             <input type="number" inputmode="decimal" step="0.5" class="ex-load-input" data-ex-id="${ex.id}" value="${load}" placeholder="—">
             <span class="ex-load-unit">kg</span>
+            ${load && isPrLoad(ex.id, parseFloat(load)) ? '<span class="ex-load-pr" title="Recorde pessoal">⚜</span>' : ''}
             ${prevLoad ? `<span class="ex-load-prev">${prevLoad}</span>` : ''}
+            ${(() => {
+              const pr = getPr(ex.id);
+              const curLoad = parseFloat(load) || 0;
+              if (pr > 0 && curLoad < pr) {
+                return `<span class="ex-load-pr-info" title="Seu recorde">PR ${pr}kg</span>`;
+              }
+              return '';
+            })()}
           </div>
           <div class="ex-actions-row">
             <button class="ex-notes-toggle" data-ex-id="${ex.id}">
@@ -3606,6 +4421,50 @@ function renderMain() {
     `;
   });
   html += '</div>';
+  
+  // === ASCENDED — todas as séries concluídas ===
+  if (isAscended) {
+    const ascendedTitle = isBossFight ? 'BOSS DEFEATED' : 'ASCENDIDO';
+    const ascendedSubtitle = isBossFight 
+      ? 'Você venceu o chefão. Cada repetição foi forjada em ouro.'
+      : 'Cada série concluída. Cada repetição feita. Honra ao guerreiro.';
+    html += `
+      <div class="ascended-section fade-in">
+        <div class="ascended-aura"></div>
+        <div class="ascended-icon">
+          <svg viewBox="0 0 80 80" width="80" height="80" aria-hidden="true">
+            <defs>
+              <radialGradient id="ascGrad" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#f0c674" stop-opacity="1"/>
+                <stop offset="50%" stop-color="#c89b3c" stop-opacity="0.6"/>
+                <stop offset="100%" stop-color="#8b6914" stop-opacity="0"/>
+              </radialGradient>
+              <linearGradient id="ascLaurel" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#f0c674"/>
+                <stop offset="100%" stop-color="#8b6914"/>
+              </linearGradient>
+            </defs>
+            <circle cx="40" cy="40" r="36" fill="url(#ascGrad)"/>
+            <!-- Estrela de 8 pontas -->
+            <path d="M40 8 L43 32 L60 12 L48 35 L72 40 L48 45 L60 68 L43 48 L40 72 L37 48 L20 68 L32 45 L8 40 L32 35 L20 12 L37 32 Z" 
+                  fill="url(#ascLaurel)" 
+                  stroke="#f0c674" 
+                  stroke-width="0.5"
+                  opacity="0.9"/>
+            <circle cx="40" cy="40" r="6" fill="#0c0a08" stroke="#f0c674" stroke-width="1"/>
+            <circle cx="40" cy="40" r="2" fill="#f0c674"/>
+          </svg>
+        </div>
+        <div class="ascended-title">${ascendedTitle}</div>
+        <div class="ascended-subtitle">${ascendedSubtitle}</div>
+        <div class="ascended-laurel">
+          <span class="laurel-line"></span>
+          <span class="laurel-glyph">⚜</span>
+          <span class="laurel-line"></span>
+        </div>
+      </div>
+    `;
+  }
   
   main.innerHTML = html;
   attachExerciseHandlers();
@@ -3719,14 +4578,42 @@ function attachExerciseHandlers() {
     });
   });
   
-  // Load inputs
+  // Load inputs — com forge effect ao bater carga maior
   document.querySelectorAll('.ex-load-input').forEach(input => {
-    input.addEventListener('change', (e) => {
-      setLoad(STATE.week, STATE.day, e.target.dataset.exId, e.target.value);
-    });
-    input.addEventListener('blur', (e) => {
-      setLoad(STATE.week, STATE.day, e.target.dataset.exId, e.target.value);
-    });
+    const handleLoadChange = (e) => {
+      const exId = e.target.dataset.exId;
+      const newValue = parseFloat(e.target.value) || 0;
+      const prevSession = getPrevLoadNumeric(STATE.week, STATE.day, exId);
+      const prevPr = getPr(exId);
+      
+      // Detecta tipo de progressão ANTES de salvar
+      const isNewPr = newValue > 0 && newValue > prevPr && prevPr > 0;
+      const isHigherThanPrev = prevSession > 0 && newValue > prevSession;
+      
+      setLoad(STATE.week, STATE.day, exId, e.target.value);
+      
+      // === FORGE EFFECT ===
+      // Carga maior que sessão anterior → flash dourado quente + bounce
+      if (isHigherThanPrev || (prevSession === 0 && newValue > 0)) {
+        e.target.classList.remove('forge-bump'); // reset se já tava
+        void e.target.offsetWidth; // forçar reflow pra re-trigger animação
+        e.target.classList.add('forge-bump');
+        if (navigator.vibrate) navigator.vibrate(15);
+        setTimeout(() => e.target.classList.remove('forge-bump'), 1100);
+      }
+      
+      // Novo PR → reflow do template (pra mostrar ⚜) + pulse mais intenso
+      if (isNewPr) {
+        if (navigator.vibrate) navigator.vibrate([20, 40, 80]);
+        // Re-renderiza pra atualizar o crown ⚜
+        setTimeout(() => renderMain(), 250);
+      } else if (newValue > 0 && isPrLoad(exId, newValue)) {
+        // Edge case: carga igualou o PR já existente, mostra crown se ainda não tava
+        setTimeout(() => renderMain(), 250);
+      }
+    };
+    input.addEventListener('change', handleLoadChange);
+    input.addEventListener('blur', handleLoadChange);
   });
   
   // Notes toggle
@@ -4541,6 +5428,7 @@ if (DAYS.includes(todayKey)) STATE.day = todayKey;
 
 renderWeekSelector();
 renderDayTabs();
+renderHeatmap();
 renderMain();
 
 // Wire up session swap (delegated, since the button is inside main which re-renders)
