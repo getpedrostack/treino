@@ -515,6 +515,12 @@
     transform: scale(1);
   }
   
+  /* No boss fight, o forge meter dourado dá lugar às chamas laranja */
+  body.boss-fight .set-tracker::before,
+  body.boss-fight .set-tracker::after {
+    opacity: 0 !important;
+  }
+  
   /* Z-index do conteúdo acima do glow */
   .set-tracker-counter,
   .set-tracker-dots,
@@ -2551,51 +2557,415 @@
     box-shadow: 0 0 16px var(--gold-bright), 0 0 8px var(--blood);
   }
   
-  /* Set tracker boss-fight: anel de energia */
-  body.boss-fight .set-tracker.active {
-    border-color: var(--gold);
-    box-shadow: 
-      inset 0 0 16px rgba(255,68,68,0.15),
-      0 0 16px rgba(200,155,60,0.3),
-      0 0 4px rgba(255,68,68,0.3),
-      0 2px 6px rgba(0,0,0,0.5);
+  /* ============================================================ */
+  /* ============ FOGO PROGRESSIVO - BOSS FIGHT v2 =============== */
+  /* ============================================================ */
+  /* Sistema de chama cinematográfica para o set tracker.        */
+  /* 5 níveis de intensidade (0..4) controlados via data-fire.   */
+  /* Camadas múltiplas com blend mode aditivo + turbulência.     */
+  /* Borda do botão permanece + conteúdo central sempre legível. */
+  
+  /* Reserva espaço mínimo no ex-side pro aro fino */
+  body.boss-fight .ex-side {
+    padding-left: 6px;
+    padding-right: 4px;
   }
   
-  body.boss-fight .set-tracker.active::after {
+  /* Wrapper de fogo: aro fino abraçando a borda do botão (não tocha externa) */
+  .boss-fire {
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    will-change: opacity, transform;
+  }
+  
+  /* === Z-INDEX: conteúdo SEMPRE acima do fogo === */
+  body.boss-fight .set-tracker > .set-tracker-counter,
+  body.boss-fight .set-tracker > .set-tracker-dots,
+  body.boss-fight .set-tracker > .set-tracker-laurel {
+    position: relative;
+    z-index: 3;
+  }
+  
+  /* O set-tracker no boss-fight precisa permitir overflow das chamas */
+  body.boss-fight .set-tracker {
+    overflow: visible;
+    isolation: isolate; /* contém o blend mode dentro do botão */
+  }
+  
+  /* Borda interna fica acima do fogo pra continuar visível */
+  body.boss-fight .set-tracker::after {
     content: '';
     position: absolute;
-    inset: -3px;
+    inset: 0;
     border-radius: 50%;
-    border: 1px solid transparent;
-    background: 
-      conic-gradient(from 0deg, transparent 0%, var(--gold-bright) 25%, var(--blood) 50%, var(--gold-bright) 75%, transparent 100%);
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    animation: bossRingSpin 3s linear infinite;
-    opacity: 0.7;
+    border: 1.5px solid var(--gold);
+    z-index: 2;
     pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s, border-color 0.4s;
   }
   
-  @keyframes bossRingSpin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+  /* Forge meter dourado do boss-fight é desligado (chamas substituem) */
+  body.boss-fight .set-tracker::before {
+    opacity: 0 !important;
   }
   
+  /* === ESTADOS DE INTENSIDADE === */
+  /* Cada nível tem intensidade --i que escala blur, spread, brilho e velocidade */
+  body.boss-fight .set-tracker[data-fire="0"] { --i: 0; }
+  body.boss-fight .set-tracker[data-fire="1"] { --i: 1; }
+  body.boss-fight .set-tracker[data-fire="2"] { --i: 2; }
+  body.boss-fight .set-tracker[data-fire="3"] { --i: 3; }
+  body.boss-fight .set-tracker[data-fire="4"],
+  body.boss-fight .set-tracker.complete { --i: 4; }
+  
+  /* Opacidade global do fogo cresce por nível */
+  body.boss-fight .set-tracker[data-fire="0"] .boss-fire { opacity: 0; }
+  body.boss-fight .set-tracker[data-fire="1"] .boss-fire { opacity: 0.75; }
+  body.boss-fight .set-tracker[data-fire="2"] .boss-fire { opacity: 0.88; }
+  body.boss-fight .set-tracker[data-fire="3"] .boss-fire { opacity: 1; }
+  body.boss-fight .set-tracker[data-fire="4"] .boss-fire,
+  body.boss-fight .set-tracker.complete .boss-fire {
+    opacity: 1;
+    filter: saturate(1.3) brightness(1.15);
+  }
+  body.boss-fight .set-tracker[data-fire="4"] .fire-rim,
+  body.boss-fight .set-tracker.complete .fire-rim {
+    filter: blur(calc(2px + var(--i, 0) * 0.8px)) brightness(1.3);
+  }
+  
+  /* Borda dourada acima do fogo aparece a partir do nível 1 */
+  body.boss-fight .set-tracker[data-fire="1"]::after,
+  body.boss-fight .set-tracker[data-fire="2"]::after,
+  body.boss-fight .set-tracker[data-fire="3"]::after,
+  body.boss-fight .set-tracker[data-fire="4"]::after,
+  body.boss-fight .set-tracker.complete::after { opacity: 1; }
+  body.boss-fight .set-tracker[data-fire="3"]::after,
+  body.boss-fight .set-tracker[data-fire="4"]::after,
+  body.boss-fight .set-tracker.complete::after {
+    border-color: var(--gold-bright);
+    box-shadow: inset 0 0 12px rgba(255,200,100,0.4);
+  }
+  
+  /* === CAMADAS DE CHAMA === */
+  /* Cada layer é um radial gradient blurred, rotaciona em velocidade própria */
+  /* mix-blend-mode: screen faz interseções ficarem mais quentes (aditivo) */
+  .fire-layer {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    mix-blend-mode: screen;
+    pointer-events: none;
+    will-change: transform, filter;
+    transform-origin: center;
+  }
+  
+  /* Mascara as camadas em formato de ANEL FINO (linha de chama, não tocha) */
+  .fire-layer {
+    -webkit-mask: radial-gradient(circle, transparent 47%, #000 52%, #000 56%, transparent 60%);
+            mask: radial-gradient(circle, transparent 47%, #000 52%, #000 56%, transparent 60%);
+  }
+  
+  /* Camada base: vermelho profundo, lenta */
+  .fire-base {
+    background: radial-gradient(
+      circle at 50% 50%,
+      transparent 30%,
+      rgba(200,40,20,0.7) 45%,
+      rgba(180,30,15,0.6) 60%,
+      rgba(140,20,10,0.4) 75%,
+      transparent 90%
+    );
+    filter: blur(calc(1.8px + var(--i, 0) * 0.9px)) saturate(calc(1 + var(--i, 0) * 0.15));
+    animation: fireSwirl1 calc(7s - var(--i, 0) * 1s) linear infinite,
+               fireBreathe calc(2.4s - var(--i, 0) * 0.25s) ease-in-out infinite;
+  }
+  
+  /* Camada média: laranja vibrante, sentido oposto, mais rápida */
+  .fire-mid {
+    background: radial-gradient(
+      circle at 50% 50%,
+      transparent 28%,
+      rgba(255,140,40,0.8) 42%,
+      rgba(255,100,30,0.7) 58%,
+      rgba(220,70,20,0.5) 72%,
+      transparent 88%
+    );
+    filter: blur(calc(1.4px + var(--i, 0) * 0.8px)) saturate(calc(1.1 + var(--i, 0) * 0.15));
+    animation: fireSwirl2 calc(5s - var(--i, 0) * 0.7s) linear infinite,
+               fireBreathe calc(1.8s - var(--i, 0) * 0.2s) ease-in-out infinite reverse;
+  }
+  
+  /* Camada superior: amarelo-branco quente, mais rápida, oscila escala */
+  /* Conic gradient adiciona variação angular — não é anel uniforme */
+  .fire-top {
+    background:
+      conic-gradient(from 45deg,
+        rgba(255,220,140,0.5) 0deg,
+        rgba(255,180,80,1) 90deg,
+        rgba(255,220,140,0.7) 180deg,
+        rgba(255,160,60,0.9) 270deg,
+        rgba(255,220,140,0.5) 360deg),
+      radial-gradient(
+        circle at 50% 50%,
+        transparent 26%,
+        rgba(255,220,140,0.85) 38%,
+        rgba(255,180,80,0.7) 52%,
+        rgba(255,120,40,0.5) 66%,
+        transparent 80%
+      );
+    background-blend-mode: overlay;
+    filter: blur(calc(1px + var(--i, 0) * 0.65px)) saturate(calc(1.2 + var(--i, 0) * 0.2));
+    animation: fireSwirl3 calc(3.5s - var(--i, 0) * 0.5s) linear infinite,
+               fireScale calc(1.6s - var(--i, 0) * 0.18s) ease-in-out infinite;
+  }
+  
+  /* CORE incandescente: REMOVIDO — não combina com o conceito de aro mágico fino.
+     Mantido o elemento no HTML por compatibilidade, mas sem efeito visual. */
+  .fire-core {
+    display: none;
+  }
+  
+  /* RIM externo: glow sutil seguindo o aro (não aura difusa enorme) */
+  .fire-rim {
+    position: absolute;
+    inset: calc(-2px - var(--i, 0) * 1px);
+    border-radius: 50%;
+    background: radial-gradient(
+      circle at 50% 50%,
+      transparent 44%,
+      rgba(255,120,40,calc(var(--i, 0) * 0.18)) 52%,
+      rgba(255,80,30,calc(var(--i, 0) * 0.12)) 60%,
+      transparent 72%
+    );
+    filter: blur(calc(2px + var(--i, 0) * 0.8px));
+    pointer-events: none;
+    animation: fireBreathe calc(3.2s - var(--i, 0) * 0.3s) ease-in-out infinite;
+  }
+  
+  /* === ANIMAÇÕES === */
+  @keyframes fireSwirl1 { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  @keyframes fireSwirl2 { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+  @keyframes fireSwirl3 { from { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.05); } to { transform: rotate(360deg) scale(1); } }
+  
+  @keyframes fireBreathe {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(calc(1.04 + var(--i, 0) * 0.015)); }
+  }
+  
+  @keyframes fireScale {
+    0%, 100% { transform: scale(0.96); }
+    50% { transform: scale(calc(1.06 + var(--i, 0) * 0.02)); }
+  }
+  
+  /* === BRASAS (EMBERS) — partículas individuais subindo === */
+  /* Aparecem a partir do nível 1, mais ativas em níveis altos */
+  .fire-ember {
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,230,160,1) 0%, rgba(255,140,40,0.8) 50%, transparent 100%);
+    box-shadow: 
+      0 0 4px rgba(255,180,80,0.9),
+      0 0 8px rgba(255,120,40,0.6);
+    pointer-events: none;
+    opacity: 0;
+    will-change: transform, opacity;
+  }
+  
+  /* Brasas voam quando há ao menos 1 série marcada */
+  body.boss-fight .set-tracker[data-fire="1"] .fire-ember,
+  body.boss-fight .set-tracker[data-fire="2"] .fire-ember,
+  body.boss-fight .set-tracker[data-fire="3"] .fire-ember,
+  body.boss-fight .set-tracker[data-fire="4"] .fire-ember,
+  body.boss-fight .set-tracker.complete .fire-ember {
+    animation: emberFly linear infinite;
+  }
+  
+  @keyframes emberFly {
+    0% {
+      transform: translate(-50%, 0) scale(0.5);
+      opacity: 0;
+    }
+    15% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 1;
+      transform: translate(calc(-50% + var(--dx, 0px)), calc(-18px - var(--i, 0) * 5px)) scale(0.8);
+    }
+    100% {
+      transform: translate(calc(-50% + var(--dx, 0px) * 1.6), calc(-36px - var(--i, 0) * 9px)) scale(0.15);
+      opacity: 0;
+    }
+  }
+  
+  /* Posições e timing variados (10 brasas) — derivas menores */
+  .fire-ember.em1  { --dx:  10px; animation-duration: 1.8s; animation-delay: 0s; }
+  .fire-ember.em2  { --dx:  -9px; animation-duration: 2.2s; animation-delay: 0.3s; }
+  .fire-ember.em3  { --dx:  13px; animation-duration: 1.5s; animation-delay: 0.6s; width: 2px; height: 2px; }
+  .fire-ember.em4  { --dx: -12px; animation-duration: 2.5s; animation-delay: 0.9s; }
+  .fire-ember.em5  { --dx:   6px; animation-duration: 1.6s; animation-delay: 1.2s; width: 3px; height: 3px; }
+  .fire-ember.em6  { --dx:  -7px; animation-duration: 2.0s; animation-delay: 1.5s; }
+  .fire-ember.em7  { --dx:  14px; animation-duration: 1.9s; animation-delay: 0.4s; width: 2px; height: 2px; }
+  .fire-ember.em8  { --dx: -13px; animation-duration: 2.3s; animation-delay: 0.7s; }
+  .fire-ember.em9  { --dx:   5px; animation-duration: 1.7s; animation-delay: 1.0s; width: 2px; height: 2px; }
+  .fire-ember.em10 { --dx: -15px; animation-duration: 2.4s; animation-delay: 1.3s; width: 3px; height: 3px; }
+  
+  /* Em níveis baixos, escondemos brasas extras pra fogo parecer mais discreto */
+  body.boss-fight .set-tracker[data-fire="1"] .fire-ember.em3,
+  body.boss-fight .set-tracker[data-fire="1"] .fire-ember.em5,
+  body.boss-fight .set-tracker[data-fire="1"] .fire-ember.em7,
+  body.boss-fight .set-tracker[data-fire="1"] .fire-ember.em8,
+  body.boss-fight .set-tracker[data-fire="1"] .fire-ember.em9,
+  body.boss-fight .set-tracker[data-fire="1"] .fire-ember.em10,
+  body.boss-fight .set-tracker[data-fire="2"] .fire-ember.em7,
+  body.boss-fight .set-tracker[data-fire="2"] .fire-ember.em8,
+  body.boss-fight .set-tracker[data-fire="2"] .fire-ember.em10 {
+    display: none;
+  }
+  
+  /* === TURBULÊNCIA SVG nos níveis 3+ === aplica deslocamento orgânico real */
+  body.boss-fight .set-tracker[data-fire="3"] .fire-mid,
+  body.boss-fight .set-tracker[data-fire="3"] .fire-top {
+    filter: url(#fireTurbulence) blur(calc(1.5px + var(--i, 0) * 1px)) saturate(1.4);
+  }
+  body.boss-fight .set-tracker[data-fire="4"] .fire-mid,
+  body.boss-fight .set-tracker[data-fire="4"] .fire-top,
+  body.boss-fight .set-tracker.complete .fire-mid,
+  body.boss-fight .set-tracker.complete .fire-top {
+    filter: url(#fireTurbulenceMax) blur(calc(1px + var(--i, 0) * 0.8px)) saturate(1.6) brightness(1.15);
+  }
+  
+  /* === BOX-SHADOW ACUMULATIVO no botão === glow sutil seguindo o aro */
+  body.boss-fight .set-tracker[data-fire="1"] {
+    box-shadow: 
+      0 0 4px rgba(255,140,40,0.4),
+      0 2px 4px rgba(0,0,0,0.4);
+  }
+  body.boss-fight .set-tracker[data-fire="2"] {
+    box-shadow: 
+      0 0 6px rgba(255,140,40,0.55),
+      0 0 2px rgba(255,60,20,0.3),
+      0 2px 6px rgba(0,0,0,0.5);
+  }
+  body.boss-fight .set-tracker[data-fire="3"] {
+    box-shadow: 
+      0 0 10px rgba(255,160,50,0.65),
+      0 0 4px rgba(255,80,30,0.4),
+      0 2px 8px rgba(0,0,0,0.5);
+  }
+  body.boss-fight .set-tracker[data-fire="4"],
   body.boss-fight .set-tracker.complete {
     background: 
-      radial-gradient(circle at 30% 30%, rgba(240,198,116,0.4) 0%, rgba(200,155,60,0.2) 50%, transparent 100%),
-      linear-gradient(180deg, rgba(200,155,60,0.3) 0%, rgba(168,50,50,0.2) 100%);
-    box-shadow: 
-      inset 0 0 24px rgba(240,198,116,0.4),
-      0 0 32px rgba(200,155,60,0.6),
-      0 0 16px rgba(255,68,68,0.3),
-      0 2px 12px rgba(0,0,0,0.5);
+      radial-gradient(circle at 30% 30%, rgba(255,210,120,0.4) 0%, rgba(200,80,30,0.2) 60%, transparent 100%),
+      linear-gradient(180deg, rgba(180,60,20,0.3) 0%, rgba(100,30,10,0.25) 100%);
+    border-color: var(--gold-bright);
+    animation: fireMaxBreathe 2.6s ease-in-out infinite;
   }
   
-  /* Exercise name no boss fight */
-  body.boss-fight .ex-name {
+  @keyframes fireMaxBreathe {
+    0%, 100% {
+      box-shadow:
+        0 0 18px rgba(255,160,60,0.85),
+        0 0 8px rgba(255,80,30,0.6),
+        0 0 3px rgba(255,220,140,0.7),
+        inset 0 0 18px rgba(255,200,100,0.5),
+        inset 0 0 4px rgba(255,240,180,0.4),
+        0 2px 10px rgba(0,0,0,0.5);
+    }
+    50% {
+      box-shadow:
+        0 0 26px rgba(255,180,80,0.95),
+        0 0 12px rgba(255,100,40,0.7),
+        0 0 5px rgba(255,230,160,0.8),
+        inset 0 0 22px rgba(255,220,140,0.55),
+        inset 0 0 6px rgba(255,250,210,0.5),
+        0 2px 12px rgba(0,0,0,0.5);
+    }
+  }
+  
+  /* === IGNIÇÃO === pulso de luz ao subir de nível (cada toque) */
+  body.boss-fight .set-tracker.active {
+    animation: fireIgnite 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  @keyframes fireIgnite {
+    0% { 
+      filter: brightness(1) saturate(1);
+      transform: scale(1);
+    }
+    25% { 
+      filter: brightness(1.5) saturate(1.4);
+      transform: scale(1.06);
+    }
+    100% { 
+      filter: brightness(1) saturate(1);
+      transform: scale(1);
+    }
+  }
+  
+  /* === ONDA DE CHOQUE FINAL === ao completar todas as séries */
+  body.boss-fight .set-tracker.complete .fire-rim {
+    animation: fireShockwave 1.4s cubic-bezier(0.16, 1, 0.3, 1) 1,
+               fireBreathe 2.6s ease-in-out infinite 1.4s;
+  }
+  
+  @keyframes fireShockwave {
+    0% { 
+      transform: scale(0.7); 
+      opacity: 0; 
+      filter: blur(2px);
+    }
+    25% { 
+      transform: scale(1.15); 
+      opacity: 1;
+      filter: blur(6px);
+    }
+    100% { 
+      transform: scale(1); 
+      opacity: 1;
+      filter: blur(calc(8px + var(--i, 0) * 3px));
+    }
+  }
+  
+  /* Number counter no completo ganha glow de calor */
+  body.boss-fight .set-tracker.complete .set-tracker-counter,
+  body.boss-fight .set-tracker[data-fire="4"] .set-tracker-counter {
+    color: #ffffff;
+    text-shadow: 
+      0 0 8px rgba(255,255,255,0.9),
+      0 0 16px rgba(255,200,100,0.8),
+      0 0 24px rgba(255,140,40,0.6);
+  }
+  body.boss-fight .set-tracker.complete .set-tracker-divider,
+  body.boss-fight .set-tracker.complete .set-tracker-max,
+  body.boss-fight .set-tracker[data-fire="4"] .set-tracker-divider,
+  body.boss-fight .set-tracker[data-fire="4"] .set-tracker-max {
+    color: rgba(255,240,200,0.85);
+  }
+  
+  /* Dots no completo vermelho-laranja brilhante */
+  body.boss-fight .set-tracker.complete .set-dot.filled {
+    background: #ffce9a;
+    box-shadow: 0 0 6px #ffa040, 0 0 2px #fff;
+  }
+  
+  /* Laurel ✦ acima ainda, em dourado */
+  body.boss-fight .set-tracker.complete .set-tracker-laurel {
+    color: #fff5dc;
+    text-shadow: 0 0 12px #ffce9a, 0 0 4px #fff;
+  }
+  
+    body.boss-fight .ex-name {
     text-shadow: 0 0 1px var(--gold), 0 1px 2px rgba(0,0,0,0.6);
   }
   
@@ -2951,6 +3321,468 @@
     }
   }
   
+  /* ============================================================ */
+  /* ============ SKINS ATMOSFÉRICAS POR DIA ============ */
+  /* ============================================================ */
+  /* Cada sessão = um "reino". Base dourada/mármore preservada, */
+  /* camada atmosférica sobreposta + partículas próprias. */
+  
+  /* Container universal de partículas — fixo, tela inteira, atrás do conteúdo */
+  .skin-atmosphere {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+  }
+  
+  .atmo-layer {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 1.2s ease;
+  }
+  
+  /* Header e main acima das partículas */
+  header { z-index: 100; }
+  main { position: relative; z-index: 2; }
+  
+  /* ====== SKIN: WARHALL (Bench/Ter) — dourado clássico, a base ====== */
+  /* É a identidade padrão. Não sobrepõe tint extra. */
+  body.skin-warhall {
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(200,155,60,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 100% 40% at 50% 110%, rgba(0,0,0,0.6) 0%, transparent 50%),
+      linear-gradient(180deg, #0c0a08 0%, #0a0806 100%);
+  }
+  
+  /* ====== SKIN: WINTER / FIMBULWINTER (Rest/Dom) — gelo, neve, quietude ====== */
+  body.skin-winter {
+    background:
+      radial-gradient(ellipse 90% 60% at 50% 0%, rgba(120,160,200,0.1) 0%, transparent 55%),
+      radial-gradient(ellipse 80% 50% at 50% 100%, rgba(40,70,110,0.15) 0%, transparent 60%),
+      radial-gradient(ellipse 100% 80% at 50% 50%, rgba(20,35,55,0.3) 0%, transparent 70%),
+      linear-gradient(180deg, #070b12 0%, #060a10 100%);
+    transition: background 1.2s ease;
+  }
+  
+  body.skin-winter::before {
+    background: linear-gradient(90deg, transparent 0%, #7da8c8 35%, #b8d4e8 50%, #7da8c8 65%, transparent 100%);
+    opacity: 0.4;
+    box-shadow: 0 0 16px rgba(125,168,200,0.5);
+  }
+  
+  body.skin-winter header {
+    background: linear-gradient(180deg, rgba(10,16,24,0.96) 0%, rgba(7,11,18,0.92) 100%);
+    border-image: linear-gradient(90deg, transparent 0%, #3a5878 25%, #b8d4e8 50%, #3a5878 75%, transparent 100%) 1;
+  }
+  
+  body.skin-winter .logo {
+    color: #d8e8f4;
+    text-shadow: 0 0 12px rgba(125,168,200,0.5), 0 0 1px rgba(184,212,232,0.8);
+  }
+  
+  body.skin-winter .day-header {
+    background:
+      radial-gradient(ellipse 60% 100% at 50% 0%, rgba(125,168,200,0.08) 0%, transparent 60%),
+      linear-gradient(180deg, transparent 0%, rgba(20,35,55,0.3) 100%);
+    border-bottom-color: #2a4258;
+  }
+  
+  body.skin-winter .day-header::after {
+    background: linear-gradient(90deg, transparent, #7da8c8, transparent);
+  }
+  
+  body.skin-winter .day-title {
+    background: linear-gradient(180deg, #e8f2fa 0%, #a8c4dc 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.5), 0 0 24px rgba(125,168,200,0.2);
+  }
+  
+  body.skin-winter .rest-day .glyph {
+    background: linear-gradient(180deg, #d8e8f4 0%, #5a7a98 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 20px rgba(125,168,200,0.5));
+  }
+  
+  body.skin-winter .rest-day::before {
+    background: radial-gradient(circle, rgba(125,168,200,0.12) 0%, transparent 70%);
+  }
+  
+  body.skin-winter .rest-day .label {
+    color: #b8d4e8;
+    text-shadow: 0 0 12px rgba(125,168,200,0.4);
+  }
+  
+  body.skin-winter .rest-day .quote {
+    color: #8aa8c0;
+  }
+  
+  /* Neve caindo — ativa só no inverno */
+  body.skin-winter .atmo-snow { opacity: 1; }
+  
+  .flake {
+    position: absolute;
+    top: -10px;
+    width: 4px;
+    height: 4px;
+    background: radial-gradient(circle, rgba(232,242,250,0.9) 0%, rgba(184,212,232,0.4) 60%, transparent 100%);
+    border-radius: 50%;
+    box-shadow: 0 0 4px rgba(216,232,244,0.6);
+    animation: snowFall linear infinite;
+  }
+  
+  @keyframes snowFall {
+    0% { transform: translateY(0) translateX(0); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(100vh) translateX(var(--sway, 20px)); opacity: 0; }
+  }
+  
+  .flake.f1 { left: 6%;  animation-duration: 11s; animation-delay: 0s;   --sway: 30px; }
+  .flake.f2 { left: 14%; animation-duration: 14s; animation-delay: 2s;   --sway: -20px; width: 3px; height: 3px; }
+  .flake.f3 { left: 23%; animation-duration: 9s;  animation-delay: 4s;   --sway: 25px; }
+  .flake.f4 { left: 32%; animation-duration: 13s; animation-delay: 1s;   --sway: -35px; width: 5px; height: 5px; }
+  .flake.f5 { left: 41%; animation-duration: 10s; animation-delay: 6s;   --sway: 15px; }
+  .flake.f6 { left: 50%; animation-duration: 15s; animation-delay: 3s;   --sway: -25px; width: 3px; height: 3px; }
+  .flake.f7 { left: 59%; animation-duration: 8s;  animation-delay: 5s;   --sway: 40px; }
+  .flake.f8 { left: 68%; animation-duration: 12s; animation-delay: 0.5s; --sway: -15px; width: 5px; height: 5px; }
+  .flake.f9 { left: 77%; animation-duration: 10s; animation-delay: 7s;   --sway: 28px; }
+  .flake.f10{ left: 85%; animation-duration: 13s; animation-delay: 2.5s; --sway: -30px; width: 3px; height: 3px; }
+  .flake.f11{ left: 92%; animation-duration: 9s;  animation-delay: 4.5s; --sway: 18px; }
+  .flake.f12{ left: 47%; animation-duration: 16s; animation-delay: 8s;   --sway: -40px; width: 6px; height: 6px; }
+  
+  /* ====== SKIN: FORGE / FORJA DE BROK (Squat/Seg) — calor de metal ====== */
+  body.skin-forge {
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -5%, rgba(255,140,40,0.1) 0%, rgba(200,100,30,0.04) 35%, transparent 65%),
+      radial-gradient(ellipse 100% 45% at 50% 105%, rgba(120,40,10,0.2) 0%, transparent 55%),
+      linear-gradient(180deg, #120a06 0%, #0d0704 100%);
+    transition: background 1.2s ease;
+  }
+  
+  body.skin-forge::before {
+    background: linear-gradient(90deg, transparent 0%, #c8641e 30%, #ffa040 50%, #c8641e 70%, transparent 100%);
+    opacity: 0.5;
+    box-shadow: 0 0 16px rgba(255,140,40,0.6);
+  }
+  
+  body.skin-forge header {
+    background: linear-gradient(180deg, rgba(20,11,7,0.96) 0%, rgba(13,7,4,0.92) 100%);
+    border-image: linear-gradient(90deg, transparent 0%, #8b3a14 25%, #ffa040 50%, #8b3a14 75%, transparent 100%) 1;
+  }
+  
+  body.skin-forge .logo {
+    color: #ffce9a;
+    text-shadow: 0 0 12px rgba(255,140,40,0.5), 0 0 1px rgba(255,206,154,0.8);
+  }
+  
+  body.skin-forge .day-header {
+    background:
+      radial-gradient(ellipse 70% 100% at 50% 0%, rgba(255,140,40,0.1) 0%, transparent 60%),
+      linear-gradient(180deg, transparent 0%, rgba(60,20,5,0.3) 100%);
+    border-bottom-color: #6b3010;
+  }
+  
+  body.skin-forge .day-header::after {
+    background: linear-gradient(90deg, transparent, #ffa040, transparent);
+    box-shadow: 0 0 12px rgba(255,140,40,0.4);
+  }
+  
+  body.skin-forge .day-title {
+    background: linear-gradient(180deg, #ffce9a 0%, #e8801e 50%, #a85410 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.6), 0 0 24px rgba(255,140,40,0.25);
+  }
+  
+  body.skin-forge .exercise.primary::before {
+    background: linear-gradient(180deg, transparent 0%, #ffa040 20%, #e8801e 80%, transparent 100%);
+    box-shadow: 0 0 12px #c8641e, 0 0 4px #ffa040;
+  }
+  
+  /* Faíscas de forja subindo */
+  body.skin-forge .atmo-forge { opacity: 1; }
+  
+  .spark {
+    position: absolute;
+    bottom: -10px;
+    width: 3px;
+    height: 3px;
+    background: radial-gradient(circle, #ffce9a 0%, #ff8020 50%, transparent 100%);
+    border-radius: 50%;
+    box-shadow: 0 0 6px #ffa040, 0 0 12px rgba(255,100,20,0.5);
+    animation: sparkRise linear infinite;
+  }
+  
+  @keyframes sparkRise {
+    0% { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
+    10% { opacity: 1; }
+    70% { opacity: 0.8; }
+    100% { transform: translateY(-90vh) translateX(var(--drift, 20px)) scale(0.3); opacity: 0; }
+  }
+  
+  .spark.s1 { left: 10%; animation-duration: 6s;   animation-delay: 0s;   --drift: 40px; }
+  .spark.s2 { left: 24%; animation-duration: 8s;   animation-delay: 1.5s; --drift: -30px; }
+  .spark.s3 { left: 38%; animation-duration: 5.5s; animation-delay: 3s;   --drift: 25px; }
+  .spark.s4 { left: 52%; animation-duration: 7.5s; animation-delay: 0.8s; --drift: -45px; }
+  .spark.s5 { left: 65%; animation-duration: 6.5s; animation-delay: 2.5s; --drift: 35px; }
+  .spark.s6 { left: 78%; animation-duration: 9s;   animation-delay: 4s;   --drift: -20px; }
+  .spark.s7 { left: 88%; animation-duration: 5s;   animation-delay: 1.2s; --drift: 30px; }
+  .spark.s8 { left: 45%; animation-duration: 10s;  animation-delay: 5s;   --drift: -50px; width: 2px; height: 2px; }
+  
+  /* ====== SKIN: LAKE / LAGO DOS NOVE (Cardio Z2/Qua) — água parada, névoa ====== */
+  body.skin-lake {
+    background:
+      radial-gradient(ellipse 90% 55% at 50% 0%, rgba(60,130,140,0.1) 0%, transparent 55%),
+      radial-gradient(ellipse 80% 50% at 50% 100%, rgba(20,60,75,0.18) 0%, transparent 60%),
+      linear-gradient(180deg, #06100f 0%, #050c0d 100%);
+    transition: background 1.2s ease;
+  }
+  
+  body.skin-lake::before {
+    background: linear-gradient(90deg, transparent 0%, #2a7878 30%, #5ab8b8 50%, #2a7878 70%, transparent 100%);
+    opacity: 0.4;
+    box-shadow: 0 0 16px rgba(90,184,184,0.5);
+  }
+  
+  body.skin-lake header {
+    background: linear-gradient(180deg, rgba(10,18,18,0.96) 0%, rgba(6,12,13,0.92) 100%);
+    border-image: linear-gradient(90deg, transparent 0%, #1e5858 25%, #5ab8b8 50%, #1e5858 75%, transparent 100%) 1;
+  }
+  
+  body.skin-lake .logo {
+    color: #a8e0e0;
+    text-shadow: 0 0 12px rgba(90,184,184,0.5), 0 0 1px rgba(168,224,224,0.8);
+  }
+  
+  body.skin-lake .day-header {
+    background:
+      radial-gradient(ellipse 60% 100% at 50% 0%, rgba(90,184,184,0.08) 0%, transparent 60%),
+      linear-gradient(180deg, transparent 0%, rgba(20,60,75,0.3) 100%);
+    border-bottom-color: #1e4a4a;
+  }
+  
+  body.skin-lake .day-header::after {
+    background: linear-gradient(90deg, transparent, #5ab8b8, transparent);
+  }
+  
+  body.skin-lake .day-title {
+    background: linear-gradient(180deg, #c8f0f0 0%, #4a9898 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.5), 0 0 24px rgba(90,184,184,0.2);
+  }
+  
+  body.skin-lake .cardio-card h3 {
+    color: #5ab8b8;
+    text-shadow: 0 0 8px rgba(90,184,184,0.3);
+  }
+  
+  body.skin-lake .cardio-card::before {
+    background: linear-gradient(90deg, transparent, #2a7878, transparent);
+  }
+  
+  /* Névoa deslizando — lago */
+  body.skin-lake .atmo-mist { opacity: 1; }
+  
+  .mist-cloud {
+    position: absolute;
+    width: 60%;
+    height: 120px;
+    background: radial-gradient(ellipse, rgba(90,184,184,0.06) 0%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(20px);
+    animation: mistDrift linear infinite;
+  }
+  
+  @keyframes mistDrift {
+    0% { transform: translateX(-60%); opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { transform: translateX(160%); opacity: 0; }
+  }
+  
+  .mist-cloud.m1 { top: 25%; animation-duration: 28s; animation-delay: 0s; }
+  .mist-cloud.m2 { top: 55%; animation-duration: 36s; animation-delay: 8s; }
+  .mist-cloud.m3 { top: 75%; animation-duration: 32s; animation-delay: 16s; }
+  
+  /* ====== SKIN: TUNDRA / MIDGARD (Cardio longo/Sab) — vento frio em movimento ====== */
+  body.skin-tundra {
+    background:
+      radial-gradient(ellipse 90% 55% at 50% 0%, rgba(140,160,180,0.08) 0%, transparent 55%),
+      radial-gradient(ellipse 80% 50% at 50% 100%, rgba(50,65,85,0.16) 0%, transparent 60%),
+      linear-gradient(180deg, #0a0d11 0%, #080b0e 100%);
+    transition: background 1.2s ease;
+  }
+  
+  body.skin-tundra::before {
+    background: linear-gradient(90deg, transparent 0%, #5a6f88 30%, #a8bcd4 50%, #5a6f88 70%, transparent 100%);
+    opacity: 0.4;
+    box-shadow: 0 0 16px rgba(168,188,212,0.4);
+  }
+  
+  body.skin-tundra header {
+    background: linear-gradient(180deg, rgba(12,16,20,0.96) 0%, rgba(8,11,14,0.92) 100%);
+    border-image: linear-gradient(90deg, transparent 0%, #485a72 25%, #a8bcd4 50%, #485a72 75%, transparent 100%) 1;
+  }
+  
+  body.skin-tundra .logo {
+    color: #ccd8e4;
+    text-shadow: 0 0 12px rgba(168,188,212,0.4), 0 0 1px rgba(204,216,228,0.8);
+  }
+  
+  body.skin-tundra .day-header {
+    background:
+      radial-gradient(ellipse 60% 100% at 50% 0%, rgba(168,188,212,0.06) 0%, transparent 60%),
+      linear-gradient(180deg, transparent 0%, rgba(50,65,85,0.3) 100%);
+    border-bottom-color: #38485a;
+  }
+  
+  body.skin-tundra .day-header::after {
+    background: linear-gradient(90deg, transparent, #a8bcd4, transparent);
+  }
+  
+  body.skin-tundra .day-title {
+    background: linear-gradient(180deg, #e0e8f0 0%, #8499b0 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.5), 0 0 24px rgba(168,188,212,0.18);
+  }
+  
+  body.skin-tundra .cardio-card h3 {
+    color: #a8bcd4;
+    text-shadow: 0 0 8px rgba(168,188,212,0.3);
+  }
+  
+  body.skin-tundra .cardio-card::before {
+    background: linear-gradient(90deg, transparent, #5a6f88, transparent);
+  }
+  
+  /* Rajadas de vento horizontais — tundra */
+  body.skin-tundra .atmo-wind { opacity: 1; }
+  
+  .gust {
+    position: absolute;
+    height: 1px;
+    width: 80px;
+    background: linear-gradient(90deg, transparent, rgba(200,216,232,0.5), transparent);
+    animation: windGust linear infinite;
+  }
+  
+  @keyframes windGust {
+    0% { transform: translateX(-100px); opacity: 0; }
+    15% { opacity: 0.8; }
+    85% { opacity: 0.8; }
+    100% { transform: translateX(100vw); opacity: 0; }
+  }
+  
+  .gust.g1 { top: 18%; animation-duration: 4s;   animation-delay: 0s;   width: 100px; }
+  .gust.g2 { top: 30%; animation-duration: 5.5s; animation-delay: 1.5s; width: 70px; }
+  .gust.g3 { top: 45%; animation-duration: 3.5s; animation-delay: 2.8s; width: 120px; }
+  .gust.g4 { top: 60%; animation-duration: 6s;   animation-delay: 0.5s; width: 60px; }
+  .gust.g5 { top: 72%; animation-duration: 4.5s; animation-delay: 3.5s; width: 90px; }
+  .gust.g6 { top: 85%; animation-duration: 5s;   animation-delay: 2s;   width: 110px; }
+  
+  /* ====== SKIN: BRONZE / ESPARTA (Upper Hipertrofia/Sex) — pátina oliva ====== */
+  body.skin-bronze {
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -5%, rgba(180,160,80,0.08) 0%, rgba(140,130,60,0.04) 35%, transparent 65%),
+      radial-gradient(ellipse 100% 45% at 50% 105%, rgba(70,65,30,0.18) 0%, transparent 55%),
+      linear-gradient(180deg, #0e0d08 0%, #0a0906 100%);
+    transition: background 1.2s ease;
+  }
+  
+  body.skin-bronze::before {
+    background: linear-gradient(90deg, transparent 0%, #8a7a3a 30%, #d4bc6a 50%, #8a7a3a 70%, transparent 100%);
+    opacity: 0.45;
+    box-shadow: 0 0 16px rgba(212,188,106,0.5);
+  }
+  
+  body.skin-bronze header {
+    background: linear-gradient(180deg, rgba(16,14,9,0.96) 0%, rgba(10,9,6,0.92) 100%);
+    border-image: linear-gradient(90deg, transparent 0%, #6a5e2a 25%, #d4bc6a 50%, #6a5e2a 75%, transparent 100%) 1;
+  }
+  
+  body.skin-bronze .logo {
+    color: #e8d89a;
+    text-shadow: 0 0 12px rgba(212,188,106,0.5), 0 0 1px rgba(232,216,154,0.8);
+  }
+  
+  body.skin-bronze .day-header {
+    background:
+      radial-gradient(ellipse 60% 100% at 50% 0%, rgba(212,188,106,0.08) 0%, transparent 60%),
+      linear-gradient(180deg, transparent 0%, rgba(70,65,30,0.3) 100%);
+    border-bottom-color: #5a4e22;
+  }
+  
+  body.skin-bronze .day-header::after {
+    background: linear-gradient(90deg, transparent, #d4bc6a, transparent);
+  }
+  
+  body.skin-bronze .day-title {
+    background: linear-gradient(180deg, #e8d89a 0%, #b4a04a 50%, #8a7a3a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.5), 0 0 24px rgba(212,188,106,0.2);
+  }
+  
+  body.skin-bronze .exercise.primary::before {
+    background: linear-gradient(180deg, transparent 0%, #d4bc6a 20%, #b4a04a 80%, transparent 100%);
+    box-shadow: 0 0 12px #8a7a3a, 0 0 4px #d4bc6a;
+  }
+  
+  /* Poeira dourada flutuante — bronze (movimento lento, partículas de academia) */
+  body.skin-bronze .atmo-dust { opacity: 1; }
+  
+  .mote {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: radial-gradient(circle, rgba(232,216,154,0.7) 0%, transparent 70%);
+    border-radius: 50%;
+    box-shadow: 0 0 3px rgba(212,188,106,0.5);
+    animation: moteFloat ease-in-out infinite;
+  }
+  
+  @keyframes moteFloat {
+    0% { transform: translate(0, 0); opacity: 0; }
+    20% { opacity: 0.7; }
+    50% { transform: translate(var(--mx, 20px), var(--my, -40px)); opacity: 0.9; }
+    80% { opacity: 0.5; }
+    100% { transform: translate(calc(var(--mx, 20px) * 2), calc(var(--my, -40px) * 2)); opacity: 0; }
+  }
+  
+  .mote.d1 { left: 15%; top: 60%; animation-duration: 12s; animation-delay: 0s;   --mx: 25px;  --my: -50px; }
+  .mote.d2 { left: 28%; top: 70%; animation-duration: 16s; animation-delay: 2s;   --mx: -20px; --my: -60px; }
+  .mote.d3 { left: 42%; top: 55%; animation-duration: 14s; animation-delay: 4s;   --mx: 30px;  --my: -45px; }
+  .mote.d4 { left: 56%; top: 75%; animation-duration: 18s; animation-delay: 1s;   --mx: -25px; --my: -55px; }
+  .mote.d5 { left: 70%; top: 65%; animation-duration: 13s; animation-delay: 5s;   --mx: 20px;  --my: -50px; }
+  .mote.d6 { left: 83%; top: 72%; animation-duration: 15s; animation-delay: 3s;   --mx: -30px; --my: -48px; }
+  .mote.d7 { left: 50%; top: 80%; animation-duration: 20s; animation-delay: 6s;   --mx: 15px;  --my: -65px; }
+  
+  /* ====== SKIN: SKIP (sem treino) — neutro, apagado, sem partículas ====== */
+  body.skin-skip {
+    background:
+      radial-gradient(ellipse 90% 60% at 50% 50%, rgba(40,40,45,0.2) 0%, transparent 70%),
+      linear-gradient(180deg, #0a0a0b 0%, #08080a 100%);
+    transition: background 1.2s ease;
+  }
+  
+  body.skin-skip::before {
+    opacity: 0.15;
+    background: linear-gradient(90deg, transparent, #4a4a52, transparent);
+    box-shadow: none;
+  }
+  
   /* ============ DESKTOP BREAKPOINT ============ */
   @media (min-width: 720px) {
     .header-row { padding: 18px 24px 14px; }
@@ -2984,6 +3816,56 @@
 </style>
 </head>
 <body>
+
+<!-- SVG filters para turbulência orgânica de fogo (cinematográfico, GPU-acelerado) -->
+<svg width="0" height="0" style="position:absolute;pointer-events:none;" aria-hidden="true">
+  <defs>
+    <filter id="fireTurbulence" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.025 0.06" numOctaves="2" seed="3" result="noise">
+        <animate attributeName="seed" values="3;7;11;3" dur="1.8s" repeatCount="indefinite"/>
+      </feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="6" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="fireTurbulenceMax" x="-30%" y="-30%" width="160%" height="160%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04 0.09" numOctaves="3" seed="5" result="noise">
+        <animate attributeName="seed" values="5;13;21;5" dur="1.1s" repeatCount="indefinite"/>
+      </feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="11" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+</svg>
+
+<!-- Camada de partículas atmosféricas (tela inteira) — cada skin ativa as suas -->
+<div class="skin-atmosphere" id="skinAtmosphere" aria-hidden="true">
+  <!-- Neve (inverno/rest) -->
+  <div class="atmo-layer atmo-snow">
+    <span class="flake f1"></span><span class="flake f2"></span><span class="flake f3"></span>
+    <span class="flake f4"></span><span class="flake f5"></span><span class="flake f6"></span>
+    <span class="flake f7"></span><span class="flake f8"></span><span class="flake f9"></span>
+    <span class="flake f10"></span><span class="flake f11"></span><span class="flake f12"></span>
+  </div>
+  <!-- Brasa (forja/squat) -->
+  <div class="atmo-layer atmo-forge">
+    <span class="spark s1"></span><span class="spark s2"></span><span class="spark s3"></span>
+    <span class="spark s4"></span><span class="spark s5"></span><span class="spark s6"></span>
+    <span class="spark s7"></span><span class="spark s8"></span>
+  </div>
+  <!-- Névoa/bruma (lago/cardio) -->
+  <div class="atmo-layer atmo-mist">
+    <span class="mist-cloud m1"></span><span class="mist-cloud m2"></span><span class="mist-cloud m3"></span>
+  </div>
+  <!-- Vento/partículas frias (tundra/cardio longo) -->
+  <div class="atmo-layer atmo-wind">
+    <span class="gust g1"></span><span class="gust g2"></span><span class="gust g3"></span>
+    <span class="gust g4"></span><span class="gust g5"></span><span class="gust g6"></span>
+  </div>
+  <!-- Poeira dourada (bronze/upper) -->
+  <div class="atmo-layer atmo-dust">
+    <span class="mote d1"></span><span class="mote d2"></span><span class="mote d3"></span>
+    <span class="mote d4"></span><span class="mote d5"></span><span class="mote d6"></span>
+    <span class="mote d7"></span>
+  </div>
+</div>
 
 <header>
   <div class="header-row">
@@ -4120,6 +5002,26 @@ function renderMain() {
   document.body.classList.toggle('boss-fight', isBossFight);
   document.body.classList.toggle('ascended', isAscended);
   
+  // === Skin atmosférica por sessão ===
+  // Cada sessão tem um "reino" visual. Boss-fight (deadlift) tem skin própria já.
+  const SKIN_MAP = {
+    squat: 'skin-forge',         // Forja de Brok — calor de metal
+    bench: 'skin-warhall',       // Salão de Guerra — dourado clássico
+    deadlift: 'skin-boss',       // Boss Fight (convive com .boss-fight)
+    upper_hiper: 'skin-bronze',  // Bronze de Esparta — pátina oliva
+    cardio_mid: 'skin-lake',     // Lago dos Nove — água parada
+    cardio_long: 'skin-tundra',  // Tundra de Midgard — vento frio
+    rest: 'skin-winter',         // Fimbulwinter — inverno, neve
+    skip: 'skin-skip'            // Sem treino — neutro apagado
+  };
+  // Remove todas as skins antes de aplicar a atual
+  ['skin-forge','skin-warhall','skin-boss','skin-bronze','skin-lake','skin-tundra','skin-winter','skin-skip'].forEach(s => {
+    document.body.classList.remove(s);
+  });
+  const activeSkin = SKIN_MAP[sessionKey] || 'skin-warhall';
+  // No deload, deadlift não é boss — usa skin neutra de força
+  document.body.classList.add(isBossFight ? 'skin-boss' : (sessionKey === 'deadlift' ? 'skin-warhall' : activeSkin));
+  
   // Atualiza heatmap (estado dos dias da semana)
   renderHeatmap();
   
@@ -4345,8 +5247,28 @@ function renderMain() {
       <button class="set-tracker ${checked ? 'complete' : ''} ${setsCompleted > 0 && !checked ? 'active' : ''}" 
               data-ex-id="${ex.id}" 
               data-max-sets="${maxSets}" 
-              style="--progress: ${Math.round((setsCompleted / maxSets) * 100)}"
+              data-fire="${setsCompleted}"
+              style="--progress: ${Math.round((setsCompleted / maxSets) * 100)}; --sets-done: ${setsCompleted}; --sets-max: ${maxSets}; --intensity: ${maxSets > 0 ? (setsCompleted / maxSets).toFixed(3) : 0}; --fire-step: ${setsCompleted}"
               aria-label="Marcar série">
+        ${isBossFight ? `
+          <div class="boss-fire" aria-hidden="true">
+            <span class="fire-layer fire-base"></span>
+            <span class="fire-layer fire-mid"></span>
+            <span class="fire-layer fire-top"></span>
+            <span class="fire-core"></span>
+            <span class="fire-rim"></span>
+            <span class="fire-ember em1"></span>
+            <span class="fire-ember em2"></span>
+            <span class="fire-ember em3"></span>
+            <span class="fire-ember em4"></span>
+            <span class="fire-ember em5"></span>
+            <span class="fire-ember em6"></span>
+            <span class="fire-ember em7"></span>
+            <span class="fire-ember em8"></span>
+            <span class="fire-ember em9"></span>
+            <span class="fire-ember em10"></span>
+          </div>
+        ` : ''}
         <div class="set-tracker-counter">
           <span class="set-tracker-current">${setsCompleted}</span>
           <span class="set-tracker-divider">/</span>
