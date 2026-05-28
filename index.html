@@ -2477,6 +2477,189 @@
     }
   }
   
+  /* ============================================================ */
+  /* ====== TÍTULO FORJADO + RUNA DE PODER (Deadlift Boss) ======= */
+  /* ============================================================ */
+  
+  /* O day-header precisa de posição relativa pra runa absoluta + altura extra */
+  body.boss-fight .day-header {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  /* === RUNA THURISAZ (ᚦ) — gravada em pedra rúnica atrás do título === */
+  /* Símbolo do gigante / força bruta. Selo do boss. */
+  .boss-rune {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    transform: translateY(-44%);
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 168px;
+    line-height: 1;
+    font-weight: 700;
+    z-index: 0;
+    pointer-events: none;
+    /* Gravada: gradiente bronze-fogo com leve relevo, glow vermelho-dourado pulsante */
+    color: transparent;
+    background: linear-gradient(155deg, 
+      rgba(255,150,50,0.22) 0%, 
+      rgba(200,70,28,0.16) 40%, 
+      rgba(140,40,18,0.1) 70%,
+      rgba(90,25,12,0.06) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    text-shadow: 
+      0 0 1px rgba(255,120,40,0.4),
+      2px 2px 4px rgba(0,0,0,0.7);
+    filter: drop-shadow(0 0 14px rgba(200,60,20,0.3));
+    animation: runeBreathe 4s ease-in-out infinite, runeEnter 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    user-select: none;
+  }
+  
+  @keyframes runeEnter {
+    0% { opacity: 0; transform: translateY(-44%) scale(1.3) rotate(-8deg); filter: drop-shadow(0 0 0 transparent); }
+    100% { opacity: 1; transform: translateY(-44%) scale(1) rotate(0deg); filter: drop-shadow(0 0 14px rgba(200,60,20,0.3)); }
+  }
+  
+  @keyframes runeBreathe {
+    0%, 100% { 
+      filter: drop-shadow(0 0 14px rgba(200,60,20,0.3));
+      opacity: 0.8;
+    }
+    50% { 
+      filter: drop-shadow(0 0 26px rgba(255,90,30,0.5)) drop-shadow(0 0 8px rgba(255,140,40,0.35));
+      opacity: 1;
+    }
+  }
+  
+  /* Conteúdo do header acima da runa */
+  body.boss-fight .boss-eyebrow,
+  body.boss-fight .day-meta,
+  body.boss-fight .day-title-btn,
+  body.boss-fight .day-subtitle {
+    position: relative;
+    z-index: 1;
+  }
+  
+  /* === TÍTULO FORJADO — metal incandescente com brasas === */
+  body.boss-fight .day-title.boss-title-forged {
+    position: relative;
+    font-size: 42px;
+    /* Metal aquecido: gradiente vertical sugerindo ferro em brasa
+       (claro/branco-quente no topo, laranja no meio, vermelho-escuro embaixo) */
+    background: linear-gradient(180deg,
+      #fff0d4 0%,
+      #ffce7a 22%,
+      #f5a040 45%,
+      #e07628 65%,
+      #b8501c 82%,
+      #8a3614 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: none;
+    letter-spacing: 0.06em;
+    filter: 
+      drop-shadow(0 0 12px rgba(255,140,40,0.5)) 
+      drop-shadow(0 2px 4px rgba(0,0,0,0.6))
+      drop-shadow(0 0 24px rgba(255,80,30,0.3));
+    animation: forgedTitleEnter 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+               forgedHeatShimmer 3s ease-in-out infinite 0.9s;
+  }
+  
+  /* Camada de brilho que desliza pelas letras (metal reluzindo ao ser forjado) */
+  body.boss-fight .day-title.boss-title-forged::before {
+    content: attr(data-title);
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(110deg,
+      transparent 0%,
+      transparent 40%,
+      rgba(255,255,230,0.8) 50%,
+      transparent 60%,
+      transparent 100%);
+    background-size: 250% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 0.06em;
+    animation: forgeGlint 4.5s ease-in-out infinite 1.2s;
+    pointer-events: none;
+  }
+  
+  @keyframes forgedTitleEnter {
+    0% { 
+      opacity: 0; 
+      transform: scale(0.94) translateY(6px);
+      filter: drop-shadow(0 0 0 transparent);
+    }
+    /* Tremor sísmico de impacto */
+    40% { transform: scale(1.02) translateX(-2px); }
+    50% { transform: scale(1.02) translateX(3px); }
+    60% { transform: scale(1.01) translateX(-2px); }
+    70% { transform: scale(1) translateX(1px); }
+    100% { 
+      opacity: 1; 
+      transform: scale(1) translateX(0);
+      filter: drop-shadow(0 0 12px rgba(255,140,40,0.5)) drop-shadow(0 2px 4px rgba(0,0,0,0.6)) drop-shadow(0 0 24px rgba(255,80,30,0.3));
+    }
+  }
+  
+  /* Heat shimmer: leve oscilação do brilho/glow como calor saindo do metal */
+  @keyframes forgedHeatShimmer {
+    0%, 100% { 
+      filter: drop-shadow(0 0 12px rgba(255,140,40,0.5)) drop-shadow(0 2px 4px rgba(0,0,0,0.6)) drop-shadow(0 0 24px rgba(255,80,30,0.3));
+    }
+    50% { 
+      filter: drop-shadow(0 0 18px rgba(255,160,60,0.65)) drop-shadow(0 2px 4px rgba(0,0,0,0.6)) drop-shadow(0 0 32px rgba(255,100,40,0.4));
+    }
+  }
+  
+  /* Brilho deslizante */
+  @keyframes forgeGlint {
+    0%, 100% { background-position: 150% 0; opacity: 0; }
+    45% { opacity: 0; }
+    50% { background-position: 150% 0; opacity: 1; }
+    70% { background-position: -100% 0; opacity: 1; }
+    72%, 100% { background-position: -100% 0; opacity: 0; }
+  }
+  
+  /* Brasas subindo de dentro das letras do título */
+  .title-embers {
+    position: absolute;
+    left: 0; right: 0; bottom: 8px;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+  }
+  
+  .title-embers .te {
+    position: absolute;
+    bottom: 0;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,235,170,1) 0%, rgba(255,140,40,0.8) 50%, transparent 100%);
+    box-shadow: 0 0 4px rgba(255,160,60,0.9), 0 0 8px rgba(255,90,30,0.5);
+    opacity: 0;
+    animation: titleEmberRise linear infinite;
+  }
+  
+  @keyframes titleEmberRise {
+    0% { transform: translateY(0) scale(0.8); opacity: 0; }
+    20% { opacity: 1; }
+    70% { opacity: 0.9; }
+    100% { transform: translateY(-44px) translateX(var(--tex, 8px)) scale(0.2); opacity: 0; }
+  }
+  
+  .title-embers .t1 { left: 12%; animation-duration: 3s;   animation-delay: 0s;   --tex: 10px; }
+  .title-embers .t2 { left: 28%; animation-duration: 3.8s; animation-delay: 1s;   --tex: -8px; }
+  .title-embers .t3 { left: 44%; animation-duration: 3.2s; animation-delay: 2s;   --tex: 12px; width: 2px; height: 2px; }
+  .title-embers .t4 { left: 60%; animation-duration: 4.2s; animation-delay: 0.6s; --tex: -10px; }
+  .title-embers .t5 { left: 76%; animation-duration: 3.5s; animation-delay: 1.6s; --tex: 6px; width: 2px; height: 2px; }
+  .title-embers .t6 { left: 90%; animation-duration: 4s;   animation-delay: 2.6s; --tex: -12px; }
+  
   /* Partículas de brasa subindo */
   .boss-particles {
     position: absolute;
@@ -2665,87 +2848,82 @@
     transform-origin: center;
   }
   
-  /* Mascara as camadas em formato de ANEL FINO (linha de chama, não tocha) */
-  .fire-layer {
-    -webkit-mask: radial-gradient(circle, transparent 47%, #000 52%, #000 56%, transparent 60%);
-            mask: radial-gradient(circle, transparent 47%, #000 52%, #000 56%, transparent 60%);
-  }
-  
-  /* Camada base: vermelho profundo, lenta */
+  /* CAMADA BASE (vermelho) — anel mais EXTERNO e largo, a "casca" fria do fogo.
+     Espessura cresce com intensidade: nível baixo = anel estreito, alto = anel largo */
   .fire-base {
-    background: radial-gradient(
-      circle at 50% 50%,
-      transparent 30%,
-      rgba(200,40,20,0.7) 45%,
-      rgba(180,30,15,0.6) 60%,
-      rgba(140,20,10,0.4) 75%,
-      transparent 90%
-    );
-    filter: blur(calc(1.8px + var(--i, 0) * 0.9px)) saturate(calc(1 + var(--i, 0) * 0.15));
-    animation: fireSwirl1 calc(7s - var(--i, 0) * 1s) linear infinite,
-               fireBreathe calc(2.4s - var(--i, 0) * 0.25s) ease-in-out infinite;
+    background: conic-gradient(from 0deg,
+      rgba(220,50,20,0.9) 0deg,
+      rgba(160,30,12,0.5) 50deg,
+      rgba(255,80,30,0.95) 110deg,
+      rgba(180,35,15,0.6) 160deg,
+      rgba(240,60,25,0.85) 220deg,
+      rgba(150,28,10,0.5) 280deg,
+      rgba(255,70,28,0.9) 330deg,
+      rgba(220,50,20,0.9) 360deg);
+    -webkit-mask: radial-gradient(circle, transparent calc(46% - var(--i,0)*1.5%), #000 calc(52% - var(--i,0)*1%), #000 calc(62% + var(--i,0)*1.5%), transparent calc(70% + var(--i,0)*2%));
+            mask: radial-gradient(circle, transparent calc(46% - var(--i,0)*1.5%), #000 calc(52% - var(--i,0)*1%), #000 calc(62% + var(--i,0)*1.5%), transparent calc(70% + var(--i,0)*2%));
+    filter: blur(calc(1.5px + var(--i,0)*0.7px)) saturate(calc(1 + var(--i,0)*0.2));
+    animation: fireSwirl1 calc(6s - var(--i,0)*0.9s) linear infinite,
+               fireBreathe calc(2.4s - var(--i,0)*0.25s) ease-in-out infinite;
   }
   
-  /* Camada média: laranja vibrante, sentido oposto, mais rápida */
+  /* CAMADA MÉDIA (laranja) — anel do MEIO, o corpo da chama */
   .fire-mid {
-    background: radial-gradient(
-      circle at 50% 50%,
-      transparent 28%,
-      rgba(255,140,40,0.8) 42%,
-      rgba(255,100,30,0.7) 58%,
-      rgba(220,70,20,0.5) 72%,
-      transparent 88%
-    );
-    filter: blur(calc(1.4px + var(--i, 0) * 0.8px)) saturate(calc(1.1 + var(--i, 0) * 0.15));
-    animation: fireSwirl2 calc(5s - var(--i, 0) * 0.7s) linear infinite,
-               fireBreathe calc(1.8s - var(--i, 0) * 0.2s) ease-in-out infinite reverse;
+    background: conic-gradient(from 120deg,
+      rgba(255,150,50,0.95) 0deg,
+      rgba(255,110,35,0.6) 45deg,
+      rgba(255,180,70,1) 100deg,
+      rgba(255,120,40,0.7) 150deg,
+      rgba(255,160,55,0.9) 210deg,
+      rgba(255,100,30,0.6) 270deg,
+      rgba(255,170,65,0.95) 320deg,
+      rgba(255,150,50,0.95) 360deg);
+    -webkit-mask: radial-gradient(circle, transparent calc(44% - var(--i,0)*1%), #000 50%, #000 calc(58% + var(--i,0)*1%), transparent calc(64% + var(--i,0)*1.5%));
+            mask: radial-gradient(circle, transparent calc(44% - var(--i,0)*1%), #000 50%, #000 calc(58% + var(--i,0)*1%), transparent calc(64% + var(--i,0)*1.5%));
+    filter: blur(calc(1px + var(--i,0)*0.5px)) saturate(calc(1.15 + var(--i,0)*0.2));
+    animation: fireSwirl2 calc(4.2s - var(--i,0)*0.6s) linear infinite,
+               fireBreathe calc(1.8s - var(--i,0)*0.2s) ease-in-out infinite reverse;
   }
   
-  /* Camada superior: amarelo-branco quente, mais rápida, oscila escala */
-  /* Conic gradient adiciona variação angular — não é anel uniforme */
+  /* CAMADA TOPO (amarelo-branco) — anel mais INTERNO e fino, o núcleo quente.
+     Opacidade cresce forte com intensidade: quase ausente no nível 1, intenso no máximo */
   .fire-top {
-    background:
-      conic-gradient(from 45deg,
-        rgba(255,220,140,0.5) 0deg,
-        rgba(255,180,80,1) 90deg,
-        rgba(255,220,140,0.7) 180deg,
-        rgba(255,160,60,0.9) 270deg,
-        rgba(255,220,140,0.5) 360deg),
-      radial-gradient(
-        circle at 50% 50%,
-        transparent 26%,
-        rgba(255,220,140,0.85) 38%,
-        rgba(255,180,80,0.7) 52%,
-        rgba(255,120,40,0.5) 66%,
-        transparent 80%
-      );
-    background-blend-mode: overlay;
-    filter: blur(calc(1px + var(--i, 0) * 0.65px)) saturate(calc(1.2 + var(--i, 0) * 0.2));
-    animation: fireSwirl3 calc(3.5s - var(--i, 0) * 0.5s) linear infinite,
-               fireScale calc(1.6s - var(--i, 0) * 0.18s) ease-in-out infinite;
+    background: conic-gradient(from 200deg,
+      rgba(255,230,150,0.9) 0deg,
+      rgba(255,190,90,0.4) 60deg,
+      rgba(255,245,200,1) 120deg,
+      rgba(255,200,100,0.5) 180deg,
+      rgba(255,235,160,0.85) 240deg,
+      rgba(255,185,85,0.4) 300deg,
+      rgba(255,230,150,0.9) 360deg);
+    -webkit-mask: radial-gradient(circle, transparent 43%, #000 48%, #000 54%, transparent 59%);
+            mask: radial-gradient(circle, transparent 43%, #000 48%, #000 54%, transparent 59%);
+    filter: blur(calc(0.6px + var(--i,0)*0.35px)) saturate(calc(1.2 + var(--i,0)*0.25));
+    opacity: calc(0.1 + var(--i,0) * var(--i,0) * 0.055);
+    animation: fireSwirl3 calc(3s - var(--i,0)*0.45s) linear infinite,
+               fireScale calc(1.4s - var(--i,0)*0.16s) ease-in-out infinite;
   }
   
-  /* CORE incandescente: REMOVIDO — não combina com o conceito de aro mágico fino.
-     Mantido o elemento no HTML por compatibilidade, mas sem efeito visual. */
+  /* CORE: desabilitado (conceito de aro fino) */
   .fire-core {
     display: none;
   }
   
-  /* RIM externo: glow sutil seguindo o aro (não aura difusa enorme) */
+  /* RIM externo: glow sutil acompanhando o aro, cresce com intensidade */
   .fire-rim {
     position: absolute;
-    inset: calc(-2px - var(--i, 0) * 1px);
+    inset: calc(-3px - var(--i,0)*1.5px);
     border-radius: 50%;
     background: radial-gradient(
       circle at 50% 50%,
-      transparent 44%,
-      rgba(255,120,40,calc(var(--i, 0) * 0.18)) 52%,
-      rgba(255,80,30,calc(var(--i, 0) * 0.12)) 60%,
-      transparent 72%
+      transparent calc(46% - var(--i,0)*1%),
+      rgba(255,120,40,calc(var(--i,0) * 0.16)) 54%,
+      rgba(255,70,25,calc(var(--i,0) * 0.1)) 64%,
+      transparent 76%
     );
-    filter: blur(calc(2px + var(--i, 0) * 0.8px));
+    filter: blur(calc(2.5px + var(--i,0)*1px));
     pointer-events: none;
-    animation: fireBreathe calc(3.2s - var(--i, 0) * 0.3s) ease-in-out infinite;
+    animation: fireBreathe calc(3.2s - var(--i,0)*0.3s) ease-in-out infinite;
   }
   
   /* === ANIMAÇÕES === */
@@ -5061,12 +5239,13 @@ function renderMain() {
   html += `
     <div class="day-header fade-in">
       ${isBossFight ? '<div class="boss-eyebrow"><span class="boss-eyebrow-line"></span><span class="boss-eyebrow-text">⚔ BOSS FIGHT ⚔</span><span class="boss-eyebrow-line"></span></div>' : ''}
+      ${isBossFight ? '<div class="boss-rune" aria-hidden="true">ᚦ</div>' : ''}
       <div class="day-meta">
         <div class="day-eyebrow">${day.eyebrow} ${customBadge}</div>
         ${progressHtml}
       </div>
-      <button class="day-title-btn" id="dayTitleBtn" aria-label="Trocar sessão deste dia">
-        <h1 class="day-title">${day.title}</h1>
+      <button class="day-title-btn ${isBossFight ? 'boss-title-btn' : ''}" id="dayTitleBtn" aria-label="Trocar sessão deste dia">
+        <h1 class="day-title ${isBossFight ? 'boss-title-forged' : ''}" ${isBossFight ? `data-title="${day.title}"` : ''}>${day.title}${isBossFight ? '<span class="title-embers"><span class="te t1"></span><span class="te t2"></span><span class="te t3"></span><span class="te t4"></span><span class="te t5"></span><span class="te t6"></span></span>' : ''}</h1>
         <span class="day-title-swap">⇄</span>
       </button>
       <div class="day-subtitle">${pillsHtml}</div>
