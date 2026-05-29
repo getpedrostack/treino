@@ -863,6 +863,21 @@
       0 2px 8px rgba(0,0,0,0.3);
   }
   
+  /* Tag mostrando que a nota é do exercício substituto */
+  .ex-notes-swap-tag {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-style: normal;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--bronze-light);
+    font-weight: 700;
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed var(--border-bright);
+  }
+  
   /* Swaps */
   .ex-actions-row {
     display: flex;
@@ -4250,9 +4265,9 @@ SESSIONS.squat = {
         deload: { sets: 3, reps: "5", intensity: "60% 1RM", rpe: "6" },
         notes: "Aquecimento progressivo até série de trabalho. Pausa no buraco opcional na semana 2. Bracing diafragmático antes de descer.",
         swaps: [
-          { name: "Hack squat (máquina)", reason: "Carga alta sem estresse axial. Bom em dia de fadiga lombar." },
-          { name: "Goblet squat com halter pesado", reason: "Se o rack estiver ocupado. Limitado pela carga do halter." },
-          { name: "Smith machine squat", reason: "Última opção — perde estabilidade, usar só se livre indisponível." }
+          { name: "Hack squat (máquina)", reason: "Carga alta sem estresse axial. Bom em dia de fadiga lombar.", notes: "Pés mais baixos na plataforma = mais quadríceps. Não deixe o joelho passar muito da ponta do pé. Desça até 90° no mínimo, controle a descida." },
+          { name: "Goblet squat com halter pesado", reason: "Se o rack estiver ocupado. Limitado pela carga do halter.", notes: "Cotovelos por dentro dos joelhos no fundo. Halter colado ao peito. Limite real é a carga do halter — se ficar leve, aumente reps ou tempo sob tensão." },
+          { name: "Smith machine squat", reason: "Última opção — perde estabilidade, usar só se livre indisponível.", notes: "Barra trava o caminho — posicione os pés ligeiramente à frente pra não forçar joelho. Perde estabilizadores; foque em ROM completo já que o equilíbrio está garantido." }
         ]
       },
       {
@@ -4261,9 +4276,9 @@ SESSIONS.squat = {
         deloadCut: true,
         notes: "Variação técnica. Alternar semana a semana — frontal em ímpares, pause em pares. Reforça core e posição vertical.",
         swaps: [
-          { name: "Máquina de agachamento sumô", reason: "Ataca quadríceps medial e adutores. Perfil diferente do livre." },
-          { name: "Goblet squat (halter no peito)", reason: "Reproduz a posição vertical do front squat sem mobilidade de punho." },
-          { name: "Zercher squat", reason: "Halter ou barra na dobra do cotovelo. Brutal pra core e upper back." }
+          { name: "Máquina de agachamento sumô", reason: "Ataca quadríceps medial e adutores. Perfil diferente do livre.", notes: "Pés largos e abertos a 45°. Empurre os joelhos PRA FORA na subida. Pega adutores e glúteo de um jeito que o livre não pega." },
+          { name: "Goblet squat (halter no peito)", reason: "Reproduz a posição vertical do front squat sem mobilidade de punho.", notes: "Tronco vertical (esse é o ponto — imita o front squat). Cotovelos apontados pra baixo. Bom se mobilidade de punho atrapalha o front com barra." },
+          { name: "Zercher squat", reason: "Halter ou barra na dobra do cotovelo. Brutal pra core e upper back.", notes: "Barra na dobra do cotovelo — use uma toalha se machucar. Mantém o tronco MUITO ereto e o core trabalha brutalmente. Comece leve, a posição é desconfortável." }
         ]
       },
       {
@@ -4272,9 +4287,9 @@ SESSIONS.squat = {
         deloadCut: true,
         notes: "Carga controlada, foco em estiramento e bracing. Quadril vai pra trás, joelho macio, barra rente à perna.",
         swaps: [
-          { name: "Good morning (barra nos ombros)", reason: "Mesmo padrão de quadril, menos demanda de grip." },
-          { name: "RDL com halteres", reason: "Se a barra olímpica estiver ocupada. Mais ROM em alguns casos." },
-          { name: "Single-leg RDL com halter", reason: "Versão unilateral. Bônus pra equilíbrio e glúteo médio." }
+          { name: "Good morning (barra nos ombros)", reason: "Mesmo padrão de quadril, menos demanda de grip.", notes: "Quadril pra trás, joelho levemente macio. NÃO arredonde a lombar — pare a descida onde a coluna ainda está neutra. Carga bem menor que stiff." },
+          { name: "RDL com halteres", reason: "Se a barra olímpica estiver ocupada. Mais ROM em alguns casos.", notes: "Halteres deslizam rente à perna. Pode dar mais ROM que a barra. Quadril pra trás primeiro, peito aberto. Sinta o estiramento do posterior, não da lombar." },
+          { name: "Single-leg RDL com halter", reason: "Versão unilateral. Bônus pra equilíbrio e glúteo médio.", notes: "Halter na mão oposta à perna de apoio. Dobradiça de quadril, perna de trás alinhada ao tronco. Equilíbrio primeiro, carga depois. Glúteo médio trabalha forte." }
         ]
       },
       {
@@ -4283,9 +4298,9 @@ SESSIONS.squat = {
         deloadHalf: true,
         notes: "Unilateral, corrige assimetrias, baixa carga axial. Pé de trás na bench, joelho da frente alinhado.",
         swaps: [
-          { name: "Leg press unilateral", reason: "Mesmo objetivo (corrigir assimetria), menos estabilização exigida." },
-          { name: "Walking lunges com halteres", reason: "Pegada dinâmica. Precisa de espaço no corredor." },
-          { name: "Step-up alto com halteres", reason: "Bench acima do joelho, foco em glúteo + quadríceps." }
+          { name: "Leg press unilateral", reason: "Mesmo objetivo (corrigir assimetria), menos estabilização exigida.", notes: "Uma perna por vez corrige assimetria. Pé centralizado na plataforma. Não trave o joelho no topo. Ótimo se equilíbrio do búlgaro for o limitante." },
+          { name: "Walking lunges com halteres", reason: "Pegada dinâmica. Precisa de espaço no corredor.", notes: "Passo longo = mais glúteo, passo curto = mais quadríceps. Joelho de trás quase no chão. Precisa de corredor livre — se a academia tá cheia, prefira o búlgaro parado." },
+          { name: "Step-up alto com halteres", reason: "Bench acima do joelho, foco em glúteo + quadríceps.", notes: "Banco na altura do joelho ou acima. Empurre pelo CALCANHAR da perna de cima, não impulsione com a de baixo. Controle a descida." }
         ]
       },
       {
@@ -4294,9 +4309,9 @@ SESSIONS.squat = {
         deloadHalf: true,
         notes: "Isquios — antagonista crítico para joelho. Controle excêntrico de 2-3s.",
         swaps: [
-          { name: "Cadeira flexora (sentado)", reason: "Mesmo músculo, ângulo diferente. Use se a mesa estiver ocupada." },
-          { name: "Nordic curl (assistido)", reason: "Excêntrico extremo. Use se acessar — superior pra hipertrofia." },
-          { name: "Glute-ham raise", reason: "Se a academia tiver GHD. Padrão-ouro pra posterior de coxa." }
+          { name: "Cadeira flexora (sentado)", reason: "Mesmo músculo, ângulo diferente. Use se a mesa estiver ocupada.", notes: "Mesmo músculo, ângulo de quadril diferente — pega a cabeça longa do bíceps femoral. Excêntrico de 2-3s. Encoste bem o quadril no fundo." },
+          { name: "Nordic curl (assistido)", reason: "Excêntrico extremo. Use se acessar — superior pra hipertrofia.", notes: "Excêntrico extremo — desça o mais devagar que conseguir, empurre o chão pra voltar. Se for muito difícil, use banda elástica de assistência. Brutal mas superior." },
+          { name: "Glute-ham raise", reason: "Se a academia tiver GHD. Padrão-ouro pra posterior de coxa.", notes: "No GHD: estenda o joelho descendo o tronco, contraia o posterior pra subir. Padrão-ouro pra posterior. Se não tiver o aparelho, fique no nordic." }
         ]
       },
       {
@@ -4305,9 +4320,9 @@ SESSIONS.squat = {
         deloadHalf: true,
         notes: "Pausa de 1s no topo. ROM completo — desce abaixo do degrau, sobe até contração total.",
         swaps: [
-          { name: "Panturrilha no leg press", reason: "Carga alta sem estresse de coluna. Boa alternativa em dia pesado." },
-          { name: "Panturrilha sentado (smith ou máquina)", reason: "Foco em sóleo (joelho dobrado). Complementa a versão em pé." },
-          { name: "Panturrilha unilateral com halter", reason: "Sem máquina disponível. Apoio numa mão, halter na outra." }
+          { name: "Panturrilha no leg press", reason: "Carga alta sem estresse de coluna. Boa alternativa em dia pesado.", notes: "Pés na base da plataforma, empurre só com a ponta. Pausa de 1s no estiramento embaixo E na contração no topo. ROM completo > carga." },
+          { name: "Panturrilha sentado (smith ou máquina)", reason: "Foco em sóleo (joelho dobrado). Complementa a versão em pé.", notes: "Joelho dobrado isola o sóleo (panturrilha profunda). Diferente da em pé que pega o gastrocnêmio. Pausa embaixo, sem quicar." },
+          { name: "Panturrilha unilateral com halter", reason: "Sem máquina disponível. Apoio numa mão, halter na outra.", notes: "Uma perna por vez expõe assimetria. Segure um halter do lado, outra mão na parede pra equilíbrio. ROM máximo, pausa no estiramento." }
         ]
       },
       {
@@ -4316,9 +4331,9 @@ SESSIONS.squat = {
         deloadHalf: true,
         notes: "Core anti-rotação/anti-extensão. Alternar entre os dois ao longo das semanas.",
         swaps: [
-          { name: "Pallof press (cabo ou banda)", reason: "Anti-rotação puro. Excelente complemento. 8-12 reps/lado." },
-          { name: "Hanging leg raise", reason: "Anti-extensão + core anterior. Suba pernas até paralelo ou acima." },
-          { name: "Dragon flag (avançado)", reason: "Versão extrema. Negativa primeiro, depois ROM completo." }
+          { name: "Pallof press (cabo ou banda)", reason: "Anti-rotação puro. Excelente complemento. 8-12 reps/lado.", notes: "Anti-rotação — o tronco NÃO pode girar enquanto você estende os braços. Fique perpendicular ao cabo. Core trabalha pra resistir, não pra mover." },
+          { name: "Hanging leg raise", reason: "Anti-extensão + core anterior. Suba pernas até paralelo ou acima.", notes: "Pendure na barra, suba as pernas SEM balançar (sem impulso). Retroversão pélvica no topo — enrole a bacia, não só levante a perna. Excêntrico controlado." },
+          { name: "Dragon flag (avançado)", reason: "Versão extrema. Negativa primeiro, depois ROM completo.", notes: "Corpo rígido como prancha, desce devagar mantendo tudo alinhado. Só os ombros tocam o banco. Muito difícil — comece com joelhos dobrados se necessário." }
         ]
       }
     ]
@@ -4338,9 +4353,9 @@ SESSIONS.bench = {
         deload: { sets: 3, reps: "5", intensity: "60% 1RM", rpe: "6" },
         notes: "Pés firmes no chão, escápulas retraídas e deprimidas, arco torácico controlado. Barra desce no peito baixo, sobe em curva leve.",
         swaps: [
-          { name: "Supino reto com halteres", reason: "Mais ROM e estabilização. Use se barra ocupada ou pra variar estímulo." },
-          { name: "Floor press com barra", reason: "ROM reduzido, foco em lockout e tríceps. Bom em dia de ombro sensível." },
-          { name: "Máquina chest press", reason: "Última opção. Útil se sentir desconforto agudo no ombro nesse dia." }
+          { name: "Supino reto com halteres", reason: "Mais ROM e estabilização. Use se barra ocupada ou pra variar estímulo.", notes: "ROM maior que a barra — desça até sentir o peito alongar. Halteres permitem trajetória natural. Não bata os halteres no topo, mantenha tensão." },
+          { name: "Floor press com barra", reason: "ROM reduzido, foco em lockout e tríceps. Bom em dia de ombro sensível.", notes: "Deitado no chão, cotovelo para ao tocar o solo. Tira a perna da equação, foca tríceps e meio do peito. Bom se ombro incomoda no supino completo." },
+          { name: "Máquina chest press", reason: "Última opção. Útil se sentir desconforto agudo no ombro nesse dia.", notes: "Trajetória guiada — bom pra fadiga ou drop-sets seguros. Ajuste o banco pra alça na linha do meio do peito. Aperte o peito no fim, não só empurre." }
         ]
       },
       {
@@ -4349,9 +4364,9 @@ SESSIONS.bench = {
         deloadCut: true,
         notes: "Pause em ímpares, close-grip em pares. Pause = 2s parado no peito. Close-grip = mãos na largura dos ombros, foco tríceps.",
         swaps: [
-          { name: "Dips com peso", reason: "Substitui close-grip. Foco em tríceps + peitoral inferior." },
-          { name: "JM press (barra)", reason: "Híbrido entre supino e tríceps testa. Brutal pra tríceps." },
-          { name: "Supino reto pegada média (halter)", reason: "Versão com halteres do close-grip. Punhos mais confortáveis." }
+          { name: "Dips com peso", reason: "Substitui close-grip. Foco em tríceps + peitoral inferior.", notes: "Inclinar o tronco à frente = mais peito; vertical = mais tríceps. Desça até o ombro na linha do cotovelo. Não desça demais se sentir o ombro." },
+          { name: "JM press (barra)", reason: "Híbrido entre supino e tríceps testa. Brutal pra tríceps.", notes: "Híbrido de supino fechado e testa. Barra desce em direção ao queixo/garganta, cotovelos à frente. Brutal pro tríceps. Comece leve, técnica é específica." },
+          { name: "Supino reto pegada média (halter)", reason: "Versão com halteres do close-grip. Punhos mais confortáveis.", notes: "Pegada um pouco mais fechada pega mais tríceps e meio do peito. Halteres dão liberdade de trajetória. Cotovelos a ~45° do tronco." }
         ]
       },
       {
@@ -4360,9 +4375,9 @@ SESSIONS.bench = {
         deloadCut: true,
         notes: "Banco a 30°. Halteres descem no nível do peito, palmas se aproximam no topo (rotação leve para mais peitoral).",
         swaps: [
-          { name: "Supino inclinado com barra", reason: "Mesma execução, sem precisar segurar 2 halteres pesados." },
-          { name: "Máquina supino inclinado", reason: "Foco em hipertrofia pura. Boa pra drop sets." },
-          { name: "Crucifixo inclinado", reason: "Se quiser priorizar estiramento ao invés de carga." }
+          { name: "Supino inclinado com barra", reason: "Mesma execução, sem precisar segurar 2 halteres pesados.", notes: "Banco a 30° (não mais — acima disso vira desenvolvimento). Barra desce na clavícula superior. Pega a porção clavicular do peito." },
+          { name: "Máquina supino inclinado", reason: "Foco em hipertrofia pura. Boa pra drop sets.", notes: "Trajetória guiada pra peito superior. Bom pra finalizar com volume seguro. Ajuste o assento pra alça ficar na altura da clavícula." },
+          { name: "Crucifixo inclinado", reason: "Se quiser priorizar estiramento ao invés de carga.", notes: "Cotovelos levemente flexionados e FIXOS — é um arco, não um supino. Sinta o estiramento embaixo. Carga moderada, isolamento puro do peito superior." }
         ]
       },
       {
@@ -4371,9 +4386,9 @@ SESSIONS.bench = {
         deloadHalf: true,
         notes: "Inclinar tronco para frente = mais peitoral. Tronco vertical = mais tríceps. Adicionar peso quando passar de 10 reps fácil.",
         swaps: [
-          { name: "Dips na máquina assistida", reason: "Se ainda não consegue paralelas com peso ou fadiga acumulada." },
-          { name: "Supino declinado halter", reason: "Mesmo padrão de peitoral inferior, sem dependência de paralelas." },
-          { name: "Push-up com peso (anilha nas costas)", reason: "Backup se paralelas indisponíveis." }
+          { name: "Dips na máquina assistida", reason: "Se ainda não consegue paralelas com peso ou fadiga acumulada.", notes: "Versão assistida pra controlar carga ou fazer com fadiga. Mais assistência = mais leve. Mantenha o tronco inclinado à frente pra pegar peito." },
+          { name: "Supino declinado halter", reason: "Mesmo padrão de peitoral inferior, sem dependência de paralelas.", notes: "Banco em declínio pega a porção inferior do peito. Halteres descem na linha do mamilo. Cuidado ao pegar/soltar os halteres na posição declinada." },
+          { name: "Push-up com peso (anilha nas costas)", reason: "Backup se paralelas indisponíveis.", notes: "Flexão com anilha nas costas pra carga. Corpo reto como tábua, desça o peito até quase o chão. Peça pra alguém colocar a anilha. Escapula controlada." }
         ]
       },
       {
@@ -4382,9 +4397,9 @@ SESSIONS.bench = {
         deloadHalf: true,
         notes: "Antagonista, essencial para saúde do ombro. Cotovelos próximos do tronco, barra vai pro umbigo, escápulas se juntam no fim.",
         swaps: [
-          { name: "Remada cavalinho (T-bar)", reason: "Carga alta, padrão de movimento similar à curvada." },
-          { name: "Chest-supported row", reason: "Elimina componente lombar. Foco puro em costas." },
-          { name: "Remada com halter unilateral", reason: "Excelente pra simetria. Apoio uma mão e joelho no banco." }
+          { name: "Remada cavalinho (T-bar)", reason: "Carga alta, padrão de movimento similar à curvada.", notes: "Peito apoiado se der. Puxe com os cotovelos, aperte escápulas. Pegada neutra confortável pro ombro. Não role os ombros pra cima — é remada, não shrug." },
+          { name: "Chest-supported row", reason: "Elimina componente lombar. Foco puro em costas.", notes: "Peito no apoio = zero trapaça lombar, costas isoladas. Puxe os cotovelos pra trás/baixo, segure 1s. Não encolha os ombros — retraia as escápulas." },
+          { name: "Remada com halter unilateral", reason: "Excelente pra simetria. Apoio uma mão e joelho no banco.", notes: "Joelho e mão no banco. Puxe ao quadril, cotovelo rente. Sinta a escápula no topo. Permite ROM grande e corrige assimetria entre lados." }
         ]
       },
       {
@@ -4393,9 +4408,9 @@ SESSIONS.bench = {
         deloadHalf: true,
         notes: "Deltoide médio. Drop-set na última série (60%→40% do peso, sem descanso). Cotovelo levemente acima do punho.",
         swaps: [
-          { name: "Elevação lateral no cabo (unilateral)", reason: "Tensão constante no ROM inteiro. Superior em hipertrofia." },
-          { name: "Elevação lateral na máquina", reason: "Padrão fixo. Bom pra falhar sem comprometer técnica." },
-          { name: "Lateral leg-out (deitado de lado)", reason: "Variação avançada. ROM grande, ataca fibras desativadas." }
+          { name: "Elevação lateral no cabo (unilateral)", reason: "Tensão constante no ROM inteiro. Superior em hipertrofia.", notes: "Cabo dá tensão constante (o halter perde tensão embaixo). Cotovelo levemente flexionado, suba até a linha do ombro. Não use impulso — devagar." },
+          { name: "Elevação lateral na máquina", reason: "Padrão fixo. Bom pra falhar sem comprometer técnica.", notes: "Trajetória guiada, ótimo pra drop-set sem trapaça. Cotovelo empurra o apoio, não a mão. Pausa de 1s no topo, descida controlada." },
+          { name: "Lateral leg-out (deitado de lado)", reason: "Variação avançada. ROM grande, ataca fibras desativadas.", notes: "Deitado de lado, eleva o halter pela lateral isolando o deltoide medial. Sem trapaça do corpo. Carga leve, controle total. Bom finalizador." }
         ]
       },
       {
@@ -4404,9 +4419,9 @@ SESSIONS.bench = {
         deloadHalf: true,
         notes: "Bi-set, sem descanso entre os dois. Corda: abrir no fim. Francês: cotovelos fixos, descer atrás da cabeça.",
         swaps: [
-          { name: "Pushdown reto + tríceps testa", reason: "Mesma estrutura bi-set, exercícios alternativos." },
-          { name: "JM press + pushdown", reason: "Composto + isolamento. Mais estímulo de força no tríceps." },
-          { name: "Dips + pushdown", reason: "Pra dias de bíceps acumulado (paralelas serve dobrado)." }
+          { name: "Pushdown reto + tríceps testa", reason: "Mesma estrutura bi-set, exercícios alternativos.", notes: "Bi-set: pushdown (cabeça lateral) seguido de testa (cabeça longa). Cotovelos fixos no pushdown. Na testa, desça até a testa/atrás da cabeça pra alongar." },
+          { name: "JM press + pushdown", reason: "Composto + isolamento. Mais estímulo de força no tríceps.", notes: "JM press pesado primeiro, depois pushdown pra bombear. Cotovelos à frente no JM. Sem descanso entre os dois — é bi-set." },
+          { name: "Dips + pushdown", reason: "Pra dias de bíceps acumulado (paralelas serve dobrado).", notes: "Dips de tríceps (tronco vertical) seguido de pushdown. Nos dips, mantenha vertical pra focar tríceps. Pushdown finaliza com volume." }
         ]
       },
       {
@@ -4415,9 +4430,9 @@ SESSIONS.bench = {
         deloadHalf: true,
         notes: "Saúde do manguito, sempre. Cotovelos altos, puxar até as orelhas, rotação externa no fim.",
         swaps: [
-          { name: "Reverse fly (halter ou máquina)", reason: "Foco em deltoide posterior. Complementa a saúde escapular." },
-          { name: "Band pull-apart", reason: "Versátil, faz onde quiser. 20+ reps." },
-          { name: "Rotação externa com halter (deitado)", reason: "Foco específico no infraespinhoso. 15 reps controladas." }
+          { name: "Reverse fly (halter ou máquina)", reason: "Foco em deltoide posterior. Complementa a saúde escapular.", notes: "Deltoide posterior — incline o tronco, abra os braços em arco. Cotovelo fixo. NÃO use trapézio (não encolha). Carga leve, qualidade do movimento." },
+          { name: "Band pull-apart", reason: "Versátil, faz onde quiser. 20+ reps.", notes: "Banda na frente, puxe abrindo até o peito, apertando escápulas. Ótimo aquecimento de ombro ou volume de posterior. Faça muitas reps, foco em ativação." },
+          { name: "Rotação externa com halter (deitado)", reason: "Foco específico no infraespinhoso. 15 reps controladas.", notes: "Saúde do manguito rotador. Deitado de lado, cotovelo a 90° fixo na cintura, gire o antebraço pra cima. Carga BEM leve — é prevenção, não força." }
         ]
       }
     ]
@@ -4455,9 +4470,9 @@ SESSIONS.deadlift = {
         deload: { sets: 3, reps: "3", intensity: "60% 1RM", rpe: "6" },
         notes: "Cada repetição como single — reset no chão, NÃO em rebote. Setup: barra sobre o meio do pé, ombros levemente à frente da barra, lats engajados.",
         swaps: [
-          { name: "Terra sumô", reason: "Pegada mais ampla, menos demanda lombar. Bom em dia de fadiga acumulada." },
-          { name: "Trap bar deadlift", reason: "Híbrido squat-deadlift. Menor estresse na lombar, carga alta possível." },
-          { name: "Romanian deadlift pesado", reason: "Se a coluna pedir. Sem chão, foco em posterior. Última opção como substituto." }
+          { name: "Terra sumô", reason: "Pegada mais ampla, menos demanda lombar. Bom em dia de fadiga acumulada.", notes: "Pés largos, mãos por dentro das pernas. Tronco mais vertical = menos estresse lombar. Empurre o chão com os pés, joelhos pra fora. Bom se o convencional incomoda a lombar." },
+          { name: "Trap bar deadlift", reason: "Híbrido squat-deadlift. Menor estresse na lombar, carga alta possível.", notes: "Pegada neutra, você fica DENTRO da barra — mais seguro pra coluna. Misto de agachamento e terra. Ótimo se o convencional dá desconforto lombar." },
+          { name: "Romanian deadlift pesado", reason: "Se a coluna pedir. Sem chão, foco em posterior. Última opção como substituto.", notes: "Parte de cima pra baixo (não do chão). Quadril pra trás, barra rente à perna, pare quando a lombar quiser arredondar. Foco em posterior, não em puxar do chão." }
         ]
       },
       {
@@ -4466,9 +4481,9 @@ SESSIONS.deadlift = {
         deloadCut: true,
         notes: "Variação técnica para fortalecer pull do chão. Déficit em ímpares, paused (1s 2cm acima do chão) em pares.",
         swaps: [
-          { name: "Rack pull (acima do joelho)", reason: "Se o ponto fraco for lockout, não pull do chão. Inverte a lógica." },
-          { name: "Snatch grip deadlift", reason: "Pegada larga aumenta ROM e ataca upper back." },
-          { name: "Block pull (3-5cm)", reason: "Se déficit for desconfortável. Mesmo objetivo, ROM ligeiramente reduzido." }
+          { name: "Rack pull (acima do joelho)", reason: "Se o ponto fraco for lockout, não pull do chão. Inverte a lógica.", notes: "Barra apoiada em pinos acima do joelho. ROM curto = carga muito alta. Trabalha a parte de cima da puxada e o grip. Não hiperestenda no topo." },
+          { name: "Snatch grip deadlift", reason: "Pegada larga aumenta ROM e ataca upper back.", notes: "Pegada bem larga aumenta o ROM e a demanda de upper back. Carga menor que o convencional. Excelente pra postura e pegada. Mantenha o peito alto." },
+          { name: "Block pull (3-5cm)", reason: "Se déficit for desconfortável. Mesmo objetivo, ROM ligeiramente reduzido.", notes: "Barra sobre blocos baixos — tira só o ponto morto inicial. Quase o ROM completo com leve vantagem. Bom se você trava logo na saída do chão." }
         ]
       },
       {
@@ -4477,9 +4492,9 @@ SESSIONS.deadlift = {
         deloadCut: true,
         notes: "Explosiva, do chão. Tronco paralelo ao chão durante toda a série. Reforça lats e ereto-espinhal.",
         swaps: [
-          { name: "Chest-supported row", reason: "Sem demanda lombar (já cansada do terra). Foco em costas pura." },
-          { name: "Remada cavalinho (T-bar)", reason: "Carga alta, padrão similar mas com apoio." },
-          { name: "Remada com halter unilateral pesada", reason: "Apoio uma mão e joelho no banco. Excelente pra simetria." }
+          { name: "Chest-supported row", reason: "Sem demanda lombar (já cansada do terra). Foco em costas pura.", notes: "Peito no apoio = zero trapaça lombar, costas isoladas. Puxe os cotovelos pra trás/baixo, segure 1s. Não encolha os ombros — retraia as escápulas." },
+          { name: "Remada cavalinho (T-bar)", reason: "Carga alta, padrão similar mas com apoio.", notes: "Peito apoiado se der. Puxe com os cotovelos, aperte escápulas. Pegada neutra confortável pro ombro. Não role os ombros pra cima — é remada, não shrug." },
+          { name: "Remada com halter unilateral pesada", reason: "Apoio uma mão e joelho no banco. Excelente pra simetria.", notes: "Versão pesada pro dia de terra. Apoie no banco, puxe ao quadril, cotovelo rente. Carga alta — pode usar strap se o grip falhar antes das costas." }
         ]
       },
       {
@@ -4488,9 +4503,9 @@ SESSIONS.deadlift = {
         deloadHalf: true,
         notes: "Adicionar peso quando passar de 10 reps. Pegada pronada ombro+. Queixo passa da barra, descida controlada.",
         swaps: [
-          { name: "Puxada alta na polia (pulldown)", reason: "Mesmo padrão de movimento, escala bem em carga." },
-          { name: "Barra fixa assistida (máquina)", reason: "Se ainda não bater 8+ reps na barra livre." },
-          { name: "Remada alta (pegada larga)", reason: "Se a barra fixa estiver impraticável (ombro sensível)." }
+          { name: "Puxada alta na polia (pulldown)", reason: "Mesmo padrão de movimento, escala bem em carga.", notes: "Puxe a barra até a clavícula, peito aberto. Não jogue o tronco pra trás demais. Pense em puxar com os cotovelos pra baixo, não com as mãos." },
+          { name: "Barra fixa assistida (máquina)", reason: "Se ainda não bater 8+ reps na barra livre.", notes: "Versão assistida da barra fixa pra controlar carga. Mais assistência = mais leve. Suba até o queixo passar a barra, desça controlando (sem despencar)." },
+          { name: "Remada alta (pegada larga)", reason: "Se a barra fixa estiver impraticável (ombro sensível).", notes: "Puxe a barra até o esterno, cotovelos altos. Pega trapézio e deltoide posterior. Pegada larga é mais segura pro ombro que a fechada." }
         ]
       },
       {
@@ -4499,9 +4514,9 @@ SESSIONS.deadlift = {
         deloadHalf: true,
         notes: "Glúteo + lombar. Adicionar carga no peito quando ficar fácil. Não hiper-estender — terminar neutro.",
         swaps: [
-          { name: "Reverse hyper (se tiver)", reason: "Padrão-ouro pra glúteo + lombar sem compressão de coluna." },
-          { name: "Glute bridge com barra", reason: "Foco em glúteo isolado. Excelente pra quem tem glúteo dormente." },
-          { name: "Single-leg RDL com halter", reason: "Versão unilateral. Equilíbrio + posterior + glúteo médio." }
+          { name: "Reverse hyper (se tiver)", reason: "Padrão-ouro pra glúteo + lombar sem compressão de coluna.", notes: "Tronco apoiado, pernas sobem por trás. Descomprime a coluna e fortalece posterior/glúteo. Sem impulso — controle a subida e a descida." },
+          { name: "Glute bridge com barra", reason: "Foco em glúteo isolado. Excelente pra quem tem glúteo dormente.", notes: "Deitado, barra sobre o quadril (use pad), empurre o quadril ao teto apertando glúteo no topo. Queixo no peito. Pausa de 1s em cima." },
+          { name: "Single-leg RDL com halter", reason: "Versão unilateral. Equilíbrio + posterior + glúteo médio.", notes: "Halter na mão oposta à perna de apoio. Dobradiça de quadril, perna de trás alinhada ao tronco. Equilíbrio primeiro, carga depois. Glúteo médio trabalha forte." }
         ]
       },
       {
@@ -4510,9 +4525,9 @@ SESSIONS.deadlift = {
         deloadHalf: true,
         notes: "Trapézio. Pausa de 1-2s no topo. Movimento puramente vertical — não rolar os ombros.",
         swaps: [
-          { name: "Trap bar shrug", reason: "Carga alta sem demanda de grip extrema. Pegada neutra confortável." },
-          { name: "Shrug na máquina", reason: "Se halteres acabarem ou barra ocupada." },
-          { name: "Farmer hold (parado, halter pesado)", reason: "Estático. Trapézio + grip + core. Substitui shrug e farmer's walk juntos." }
+          { name: "Trap bar shrug", reason: "Carga alta sem demanda de grip extrema. Pegada neutra confortável.", notes: "Dentro da trap bar, pegada neutra — carga alta sem demanda extrema de grip. Encolha vertical, pausa de 1-2s no topo. Não role os ombros." },
+          { name: "Shrug na máquina", reason: "Se halteres acabarem ou barra ocupada.", notes: "Use se halteres acabarem ou barra ocupada. Movimento puramente vertical, pausa no topo. Não gire os ombros — sobe e desce reto." },
+          { name: "Farmer hold bilateral (halteres pesados, 30-45s)", reason: "Estacionário. Trapézio + grip + core de uma vez. Use se quiser combinar shrug e grip training num exercício só.", notes: "Halteres pesados nas duas mãos, fique parado ereto. Trapézio + grip + core num exercício só. Ombros pra trás, respire. Tempo sob tensão > carga." }
         ]
       },
       {
@@ -4521,20 +4536,21 @@ SESSIONS.deadlift = {
         deloadHalf: true,
         notes: "Volume mínimo de bíceps. Cotovelo fixo ao lado do tronco, supinação no caminho da subida.",
         swaps: [
-          { name: "Rosca martelo (halter)", reason: "Foco em braquial e braquiorradial. Bom complemento." },
-          { name: "Rosca scott", reason: "Tensão na posição de estiramento. Excelente pra hipertrofia." },
-          { name: "Rosca direta com barra W", reason: "Carga maior, ambos os braços simultâneos. Mais eficiente em tempo." }
+          { name: "Rosca martelo (halter)", reason: "Foco em braquial e braquiorradial. Bom complemento.", notes: "Pegada neutra (martelo) pega o braquial e braquiorradial — engrossa o braço. Cotovelo fixo ao lado. Sem balançar o tronco." },
+          { name: "Rosca scott", reason: "Tensão na posição de estiramento. Excelente pra hipertrofia.", notes: "Banco scott fixa o cotovelo — isola o bíceps na posição de estiramento. Não estenda totalmente embaixo pra proteger o tendão. Excêntrico controlado." },
+          { name: "Rosca direta com barra W", reason: "Carga maior, ambos os braços simultâneos. Mais eficiente em tempo.", notes: "Barra W (EZ) é mais confortável pro punho que a reta. Cotovelo fixo, sem balanço. Suba apertando o bíceps, desça controlando." }
         ]
       },
       {
-        id: "dl8", name: "Farmer's walk", primary: false,
-        sets: 3, reps: "30-40m", rpe: "Carga máx",
+        id: "dl8", name: "Suitcase hold (halter unilateral)", primary: false,
+        sets: 3, reps: "30-45s/lado", rpe: "Carga máx",
         deloadHalf: true,
-        notes: "Grip + core + estabilidade total. Postura ereta, ombros para trás, passos curtos. Substitui qualquer 'core específico' do dia.",
+        notes: "Substituiu Farmer's walk — estacionário, ideal pra academia cheia. Halter pesado em um lado, postura ereta, ombros nivelados (NÃO inclinar pro lado oposto). Trabalha grip estático + core anti-lateral flexion + estabilizadores. Faça os dois lados. Tempo > carga: melhor 45s firme do que 30s tremendo.",
         swaps: [
-          { name: "Suitcase hold (halter unilateral, 30-45s/lado)", reason: "Substituto principal. Mesmo estímulo de core anti-flexão lateral + grip, ESPAÇO FIXO. Use em academia cheia." },
-          { name: "Heavy dumbbell hold bilateral (30-60s)", reason: "Grip puro + traps. Perde anti-rotação, mas é prático." },
-          { name: "Dead hang em barra fixa (até falha)", reason: "Grip + decompressão de coluna pós-deadlift. Bônus pra ombros." }
+          { name: "Dead hang em barra fixa (30-60s)", reason: "Grip puro + descompressão de coluna pós-deadlift. Bônus pra ombros e lats. Estacionário.", notes: "Só pendure com pegada pronada. Grip puro + descompressão da coluna (ótimo pós-terra) + alonga lats. Ombros levemente ativos, não totalmente soltos." },
+          { name: "Plate pinch (segurar 2 discos pelas bordas, 30s/mão)", reason: "Grip de pinça (diferente do crush grip). Útil pra pegadas fracas no deadlift. Espaço mínimo.", notes: "Segure 2 discos lisos juntos pelas bordas, só com a força dos dedos (pinça). Diferente do grip de pegar barra. Ótimo pra pegada fraca no terra." },
+          { name: "Shrug pesado (3x8-10, halteres ou trap bar)", reason: "Foco em trapézio se grip estiver gastado. Perde core anti-lateral, mas hipertrofia trap superior.", notes: "Se o grip já estiver gasto do terra, foque em trapézio com a pegada firmada. Encolha vertical, pausa no topo. Perde o core do suitcase, mas constrói trapézio." },
+          { name: "Heavy dumbbell hold bilateral (30-60s)", reason: "Grip + traps em ambos os lados. Mais simples, mas perde estímulo anti-rotação.", notes: "Halteres pesados nas duas mãos, parado e ereto. Mais simples que o suitcase mas perde o estímulo anti-lateral. Grip + traps. Respire firme." }
         ]
       }
     ]
@@ -4554,8 +4570,8 @@ SESSIONS.upper_hiper = {
         sets: 5, reps: "5", intensity: "75–80% 1RM",
         notes: "Velocidade de barra alta, NÃO RPE alto. Frequência 2 do supino — o objetivo é volume técnico, não esforço máximo. Sair com gás.",
         swaps: [
-          { name: "Supino com halteres", reason: "Mesma execução, mais ROM. Mantém a lógica de velocidade de barra." },
-          { name: "Supino reto na máquina (smith)", reason: "Backup se a barra estiver indisponível. Mantém o padrão." }
+          { name: "Supino com halteres", reason: "Mesma execução, mais ROM. Mantém a lógica de velocidade de barra.", notes: "ROM maior que a barra — desça até sentir o peito. Trajetória livre. No supino frequência 2, mantenha velocidade de barra alta, NÃO chegue à falha." },
+          { name: "Supino reto na máquina (smith)", reason: "Backup se a barra estiver indisponível. Mantém o padrão.", notes: "Barra guiada — bom pra velocidade técnica sem preocupar com equilíbrio. Na frequência 2, foque em barra rápida e explosiva, não em peso máximo." }
         ]
       },
       {
@@ -4563,9 +4579,9 @@ SESSIONS.upper_hiper = {
         sets: 4, reps: "6-8", rpe: "8",
         notes: "Em pé, barra. Trabalha estabilidade do core também. Glúteos contraídos, costelas pra dentro, barra passa rente ao rosto.",
         swaps: [
-          { name: "Push press (em pé)", reason: "Permite usar mais carga (impulso de pernas no início). Bom em dia de fadiga." },
-          { name: "Desenvolvimento sentado halter", reason: "Sem demanda de core. Foco puro em ombro." },
-          { name: "Máquina de desenvolvimento", reason: "Última opção. Útil se o ombro pedir movimento guiado." }
+          { name: "Push press (em pé)", reason: "Permite usar mais carga (impulso de pernas no início). Bom em dia de fadiga.", notes: "Use as pernas pra iniciar (leve dobra de joelho + impulso), depois empurre. Permite carga maior que o OHP estrito. Core firme, não hiperestenda a lombar." },
+          { name: "Desenvolvimento sentado halter", reason: "Sem demanda de core. Foco puro em ombro.", notes: "Sentado tira a trapaça das pernas — ombro puro. Halteres descem até a linha da orelha. Não trave o cotovelo batendo os halteres no topo." },
+          { name: "Máquina de desenvolvimento", reason: "Última opção. Útil se o ombro pedir movimento guiado.", notes: "Trajetória guiada pra ombro, boa pra fadiga ou drop-set seguro. Ajuste o assento pra alça na linha do ombro. Aperte no topo sem travar." }
         ]
       },
       {
@@ -4573,9 +4589,9 @@ SESSIONS.upper_hiper = {
         sets: 4, reps: "10", rpe: "8",
         notes: "Volume de costas para postura sob a barra. Cotovelos próximos do tronco, puxar com os lats (não com bíceps).",
         swaps: [
-          { name: "Remada baixa na polia", reason: "Ângulo similar, tensão constante. Bom pra hipertrofia." },
-          { name: "Chest-supported row", reason: "Elimina componente lombar. Foco puro em costas." },
-          { name: "Remada com halter unilateral", reason: "Excelente pra simetria. Apoio no banco." }
+          { name: "Remada baixa na polia", reason: "Ângulo similar, tensão constante. Bom pra hipertrofia.", notes: "Sentado, puxe ao abdômen, peito aberto, aperte escápulas. NÃO use impulso de tronco. Cotovelos rente ao corpo. Segure 1s na contração." },
+          { name: "Chest-supported row", reason: "Elimina componente lombar. Foco puro em costas.", notes: "Peito no apoio = zero trapaça lombar, costas isoladas. Puxe os cotovelos pra trás/baixo, segure 1s. Não encolha os ombros — retraia as escápulas." },
+          { name: "Remada com halter unilateral", reason: "Excelente pra simetria. Apoio no banco.", notes: "Joelho e mão no banco. Puxe ao quadril, cotovelo rente. Sinta a escápula no topo. Permite ROM grande e corrige assimetria entre lados." }
         ]
       },
       {
@@ -4583,9 +4599,9 @@ SESSIONS.upper_hiper = {
         sets: 3, reps: "12", rpe: "8",
         notes: "Pegada neutra ou supinada. Peito estufado, barra desce no esterno, contrair lats no fundo.",
         swaps: [
-          { name: "Barra fixa (lastrada se possível)", reason: "Padrão-ouro. Use se já tiver bom volume na quinta." },
-          { name: "Pulldown unilateral", reason: "Corrige assimetria entre os lados. Bom em mesociclos de hipertrofia." },
-          { name: "Pulldown com pegada V (neutra fechada)", reason: "Foco em lats inferior. Variação útil." }
+          { name: "Barra fixa (lastrada se possível)", reason: "Padrão-ouro. Use se já tiver bom volume na quinta.", notes: "Adicione peso no cinto se 10 reps ficarem fáceis. Suba até o queixo passar, desça controlando totalmente (não despenque). Peito aberto, puxe com os cotovelos." },
+          { name: "Pulldown unilateral", reason: "Corrige assimetria entre os lados. Bom em mesociclos de hipertrofia.", notes: "Uma mão por vez expõe assimetria e dá mais ROM. Cabo na polia alta, puxe ao ombro girando levemente. Sinta o lat alongar no topo." },
+          { name: "Pulldown com pegada V (neutra fechada)", reason: "Foco em lats inferior. Variação útil.", notes: "Pegada neutra fechada pega mais a porção interna das costas e é confortável pro ombro. Puxe ao peito, cotovelos pra baixo, aperte no fim." }
         ]
       },
       {
@@ -4593,9 +4609,9 @@ SESSIONS.upper_hiper = {
         sets: 3, reps: "12", rpe: "9",
         notes: "Estiramento máximo, controle excêntrico de 3s. Banco a 30°, cotovelos levemente flexionados durante todo o movimento.",
         swaps: [
-          { name: "Crucifixo no cabo (cross-over alto pra baixo)", reason: "Tensão constante no ROM inteiro. Superior pra hipertrofia." },
-          { name: "Peck deck (máquina)", reason: "Carga alta, padrão fixo. Bom pra falhar." },
-          { name: "Crucifixo reto halter", reason: "Foco em peitoral médio. Variação aceitável." }
+          { name: "Crucifixo no cabo (cross-over alto pra baixo)", reason: "Tensão constante no ROM inteiro. Superior pra hipertrofia.", notes: "Cabos de cima pra baixo pega peito inferior. Cotovelo fixo levemente flexionado — arco, não empurra. Cruze levemente as mãos no fim pra contração extra." },
+          { name: "Peck deck (máquina)", reason: "Carga alta, padrão fixo. Bom pra falhar.", notes: "Isolamento puro do peito, trajetória guiada. Cotovelos na almofada (ou mãos nas alças), aperte o peito juntando os braços. Pausa de 1s no centro." },
+          { name: "Crucifixo reto halter", reason: "Foco em peitoral médio. Variação aceitável.", notes: "Deitado, cotovelos fixos levemente flexionados. Abra em arco até sentir o estiramento, junte apertando o peito. Carga moderada — é isolamento, não supino." }
         ]
       },
       {
@@ -4603,9 +4619,9 @@ SESSIONS.upper_hiper = {
         sets: 4, reps: "15", rpe: "9",
         notes: "Mais isolamento que em pé — elimina trapézio superior compensando. Subir até paralelo, não acima.",
         swaps: [
-          { name: "Lateral no cabo unilateral", reason: "Tensão constante. Padrão-ouro pra hipertrofia de deltoide médio." },
-          { name: "Lateral na máquina", reason: "Padrão fixo. Bom pra drop sets." },
-          { name: "Lateral leg-out (deitado de lado)", reason: "Variação avançada. ROM grande, ataca fibras desativadas." }
+          { name: "Lateral no cabo unilateral", reason: "Tensão constante. Padrão-ouro pra hipertrofia de deltoide médio.", notes: "Cabo dá tensão constante (halter perde embaixo). Cotovelo levemente dobrado, suba à linha do ombro sem impulso. Devagar, qualidade > peso." },
+          { name: "Lateral na máquina", reason: "Padrão fixo. Bom pra drop sets.", notes: "Guiada — ótima pra drop-set sem trapaça. Cotovelo empurra o apoio, não a mão. Pausa no topo, descida controlada de 2s." },
+          { name: "Lateral leg-out (deitado de lado)", reason: "Variação avançada. ROM grande, ataca fibras desativadas.", notes: "Deitado de lado, eleva o halter pela lateral isolando o deltoide medial. Sem trapaça do corpo. Carga leve, controle total. Bom finalizador." }
         ]
       },
       {
@@ -4613,9 +4629,9 @@ SESSIONS.upper_hiper = {
         sets: 3, reps: "10 cada", rpe: "8",
         notes: "Bi-set, sem descanso. Rosca: cotovelos fixos. Testa: cotovelos fixos apontando pro teto, barra desce até a testa.",
         swaps: [
-          { name: "Rosca scott + pushdown corda", reason: "Mesma estrutura bi-set. Foco em estiramento (rosca) e contração (pushdown)." },
-          { name: "Rosca martelo + JM press", reason: "Variação focada em braquial e tríceps medial." },
-          { name: "Rosca alternada halter + tríceps unilateral cabo", reason: "Unilateral, corrige assimetria. Mais demorado." }
+          { name: "Rosca scott + pushdown corda", reason: "Mesma estrutura bi-set. Foco em estiramento (rosca) e contração (pushdown).", notes: "Bi-set: scott (bíceps alongado) + pushdown corda (tríceps). No scott não estenda 100% embaixo. Na corda, abra as pontas no fim pra contrair mais." },
+          { name: "Rosca martelo + JM press", reason: "Variação focada em braquial e tríceps medial.", notes: "Bi-set: martelo (braquial) + JM press (tríceps). Cotovelo fixo no martelo. JM press desce ao queixo, cotovelos à frente. Sem descanso entre eles." },
+          { name: "Rosca alternada halter + tríceps unilateral cabo", reason: "Unilateral, corrige assimetria. Mais demorado.", notes: "Bi-set unilateral: rosca alternada (supinação na subida) + tríceps no cabo uma mão. Cotovelo sempre fixo. Trabalha um lado por vez, foco na conexão." }
         ]
       }
     ]
@@ -5494,7 +5510,7 @@ function renderMain() {
             ` : ''}
           </div>
           <div class="ex-notes" data-notes-for="${ex.id}">
-            <div class="ex-notes-content">${ex.notes}</div>
+            <div class="ex-notes-content">${activeSwap && activeSwap.notes ? `<span class="ex-notes-swap-tag">↻ ${activeSwap.name}</span>${activeSwap.notes}` : ex.notes}</div>
           </div>
           ${ex.swaps && ex.swaps.length ? `
             <div class="ex-swaps" data-swaps-for="${ex.id}">
@@ -5758,6 +5774,7 @@ function attachExerciseHandlers() {
         setExerciseSwap(STATE.week, STATE.day, exId, {
           name: swap.name,
           reason: swap.reason,
+          notes: swap.notes || '',
           swapIndex: swapIdx
         });
       }
