@@ -3,53 +3,56 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#0a0c10">
+<meta name="theme-color" content="#0c0a08">
 <title>Diário</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════════════════════════════
    DESIGN TOKENS
 ═══════════════════════════════════════════════════════════════ */
 :root {
-  /* Surfaces — 3 níveis, não 5 */
-  --surface-0: #0a0c10;       /* deepest bg */
-  --surface-1: #11141a;       /* cards */
-  --surface-2: #181c24;       /* hover/active card */
-  --surface-3: #1f242e;       /* inputs */
+  /* Surfaces — carvão quente God of War */
+  --surface-0: #0c0a08;       /* preto carvão com calor */
+  --surface-1: #15110d;       /* mármore escuro / cards */
+  --surface-2: #1a1612;       /* pedra envelhecida / hover */
+  --surface-3: #221c15;       /* bronze fosco / inputs */
 
-  /* Borders — usadas com parcimônia */
-  --border: rgba(255,255,255,0.06);
-  --border-strong: rgba(255,255,255,0.12);
-  --border-focus: rgba(212,165,116,0.4);
+  /* Borders — bronze */
+  --border: rgba(200,155,60,0.10);
+  --border-strong: rgba(200,155,60,0.22);
+  --border-focus: rgba(240,198,116,0.5);
 
-  /* Text hierarchy */
-  --text-1: #e6e8ec;          /* primary */
-  --text-2: #a0a8b3;          /* secondary */
-  --text-3: #6b7280;          /* tertiary/labels */
-  --text-4: #4b5563;          /* faint */
+  /* Text hierarchy — mármore / pergaminho / bronze */
+  --text-1: #f0e6d2;          /* mármore claro / pergaminho */
+  --text-2: #b8a586;          /* dourado fosco */
+  --text-3: #8a7659;          /* bronze claro */
+  --text-4: #5e4f3c;          /* bronze escuro */
 
-  /* Brand — café */
-  --brand: #d4a574;
-  --brand-bright: #e6b988;
-  --brand-dim: #8a6a4a;
-  --brand-tint: rgba(212,165,116,0.12);
-  --brand-tint-strong: rgba(212,165,116,0.20);
+  /* Brand — ouro queimado */
+  --brand: #c89b3c;           /* dourado queimado principal */
+  --brand-bright: #f0c674;    /* dourado vibrante (hover/glow) */
+  --brand-dim: #8b6914;       /* dourado escuro/sombra */
+  --brand-tint: rgba(200,155,60,0.12);
+  --brand-tint-strong: rgba(200,155,60,0.22);
 
-  /* Semantic */
-  --success: #4ade80;
-  --success-tint: rgba(74,222,128,0.12);
-  --warn: #fbbf24;
-  --warn-tint: rgba(251,191,36,0.12);
-  --danger: #f87171;
-  --danger-tint: rgba(248,113,113,0.12);
-  --info: #60a5fa;
-  --info-tint: rgba(96,165,250,0.12);
+  /* Semantic — God of War */
+  --success: #c9a94a;         /* vitória dourada (não verde frio) */
+  --success-tint: rgba(200,155,60,0.14);
+  --warn: #b8763c;            /* bronze de alerta */
+  --warn-tint: rgba(184,118,60,0.14);
+  --danger: #a83232;          /* sangue */
+  --danger-tint: rgba(168,50,50,0.14);
+  --info: #c89b3c;            /* sem azul frio — usa ouro */
+  --info-tint: rgba(200,155,60,0.12);
 
-  /* Pillar colors — saturação igual, evita uns sobressaírem aleatoriamente */
-  --p-foundation: #d4a574;
-  --p-construction: #60a5fa;
-  --p-vitality: #4ade80;
-  --p-culture: #c084fc;
-  --p-awareness: #f472b6;
+  /* Pillar colors — tons quentes coordenados */
+  --p-foundation: #c89b3c;    /* ouro */
+  --p-construction: #b8763c;  /* bronze */
+  --p-vitality: #c9a94a;      /* ouro pálido */
+  --p-culture: #a87b4a;       /* bronze profundo */
+  --p-awareness: #d4a04a;     /* âmbar */
 
   /* Spacing — 4pt grid */
   --s-1: 4px;
@@ -67,14 +70,16 @@
   --r-lg: 14px;
   --r-xl: 20px;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.25);
-  --shadow-lg: 0 12px 32px rgba(0,0,0,0.4);
+  /* Shadows — profundidade preta + glow dourado */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.4);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.5), 0 1px 0 rgba(200,155,60,0.06) inset;
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.6), 0 1px 0 rgba(200,155,60,0.08) inset;
+  --shadow-glow: 0 0 24px rgba(200,155,60,0.25), 0 0 60px rgba(200,155,60,0.06);
 
-  /* Type */
-  --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif;
-  --font-mono: ui-monospace, "JetBrains Mono", "SF Mono", Menlo, monospace;
+  /* Type — Cinzel (títulos), JetBrains Mono (números), Inter (corpo) */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, "SF Mono", Menlo, monospace;
+  --font-display: 'Cinzel', Georgia, serif;
 
   /* Transitions */
   --t-fast: 120ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -111,6 +116,23 @@ body {
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   min-height: 100vh;
   min-height: 100dvh;
+  position: relative;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(200,155,60,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 100%, rgba(139,90,43,0.04) 0%, transparent 70%);
+  background-attachment: fixed;
+}
+
+/* Linha de luz dourada no topo — cinematográfica God of War */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--brand) 50%, transparent 100%);
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 999;
 }
 
 #app {
@@ -167,9 +189,11 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   border: none;
   color: var(--text-3);
   padding: var(--s-3) var(--s-4);
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 500;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   border-radius: 8px;
   cursor: pointer;
   transition: all var(--t-fast);
@@ -201,11 +225,13 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   margin-bottom: var(--s-1);
 }
 .day-name {
-  font-size: 28px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   color: var(--text-1);
   line-height: 1.1;
+  text-shadow: 0 0 16px rgba(200,155,60,0.2), 0 1px 0 rgba(0,0,0,0.4);
 }
 
 /* Day nav — bigger tap targets, subtle */
@@ -262,24 +288,25 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .score-card.keystone-card {
   border-color: var(--brand-tint-strong);
   background: linear-gradient(135deg, var(--brand-tint) 0%, var(--surface-1) 60%);
+  box-shadow: 0 0 16px rgba(200,155,60,0.12), 0 1px 0 rgba(200,155,60,0.1) inset;
 }
 .score-label {
   font-size: 11px;
   color: var(--text-3);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-weight: 500;
+  letter-spacing: 0.1em;
+  font-weight: 600;
 }
 .score-value {
   font-family: var(--font-mono);
   font-size: 22px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-1);
   line-height: 1.1;
   letter-spacing: -0.02em;
 }
-.score-card.keystone-card .score-value { color: var(--brand); }
-.score-card.keystone-card.full .score-value { color: var(--success); }
+.score-card.keystone-card .score-value { color: var(--brand-bright); text-shadow: 0 0 12px rgba(200,155,60,0.3); }
+.score-card.keystone-card.full .score-value { color: var(--brand-bright); text-shadow: 0 0 16px rgba(240,198,116,0.5); }
 
 @media (max-width: 480px) {
   .day-name { font-size: 22px; }
@@ -342,13 +369,14 @@ section.keystone-section {
   min-height: 48px;
 }
 .section-header h2 {
+  font-family: var(--font-display);
   font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-weight: 700;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-2);
 }
-.keystone-section .section-header h2 { color: var(--brand); }
+.keystone-section .section-header h2 { color: var(--brand); text-shadow: 0 0 12px rgba(200,155,60,0.25); }
 
 .section-count {
   font-family: var(--font-mono);
@@ -410,21 +438,23 @@ section.collapsed .section-header { padding-bottom: var(--s-4); }
   top: 2px;
   width: 5px;
   height: 11px;
-  border: solid white;
+  border: solid var(--surface-0);
   border-width: 0 2px 2px 0;
   transform: rotate(45deg) scale(0);
   transition: transform var(--t-base) cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .habit.done .habit-check {
   background: var(--success);
-  border-color: var(--success);
+  border-color: var(--brand-bright);
+  box-shadow: 0 0 10px rgba(200,155,60,0.4);
 }
 .habit.done .habit-check::after {
   transform: rotate(45deg) scale(1);
 }
 .keystone-section .habit.done .habit-check {
   background: var(--brand);
-  border-color: var(--brand);
+  border-color: var(--brand-bright);
+  box-shadow: 0 0 12px rgba(240,198,116,0.5);
 }
 
 .habit-label {
@@ -802,10 +832,12 @@ section.collapsed .section-header { padding-bottom: var(--s-4); }
 }
 .pillar-info { min-width: 0; }
 .pillar-name {
+  font-family: var(--font-display);
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-1);
-  letter-spacing: -0.01em;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 .pillar-sub {
   font-size: 12px;
@@ -1101,13 +1133,15 @@ section.collapsed .section-header { padding-bottom: var(--s-4); }
   position: relative;
 }
 .review-title {
-  font-size: 28px;
+  font-family: var(--font-display);
+  font-size: 26px;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.04em;
   color: var(--text-1);
   line-height: 1.1;
   margin-bottom: var(--s-2);
   position: relative;
+  text-shadow: 0 0 16px rgba(200,155,60,0.2);
 }
 .review-subtitle {
   font-size: 14px;
@@ -1186,9 +1220,11 @@ section.collapsed .section-header { padding-bottom: var(--s-4); }
   gap: var(--s-3);
 }
 .review-section-header h2 {
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--text-1);
 }
 .review-section-body { padding: 0 var(--s-4) var(--s-4); }
@@ -1526,9 +1562,11 @@ section:hover { transition: transform var(--t-base), box-shadow var(--t-base); }
 
 /* App header — stronger glassmorphism */
 .app-header {
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  background: linear-gradient(to bottom, rgba(10, 12, 16, 0.9) 60%, rgba(10, 12, 16, 0.6) 100%);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  background: linear-gradient(180deg, rgba(15,12,8,0.94) 60%, rgba(12,10,8,0.7) 100%);
+  border-bottom: 1px solid transparent;
+  border-image: linear-gradient(90deg, transparent 0%, var(--brand-dim) 20%, var(--brand) 50%, var(--brand-dim) 80%, transparent 100%) 1;
 }
 
 /* Better button hover with subtle elevation */
@@ -1744,10 +1782,11 @@ section {
   color: var(--text-3);
 }
 .drawer-title {
+  font-family: var(--font-display);
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-1);
-  letter-spacing: -0.01em;
+  letter-spacing: 0.04em;
   margin-top: 2px;
 }
 
@@ -1844,6 +1883,229 @@ body.drawer-open { overflow: hidden; }
   .drawer-body { padding-left: var(--s-4); padding-right: var(--s-4); }
   .drawer-footer { padding-left: var(--s-4); padding-right: var(--s-4); }
   .drawer-title { font-size: 16px; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   GAMIFICAÇÃO — painel, XP, níveis, conquistas
+═══════════════════════════════════════════════════════════════ */
+.gamif-panel {
+  background: linear-gradient(135deg, rgba(212,165,116,0.12) 0%, var(--surface-1) 55%);
+  border: 1px solid var(--brand-tint-strong);
+  border-radius: var(--r-lg);
+  padding: var(--s-4);
+  margin-bottom: var(--s-4);
+  position: relative;
+  overflow: hidden;
+  animation: pillarFadeIn 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.gamif-panel::before {
+  content: "";
+  position: absolute;
+  top: -40%;
+  right: -10%;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(212,165,116,0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.gamif-top {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  margin-bottom: var(--s-4);
+  position: relative;
+}
+.gamif-level-badge {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--brand-bright) 0%, var(--brand) 45%, var(--brand-dim) 100%);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 20px rgba(200,155,60,0.5), 0 0 0 1px rgba(240,198,116,0.4), inset 0 1px 0 rgba(255,255,255,0.3);
+  position: relative;
+}
+.gamif-level-num {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--surface-0);
+  letter-spacing: 0;
+  text-shadow: 0 1px 0 rgba(240,198,116,0.4);
+}
+.gamif-level-info { flex: 1; min-width: 0; }
+.gamif-level-title {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-1);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-shadow: 0 0 12px rgba(200,155,60,0.25);
+}
+.gamif-xp-text {
+  font-size: 12px;
+  color: var(--text-3);
+  margin: 3px 0 8px;
+  font-family: var(--font-mono);
+}
+.gamif-xp-bar {
+  height: 8px;
+  background: var(--surface-3);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+.gamif-xp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--brand-dim), var(--brand-bright));
+  border-radius: 4px;
+  transition: width 600ms cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+.gamif-xp-fill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  animation: xpShine 2.5s ease-in-out infinite;
+}
+@keyframes xpShine {
+  0% { transform: translateX(-100%); }
+  60%, 100% { transform: translateX(200%); }
+}
+
+.gamif-stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--s-2);
+  margin-bottom: var(--s-4);
+  position: relative;
+}
+.gamif-stat {
+  background: var(--surface-2);
+  border-radius: var(--r-md);
+  padding: var(--s-3) var(--s-2);
+  text-align: center;
+}
+.gamif-stat-icon {
+  font-size: 20px;
+  line-height: 1;
+  margin-bottom: 4px;
+  filter: grayscale(0.3);
+  transition: filter var(--t-base), transform var(--t-base);
+}
+.gamif-stat-icon.streak-icon.active {
+  filter: grayscale(0) drop-shadow(0 0 6px rgba(249,115,22,0.6));
+  animation: flameFlicker 1.8s ease-in-out infinite;
+}
+@keyframes flameFlicker {
+  0%, 100% { transform: scale(1) rotate(-2deg); }
+  50% { transform: scale(1.1) rotate(2deg); }
+}
+.gamif-stat-val {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-1);
+  letter-spacing: -0.02em;
+}
+.gamif-stat-lbl {
+  font-size: 10px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 2px;
+}
+
+.gamif-achievements {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+  gap: var(--s-2);
+  position: relative;
+}
+.achievement-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: var(--s-2) 4px;
+  border-radius: var(--r-md);
+  text-align: center;
+  transition: transform var(--t-base);
+}
+.achievement-badge.unlocked {
+  background: var(--surface-2);
+}
+.achievement-badge.unlocked:hover {
+  transform: translateY(-2px) scale(1.04);
+}
+.achievement-badge.locked { opacity: 0.4; }
+.achievement-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+  background: var(--surface-3);
+}
+.achievement-badge.unlocked .achievement-icon {
+  background: color-mix(in srgb, var(--ach-color, var(--brand)) 18%, var(--surface-2));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ach-color, var(--brand)) 30%, transparent);
+}
+.achievement-name {
+  font-size: 9px;
+  color: var(--text-3);
+  font-weight: 500;
+  line-height: 1.2;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.achievement-badge.unlocked .achievement-name { color: var(--text-2); }
+
+/* Status pill (review automático) */
+.auto-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px var(--s-3);
+  background: var(--surface-2);
+  border-radius: 100px;
+  font-size: 12px;
+  color: var(--text-2);
+  font-weight: 500;
+  position: relative;
+}
+.auto-status-pill.ok {
+  background: var(--success-tint);
+  color: var(--success);
+}
+.auto-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--text-4);
+  flex-shrink: 0;
+}
+.auto-status-pill.ok .auto-status-dot {
+  background: var(--success);
+  box-shadow: 0 0 0 3px var(--success-tint);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 3px var(--success-tint); }
+  50% { box-shadow: 0 0 0 5px transparent; }
+}
+
+@media (max-width: 480px) {
+  .gamif-level-badge { width: 48px; height: 48px; }
+  .gamif-level-num { font-size: 22px; }
+  .achievement-icon { width: 36px; height: 36px; font-size: 18px; }
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -2179,10 +2441,11 @@ body.sabbath section:not(.keystone-section):not(.reflection-section):not(.histor
     </div>
 
     <div class="dash-actions">
-      <button class="btn primary" onclick="exportDashboardReport()">Gerar relatório</button>
-      <button class="btn" onclick="exportBackup()">Backup</button>
+      <button class="btn primary" onclick="exportAll()">
+        <span style="display:inline-flex;align-items:center;gap:7px;">↓ Exportar tudo (JSON)</span>
+      </button>
       <button class="btn" onclick="document.getElementById('importInput').click()">Restaurar</button>
-      <input type="file" id="importInput" accept=".json,application/json" style="display:none" onchange="importBackup(event)">
+      <input type="file" id="importInput" accept=".json,application/json" style="display:none" onchange="importAll(event)">
     </div>
 
     <div id="dashboardContent"></div>
@@ -2191,21 +2454,12 @@ body.sabbath section:not(.keystone-section):not(.reflection-section):not(.histor
   <!-- ══════════ REVIEW VIEW ══════════ -->
   <div id="reviewView">
 
-    <!-- Step 1: Status & Importação -->
+    <!-- Step 1: Hero com status automático -->
     <section class="review-header-card">
       <div class="review-eyebrow">Ritual semanal</div>
       <div class="review-title" id="reviewWeekTitle">Semana —</div>
-      <div class="review-subtitle" id="reviewWeekSubtitle">Domingo é o dia de olhar para trás e desenhar a próxima semana</div>
-
-      <div class="review-import-zone" id="reviewImportZone">
-        <div class="import-zone-icon">↓</div>
-        <div class="import-zone-text">
-          <strong>Importar review da semana passada</strong>
-          <span>Carrega metas anteriores e calcula cumprimento automaticamente</span>
-        </div>
-        <button class="btn primary" onclick="document.getElementById('reviewImportInput').click()">Importar JSON</button>
-        <input type="file" id="reviewImportInput" accept=".json,application/json" style="display:none" onchange="importReview(event)">
-      </div>
+      <div class="review-subtitle" id="reviewWeekSubtitle">A análise da semana anterior é carregada automaticamente</div>
+      <div id="reviewAutoStatus"></div>
     </section>
 
     <!-- Step 2: Avaliação metas anteriores (só se importou) -->
@@ -2275,15 +2529,12 @@ body.sabbath section:not(.keystone-section):not(.reflection-section):not(.histor
       </div>
     </section>
 
-    <!-- Step 6: Export -->
+    <!-- Step 6: Salvar -->
     <section class="review-section">
       <div class="review-section-body">
-        <div class="btn-row">
-          <button class="btn ghost" onclick="exportReviewMarkdown()">Markdown (Obsidian)</button>
-          <button class="btn primary" onclick="exportReviewJSON()">Salvar review (JSON)</button>
-        </div>
+        <button class="btn primary" style="width:100%;" onclick="saveReviewNow()">Concluir e salvar review da semana</button>
         <div class="review-hint">
-          <strong>JSON</strong> é o que você vai importar no próximo domingo · <strong>Markdown</strong> vai pro vault como nota
+          Salvo automaticamente no app · próximo domingo a avaliação aparece sozinha. Para análise externa, use <strong>Exportar tudo</strong> em Progresso.
         </div>
       </div>
     </section>
@@ -2465,6 +2716,7 @@ function switchView(view) {
   document.getElementById('trackerHeaderBlock').style.display = view === 'tracker' ? 'block' : 'none';
   if (view === 'dashboard') renderDashboard();
   if (view === 'review') renderReview();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -2633,6 +2885,7 @@ document.querySelectorAll('.habit').forEach(el => {
     el.classList.toggle('done', day.habits[id]);
     updateScores(day);
     renderHistory();
+    syncDayXP(currentDate);
   });
 });
 
@@ -2660,6 +2913,7 @@ function saveData() {
   day.reflection.travei = getTextCardValue('reflTravei');
   day.reflection.proximo = getTextCardValue('reflProximo');
   saveDay(currentDate, day);
+  syncDayXP(currentDate);
 }
 
 function changeDay(delta) {
@@ -2708,7 +2962,9 @@ function renderDashboard() {
   const agg = aggregateData(dates);
   const rangeLabel = currentRange === 'week' ? '7 dias' : currentRange === 'month' ? '30 dias' : '365 dias';
 
+  checkAchievements();
   container.innerHTML = '';
+  container.appendChild(renderGamificationPanel());
   container.appendChild(renderPillarFoundation(agg, rangeLabel));
   container.appendChild(renderPillarConstruction(agg, rangeLabel));
   container.appendChild(renderPillarVitality(agg, rangeLabel));
@@ -3397,273 +3653,133 @@ function generateNarrative(stats, prevStats, days) {
   return lines.join('\n');
 }
 
-function exportDashboardReport() {
-  const dates = getDateRange(currentRange);
-  const agg = aggregateData(dates);
-  const days = dates.length;
-  const rangeLabel = currentRange === 'week' ? '7 dias' : currentRange === 'month' ? '30 dias' : '365 dias';
-
-  const prevEnd = new Date(dates[0]);
-  prevEnd.setDate(prevEnd.getDate() - 1);
-  const prevDates = [];
-  for (let i = days - 1; i >= 0; i--) {
-    const d = new Date(prevEnd);
-    d.setDate(prevEnd.getDate() - i);
-    prevDates.push(d);
-  }
-  const prevAgg = aggregateData(prevDates);
-
-  const stats = computeAllStats(agg);
-  const prevStats = computeAllStats(prevAgg);
-
-  const startDate = dateKey(dates[0]);
-  const endDate = dateKey(dates[dates.length - 1]);
-
-  const delta = (curr, prev, unit = 'pp') => {
-    if (!prev && !curr) return '';
-    if (!prev) return ` *(novo)*`;
-    const d = curr - prev;
-    if (Math.abs(d) < 1) return ` *(estável)*`;
-    const sign = d > 0 ? '+' : '';
-    const arrow = d > 2 ? '↗' : d < -2 ? '↘' : '→';
-    return ` *(${arrow} ${sign}${d.toFixed(1)}${unit})*`;
+function exportAll() {
+  // Coletar TODOS os dados: dias + reviews + meta de gamificação
+  const dump = {
+    type: 'diario_full_export',
+    version: 2,
+    exported_at: new Date().toISOString(),
+    app: 'diario-pedro',
+    days: {},
+    reviews: {},
+    gamification: loadGamification()
   };
 
-  const inst = Object.entries(stats.culture.instrumentMin)
-    .filter(([_,v]) => v > 0)
-    .map(([k,v]) => `- ${k.charAt(0).toUpperCase()+k.slice(1)}: ${v}min (${Math.round(v/stats.culture.totalMinutes*100)}%)`)
-    .join('\n') || '- Sem dado registrado';
-
-  const md = `# Relatório · ${rangeLabel} (${startDate} → ${endDate})
-
-> Gerado em ${new Date().toISOString().slice(0, 16).replace('T', ' ')}
-> Comparação com período anterior: ${dateKey(prevDates[0])} → ${dateKey(prevDates[prevDates.length-1])}
-
-## Sumário
-
-- Score geral médio: **${stats.avgPct}%**${delta(stats.avgPct, prevStats.avgPct)}
-- Dias com dados: ${stats.daysWithData}/${days}
-- Melhor dia: ${stats.bestDay || '—'}
-- Pior dia: ${stats.worstDay || '—'}
-${stats.driftAlerts.length > 0 ? `\n⚠️ **Drifts ativos:** ${stats.driftAlerts.map(d => `${d.label} (${d.days}d)`).join(', ')}` : ''}
-
----
-
-## Fundação · ${stats.foundation.pct}%${delta(stats.foundation.pct, prevStats.foundation.pct)}
-
-- Dias 4/4: ${stats.foundation.days4of4}/${days}
-- Streak atual: ${stats.foundation.streakNow} dias
-- Streak máximo (1 ano): ${stats.foundation.streakMax} dias
-
-### Por keystone
-${KEYSTONES.map(k => `- ${LABELS[k]}: ${stats.foundation.byHabit[k]}/${days} (${Math.round(stats.foundation.byHabit[k]/days*100)}%)`).join('\n')}
-
----
-
-## Construção · ${stats.construction.pctActive}% dias ativos${delta(stats.construction.pctActive, prevStats.construction.pctActive)}
-
-- Score de balanço: ${stats.construction.balance}/100
-- Frentes ativas no período: ${stats.construction.activeFronts}/4
-
-### Por frente
-${WORK.map(w => `- ${LABELS[w]}: ${stats.construction.byHabit[w]}/${days} (${Math.round(stats.construction.byHabit[w]/days*100)}%)`).join('\n')}
-
-${stats.driftAlerts.length > 0 ? `### Alertas de drift\n${stats.driftAlerts.map(d => `- **${d.label}** sem registro há ${d.days} dias${d.critical ? ' · CRÍTICO' : ''}`).join('\n')}\n` : ''}
----
-
-## Vitalidade
-
-- Sono médio: ${stats.vitality.meanSleep ? stats.vitality.meanSleep.toFixed(1) + 'h' : '—'}${prevStats.vitality.meanSleep && stats.vitality.meanSleep ? delta(stats.vitality.meanSleep, prevStats.vitality.meanSleep, 'h') : ''}
-- Variabilidade do sono: ±${stats.vitality.sleepStd.toFixed(1)}h
-- Energia média: ${stats.vitality.meanEnergy ? stats.vitality.meanEnergy.toFixed(1) + '/5' : '—'}
-- Foco médio: ${stats.vitality.meanFocus ? stats.vitality.meanFocus.toFixed(1) + '/5' : '—'}
-- Academia: ${stats.vitality.academiaCount}/${days} dias
-- Mobilidade: ${stats.vitality.mobilidadeCount}/${days} dias
-
-${stats.vitality.sleepInsight ? `### Insight\n${stats.vitality.sleepInsight.replace(/<\/?strong>/g, '**')}\n` : ''}
----
-
-## Cultura
-
-- Música total: ${stats.culture.totalMinutes}min (média ${(stats.culture.totalMinutes/days).toFixed(0)}min/dia)
-- Cobertura tonal: ${stats.culture.tonesRecent}/12 (últimos 14 dias) · ${stats.culture.tonesInRange}/12 (no período)
-- Leitura: ${stats.culture.leitura}/${days} dias
-- Xadrez: ${stats.culture.xadrez}/${days} partidas
-
-### Distribuição por instrumento
-${inst}
-
-${stats.culture.untouchedTones.length > 0 ? `### Tons sem registro em 14 dias\n${stats.culture.untouchedTones.join(', ')}\n` : ''}
----
-
-## Consciência
-
-- Dias com reflexão: ${stats.awareness.reflDays}/${days} (${stats.awareness.pct}%)${delta(stats.awareness.pct, prevStats.awareness.pct)}
-- Reflexão completa (3/3 campos): ${stats.awareness.reflFull}/${days}
-
----
-
-## Análise · padrões e ações sugeridas
-
-${generateNarrative(stats, prevStats, days)}
-
----
-
-*Relatório gerado pelo tracker · dados em localStorage*
-`;
-
-  showModal(`Relatório · ${rangeLabel}`, md, `relatorio-${currentRange}-${endDate}.md`);
-}
-
-function exportBackup() {
-  const dump = { version: 1, exported_at: new Date().toISOString(), data: {} };
-  let count = 0;
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
-    if (key && key.startsWith(STORAGE_PREFIX)) {
-      dump.data[key] = localStorage.getItem(key);
-      count++;
+    if (!key) continue;
+    if (key.startsWith(STORAGE_PREFIX)) {
+      try { dump.days[key.replace(STORAGE_PREFIX, '')] = JSON.parse(localStorage.getItem(key)); }
+      catch(e) {}
+    } else if (key.startsWith('review_')) {
+      try { dump.reviews[key.replace('review_', '')] = JSON.parse(localStorage.getItem(key)); }
+      catch(e) {}
     }
   }
+
+  // Resumo analítico embutido — facilita análise por IA
+  const weekDates = getDateRange('week');
+  const monthDates = getDateRange('month');
+  dump.analysis = {
+    week: summarizeForAnalysis(aggregateData(weekDates), 'semana'),
+    month: summarizeForAnalysis(aggregateData(monthDates), 'mês')
+  };
+
+  const dayCount = Object.keys(dump.days).length;
   const blob = new Blob([JSON.stringify(dump, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `diario-backup-${dateKey(new Date())}.json`;
+  a.download = `diario-${dateKey(new Date())}.json`;
   a.click();
   URL.revokeObjectURL(url);
-  showToast(`Backup · ${count} dias`);
+  showToast(`Exportado · ${dayCount} dias`);
 }
 
-function importBackup(event) {
+function summarizeForAnalysis(agg, periodo) {
+  const s = computeAllStats(agg);
+  return {
+    periodo,
+    dias_com_dados: s.daysWithData,
+    score_medio: s.avgPct,
+    fundacao_pct: s.foundation.pct,
+    dias_4de4: s.foundation.days4of4,
+    streak_atual: s.foundation.streakNow,
+    streak_recorde: s.foundation.streakMax,
+    keystones_freq: s.foundation.byHabit,
+    construcao_pct: s.construction.pctActive,
+    balanco_frentes: s.construction.balance,
+    frentes_freq: s.construction.byHabit,
+    drifts: s.driftAlerts.map(d => ({ frente: d.label, dias: d.days, critico: d.critical })),
+    sono_medio: s.vitality.meanSleep,
+    sono_variabilidade: s.vitality.sleepStd,
+    energia_media: s.vitality.meanEnergy,
+    foco_medio: s.vitality.meanFocus,
+    academia_dias: s.vitality.academiaCount,
+    musica_min: s.culture.totalMinutes,
+    cobertura_tonal: s.culture.tonesRecent,
+    leitura_dias: s.culture.leitura,
+    xadrez: s.culture.xadrez,
+    reflexao_pct: s.awareness.pct,
+    insight_sono: s.vitality.sleepInsight ? s.vitality.sleepInsight.replace(/<[^>]+>/g, '') : null
+  };
+}
+
+function importAll(event) {
   const file = event.target.files[0];
   if (!file) return;
   const reader = new FileReader();
   reader.onload = e => {
     try {
       const dump = JSON.parse(e.target.result);
-      if (!dump.data || typeof dump.data !== 'object') {
-        alert('Arquivo inválido: estrutura não reconhecida.');
+      // Aceita o formato novo (v2) e o antigo (backup simples)
+      let dayEntries = {};
+      let reviewEntries = {};
+      let gamif = null;
+
+      if (dump.type === 'diario_full_export' && dump.days) {
+        dayEntries = dump.days;
+        reviewEntries = dump.reviews || {};
+        gamif = dump.gamification || null;
+      } else if (dump.data && typeof dump.data === 'object') {
+        // formato antigo de backup
+        Object.keys(dump.data).forEach(k => {
+          if (k.startsWith(STORAGE_PREFIX)) {
+            try { dayEntries[k.replace(STORAGE_PREFIX,'')] = JSON.parse(dump.data[k]); } catch(e){}
+          }
+        });
+      } else {
+        showToast('Arquivo não reconhecido', true);
         return;
       }
-      const keys = Object.keys(dump.data).filter(k => k.startsWith(STORAGE_PREFIX));
-      if (keys.length === 0) {
-        alert('Arquivo não contém dados do diário.');
+
+      const dayKeys = Object.keys(dayEntries);
+      if (dayKeys.length === 0) {
+        showToast('Nenhum dado no arquivo', true);
         return;
       }
+
       let conflicts = 0;
-      keys.forEach(k => { if (localStorage.getItem(k)) conflicts++; });
+      dayKeys.forEach(k => { if (localStorage.getItem(STORAGE_PREFIX + k)) conflicts++; });
       const msg = conflicts > 0
-        ? `Backup contém ${keys.length} dias.\n\n${conflicts} dias já existem localmente e serão SOBRESCRITOS.\n\nContinuar?`
-        : `Backup contém ${keys.length} dias.\n\nNenhum conflito com dados atuais.\n\nContinuar?`;
+        ? `${dayKeys.length} dias no arquivo.\n\n${conflicts} já existem e serão SOBRESCRITOS.\n\nContinuar?`
+        : `${dayKeys.length} dias no arquivo.\nSem conflitos.\n\nContinuar?`;
       if (!confirm(msg)) return;
-      keys.forEach(k => localStorage.setItem(k, dump.data[k]));
-      showToast(`Restaurado · ${keys.length} dias`);
+
+      dayKeys.forEach(k => localStorage.setItem(STORAGE_PREFIX + k, JSON.stringify(dayEntries[k])));
+      Object.keys(reviewEntries).forEach(k => localStorage.setItem('review_' + k, JSON.stringify(reviewEntries[k])));
+      if (gamif) saveGamification(gamif);
+
+      showToast(`Restaurado · ${dayKeys.length} dias`);
       render();
       if (currentView === 'dashboard') renderDashboard();
+      if (currentView === 'review') renderReview();
     } catch (err) {
       showToast('Erro ao ler arquivo', true);
     }
   };
   reader.readAsText(file);
   event.target.value = '';
-}
-
-/* ═══════════════════════════════════════════════════════
-   EXPORT MARKDOWN (dia + semana)
-═══════════════════════════════════════════════════════ */
-function exportMarkdown() {
-  const day = loadDay(currentDate);
-  const dow = currentDate.getDay();
-  const ks = KEYSTONES.filter(id => day.habits[id]).length;
-  const tot = ALL_HABITS.filter(id => day.habits[id]).length;
-  const tone = getToneOfDay(currentDate);
-  const rhythm = getRhythmOfDay(currentDate);
-
-  const habitLine = (id, label) => `- [${day.habits[id] ? 'x' : ' '}] ${label}`;
-
-  const md = `# ${dateKey(currentDate)} · ${DAY_NAMES[dow]}
-
-> Score: **${ks}/4 keystones** · ${tot}/12 total
-> Sugestão musical do dia: ${tone.tone} · ${rhythm}
-
-## Métricas
-- Sono: ${day.metrics.sleep || '—'}h
-- Energia: ${day.metrics.energy || '—'}/5
-- Foco: ${day.metrics.focus || '—'}/5
-
-## Base não-negociável
-${habitLine('k_jejum', 'Jejum 16/8')}
-${habitLine('k_alimentacao', 'Alimentação limpa + multi')}
-${habitLine('k_sono', 'Sono 7h+')}
-${habitLine('k_porn', 'Sem pornografia')}
-
-## Trabalho
-${habitLine('w_torra', 'Sessão de torra OU análise de log')}
-${habitLine('w_pkm', 'PKM · 1 nota processada')}
-${habitLine('w_ig', 'Conteúdo IG')}
-${habitLine('w_estudo', 'Estudo técnico')}
-
-## Corpo
-${habitLine('b_academia', 'Academia')}
-${habitLine('b_mobilidade', 'Cardio/mobilidade')}
-
-## Mente
-${habitLine('m_xadrez', 'Xadrez')}
-${habitLine('m_leitura', 'Leitura')}
-- Música: ${day.music.instrument || '—'} · ${day.music.tone || '—'} · ${day.music.rhythm || '—'} · ${day.music.minutes || '0'}min
-
-## Reflexão
-
-**Avancei:**
-${day.reflection.avancei || '—'}
-
-**Travei:**
-${day.reflection.travei || '—'}
-
-**Próximo passo:**
-${day.reflection.proximo || '—'}
-`;
-
-  showModal('Export · ' + dateKey(currentDate), md, dateKey(currentDate) + '.md');
-}
-
-function exportWeekly() {
-  const lines = [`# Review · semana terminando em ${dateKey(currentDate)}\n`];
-  let totalKs = 0, totalAll = 0;
-  const habitTotals = {};
-  ALL_HABITS.forEach(h => habitTotals[h] = 0);
-
-  for (let i = 6; i >= 0; i--) {
-    const d = new Date(currentDate);
-    d.setDate(currentDate.getDate() - i);
-    const data = loadDay(d);
-    const ks = KEYSTONES.filter(id => data.habits[id]).length;
-    const tot = ALL_HABITS.filter(id => data.habits[id]).length;
-    totalKs += ks; totalAll += tot;
-    ALL_HABITS.forEach(h => { if (data.habits[h]) habitTotals[h]++; });
-    lines.push(`- **${dateKey(d)}** (${DAY_NAMES[d.getDay()]}): ${ks}/4 keystones · ${tot}/12 total`);
-  }
-
-  lines.push(`\n## Agregado\n- Keystones: ${totalKs}/28 (${Math.round(totalKs/28*100)}%)`);
-  lines.push(`- Total: ${totalAll}/84 (${Math.round(totalAll/84*100)}%)`);
-  lines.push(`\n## Frequência por hábito`);
-  ALL_HABITS.forEach(h => lines.push(`- ${LABELS[h]}: ${habitTotals[h]}/7`));
-
-  lines.push(`\n## Reflexões`);
-  for (let i = 6; i >= 0; i--) {
-    const d = new Date(currentDate);
-    d.setDate(currentDate.getDate() - i);
-    const data = loadDay(d);
-    if (data.reflection.avancei || data.reflection.travei || data.reflection.proximo) {
-      lines.push(`\n### ${dateKey(d)} (${DAY_NAMES[d.getDay()]})`);
-      if (data.reflection.avancei) lines.push(`- **Avancei:** ${data.reflection.avancei}`);
-      if (data.reflection.travei) lines.push(`- **Travei:** ${data.reflection.travei}`);
-      if (data.reflection.proximo) lines.push(`- **Próximo:** ${data.reflection.proximo}`);
-    }
-  }
-
-  showModal('Review semanal', lines.join('\n'), 'review-' + dateKey(currentDate) + '.md');
 }
 
 /* MODAL */
@@ -3727,6 +3843,30 @@ function renderReview() {
   document.getElementById('reviewWeekTitle').textContent = `Semana ${weekNum}`;
   document.getElementById('weekDateRange').textContent =
     `${weekStart.getDate()} ${MONTH_NAMES[weekStart.getMonth()]} → ${weekEnd.getDate()} ${MONTH_NAMES[weekEnd.getMonth()]}`;
+
+  // CARREGAMENTO AUTOMÁTICO do review anterior
+  reviewState.prevReview = loadPrevReviewAuto(weekEnd);
+
+  // Carregar review JÁ SALVO desta semana (se existir) para não perder edição
+  const thisWeekSaved = (() => {
+    try { return JSON.parse(localStorage.getItem('review_' + dateKey(weekEnd))); }
+    catch(e) { return null; }
+  })();
+  if (thisWeekSaved) {
+    if (thisWeekSaved.goals && reviewState.currentGoals.length === 0) reviewState.currentGoals = thisWeekSaved.goals;
+    if (thisWeekSaved.reflection) {
+      if (!reviewState.pattern) reviewState.pattern = thisWeekSaved.reflection.pattern || '';
+      if (!reviewState.focusNext) reviewState.focusNext = thisWeekSaved.reflection.focus_next || '';
+    }
+  }
+
+  // Status automático no hero
+  const statusEl = document.getElementById('reviewAutoStatus');
+  if (reviewState.prevReview) {
+    statusEl.innerHTML = `<div class="auto-status-pill ok"><span class="auto-status-dot"></span>Análise da semana ${reviewState.prevReview.week_number} carregada automaticamente</div>`;
+  } else {
+    statusEl.innerHTML = `<div class="auto-status-pill"><span class="auto-status-dot"></span>Primeira semana — sem review anterior para comparar</div>`;
+  }
 
   const weekDates = [];
   for (let i = 6; i >= 0; i--) {
@@ -4141,36 +4281,7 @@ function evaluateGoals(goals, weekStats) {
   });
 }
 
-function importReview(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    try {
-      const data = JSON.parse(e.target.result);
-      if (data.type !== 'weekly_review') {
-        showToast('Arquivo não é um review semanal', true);
-        return;
-      }
-      reviewState.prevReview = data;
-      const zone = document.getElementById('reviewImportZone');
-      zone.classList.add('imported');
-      zone.querySelector('.import-zone-icon').textContent = '✓';
-      zone.querySelector('.import-zone-text strong').textContent = `Review importado · semana ${data.week_number || '?'}`;
-      zone.querySelector('.import-zone-text span').textContent =
-        `${(data.goals || []).length} metas serão avaliadas vs sua execução real`;
-      zone.querySelector('button').textContent = 'Trocar arquivo';
-      renderReview();
-      showToast('Review importado · metas avaliadas');
-    } catch (err) {
-      showToast('Erro ao ler review: ' + err.message, true);
-    }
-  };
-  reader.readAsText(file);
-  event.target.value = '';
-}
-
-function buildReviewJSON() {
+function buildReviewObject() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const dowToday = today.getDay();
@@ -4192,7 +4303,7 @@ function buildReviewJSON() {
 
   return {
     type: 'weekly_review',
-    version: 1,
+    version: 2,
     exported_at: new Date().toISOString(),
     week_ending: dateKey(weekEnd),
     week_number: weekNum,
@@ -4211,101 +4322,40 @@ function buildReviewJSON() {
       reflection_pct: stats.awareness.pct
     },
     goals: reviewState.currentGoals,
-    reflection: {
-      pattern: reviewState.pattern,
-      focus_next: reviewState.focusNext
-    },
-    prev_goals_eval: reviewState.prevReview && reviewState.prevReview.goals
-      ? evaluateGoals(reviewState.prevReview.goals, stats).map(g => ({
-          text: g.text, category: g.category, achieved: g.achieved, actual: g.actual, target: g.target
-        }))
-      : null
+    reflection: { pattern: reviewState.pattern, focus_next: reviewState.focusNext }
   };
 }
 
-function exportReviewJSON() {
-  const review = buildReviewJSON();
-  const blob = new Blob([JSON.stringify(review, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `review-${review.week_ending}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
+// Salva review da semana corrente no localStorage (automático, sem download)
+function saveReviewNow() {
+  const review = buildReviewObject();
   localStorage.setItem('review_' + review.week_ending, JSON.stringify(review));
-  showToast('Review salvo · use no próximo domingo');
+  // XP por concluir review
+  awardXP(40, 'Review semanal concluído');
+  showToast('Review salvo ✓');
+  renderReview();
 }
 
-function exportReviewMarkdown() {
-  const review = buildReviewJSON();
-  const lines = [];
-  lines.push(`# Review · Semana ${review.week_number}`);
-  lines.push(``);
-  lines.push(`> Semana terminando em ${review.week_ending}`);
-  lines.push(`> Gerado em ${new Date().toISOString().slice(0, 16).replace('T', ' ')}`);
-  lines.push(``);
-  lines.push(`## Sumário`);
-  lines.push(``);
-  lines.push(`- Score médio: **${review.summary.score_avg}%**`);
-  lines.push(`- Keystones: ${review.summary.keystones_pct}% · ${review.summary.days_4of4} dias 4/4 · streak ${review.summary.streak}`);
-  lines.push(`- Construção: ${review.summary.construction_pct}% dias ativos · balanço ${review.summary.balance}/100`);
-  lines.push(`- Sono: ${review.summary.sleep_mean ? review.summary.sleep_mean.toFixed(1) + 'h ±' + review.summary.sleep_std.toFixed(1) + 'h' : '—'}`);
-  lines.push(`- Academia: ${review.summary.academia} dias`);
-  lines.push(`- Música: ${review.summary.music_minutes}min · ${review.summary.tones_recent}/12 tons cobertos`);
-  lines.push(`- Reflexão: ${review.summary.reflection_pct}%`);
-  lines.push(``);
-
-  if (review.prev_goals_eval && review.prev_goals_eval.length > 0) {
-    lines.push(`## Cumprimento das metas anteriores`);
-    lines.push(``);
-    const measurable = review.prev_goals_eval.filter(g => g.achieved !== null);
-    const achieved = measurable.filter(g => g.achieved).length;
-    lines.push(`**${achieved}/${measurable.length} metas cumpridas**`);
-    lines.push(``);
-    review.prev_goals_eval.forEach(g => {
-      const icon = g.achieved === true ? '✓' : g.achieved === false ? '✗' : '○';
-      lines.push(`- ${icon} ${g.text}`);
-    });
-    lines.push(``);
-  }
-
-  if (review.reflection.pattern || review.reflection.focus_next) {
-    lines.push(`## Reflexão`);
-    lines.push(``);
-    if (review.reflection.pattern) {
-      lines.push(`### Padrão observado`);
-      lines.push(review.reflection.pattern);
-      lines.push(``);
-    }
-    if (review.reflection.focus_next) {
-      lines.push(`### Foco prioritário`);
-      lines.push(review.reflection.focus_next);
-      lines.push(``);
+// Carrega automaticamente o review da semana ANTERIOR (último review salvo antes da semana atual)
+function loadPrevReviewAuto(currentWeekEnd) {
+  let best = null;
+  let bestDate = null;
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (!key || !key.startsWith('review_')) continue;
+    const dateStr = key.replace('review_', '');
+    const d = new Date(dateStr + 'T00:00:00');
+    if (isNaN(d)) continue;
+    // Só reviews com fim ANTES do fim da semana atual
+    if (d >= currentWeekEnd) continue;
+    if (!bestDate || d > bestDate) {
+      try {
+        best = JSON.parse(localStorage.getItem(key));
+        bestDate = d;
+      } catch(e) {}
     }
   }
-
-  if (review.goals && review.goals.length > 0) {
-    lines.push(`## Metas para a próxima semana`);
-    lines.push(``);
-    const byCat = {};
-    review.goals.forEach(g => {
-      if (!byCat[g.category]) byCat[g.category] = [];
-      byCat[g.category].push(g);
-    });
-    Object.entries(byCat).forEach(([cat, items]) => {
-      lines.push(`### ${goalCategoryLabel(cat)}`);
-      items.forEach(g => {
-        lines.push(`- [ ] ${g.text} *(${g.priority || 'medium'})*`);
-      });
-      lines.push(``);
-    });
-  }
-
-  lines.push(`---`);
-  lines.push(``);
-  lines.push(`*Review do tracker · próximo domingo, importe \`review-${review.week_ending}.json\` para ver cumprimento*`);
-
-  showModal(`Review · Semana ${review.week_number}`, lines.join('\n'), `review-${review.week_ending}.md`);
+  return best;
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -4422,6 +4472,233 @@ document.addEventListener('keydown', (e) => {
     }
   }
 });
+
+/* ═══════════════════════════════════════════════════════
+   GAMIFICAÇÃO — XP, níveis, conquistas, streaks
+═══════════════════════════════════════════════════════ */
+const GAMIF_KEY = 'gamif_state';
+
+// Níveis: XP necessário cresce ~1.4x por nível
+const LEVEL_TITLES = [
+  'Iniciante', 'Aprendiz', 'Praticante', 'Constante', 'Disciplinado',
+  'Dedicado', 'Veterano', 'Mestre', 'Guardião', 'Lendário'
+];
+
+function xpForLevel(level) {
+  // XP acumulado necessário para atingir o nível
+  if (level <= 1) return 0;
+  return Math.round(100 * (Math.pow(1.4, level - 1) - 1) / 0.4);
+}
+
+function levelFromXP(xp) {
+  let lvl = 1;
+  while (xp >= xpForLevel(lvl + 1) && lvl < 99) lvl++;
+  return lvl;
+}
+
+function loadGamification() {
+  try {
+    const raw = localStorage.getItem(GAMIF_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return { xp: 0, achievements: {}, lastXpLog: [] };
+}
+
+function saveGamification(state) {
+  localStorage.setItem(GAMIF_KEY, JSON.stringify(state));
+}
+
+function awardXP(amount, reason) {
+  const g = loadGamification();
+  const oldLevel = levelFromXP(g.xp);
+  g.xp += amount;
+  const newLevel = levelFromXP(g.xp);
+  g.lastXpLog = (g.lastXpLog || []).slice(-20);
+  g.lastXpLog.push({ amount, reason, at: new Date().toISOString() });
+  saveGamification(g);
+  if (newLevel > oldLevel) {
+    showToast(`⬆ Nível ${newLevel} · ${LEVEL_TITLES[Math.min(newLevel-1, LEVEL_TITLES.length-1)]}`);
+  }
+  return g;
+}
+
+// XP do dia: calculado a partir dos hábitos (idempotente — recalcula, não acumula dobrado)
+// Estratégia: guardamos o XP "creditado" por dia em day._xpAwarded e ajustamos o delta.
+function syncDayXP(date) {
+  const day = loadDay(date);
+  const ks = KEYSTONES.filter(id => day.habits[id]).length;
+  const tot = ALL_HABITS.filter(id => day.habits[id]).length;
+  // Fórmula: 10 XP por keystone, 4 XP por hábito extra, bônus 20 se 4/4 keystones
+  let dayXP = ks * 10 + (tot - ks) * 4;
+  if (ks === 4) dayXP += 20;
+  // reflexão completa: +10
+  const refl = day.reflection || {};
+  if (refl.avancei && refl.travei && refl.proximo) dayXP += 10;
+
+  const prevAwarded = day._xpAwarded || 0;
+  const delta = dayXP - prevAwarded;
+  if (delta !== 0) {
+    const g = loadGamification();
+    g.xp = Math.max(0, g.xp + delta);
+    saveGamification(g);
+    day._xpAwarded = dayXP;
+    // salvar sem toast (evita "Salvo" duplicado)
+    localStorage.setItem(STORAGE_PREFIX + dateKey(date), JSON.stringify(day));
+  }
+  checkAchievements();
+}
+
+/* ─── CONQUISTAS ─── */
+const ACHIEVEMENTS = [
+  { id: 'first_day', icon: '🌱', name: 'Primeiro passo', desc: 'Complete seu primeiro dia', color: 'var(--p-vitality)',
+    check: (ctx) => ctx.totalDaysWithData >= 1 },
+  { id: 'first_4of4', icon: '💎', name: 'Dia perfeito', desc: '4/4 keystones em um dia', color: 'var(--brand)',
+    check: (ctx) => ctx.anyPerfectDay },
+  { id: 'streak_3', icon: '🔥', name: 'Aquecendo', desc: '3 dias seguidos de keystones', color: '#fb923c',
+    check: (ctx) => ctx.maxStreak >= 3 },
+  { id: 'streak_7', icon: '🔥', name: 'Em chamas', desc: '7 dias seguidos', color: '#f97316',
+    check: (ctx) => ctx.maxStreak >= 7 },
+  { id: 'streak_21', icon: '🔥', name: 'Hábito formado', desc: '21 dias seguidos', color: '#ef4444',
+    check: (ctx) => ctx.maxStreak >= 21 },
+  { id: 'streak_30', icon: '👑', name: 'Inabalável', desc: '30 dias seguidos', color: '#fbbf24',
+    check: (ctx) => ctx.maxStreak >= 30 },
+  { id: 'music_300', icon: '🎵', name: 'Sanfoneiro', desc: '300 min de música acumulados', color: 'var(--p-culture)',
+    check: (ctx) => ctx.totalMusicMin >= 300 },
+  { id: 'tones_12', icon: '🎹', name: 'Círculo completo', desc: 'Cobrir os 12 tons em 14 dias', color: 'var(--p-culture)',
+    check: (ctx) => ctx.tonesRecent >= 12 },
+  { id: 'gym_20', icon: '💪', name: 'Forjado', desc: '20 dias de academia', color: 'var(--p-vitality)',
+    check: (ctx) => ctx.totalGym >= 20 },
+  { id: 'reflect_14', icon: '📖', name: 'Examinado', desc: '14 dias de reflexão escrita', color: 'var(--p-awareness)',
+    check: (ctx) => ctx.totalReflect >= 14 },
+  { id: 'level_5', icon: '⭐', name: 'Disciplinado', desc: 'Alcançar nível 5', color: 'var(--brand)',
+    check: (ctx) => ctx.level >= 5 },
+  { id: 'review_first', icon: '🧭', name: 'Estrategista', desc: 'Concluir primeiro review semanal', color: 'var(--p-construction)',
+    check: (ctx) => ctx.reviewCount >= 1 }
+];
+
+function buildAchievementContext() {
+  // Varre últimos 365 dias
+  let totalDaysWithData = 0, totalMusicMin = 0, totalGym = 0, totalReflect = 0;
+  let anyPerfectDay = false;
+  const today = new Date(); today.setHours(0,0,0,0);
+  for (let i = 0; i < 365; i++) {
+    const d = new Date(today); d.setDate(today.getDate() - i);
+    const data = loadDay(d);
+    const hasData = Object.keys(data.habits).length > 0 || data.reflection.avancei || data.metrics.sleep;
+    if (hasData) totalDaysWithData++;
+    const ks = KEYSTONES.filter(id => data.habits[id]).length;
+    if (ks === 4) anyPerfectDay = true;
+    totalMusicMin += parseInt(data.music.minutes) || 0;
+    if (data.habits.b_academia) totalGym++;
+    if (data.reflection.avancei || data.reflection.travei || data.reflection.proximo) totalReflect++;
+  }
+  // Tons recentes
+  const recent14 = new Set();
+  for (let i = 0; i < 14; i++) {
+    const d = new Date(today); d.setDate(today.getDate() - i);
+    const data = loadDay(d);
+    if (data.music.tone) recent14.add(data.music.tone.trim());
+  }
+  const tonesRecent = ALL_TONES.filter(t => recent14.has(t)).length;
+  // Reviews
+  let reviewCount = 0;
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k && k.startsWith('review_')) reviewCount++;
+  }
+  const g = loadGamification();
+  return {
+    totalDaysWithData, totalMusicMin, totalGym, totalReflect, anyPerfectDay,
+    maxStreak: computeMaxStreak(), tonesRecent, reviewCount,
+    level: levelFromXP(g.xp)
+  };
+}
+
+function checkAchievements() {
+  const g = loadGamification();
+  g.achievements = g.achievements || {};
+  const ctx = buildAchievementContext();
+  let newUnlocks = [];
+  ACHIEVEMENTS.forEach(a => {
+    if (!g.achievements[a.id] && a.check(ctx)) {
+      g.achievements[a.id] = new Date().toISOString();
+      newUnlocks.push(a);
+    }
+  });
+  if (newUnlocks.length > 0) {
+    saveGamification(g);
+    // Notifica a primeira conquista nova
+    const first = newUnlocks[0];
+    setTimeout(() => showToast(`${first.icon} Conquista: ${first.name}`), 600);
+  }
+  return g;
+}
+
+/* ─── RENDER DO PAINEL DE GAMIFICAÇÃO (no topo do dashboard) ─── */
+function renderGamificationPanel() {
+  const g = loadGamification();
+  const level = levelFromXP(g.xp);
+  const currentLevelXP = xpForLevel(level);
+  const nextLevelXP = xpForLevel(level + 1);
+  const xpInLevel = g.xp - currentLevelXP;
+  const xpNeeded = nextLevelXP - currentLevelXP;
+  const pct = Math.min(100, Math.round((xpInLevel / xpNeeded) * 100));
+  const title = LEVEL_TITLES[Math.min(level - 1, LEVEL_TITLES.length - 1)];
+  const streak = computeStreak();
+  const maxStreak = computeMaxStreak();
+
+  const ctx = buildAchievementContext();
+  const unlockedCount = Object.keys(g.achievements || {}).length;
+
+  const panel = document.createElement('div');
+  panel.className = 'gamif-panel';
+  panel.innerHTML = `
+    <div class="gamif-top">
+      <div class="gamif-level-badge">
+        <div class="gamif-level-num">${level}</div>
+      </div>
+      <div class="gamif-level-info">
+        <div class="gamif-level-title">${title}</div>
+        <div class="gamif-xp-text">${g.xp} XP · faltam ${Math.max(0, nextLevelXP - g.xp)} para nível ${level + 1}</div>
+        <div class="gamif-xp-bar"><div class="gamif-xp-fill" style="width:${pct}%"></div></div>
+      </div>
+    </div>
+    <div class="gamif-stats-row">
+      <div class="gamif-stat">
+        <div class="gamif-stat-icon streak-icon ${streak > 0 ? 'active' : ''}">🔥</div>
+        <div class="gamif-stat-val">${streak}</div>
+        <div class="gamif-stat-lbl">streak</div>
+      </div>
+      <div class="gamif-stat">
+        <div class="gamif-stat-icon">🏆</div>
+        <div class="gamif-stat-val">${maxStreak}</div>
+        <div class="gamif-stat-lbl">recorde</div>
+      </div>
+      <div class="gamif-stat">
+        <div class="gamif-stat-icon">🎖️</div>
+        <div class="gamif-stat-val">${unlockedCount}/${ACHIEVEMENTS.length}</div>
+        <div class="gamif-stat-lbl">conquistas</div>
+      </div>
+    </div>
+    <div class="gamif-achievements" id="gamifAchievements"></div>
+  `;
+
+  // Achievements grid
+  const grid = panel.querySelector('#gamifAchievements');
+  ACHIEVEMENTS.forEach(a => {
+    const unlocked = !!(g.achievements && g.achievements[a.id]);
+    const badge = document.createElement('div');
+    badge.className = 'achievement-badge ' + (unlocked ? 'unlocked' : 'locked');
+    badge.title = a.name + ' — ' + a.desc;
+    badge.innerHTML = `
+      <div class="achievement-icon" style="${unlocked ? '--ach-color:' + a.color : ''}">${unlocked ? a.icon : '🔒'}</div>
+      <div class="achievement-name">${unlocked ? a.name : '???'}</div>
+    `;
+    grid.appendChild(badge);
+  });
+
+  return panel;
+}
 
 /* INIT */
 render();
