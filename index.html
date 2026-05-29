@@ -563,6 +563,59 @@
     transform: scale(0.95);
   }
   
+  /* ============================================================ */
+  /* === AURAS TEMÁTICAS DO SET TRACKER POR REINO ============== */
+  /* ============================================================ */
+  /* Cada reino tinge o glow do botão de séries com sua cor.     */
+  /* (Boss-fight/deadlift tem o fogo próprio, não usa isto.)      */
+  
+  /* FORJA (Squat) — laranja-bronze, calor de fundição */
+  body.skin-forge .set-tracker::after {
+    background: radial-gradient(circle, rgba(255,140,40,0.2) 0%, rgba(200,90,20,0.1) 50%, transparent 100%);
+  }
+  body.skin-forge .set-tracker.active {
+    border-color: #c8641e;
+    background: radial-gradient(circle at 30% 30%, rgba(255,140,40,0.12) 0%, transparent 60%), linear-gradient(180deg, var(--bg-card) 0%, #120a06 100%);
+    box-shadow: inset 0 0 12px rgba(255,140,40,0.18), 0 0 12px rgba(255,140,40,0.25), 0 2px 6px rgba(0,0,0,0.4);
+  }
+  body.skin-forge .set-tracker.complete {
+    border-color: #ffa040;
+    background: radial-gradient(circle at 30% 30%, rgba(255,180,80,0.3) 0%, rgba(255,120,40,0.15) 60%, transparent 100%), linear-gradient(180deg, rgba(255,120,40,0.2) 0%, rgba(168,84,16,0.3) 100%);
+    box-shadow: inset 0 0 16px rgba(255,180,80,0.3), 0 0 24px rgba(255,140,40,0.5), 0 0 8px rgba(255,200,100,0.4), 0 2px 8px rgba(0,0,0,0.4);
+  }
+  body.skin-forge .set-tracker.complete .set-tracker-laurel { color: #ffce9a; text-shadow: 0 0 10px #ffa040; }
+  body.skin-forge .set-dot.filled { background: #ffce9a; box-shadow: 0 0 4px #ffa040; }
+  body.skin-forge .set-tracker::before {
+    background: conic-gradient(from -90deg, #ffce9a 0deg, #e8801e calc(var(--progress, 0) * 3.6deg), transparent calc(var(--progress, 0) * 3.6deg + 1deg), transparent 360deg);
+    filter: drop-shadow(0 0 4px rgba(255,140,40,0.5));
+  }
+  
+  /* SALÃO DE GUERRA (Bench) — dourado clássico (já é o padrão) */
+  body.skin-warhall .set-tracker.complete .set-tracker-laurel { color: var(--gold-bright); text-shadow: 0 0 10px var(--gold); }
+  
+  /* BRONZE DE ESPARTA (Upper) — dourado-oliva, pátina viva */
+  body.skin-bronze .set-tracker::after {
+    background: radial-gradient(circle, rgba(212,188,106,0.2) 0%, rgba(140,122,58,0.1) 50%, transparent 100%);
+  }
+  body.skin-bronze .set-tracker.active {
+    border-color: #8a7a3a;
+    background: radial-gradient(circle at 30% 30%, rgba(212,188,106,0.12) 0%, transparent 60%), linear-gradient(180deg, var(--bg-card) 0%, #0e0d08 100%);
+    box-shadow: inset 0 0 12px rgba(212,188,106,0.18), 0 0 12px rgba(212,188,106,0.25), 0 2px 6px rgba(0,0,0,0.4);
+  }
+  body.skin-bronze .set-tracker.complete {
+    border-color: #d4bc6a;
+    background: radial-gradient(circle at 30% 30%, rgba(232,216,154,0.3) 0%, rgba(180,160,74,0.15) 60%, transparent 100%), linear-gradient(180deg, rgba(180,160,74,0.2) 0%, rgba(138,122,58,0.3) 100%);
+    box-shadow: inset 0 0 16px rgba(232,216,154,0.3), 0 0 24px rgba(212,188,106,0.5), 0 0 8px rgba(232,216,154,0.4), 0 2px 8px rgba(0,0,0,0.4);
+  }
+  body.skin-bronze .set-tracker.complete .set-tracker-laurel { color: #e8d89a; text-shadow: 0 0 10px #d4bc6a; }
+  body.skin-bronze .set-dot.filled { background: #e8d89a; box-shadow: 0 0 4px #d4bc6a; }
+  body.skin-bronze .set-tracker::before {
+    background: conic-gradient(from -90deg, #e8d89a 0deg, #b4a04a calc(var(--progress, 0) * 3.6deg), transparent calc(var(--progress, 0) * 3.6deg + 1deg), transparent 360deg);
+    filter: drop-shadow(0 0 4px rgba(212,188,106,0.5));
+  }
+  
+  /* LAGO e TUNDRA (cardio) usam botão de conclusão. WINTER (rest) não tem exercícios. */
+  
   .set-tracker-counter {
     font-family: 'Cinzel', Georgia, serif;
     font-weight: 700;
@@ -2557,6 +2610,75 @@
     z-index: 1;
   }
   
+  /* ============================================================ */
+  /* === RUNA DO REINO (todos os dias, exceto boss/skip) ======== */
+  /* ============================================================ */
+  /* Mesma estrutura gravada da boss-rune, cor temática por skin. */
+  .realm-rune {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    transform: translateY(-44%);
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 158px;
+    line-height: 1;
+    font-weight: 700;
+    z-index: 0;
+    pointer-events: none;
+    color: transparent;
+    /* default dourado — sobrescrito por skin */
+    background-image: linear-gradient(155deg, rgba(240,198,116,0.2) 0%, rgba(200,155,60,0.14) 50%, rgba(139,105,20,0.08) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    /* drop-shadow no filter respeita o formato do glifo (text-shadow criava um bloco retangular) */
+    filter: drop-shadow(0 0 14px rgba(200,155,60,0.25)) drop-shadow(1px 1px 2px rgba(0,0,0,0.5));
+    animation: realmRuneBreathe 4.5s ease-in-out infinite, runeEnter 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    user-select: none;
+  }
+  
+  @keyframes realmRuneBreathe {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 0.95; }
+  }
+  
+  /* Header com posição relativa pra runa em todos os dias */
+  .day-header { position: relative; overflow: hidden; }
+  .day-header .day-meta,
+  .day-header .day-title-btn,
+  .day-header .day-subtitle { position: relative; z-index: 1; }
+  
+  /* FORJA (Squat) — runa Kenaz laranja-fogo */
+  body.skin-forge .realm-rune {
+    background-image: linear-gradient(155deg, rgba(255,150,50,0.22) 0%, rgba(200,90,28,0.15) 50%, rgba(120,40,15,0.08) 100%);
+    filter: drop-shadow(0 0 14px rgba(255,120,40,0.28)) drop-shadow(1px 1px 2px rgba(0,0,0,0.5));
+  }
+  /* SALÃO (Bench) — runa Tiwaz dourada */
+  body.skin-warhall .realm-rune {
+    background-image: linear-gradient(155deg, rgba(240,198,116,0.24) 0%, rgba(200,155,60,0.16) 50%, rgba(139,105,20,0.09) 100%);
+    filter: drop-shadow(0 0 14px rgba(200,155,60,0.3)) drop-shadow(1px 1px 2px rgba(0,0,0,0.5));
+  }
+  /* BRONZE (Upper) — runa Berkano oliva */
+  body.skin-bronze .realm-rune {
+    background-image: linear-gradient(155deg, rgba(212,188,106,0.22) 0%, rgba(140,122,58,0.15) 50%, rgba(90,78,34,0.08) 100%);
+    filter: drop-shadow(0 0 14px rgba(212,188,106,0.28)) drop-shadow(1px 1px 2px rgba(0,0,0,0.5));
+  }
+  /* LAGO (Cardio Z2) — runa Laguz azul-petróleo */
+  body.skin-lake .realm-rune {
+    background-image: linear-gradient(155deg, rgba(90,184,184,0.22) 0%, rgba(42,120,120,0.15) 50%, rgba(20,74,74,0.08) 100%);
+    filter: drop-shadow(0 0 14px rgba(90,184,184,0.28)) drop-shadow(1px 1px 2px rgba(0,0,0,0.5));
+  }
+  /* TUNDRA (Cardio longo) — runa Raidho cinza-azulado */
+  body.skin-tundra .realm-rune {
+    background-image: linear-gradient(155deg, rgba(168,188,212,0.2) 0%, rgba(90,111,136,0.14) 50%, rgba(56,72,90,0.08) 100%);
+    filter: drop-shadow(0 0 14px rgba(168,188,212,0.26)) drop-shadow(1px 1px 2px rgba(0,0,0,0.5));
+  }
+  /* FIMBULWINTER (Rest) — runa Isa azul-gelo */
+  body.skin-winter .realm-rune {
+    background-image: linear-gradient(155deg, rgba(125,168,200,0.22) 0%, rgba(90,122,152,0.15) 50%, rgba(42,66,88,0.08) 100%);
+    filter: drop-shadow(0 0 14px rgba(125,168,200,0.28)) drop-shadow(1px 1px 2px rgba(0,0,0,0.5));
+  }
+  
   /* === TÍTULO FORJADO — metal incandescente com brasas === */
   body.boss-fight .day-title.boss-title-forged {
     position: relative;
@@ -3976,6 +4098,389 @@
     box-shadow: none;
   }
   
+  /* ============================================================ */
+  /* === ASCENSÃO TEMÁTICA + BOTÃO DE CARDIO (por reino) ======== */
+  /* ============================================================ */
+  
+  /* Mensagem de conclusão — inscrição em pedra (várias linhas) */
+  .ascended-message {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-style: italic;
+    font-size: 15.5px;
+    color: var(--gold-pale);
+    line-height: 1.5;
+    max-width: 340px;
+    margin: 0 auto 22px;
+    position: relative;
+    z-index: 1;
+    letter-spacing: 0.02em;
+    text-shadow: 0 0 12px rgba(0,0,0,0.6);
+    animation: fadeIn 1.2s ease-out 0.3s both;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  
+  .asc-msg-line {
+    display: block;
+  }
+  /* Primeira linha levemente destacada (abertura da inscrição) */
+  .asc-msg-line:first-child {
+    color: var(--gold-bright);
+    font-size: 16.5px;
+  }
+  
+  /* Cores default da estrela/ícone (dourado clássico) — sobrescritas por reino */
+  .asc-grad-0 { stop-color: #f0c674; }
+  .asc-grad-1 { stop-color: #c89b3c; }
+  .asc-grad-2 { stop-color: #8b6914; }
+  .asc-laurel-0 { stop-color: #f0c674; }
+  .asc-laurel-1 { stop-color: #8b6914; }
+  .asc-star-stroke { stroke: #f0c674; }
+  .asc-core-stroke { stroke: #f0c674; }
+  .asc-core-dot { fill: #f0c674; }
+  
+  /* ========== BOTÃO DE CONCLUSÃO DE CARDIO ========== */
+  .cardio-complete-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    margin-top: 20px;
+    padding: 18px 24px;
+    background: linear-gradient(180deg, var(--bg-elev) 0%, var(--bg-card) 100%);
+    border: 1.5px solid var(--border-bright);
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Cinzel', Georgia, serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold-pale);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .cardio-complete-btn:active {
+    transform: scale(0.98);
+  }
+  
+  .cardio-cb-glyph {
+    font-size: 18px;
+    transition: transform 0.3s;
+  }
+  
+  .cardio-cb-label {
+    position: relative;
+    z-index: 1;
+  }
+  
+  .cardio-cb-check {
+    font-size: 16px;
+    font-weight: 700;
+  }
+  
+  /* Estado concluído */
+  .cardio-complete-btn.done {
+    border-color: var(--gold);
+    color: var(--gold-bright);
+    box-shadow: 0 0 20px rgba(200,155,60,0.3), inset 0 0 16px rgba(200,155,60,0.1);
+    animation: cardioCompletePulse 3s ease-in-out infinite;
+  }
+  
+  .cardio-complete-btn.done .cardio-cb-glyph {
+    animation: cardioGlyphSpin 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  @keyframes cardioCompletePulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(200,155,60,0.3), inset 0 0 16px rgba(200,155,60,0.1); }
+    50% { box-shadow: 0 0 32px rgba(200,155,60,0.45), inset 0 0 24px rgba(200,155,60,0.18); }
+  }
+  
+  @keyframes cardioGlyphSpin {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.3); }
+    100% { transform: rotate(360deg) scale(1); }
+  }
+  
+  /* ============================================================ */
+  /* === CORES TEMÁTICAS DA ASCENSÃO POR REINO ================= */
+  /* ============================================================ */
+  
+  /* FORJA (Squat) — laranja-bronze incandescente */
+  .ascended-section.realm-squat .ascended-title {
+    background: linear-gradient(180deg, #ffce9a 0%, #e8801e 55%, #a85410 100%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .realm-squat .asc-grad-0 { stop-color: #ffb060; }
+  .realm-squat .asc-grad-1 { stop-color: #e8801e; }
+  .realm-squat .asc-grad-2 { stop-color: #8a3614; }
+  .realm-squat .asc-laurel-0 { stop-color: #ffce9a; }
+  .realm-squat .asc-laurel-1 { stop-color: #a85410; }
+  .realm-squat .asc-star-stroke { stroke: #ffb060; }
+  .realm-squat .asc-core-stroke { stroke: #ffce9a; }
+  .realm-squat .asc-core-dot { fill: #ffce9a; }
+  .realm-squat .ascended-aura { background: radial-gradient(circle, rgba(255,140,40,0.25) 0%, rgba(200,80,20,0.1) 40%, transparent 70%); }
+  .realm-squat .laurel-line { background: linear-gradient(90deg, transparent, #e8801e, transparent); box-shadow: 0 0 4px #e8801e; }
+  .realm-squat .laurel-glyph { color: #ffce9a; text-shadow: 0 0 12px #e8801e, 0 0 4px #ffce9a; }
+  .realm-squat .asc-msg-line:first-child { color: #ffce9a; }
+  .realm-squat .ascended-message { color: #f0c8a0; }
+  
+  /* SALÃO DE GUERRA (Bench) — dourado clássico (mantém o padrão, reforçado) */
+  .ascended-section.realm-bench .ascended-title {
+    background: linear-gradient(180deg, #ffe9a8 0%, #e6c068 50%, #c89b3c 100%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .realm-bench .ascended-aura { background: radial-gradient(circle, rgba(240,198,116,0.25) 0%, rgba(200,155,60,0.1) 40%, transparent 70%); }
+  
+  /* BRONZE DE ESPARTA (Upper) — dourado-oliva, pátina */
+  .ascended-section.realm-upper_hiper .ascended-title {
+    background: linear-gradient(180deg, #e8d89a 0%, #b4a04a 50%, #8a7a3a 100%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .realm-upper_hiper .asc-grad-0 { stop-color: #d4bc6a; }
+  .realm-upper_hiper .asc-grad-1 { stop-color: #b4a04a; }
+  .realm-upper_hiper .asc-grad-2 { stop-color: #5a4e22; }
+  .realm-upper_hiper .asc-laurel-0 { stop-color: #e8d89a; }
+  .realm-upper_hiper .asc-laurel-1 { stop-color: #8a7a3a; }
+  .realm-upper_hiper .asc-star-stroke { stroke: #d4bc6a; }
+  .realm-upper_hiper .asc-core-stroke { stroke: #e8d89a; }
+  .realm-upper_hiper .asc-core-dot { fill: #e8d89a; }
+  .realm-upper_hiper .ascended-aura { background: radial-gradient(circle, rgba(212,188,106,0.22) 0%, rgba(140,122,58,0.1) 40%, transparent 70%); }
+  .realm-upper_hiper .laurel-line { background: linear-gradient(90deg, transparent, #b4a04a, transparent); box-shadow: 0 0 4px #b4a04a; }
+  .realm-upper_hiper .laurel-glyph { color: #e8d89a; text-shadow: 0 0 12px #b4a04a, 0 0 4px #e8d89a; }
+  .realm-upper_hiper .asc-msg-line:first-child { color: #e8d89a; }
+  .realm-upper_hiper .ascended-message { color: #d8cca0; }
+  
+  /* DEADLIFT (Boss) — sangue + dourado (já tem boss-fight, mas reforça a ascensão) */
+  .ascended-section.realm-deadlift .ascended-title {
+    background: linear-gradient(180deg, #ffd4a0 0%, #e87838 45%, #a83232 100%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .realm-deadlift .asc-grad-0 { stop-color: #ffb060; }
+  .realm-deadlift .asc-grad-1 { stop-color: #d4502a; }
+  .realm-deadlift .asc-grad-2 { stop-color: #6a1818; }
+  .realm-deadlift .asc-laurel-0 { stop-color: #ffd4a0; }
+  .realm-deadlift .asc-laurel-1 { stop-color: #a83232; }
+  .realm-deadlift .asc-star-stroke { stroke: #ff8040; }
+  .realm-deadlift .asc-core-stroke { stroke: #ffd4a0; }
+  .realm-deadlift .asc-core-dot { fill: #ffd4a0; }
+  .realm-deadlift .ascended-aura { background: radial-gradient(circle, rgba(255,100,40,0.25) 0%, rgba(168,50,50,0.12) 40%, transparent 70%); }
+  .realm-deadlift .laurel-line { background: linear-gradient(90deg, transparent, #d4502a, transparent); box-shadow: 0 0 4px #d4502a; }
+  .realm-deadlift .laurel-glyph { color: #ffd4a0; text-shadow: 0 0 12px #d4502a, 0 0 4px #ffd4a0; }
+  .realm-deadlift .asc-msg-line:first-child { color: #ffd4a0; }
+  .realm-deadlift .ascended-message { color: #f0c0a0; }
+  
+  /* LAGO DOS NOVE (Cardio Z2) — azul-petróleo */
+  .ascended-section.realm-cardio_mid .ascended-title {
+    background: linear-gradient(180deg, #c8f0f0 0%, #5ab8b8 55%, #2a7878 100%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .realm-cardio_mid .asc-grad-0 { stop-color: #7ad0d0; }
+  .realm-cardio_mid .asc-grad-1 { stop-color: #5ab8b8; }
+  .realm-cardio_mid .asc-grad-2 { stop-color: #1e4a4a; }
+  .realm-cardio_mid .asc-laurel-0 { stop-color: #c8f0f0; }
+  .realm-cardio_mid .asc-laurel-1 { stop-color: #2a7878; }
+  .realm-cardio_mid .asc-star-stroke { stroke: #7ad0d0; }
+  .realm-cardio_mid .asc-core-stroke { stroke: #c8f0f0; }
+  .realm-cardio_mid .asc-core-dot { fill: #c8f0f0; }
+  .realm-cardio_mid .ascended-aura { background: radial-gradient(circle, rgba(90,184,184,0.22) 0%, rgba(42,120,120,0.1) 40%, transparent 70%); }
+  .realm-cardio_mid .laurel-line { background: linear-gradient(90deg, transparent, #5ab8b8, transparent); box-shadow: 0 0 4px #5ab8b8; }
+  .realm-cardio_mid .laurel-glyph { color: #c8f0f0; text-shadow: 0 0 12px #5ab8b8, 0 0 4px #c8f0f0; }
+  .realm-cardio_mid .asc-msg-line:first-child { color: #c8f0f0; }
+  .realm-cardio_mid .ascended-message { color: #a8dcdc; }
+  
+  /* TUNDRA DE MIDGARD (Cardio longo) — cinza-azulado frio */
+  .ascended-section.realm-cardio_long .ascended-title {
+    background: linear-gradient(180deg, #e0e8f0 0%, #8499b0 55%, #5a6f88 100%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .realm-cardio_long .asc-grad-0 { stop-color: #a8bcd4; }
+  .realm-cardio_long .asc-grad-1 { stop-color: #8499b0; }
+  .realm-cardio_long .asc-grad-2 { stop-color: #38485a; }
+  .realm-cardio_long .asc-laurel-0 { stop-color: #e0e8f0; }
+  .realm-cardio_long .asc-laurel-1 { stop-color: #5a6f88; }
+  .realm-cardio_long .asc-star-stroke { stroke: #a8bcd4; }
+  .realm-cardio_long .asc-core-stroke { stroke: #e0e8f0; }
+  .realm-cardio_long .asc-core-dot { fill: #e0e8f0; }
+  .realm-cardio_long .ascended-aura { background: radial-gradient(circle, rgba(168,188,212,0.2) 0%, rgba(90,111,136,0.1) 40%, transparent 70%); }
+  .realm-cardio_long .laurel-line { background: linear-gradient(90deg, transparent, #8499b0, transparent); box-shadow: 0 0 4px #8499b0; }
+  .realm-cardio_long .laurel-glyph { color: #e0e8f0; text-shadow: 0 0 12px #8499b0, 0 0 4px #e0e8f0; }
+  .realm-cardio_long .asc-msg-line:first-child { color: #e0e8f0; }
+  .realm-cardio_long .ascended-message { color: #c4d0e0; }
+  
+  /* FIMBULWINTER (Rest) — azul-gelo profundo */
+  .ascended-section.realm-rest .ascended-title {
+    background: linear-gradient(180deg, #e8f2fa 0%, #a8c4dc 55%, #5a7a98 100%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .realm-rest .asc-grad-0 { stop-color: #b8d4e8; }
+  .realm-rest .asc-grad-1 { stop-color: #7da8c8; }
+  .realm-rest .asc-grad-2 { stop-color: #2a4258; }
+  .realm-rest .asc-laurel-0 { stop-color: #e8f2fa; }
+  .realm-rest .asc-laurel-1 { stop-color: #5a7a98; }
+  .realm-rest .asc-star-stroke { stroke: #b8d4e8; }
+  .realm-rest .asc-core-stroke { stroke: #e8f2fa; }
+  .realm-rest .asc-core-dot { fill: #e8f2fa; }
+  .realm-rest .ascended-aura { background: radial-gradient(circle, rgba(125,168,200,0.22) 0%, rgba(58,88,120,0.1) 40%, transparent 70%); }
+  .realm-rest .laurel-line { background: linear-gradient(90deg, transparent, #7da8c8, transparent); box-shadow: 0 0 4px #7da8c8; }
+  .realm-rest .laurel-glyph { color: #e8f2fa; text-shadow: 0 0 12px #7da8c8, 0 0 4px #e8f2fa; }
+  .realm-rest .asc-msg-line:first-child { color: #e8f2fa; }
+  .realm-rest .ascended-message { color: #c8dcec; }
+  
+  /* ===== BOTÃO DE CARDIO TEMÁTICO ===== */
+  /* Lago dos Nove — azul-petróleo */
+  body.skin-lake .cardio-complete-btn.done {
+    border-color: #5ab8b8;
+    color: #c8f0f0;
+    box-shadow: 0 0 20px rgba(90,184,184,0.3), inset 0 0 16px rgba(90,184,184,0.1);
+    animation: cardioCompletePulseLake 3s ease-in-out infinite;
+  }
+  @keyframes cardioCompletePulseLake {
+    0%, 100% { box-shadow: 0 0 20px rgba(90,184,184,0.3), inset 0 0 16px rgba(90,184,184,0.1); }
+    50% { box-shadow: 0 0 32px rgba(90,184,184,0.45), inset 0 0 24px rgba(90,184,184,0.18); }
+  }
+  body.skin-lake .cardio-complete-btn:not(.done) { border-color: rgba(90,184,184,0.4); color: #a8dcdc; }
+  body.skin-lake .cardio-complete-btn:not(.done):active { border-color: #5ab8b8; }
+  
+  /* Tundra de Midgard — cinza-azulado frio */
+  body.skin-tundra .cardio-complete-btn.done {
+    border-color: #a8bcd4;
+    color: #e0e8f0;
+    box-shadow: 0 0 20px rgba(168,188,212,0.3), inset 0 0 16px rgba(168,188,212,0.1);
+    animation: cardioCompletePulseTundra 3s ease-in-out infinite;
+  }
+  @keyframes cardioCompletePulseTundra {
+    0%, 100% { box-shadow: 0 0 20px rgba(168,188,212,0.3), inset 0 0 16px rgba(168,188,212,0.1); }
+    50% { box-shadow: 0 0 32px rgba(168,188,212,0.45), inset 0 0 24px rgba(168,188,212,0.18); }
+  }
+  body.skin-tundra .cardio-complete-btn:not(.done) { border-color: rgba(168,188,212,0.4); color: #c4d0e0; }
+  body.skin-tundra .cardio-complete-btn:not(.done):active { border-color: #a8bcd4; }
+  
+  /* ============================================================ */
+  /* === PARTÍCULAS DE TOQUE POR REINO (burst no set/botão) ===== */
+  /* ============================================================ */
+  
+  /* Camada que contém as partículas — sobre o botão, sem capturar clique */
+  .tap-fx-layer {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 4;
+    overflow: visible;
+  }
+  
+  /* ===== FORJA — fagulhas de martelo ===== */
+  .tap-spark {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: var(--ssize, 4px);
+    height: var(--ssize, 4px);
+    border-radius: 50%;
+    background: radial-gradient(circle, #fff8e4 0%, #ffc860 40%, #ff7020 100%);
+    box-shadow: 0 0 6px #ffb040, 0 0 12px rgba(255,110,20,0.7), 0 0 2px #fff;
+    pointer-events: none;
+    animation: tapSparkFly var(--sdur, 0.6s) cubic-bezier(0.2, 0.6, 0.4, 1) forwards;
+  }
+  @keyframes tapSparkFly {
+    0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    70% { opacity: 1; }
+    100% { transform: translate(calc(-50% + var(--sx, 0px)), calc(-50% + var(--sy, 0px) + 14px)) scale(0.2); opacity: 0; }
+  }
+  
+  /* ===== SALÃO — raios dourados irradiando ===== */
+  .tap-ray {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 3px;
+    height: var(--rlen, 24px);
+    background: linear-gradient(to top, transparent, #f0c674 30%, #ffe9a8 80%, #fff8e0 100%);
+    border-radius: 2px;
+    box-shadow: 0 0 6px rgba(240,198,116,0.8);
+    transform-origin: 50% 100%;
+    transform: translate(-50%, -100%) rotate(var(--rot, 0deg));
+    opacity: 0;
+    animation: tapRayBurst 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  @keyframes tapRayBurst {
+    0% { opacity: 0; height: 0; }
+    40% { opacity: 1; height: var(--rlen, 24px); }
+    100% { opacity: 0; height: calc(var(--rlen, 24px) * 1.5); }
+  }
+  .tap-flash {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 44px; height: 44px;
+    transform: translate(-50%, -50%) scale(0.5);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,233,168,0.85) 0%, rgba(240,198,116,0.3) 45%, transparent 70%);
+    pointer-events: none;
+    animation: tapFlashPulse 0.55s ease-out forwards;
+  }
+  @keyframes tapFlashPulse {
+    0% { transform: translate(-50%, -50%) scale(0.4); opacity: 0.9; }
+    100% { transform: translate(-50%, -50%) scale(1.6); opacity: 0; }
+  }
+  
+  /* ===== BRONZE — ondas místicas concêntricas ===== */
+  .tap-wave {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 100%; height: 100%;
+    transform: translate(-50%, -50%) scale(0.6);
+    border-radius: 50%;
+    border: 2px solid rgba(212,188,106,0.8);
+    box-shadow: 0 0 8px rgba(212,188,106,0.5), inset 0 0 8px rgba(212,188,106,0.3);
+    pointer-events: none;
+    opacity: 0;
+    animation: tapWaveExpand 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  @keyframes tapWaveExpand {
+    0% { transform: translate(-50%, -50%) scale(0.6); opacity: 0; }
+    30% { opacity: 0.9; }
+    100% { transform: translate(-50%, -50%) scale(var(--wscale, 2)); opacity: 0; }
+  }
+  
+  /* ===== LAGO — ondas de água (anéis azuis) ===== */
+  .tap-ripple {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 60%; height: 60%;
+    transform: translate(-50%, -50%) scale(0.4);
+    border-radius: 50%;
+    border: 2px solid rgba(120,208,208,0.7);
+    box-shadow: 0 0 10px rgba(90,184,184,0.5);
+    pointer-events: none;
+    opacity: 0;
+    animation: tapRippleExpand 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  @keyframes tapRippleExpand {
+    0% { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
+    25% { opacity: 0.8; }
+    100% { transform: translate(-50%, -50%) scale(2.4); opacity: 0; }
+  }
+  
+  /* ===== TUNDRA — estilhaços de gelo ===== */
+  .tap-shard {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 5px; height: 11px;
+    background: linear-gradient(to bottom, #ffffff, #b8e0f0 55%, rgba(140,184,216,0.4));
+    box-shadow: 0 0 6px rgba(200,228,248,0.9), 0 0 2px #fff;
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    pointer-events: none;
+    animation: tapShardFly 0.75s cubic-bezier(0.2, 0.6, 0.4, 1) forwards;
+  }
+  @keyframes tapShardFly {
+    0% { transform: translate(-50%, -50%) rotate(var(--srot, 0deg)) scale(1); opacity: 1; }
+    100% { transform: translate(calc(-50% + var(--sx, 0px)), calc(-50% + var(--sy, 0px))) rotate(calc(var(--srot, 0deg) + 180deg)) scale(0.3); opacity: 0; }
+  }
+  
   /* ============ DESKTOP BREAKPOINT ============ */
   @media (min-width: 720px) {
     .header-row { padding: 18px 24px 14px; }
@@ -4708,6 +5213,56 @@ const DEFAULT_SCHEDULE = {
 // Dias em que TRT é aplicada (sempre seg/qua/sex, independe do treino do dia)
 const TRT_DAYS = ['seg', 'qua', 'sex'];
 
+// ============================================================
+// === CONFIGURAÇÃO DOS REINOS — identidade de cada sessão ====
+// ============================================================
+// Cada sessão é um "reino" com: classe de skin, título de ascensão,
+// e mensagem secreta de conclusão (inscrição em pedra, revelada só ao completar).
+const REALM_CONFIG = {
+  squat: {
+    rune: 'ᚲ', // Kenaz — a tocha, fogo da forja, ofício
+    effect: 'sparks',
+    ascendedTitle: 'A FORJA SE CALA',
+    ascendedMessage: 'O metal cedeu à pressão e ganhou nova forma.\nO que foi martelado hoje sustentará o peso de amanhã.\nDa bigorna, ergue-se a fundação.'
+  },
+  bench: {
+    rune: 'ᛏ', // Tiwaz — runa de Týr, o guerreiro, vitória honrada
+    effect: 'rays',
+    ascendedTitle: 'O SALÃO RUGE',
+    ascendedMessage: 'Os escudos foram erguidos e o tronco não vergou.\nCada empurrão ecoou pelas paredes do salão dourado.\nOs guerreiros saúdam a força que resiste.'
+  },
+  deadlift: {
+    rune: 'ᚦ', // Thurisaz — o gigante, força bruta
+    effect: 'fire',
+    ascendedTitle: 'O CHEFÃO TOMBOU',
+    ascendedMessage: 'A terra resistiu, mas foi arrancada do chão.\nO gigante caiu de joelhos diante da tua pegada.\nThurisaz arde — a força bruta encontrou seu mestre.'
+  },
+  upper_hiper: {
+    rune: 'ᛒ', // Berkano — crescimento, regeneração (a hipertrofia)
+    effect: 'waves',
+    ascendedTitle: 'O BRONZE VIVE',
+    ascendedMessage: 'Cada fibra foi cinzelada como escultura de guerra.\nO bronze de Esparta não se quebra: ele endurece.\nO detalhe forjado hoje é a armadura de amanhã.'
+  },
+  cardio_mid: {
+    rune: 'ᛚ', // Laguz — água, lago, fluxo
+    effect: 'ripple',
+    ascendedTitle: 'A TRAVESSIA SE COMPLETA',
+    ascendedMessage: 'As águas paradas do Lago dos Nove foram cruzadas.\nO fôlego firme moveu o corpo sem pressa nem fúria.\nNa calmaria também se forja o guerreiro.'
+  },
+  cardio_long: {
+    rune: 'ᚱ', // Raidho — a jornada, a cavalgada, a travessia
+    effect: 'frost',
+    ascendedTitle: 'A TUNDRA FOI VENCIDA',
+    ascendedMessage: 'O vento gelado de Midgard cortou, mas não deteve.\nPasso após passo, a resistência derrotou a distância.\nO frio testa o fraco e revela o incansável.'
+  },
+  rest: {
+    rune: 'ᛁ', // Isa — gelo, quietude, estase
+    effect: 'none',
+    ascendedTitle: 'FIMBULWINTER',
+    ascendedMessage: 'O inverno desce e o guerreiro recolhe suas armas.\nNo silêncio da neve, o corpo reconstrói o que foi rompido.\nQuem sabe descansar, sabe vencer.'
+  }
+};
+
 const DAYS = ['seg','ter','qua','qui','sex','sab','dom'];
 const DAY_LABELS = { seg:'SEG', ter:'TER', qua:'QUA', qui:'QUI', sex:'SEX', sab:'SAB', dom:'DOM' };
 const DAY_LABELS_FULL = { seg:'Segunda', ter:'Terça', qua:'Quarta', qui:'Quinta', sex:'Sexta', sab:'Sábado', dom:'Domingo' };
@@ -4726,7 +5281,8 @@ const STATE = {
   skipJustifications: {}, // { 'week::day': { reasonKey, reasonLabel, note, timestamp } }
   weeklyNotes: {}, // { 'week': { sleep, libido, energy, weight, waist, notes, timestamp } }
   setProgress: {}, // { 'week::day::exId': number_of_completed_sets }
-  prHistory: {} // { exId: maxLoad } — recorde absoluto por exercício
+  prHistory: {}, // { exId: maxLoad } — recorde absoluto por exercício
+  cardioDone: {} // { 'week::day': true } — cardio marcado como concluído
 };
 
 function loadState() {
@@ -4740,6 +5296,7 @@ function loadState() {
     const wNotes = localStorage.getItem('pwr.weeklyNotes');
     const sets = localStorage.getItem('pwr.setProgress');
     const pr = localStorage.getItem('pwr.prHistory');
+    const cardioDone = localStorage.getItem('pwr.cardioDone');
     if (checks) STATE.checks = JSON.parse(checks);
     if (loads) STATE.loads = JSON.parse(loads);
     if (week) STATE.week = week;
@@ -4748,6 +5305,7 @@ function loadState() {
     if (skipJust) STATE.skipJustifications = JSON.parse(skipJust);
     if (wNotes) STATE.weeklyNotes = JSON.parse(wNotes);
     if (sets) STATE.setProgress = JSON.parse(sets);
+    if (cardioDone) STATE.cardioDone = JSON.parse(cardioDone);
     if (pr) STATE.prHistory = JSON.parse(pr);
     else {
       // Primeira execução: reconstrói PR history a partir das cargas existentes
@@ -4774,6 +5332,17 @@ function saveSkipJustifications() { localStorage.setItem('pwr.skipJustifications
 function saveWeeklyNotes() { localStorage.setItem('pwr.weeklyNotes', JSON.stringify(STATE.weeklyNotes)); }
 function saveSetProgress() { localStorage.setItem('pwr.setProgress', JSON.stringify(STATE.setProgress)); }
 function savePrHistory() { localStorage.setItem('pwr.prHistory', JSON.stringify(STATE.prHistory)); }
+function saveCardioDone() { localStorage.setItem('pwr.cardioDone', JSON.stringify(STATE.cardioDone)); }
+
+// Cardio done helpers
+function cardioDoneKey(week, day) { return `${week}::${day}`; }
+function isCardioDone(week, day) { return !!STATE.cardioDone[cardioDoneKey(week, day)]; }
+function toggleCardioDone(week, day) {
+  const k = cardioDoneKey(week, day);
+  if (STATE.cardioDone[k]) delete STATE.cardioDone[k];
+  else STATE.cardioDone[k] = true;
+  saveCardioDone();
+}
 
 // Set progress helpers
 function setProgressKey(week, day, exId) { return `${week}::${day}::${exId}`; }
@@ -4819,7 +5388,10 @@ function resetSetProgress(week, day, exId) {
 // Verifica se TODOS os exercícios do dia estão completos (ascensão)
 function isDayFullyComplete(week, day) {
   const session = getSessionForDay(day);
-  if (!session || !session.exercises || session.exercises.length === 0) return false;
+  if (!session) return false;
+  // Cardio: completo quando o botão de conclusão foi marcado
+  if (session.cardio) return isCardioDone(week, day);
+  if (!session.exercises || session.exercises.length === 0) return false;
   const isDeload = week === 'deload';
   
   let total = 0, done = 0;
@@ -5252,10 +5824,17 @@ function renderMain() {
   
   const customBadge = isModifiedDay ? '<span class="custom-badge" title="Sessão movida">REORG</span>' : '';
   
+  // Runa do reino — todos os dias têm a sua (deadlift usa a boss-rune estilizada)
+  const realmCfg = REALM_CONFIG[sessionKey] || {};
+  const runeChar = realmCfg.rune || '';
+  const runeHtml = isBossFight
+    ? `<div class="boss-rune" aria-hidden="true">${runeChar}</div>`
+    : (runeChar && !day.skip ? `<div class="realm-rune" aria-hidden="true">${runeChar}</div>` : '');
+  
   html += `
     <div class="day-header fade-in">
       ${isBossFight ? '<div class="boss-eyebrow"><span class="boss-eyebrow-line"></span><span class="boss-eyebrow-text">⚔ BOSS FIGHT ⚔</span><span class="boss-eyebrow-line"></span></div>' : ''}
-      ${isBossFight ? '<div class="boss-rune" aria-hidden="true">ᚦ</div>' : ''}
+      ${runeHtml}
       <div class="day-meta">
         <div class="day-eyebrow">${day.eyebrow} ${customBadge}</div>
         ${progressHtml}
@@ -5306,6 +5885,11 @@ function renderMain() {
   
   if (day.cardio) {
     const c = day.cardioContent;
+    const cardioComplete = isCardioDone(STATE.week, STATE.day);
+    const realm = REALM_CONFIG[sessionKey] || {};
+    // Texto do botão temático por reino
+    const cardioBtnLabel = sessionKey === 'cardio_long' ? 'RESISTÊNCIA VENCIDA' : 'TRAVESSIA CONCLUÍDA';
+    const cardioBtnIdle = sessionKey === 'cardio_long' ? 'Marcar resistência vencida' : 'Marcar travessia concluída';
     html += `
       <div class="cardio-day fade-in">
         <div class="cardio-card">
@@ -5322,9 +5906,19 @@ function renderMain() {
           <h3>Por quê</h3>
           <p>${c.why}</p>
         </div>
+        <button class="cardio-complete-btn ${cardioComplete ? 'done' : ''}" id="cardioCompleteBtn" data-sk="${sessionKey}">
+          <span class="cardio-cb-glyph">${cardioComplete ? '✦' : '◇'}</span>
+          <span class="cardio-cb-label">${cardioComplete ? cardioBtnLabel : cardioBtnIdle}</span>
+          ${cardioComplete ? '<span class="cardio-cb-check">✓</span>' : ''}
+        </button>
       </div>
     `;
+    // Se cardio concluído, mostra a tela de ascensão temática
+    if (cardioComplete) {
+      html += buildAscendedSection(sessionKey, false);
+    }
     main.innerHTML = html;
+    attachCardioHandlers();
     return;
   }
   
@@ -5541,39 +6135,52 @@ function renderMain() {
   
   // === ASCENDED — todas as séries concluídas ===
   if (isAscended) {
-    const ascendedTitle = isBossFight ? 'BOSS DEFEATED' : 'ASCENDIDO';
-    const ascendedSubtitle = isBossFight 
-      ? 'Você venceu o chefão. Cada repetição foi forjada em ouro.'
-      : 'Cada série concluída. Cada repetição feita. Honra ao guerreiro.';
-    html += `
-      <div class="ascended-section fade-in">
+    html += buildAscendedSection(sessionKey, isBossFight);
+  }
+  
+  main.innerHTML = html;
+  attachExerciseHandlers();
+}
+
+// Constrói a seção de ascensão temática por reino
+function buildAscendedSection(sessionKey, isBoss) {
+  const realm = REALM_CONFIG[sessionKey] || {
+    ascendedTitle: 'ASCENDIDO',
+    ascendedMessage: 'Cada série concluída. Cada repetição feita.\nHonra ao guerreiro.'
+  };
+  const title = realm.ascendedTitle;
+  // Converte \n da mensagem em <br> (inscrição em pedra, várias linhas)
+  const messageLines = realm.ascendedMessage.split('\n').map(l => l.trim()).filter(Boolean);
+  const messageHtml = messageLines.map(l => `<span class="asc-msg-line">${l}</span>`).join('');
+  
+  return `
+      <div class="ascended-section realm-${sessionKey} fade-in">
         <div class="ascended-aura"></div>
         <div class="ascended-icon">
           <svg viewBox="0 0 80 80" width="80" height="80" aria-hidden="true">
             <defs>
-              <radialGradient id="ascGrad" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stop-color="#f0c674" stop-opacity="1"/>
-                <stop offset="50%" stop-color="#c89b3c" stop-opacity="0.6"/>
-                <stop offset="100%" stop-color="#8b6914" stop-opacity="0"/>
+              <radialGradient id="ascGrad-${sessionKey}" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" class="asc-grad-0" stop-opacity="1"/>
+                <stop offset="50%" class="asc-grad-1" stop-opacity="0.6"/>
+                <stop offset="100%" class="asc-grad-2" stop-opacity="0"/>
               </radialGradient>
-              <linearGradient id="ascLaurel" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#f0c674"/>
-                <stop offset="100%" stop-color="#8b6914"/>
+              <linearGradient id="ascLaurel-${sessionKey}" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" class="asc-laurel-0"/>
+                <stop offset="100%" class="asc-laurel-1"/>
               </linearGradient>
             </defs>
-            <circle cx="40" cy="40" r="36" fill="url(#ascGrad)"/>
-            <!-- Estrela de 8 pontas -->
+            <circle cx="40" cy="40" r="36" fill="url(#ascGrad-${sessionKey})"/>
             <path d="M40 8 L43 32 L60 12 L48 35 L72 40 L48 45 L60 68 L43 48 L40 72 L37 48 L20 68 L32 45 L8 40 L32 35 L20 12 L37 32 Z" 
-                  fill="url(#ascLaurel)" 
-                  stroke="#f0c674" 
+                  fill="url(#ascLaurel-${sessionKey})" 
+                  class="asc-star-stroke"
                   stroke-width="0.5"
                   opacity="0.9"/>
-            <circle cx="40" cy="40" r="6" fill="#0c0a08" stroke="#f0c674" stroke-width="1"/>
-            <circle cx="40" cy="40" r="2" fill="#f0c674"/>
+            <circle cx="40" cy="40" r="6" fill="#0c0a08" class="asc-core-stroke" stroke-width="1"/>
+            <circle cx="40" cy="40" r="2" class="asc-core-dot"/>
           </svg>
         </div>
-        <div class="ascended-title">${ascendedTitle}</div>
-        <div class="ascended-subtitle">${ascendedSubtitle}</div>
+        <div class="ascended-title">${title}</div>
+        <div class="ascended-message">${messageHtml}</div>
         <div class="ascended-laurel">
           <span class="laurel-line"></span>
           <span class="laurel-glyph">⚜</span>
@@ -5581,10 +6188,20 @@ function renderMain() {
         </div>
       </div>
     `;
-  }
-  
-  main.innerHTML = html;
-  attachExerciseHandlers();
+}
+
+function attachCardioHandlers() {
+  const btn = document.getElementById('cardioCompleteBtn');
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    toggleCardioDone(STATE.week, STATE.day);
+    if (navigator.vibrate) {
+      // Vibração de conquista ao concluir
+      if (isCardioDone(STATE.week, STATE.day)) navigator.vibrate([20, 40, 80]);
+      else navigator.vibrate(15);
+    }
+    renderMain();
+  });
 }
 
 function attachSkipHandlers() {
@@ -5660,6 +6277,144 @@ document.getElementById('skipSaveBtn').addEventListener('click', () => {
   renderMain();
 });
 
+// ============================================================
+// === EFEITOS DE PARTÍCULAS POR REINO (burst no toque) =======
+// ============================================================
+// Spawner genérico fire-and-forget: cria partículas, anima via CSS,
+// remove ao terminar. Cada reino tem visual próprio.
+
+function spawnTapBurst(buttonEl, effect, count, maxSets, isComplete) {
+  // Container temporário sobre o botão
+  let layer = buttonEl.querySelector('.tap-fx-layer');
+  if (!layer) {
+    layer = document.createElement('span');
+    layer.className = 'tap-fx-layer';
+    buttonEl.appendChild(layer);
+  }
+  // Intensidade 1..4+ — mais partículas conforme avança; completo = burst máximo
+  const intensity = isComplete ? maxSets + 2 : count;
+  
+  const spawn = (cls, n, builder) => {
+    for (let i = 0; i < n; i++) {
+      const p = document.createElement('span');
+      p.className = cls;
+      builder(p, i, n);
+      layer.appendChild(p);
+      p.addEventListener('animationend', () => p.remove(), { once: true });
+    }
+  };
+  
+  if (effect === 'sparks') {
+    // FORJA — fagulhas de martelo voando pra cima e pros lados
+    const n = 5 + intensity * 2;
+    spawn('tap-spark', n, (p, i) => {
+      const angle = -90 + (Math.random() * 140 - 70); // pra cima, espalhando
+      const dist = 22 + Math.random() * (28 + intensity * 6);
+      const rad = angle * Math.PI / 180;
+      p.style.setProperty('--sx', `${Math.cos(rad) * dist}px`);
+      p.style.setProperty('--sy', `${Math.sin(rad) * dist}px`);
+      p.style.setProperty('--sdur', `${0.5 + Math.random() * 0.4}s`);
+      p.style.setProperty('--ssize', `${2 + Math.random() * 2.5}px`);
+      p.style.animationDelay = `${Math.random() * 0.08}s`;
+    });
+  } else if (effect === 'rays') {
+    // SALÃO — raios dourados irradiando do centro
+    const n = 6 + intensity;
+    spawn('tap-ray', n, (p, i) => {
+      const angle = (360 / n) * i + Math.random() * 12;
+      p.style.setProperty('--rot', `${angle}deg`);
+      p.style.setProperty('--rlen', `${20 + intensity * 4}px`);
+      p.style.animationDelay = `${Math.random() * 0.05}s`;
+    });
+    // flash radial central
+    spawn('tap-flash', 1, (p) => {});
+  } else if (effect === 'waves') {
+    // BRONZE — ondas místicas concêntricas
+    const n = Math.min(2 + Math.floor(intensity / 2), 4);
+    spawn('tap-wave', n, (p, i) => {
+      p.style.animationDelay = `${i * 0.12}s`;
+      p.style.setProperty('--wscale', `${1.8 + intensity * 0.15}`);
+    });
+  } else if (effect === 'ripple') {
+    // LAGO — ondas de água (anéis azuis)
+    const n = 3;
+    spawn('tap-ripple', n, (p, i) => {
+      p.style.animationDelay = `${i * 0.18}s`;
+    });
+  } else if (effect === 'frost') {
+    // TUNDRA — estilhaços de gelo
+    const n = 6 + intensity;
+    spawn('tap-shard', n, (p, i) => {
+      const angle = Math.random() * 360;
+      const dist = 18 + Math.random() * (24 + intensity * 5);
+      const rad = angle * Math.PI / 180;
+      p.style.setProperty('--sx', `${Math.cos(rad) * dist}px`);
+      p.style.setProperty('--sy', `${Math.sin(rad) * dist}px`);
+      p.style.setProperty('--srot', `${Math.random() * 360}deg`);
+      p.style.animationDelay = `${Math.random() * 0.06}s`;
+    });
+  }
+}
+
+function triggerThemedVibration(effect, isComplete) {
+  if (!navigator.vibrate) return;
+  // Padrões hápticos por reino
+  const patterns = {
+    sparks: isComplete ? [30, 30, 30, 30, 60] : [25],      // martelo: batida seca
+    rays:   isComplete ? [15, 30, 15, 30, 80] : [12, 20],  // luz: pulsos
+    waves:  isComplete ? [40, 60, 100] : [20, 40],          // onda: crescente
+    ripple: isComplete ? [20, 50, 90] : [15, 35],           // água: suave
+    frost:  isComplete ? [15, 15, 15, 50] : [10, 10],       // gelo: estalos curtos
+    fire:   isComplete ? [20, 40, 80] : [15]
+  };
+  navigator.vibrate(patterns[effect] || [15]);
+}
+
+// Atualiza o botão de séries SEM recriar o DOM (preserva partículas em voo).
+// Usado pro burst de partículas não ser interrompido pelo renderMain.
+function updateSetTrackerInPlace(btn, exId, newCount, maxSets) {
+  const pct = Math.round((newCount / maxSets) * 100);
+  // Atributos e custom props
+  btn.dataset.fire = newCount;
+  btn.style.setProperty('--progress', pct);
+  btn.style.setProperty('--sets-done', newCount);
+  btn.style.setProperty('--intensity', maxSets > 0 ? (newCount / maxSets).toFixed(3) : 0);
+  btn.style.setProperty('--fire-step', newCount);
+  // Classes active/complete
+  const complete = newCount >= maxSets;
+  btn.classList.toggle('active', newCount > 0 && !complete);
+  btn.classList.toggle('complete', complete);
+  // Contador
+  const cur = btn.querySelector('.set-tracker-current');
+  if (cur) cur.textContent = newCount;
+  // Dots
+  const dots = btn.querySelectorAll('.set-dot');
+  dots.forEach((d, i) => d.classList.toggle('filled', i < newCount));
+  // Card pai ganha classe in-progress (pro glow lateral, se houver)
+  const card = btn.closest('.exercise');
+  if (card) {
+    card.classList.toggle('in-progress', newCount > 0 && !complete);
+    // Garante botão de reset visível
+    if (newCount > 0 && !card.querySelector('.set-reset-btn')) {
+      const side = card.querySelector('.ex-side');
+      if (side) {
+        const rst = document.createElement('button');
+        rst.className = 'set-reset-btn';
+        rst.dataset.exId = exId;
+        rst.setAttribute('aria-label', 'Resetar séries');
+        rst.textContent = '↺';
+        rst.addEventListener('click', (e) => {
+          e.stopPropagation();
+          resetSetProgress(STATE.week, STATE.day, exId);
+          if (navigator.vibrate) navigator.vibrate(10);
+          renderMain();
+        });
+        side.appendChild(rst);
+      }
+    }
+  }
+}
+
 function attachExerciseHandlers() {
   // Set trackers — incrementa contagem de séries a cada toque
   document.querySelectorAll('.set-tracker').forEach(btn => {
@@ -5667,20 +6422,39 @@ function attachExerciseHandlers() {
       const exId = btn.dataset.exId;
       const maxSets = parseInt(btn.dataset.maxSets, 10);
       const wasComplete = btn.classList.contains('complete');
+      const prevCount = getSetProgress(STATE.week, STATE.day, exId);
       
       incrementSetProgress(STATE.week, STATE.day, exId, maxSets);
       
       const newCount = getSetProgress(STATE.week, STATE.day, exId);
       const nowComplete = newCount >= maxSets;
+      const sessionKey = getSessionKeyForDay(STATE.day);
+      const effect = (REALM_CONFIG[sessionKey] || {}).effect || 'sparks';
       
-      // Haptic
-      if (navigator.vibrate) {
-        if (nowComplete && !wasComplete) navigator.vibrate([20, 40, 80]); // celebração
-        else navigator.vibrate(15);
+      // Efeito de partículas temático no toque (burst progressivo).
+      // Só dispara quando AVANÇA (não no reset do 5º toque).
+      if (newCount > prevCount && effect !== 'fire') {
+        // intensidade 1..maxSets — escala o burst
+        spawnTapBurst(btn, effect, newCount, maxSets, nowComplete);
       }
       
-      // Re-render só este card pra mostrar o pulse e estado novo
-      renderMain();
+      // Haptic temático por reino
+      if (navigator.vibrate && newCount > prevCount) {
+        triggerThemedVibration(effect, nowComplete && !wasComplete);
+      } else if (navigator.vibrate) {
+        navigator.vibrate(10);
+      }
+      
+      // Atualiza o botão IN-PLACE (preserva as partículas em voo).
+      // Se foi reset (5º toque) ou completou, re-render completo após a animação.
+      if (newCount > prevCount && !nowComplete) {
+        updateSetTrackerInPlace(btn, exId, newCount, maxSets);
+      } else {
+        // completou ou resetou — deixa as partículas terminarem, depois re-render
+        const delay = (newCount > prevCount && nowComplete && effect !== 'fire') ? 850 : 30;
+        if (newCount > prevCount && nowComplete) updateSetTrackerInPlace(btn, exId, newCount, maxSets);
+        setTimeout(() => renderMain(), delay);
+      }
     });
   });
   
@@ -6106,11 +6880,14 @@ function buildFullBackup() {
         dayData.rest = true;
       } else if (session.cardio) {
         dayData.cardio = true;
+        dayData.cardioCompleted = isCardioDone(week, dayKey);
         dayData.cardioContent = {
           protocol: session.cardioContent.protocol,
           heartRate: session.cardioContent.heartRate,
           duration: session.cardioContent.duration
         };
+        weekData.adherence.planned++;
+        if (dayData.cardioCompleted) weekData.adherence.completed++;
       } else if (session.exercises) {
         // Dia de treino
         dayData.exercises = [];
