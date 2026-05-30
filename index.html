@@ -2566,8 +2566,7 @@
     font-size: 168px;
     line-height: 1;
     font-weight: 700;
-    z-index: 0;
-    pointer-events: none;
+    z-index: 2;
     /* Gravada: gradiente bronze-fogo com leve relevo, glow vermelho-dourado pulsante */
     color: transparent;
     background: linear-gradient(155deg, 
@@ -2623,8 +2622,7 @@
     font-size: 158px;
     line-height: 1;
     font-weight: 700;
-    z-index: 0;
-    pointer-events: none;
+    z-index: 2;
     color: transparent;
     /* default dourado — sobrescrito por skin */
     background-image: linear-gradient(155deg, rgba(240,198,116,0.2) 0%, rgba(200,155,60,0.14) 50%, rgba(139,105,20,0.08) 100%);
@@ -4634,7 +4632,8 @@
   .rune-modal.realm-rest .rune-div-line { background: linear-gradient(90deg, transparent, #5a7a98, transparent); }
   .rune-modal.realm-rest .rune-div-glyph { color: #7da8c8; }
   
-  /* Runa clicável — herda estilo da boss-rune/realm-rune mas vira botão */
+  /* Runa clicável — botão. A caixa de clique é estreita e encostada à direita
+     (sobre o glifo), pra NÃO capturar toques destinados ao título/swap. */
   .rune-clickable {
     cursor: pointer;
     border: none;
@@ -4642,9 +4641,19 @@
     padding: 0;
     -webkit-tap-highlight-color: transparent;
     transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    /* Caixa de clique compacta na zona direita; glifo transborda sem alargar alvo */
+    width: 76px;
+    height: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
   }
   .rune-clickable:active {
     transform: translateY(-44%) scale(0.92) !important;
+  }
+  .rune-clickable:hover {
+    filter: drop-shadow(0 0 20px rgba(255,255,255,0.3)) drop-shadow(1px 1px 2px rgba(0,0,0,0.5));
   }
   
   /* ============ DESKTOP BREAKPOINT ============ */
