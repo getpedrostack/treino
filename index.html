@@ -4481,6 +4481,172 @@
     100% { transform: translate(calc(-50% + var(--sx, 0px)), calc(-50% + var(--sy, 0px))) rotate(calc(var(--srot, 0deg) + 180deg)) scale(0.3); opacity: 0; }
   }
   
+  /* ============================================================ */
+  /* === MODAL DE RUNA (lore pré-treino, temático por reino) ==== */
+  /* ============================================================ */
+  
+  .rune-modal {
+    text-align: center;
+    padding-top: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .rune-modal .modal-close {
+    position: absolute;
+    top: 14px; right: 14px;
+    z-index: 2;
+  }
+  
+  /* Símbolo grande da runa no topo */
+  .rune-modal-symbol {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 88px;
+    line-height: 1;
+    font-weight: 700;
+    margin: 8px 0 4px;
+    color: var(--gold-bright);
+    text-shadow: 0 0 24px rgba(200,155,60,0.5), 0 2px 4px rgba(0,0,0,0.6);
+    animation: runeModalSymbolIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  @keyframes runeModalSymbolIn {
+    0% { opacity: 0; transform: scale(0.5) rotate(-12deg); }
+    100% { opacity: 1; transform: scale(1) rotate(0deg); }
+  }
+  
+  .rune-modal-name {
+    font-family: 'Cinzel', Georgia, serif;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--gold-bright);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  
+  .rune-modal-translit {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--text-3);
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  
+  .rune-modal-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 auto 20px;
+    max-width: 180px;
+  }
+  .rune-div-line {
+    flex: 1; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-deep), transparent);
+  }
+  .rune-div-glyph {
+    font-size: 8px;
+    color: var(--gold);
+  }
+  
+  .rune-modal-section {
+    text-align: left;
+    margin-bottom: 18px;
+  }
+  
+  .rune-modal-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  
+  .rune-modal-text {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--text-2);
+    font-style: italic;
+  }
+  
+  .rune-modal-connection {
+    color: var(--gold-pale);
+    padding: 12px 14px;
+    background: linear-gradient(180deg, rgba(200,155,60,0.06) 0%, transparent 100%);
+    border-left: 2px solid var(--gold);
+    border-radius: 0 4px 4px 0;
+  }
+  
+  /* ===== Cores temáticas do modal por reino ===== */
+  /* FORJA */
+  .rune-modal.realm-squat .rune-modal-symbol { color: #ffce9a; text-shadow: 0 0 24px rgba(255,140,40,0.5), 0 2px 4px rgba(0,0,0,0.6); }
+  .rune-modal.realm-squat .rune-modal-name { color: #ffce9a; }
+  .rune-modal.realm-squat .rune-modal-label { color: #ffa040; }
+  .rune-modal.realm-squat .rune-modal-connection { border-left-color: #ffa040; background: linear-gradient(180deg, rgba(255,140,40,0.08) 0%, transparent 100%); color: #f0c8a0; }
+  .rune-modal.realm-squat .rune-div-line { background: linear-gradient(90deg, transparent, #c8641e, transparent); }
+  .rune-modal.realm-squat .rune-div-glyph { color: #ffa040; }
+  
+  /* SALÃO (dourado — padrão, mas reforça) */
+  .rune-modal.realm-bench .rune-modal-symbol { color: #ffe9a8; }
+  .rune-modal.realm-bench .rune-modal-name { color: #ffe9a8; }
+  
+  /* DEADLIFT (boss) */
+  .rune-modal.realm-deadlift .rune-modal-symbol { color: #ffd4a0; text-shadow: 0 0 24px rgba(255,100,40,0.5), 0 2px 4px rgba(0,0,0,0.6); }
+  .rune-modal.realm-deadlift .rune-modal-name { color: #ffd4a0; }
+  .rune-modal.realm-deadlift .rune-modal-label { color: #e87838; }
+  .rune-modal.realm-deadlift .rune-modal-connection { border-left-color: #d4502a; background: linear-gradient(180deg, rgba(255,100,40,0.08) 0%, transparent 100%); color: #f0c0a0; }
+  .rune-modal.realm-deadlift .rune-div-line { background: linear-gradient(90deg, transparent, #d4502a, transparent); }
+  .rune-modal.realm-deadlift .rune-div-glyph { color: #e87838; }
+  
+  /* BRONZE */
+  .rune-modal.realm-upper_hiper .rune-modal-symbol { color: #e8d89a; text-shadow: 0 0 24px rgba(212,188,106,0.5), 0 2px 4px rgba(0,0,0,0.6); }
+  .rune-modal.realm-upper_hiper .rune-modal-name { color: #e8d89a; }
+  .rune-modal.realm-upper_hiper .rune-modal-label { color: #b4a04a; }
+  .rune-modal.realm-upper_hiper .rune-modal-connection { border-left-color: #b4a04a; background: linear-gradient(180deg, rgba(212,188,106,0.08) 0%, transparent 100%); color: #d8cca0; }
+  .rune-modal.realm-upper_hiper .rune-div-line { background: linear-gradient(90deg, transparent, #b4a04a, transparent); }
+  .rune-modal.realm-upper_hiper .rune-div-glyph { color: #b4a04a; }
+  
+  /* LAGO */
+  .rune-modal.realm-cardio_mid .rune-modal-symbol { color: #c8f0f0; text-shadow: 0 0 24px rgba(90,184,184,0.5), 0 2px 4px rgba(0,0,0,0.6); }
+  .rune-modal.realm-cardio_mid .rune-modal-name { color: #c8f0f0; }
+  .rune-modal.realm-cardio_mid .rune-modal-label { color: #5ab8b8; }
+  .rune-modal.realm-cardio_mid .rune-modal-connection { border-left-color: #5ab8b8; background: linear-gradient(180deg, rgba(90,184,184,0.08) 0%, transparent 100%); color: #a8dcdc; }
+  .rune-modal.realm-cardio_mid .rune-div-line { background: linear-gradient(90deg, transparent, #2a7878, transparent); }
+  .rune-modal.realm-cardio_mid .rune-div-glyph { color: #5ab8b8; }
+  
+  /* TUNDRA */
+  .rune-modal.realm-cardio_long .rune-modal-symbol { color: #e0e8f0; text-shadow: 0 0 24px rgba(168,188,212,0.5), 0 2px 4px rgba(0,0,0,0.6); }
+  .rune-modal.realm-cardio_long .rune-modal-name { color: #e0e8f0; }
+  .rune-modal.realm-cardio_long .rune-modal-label { color: #8499b0; }
+  .rune-modal.realm-cardio_long .rune-modal-connection { border-left-color: #8499b0; background: linear-gradient(180deg, rgba(168,188,212,0.08) 0%, transparent 100%); color: #c4d0e0; }
+  .rune-modal.realm-cardio_long .rune-div-line { background: linear-gradient(90deg, transparent, #5a6f88, transparent); }
+  .rune-modal.realm-cardio_long .rune-div-glyph { color: #8499b0; }
+  
+  /* FIMBULWINTER */
+  .rune-modal.realm-rest .rune-modal-symbol { color: #e8f2fa; text-shadow: 0 0 24px rgba(125,168,200,0.5), 0 2px 4px rgba(0,0,0,0.6); }
+  .rune-modal.realm-rest .rune-modal-name { color: #e8f2fa; }
+  .rune-modal.realm-rest .rune-modal-label { color: #7da8c8; }
+  .rune-modal.realm-rest .rune-modal-connection { border-left-color: #7da8c8; background: linear-gradient(180deg, rgba(125,168,200,0.08) 0%, transparent 100%); color: #c8dcec; }
+  .rune-modal.realm-rest .rune-div-line { background: linear-gradient(90deg, transparent, #5a7a98, transparent); }
+  .rune-modal.realm-rest .rune-div-glyph { color: #7da8c8; }
+  
+  /* Runa clicável — herda estilo da boss-rune/realm-rune mas vira botão */
+  .rune-clickable {
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .rune-clickable:active {
+    transform: translateY(-44%) scale(0.92) !important;
+  }
+  
   /* ============ DESKTOP BREAKPOINT ============ */
   @media (min-width: 720px) {
     .header-row { padding: 18px 24px 14px; }
@@ -4718,6 +4884,26 @@
       <div class="gym-row gym-sub"><span class="gym-day">Sábado</span><span class="gym-hours">08h às 12h</span></div>
       <div class="gym-row gym-sub"><span class="gym-day">Domingo</span><span class="gym-hours">08h às 12h</span></div>
       <div class="gym-row gym-sub"><span class="gym-day">Feriado</span><span class="gym-hours">08h às 12h</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Rune Lore Modal (dinâmico, preenchido por JS) -->
+<div class="modal-backdrop" id="runeModal">
+  <div class="modal rune-modal" role="dialog" aria-labelledby="runeModalName" id="runeModalInner">
+    <div class="modal-handle"></div>
+    <button class="modal-close" id="runeModalClose" aria-label="Fechar">×</button>
+    <div class="rune-modal-symbol" id="runeModalSymbol"></div>
+    <div class="rune-modal-name" id="runeModalName"></div>
+    <div class="rune-modal-translit" id="runeModalTranslit"></div>
+    <div class="rune-modal-divider"><span class="rune-div-line"></span><span class="rune-div-glyph">◆</span><span class="rune-div-line"></span></div>
+    <div class="rune-modal-section">
+      <div class="rune-modal-label">O Significado</div>
+      <p class="rune-modal-text" id="runeModalMeaning"></p>
+    </div>
+    <div class="rune-modal-section">
+      <div class="rune-modal-label">No Teu Treino</div>
+      <p class="rune-modal-text rune-modal-connection" id="runeModalConnection"></p>
     </div>
   </div>
 </div>
@@ -5221,42 +5407,70 @@ const TRT_DAYS = ['seg', 'qua', 'sex'];
 const REALM_CONFIG = {
   squat: {
     rune: 'ᚲ', // Kenaz — a tocha, fogo da forja, ofício
+    runeName: 'Kenaz',
+    runeTranslit: 'ᚲ · "K" · A Tocha',
+    runeMeaning: 'No Futhark Antigo, Kenaz é a chama controlada — não o incêndio selvagem, mas o fogo da forja que o ferreiro domina para criar. Representa conhecimento técnico, ofício e a transformação da matéria bruta em algo de valor através do calor e da pressão.',
+    runeConnection: 'O agachamento é a tua forja. A carga é o martelo, teus quadris e joelhos são o metal sob pressão. Hoje não se trata de força bruta — é ofício: cada repetição executada com técnica é uma martelada precisa. Da bigorna nasce a fundação.',
     effect: 'sparks',
     ascendedTitle: 'A FORJA SE CALA',
     ascendedMessage: 'O metal cedeu à pressão e ganhou nova forma.\nO que foi martelado hoje sustentará o peso de amanhã.\nDa bigorna, ergue-se a fundação.'
   },
   bench: {
     rune: 'ᛏ', // Tiwaz — runa de Týr, o guerreiro, vitória honrada
+    runeName: 'Tiwaz',
+    runeTranslit: 'ᛏ · "T" · A Lança de Týr',
+    runeMeaning: 'Tiwaz é a runa de Týr, o deus nórdico da guerra justa e do sacrifício. Diferente de uma vitória qualquer, ela representa o triunfo conquistado com honra, coragem e disciplina. Seu formato aponta para cima como uma lança — direção, vontade e justiça.',
+    runeConnection: 'O supino é teu campo de batalha frontal. A barra desce ao peito como o peso de um adversário e tu a repeles. Týr sacrificou a mão ao lobo Fenrir sem hesitar — hoje, empurra com a mesma resolução. Cada empurrão é uma vitória honrada.',
     effect: 'rays',
     ascendedTitle: 'O SALÃO RUGE',
     ascendedMessage: 'Os escudos foram erguidos e o tronco não vergou.\nCada empurrão ecoou pelas paredes do salão dourado.\nOs guerreiros saúdam a força que resiste.'
   },
   deadlift: {
     rune: 'ᚦ', // Thurisaz — o gigante, força bruta
+    runeName: 'Thurisaz',
+    runeTranslit: 'ᚦ · "Th" · O Gigante',
+    runeMeaning: 'Thurisaz é a runa do espinho e do gigante (thurs) — força bruta, primal e perigosa. Associada a Thor e ao seu martelo, carrega o poder de destruir e de proteger. É a energia caótica da terra dominada pela vontade de quem a empunha.',
+    runeConnection: 'O levantamento terra é o confronto direto com a gravidade. Tu arrancas o peso do chão como quem desafia um gigante. Não há elegância aqui — há força primal canalizada por técnica. Esta é a tua luta de chefão. Thurisaz arde quando a barra sobe.',
     effect: 'fire',
     ascendedTitle: 'O CHEFÃO TOMBOU',
     ascendedMessage: 'A terra resistiu, mas foi arrancada do chão.\nO gigante caiu de joelhos diante da tua pegada.\nThurisaz arde — a força bruta encontrou seu mestre.'
   },
   upper_hiper: {
     rune: 'ᛒ', // Berkano — crescimento, regeneração (a hipertrofia)
+    runeName: 'Berkano',
+    runeTranslit: 'ᛒ · "B" · A Bétula',
+    runeMeaning: 'Berkano é a runa da bétula, árvore que renasce primeiro após o inverno. Símbolo de crescimento, fertilidade e regeneração — o ciclo de quebrar para reconstruir mais forte. É a runa da vida que insiste em florescer e se multiplicar.',
+    runeConnection: 'Hipertrofia é Berkano em ação: tu rompes a fibra muscular hoje para que ela cresça maior amanhã. Volume, repetição, o pump que enche o músculo de sangue. Cada série é uma semente. O bronze de Esparta não nasce pronto — ele é cultivado.',
     effect: 'waves',
     ascendedTitle: 'O BRONZE VIVE',
     ascendedMessage: 'Cada fibra foi cinzelada como escultura de guerra.\nO bronze de Esparta não se quebra: ele endurece.\nO detalhe forjado hoje é a armadura de amanhã.'
   },
   cardio_mid: {
     rune: 'ᛚ', // Laguz — água, lago, fluxo
+    runeName: 'Laguz',
+    runeTranslit: 'ᛚ · "L" · A Água',
+    runeMeaning: 'Laguz é a runa da água, do lago e do fluxo. Representa o que corre sem resistência, a intuição, a adaptação e a renovação. A água não força seu caminho — ela encontra o caminho. É a calma que esconde profundidade e poder constante.',
+    runeConnection: 'Zona 2 é fluxo, não fúria. Aqui tu te moves como água: ritmo constante, respiração controlada, sem picos nem explosões. É o oposto do levantamento terra — e igualmente necessário. O coração trabalha na cadência do lago. Atravessa as águas dos Nove Reinos.',
     effect: 'ripple',
     ascendedTitle: 'A TRAVESSIA SE COMPLETA',
     ascendedMessage: 'As águas paradas do Lago dos Nove foram cruzadas.\nO fôlego firme moveu o corpo sem pressa nem fúria.\nNa calmaria também se forja o guerreiro.'
   },
   cardio_long: {
     rune: 'ᚱ', // Raidho — a jornada, a cavalgada, a travessia
+    runeName: 'Raidho',
+    runeTranslit: 'ᚱ · "R" · A Cavalgada',
+    runeMeaning: 'Raidho é a runa da jornada, da cavalgada e do movimento com propósito. Não é o destino, mas a viagem — o ritmo da caminhada longa, a disciplina de seguir adiante quilômetro após quilômetro. Representa progresso, direção e a ordem do ciclo em movimento.',
+    runeConnection: 'O cardio longo é tua travessia pela tundra gelada. Não há glória súbita — há resistência, passo após passo, contra o vento e a distância. Raidho recompensa quem não para. O frio testa o fraco e revela o incansável. Cavalga até o fim.',
     effect: 'frost',
     ascendedTitle: 'A TUNDRA FOI VENCIDA',
     ascendedMessage: 'O vento gelado de Midgard cortou, mas não deteve.\nPasso após passo, a resistência derrotou a distância.\nO frio testa o fraco e revela o incansável.'
   },
   rest: {
     rune: 'ᛁ', // Isa — gelo, quietude, estase
+    runeName: 'Isa',
+    runeTranslit: 'ᛁ · "I" · O Gelo',
+    runeMeaning: 'Isa é a runa do gelo — quietude, estase e pausa. Uma única linha vertical, imóvel. Representa o momento de congelamento necessário, a calmaria antes do movimento, a concentração silenciosa. No gelo, tudo se preserva e se prepara.',
+    runeConnection: 'Descanso não é fraqueza — é estratégia. Hoje Isa governa: o corpo congela o esforço para reconstruir o que foi rompido nos outros reinos. Os músculos crescem no repouso, não no treino. Fimbulwinter desce. Quem sabe descansar, sabe vencer.',
     effect: 'none',
     ascendedTitle: 'FIMBULWINTER',
     ascendedMessage: 'O inverno desce e o guerreiro recolhe suas armas.\nNo silêncio da neve, o corpo reconstrói o que foi rompido.\nQuem sabe descansar, sabe vencer.'
@@ -5825,11 +6039,13 @@ function renderMain() {
   const customBadge = isModifiedDay ? '<span class="custom-badge" title="Sessão movida">REORG</span>' : '';
   
   // Runa do reino — todos os dias têm a sua (deadlift usa a boss-rune estilizada)
+  // Clicável: abre o quadro explicativo do significado da runa.
   const realmCfg = REALM_CONFIG[sessionKey] || {};
   const runeChar = realmCfg.rune || '';
+  const hasRuneInfo = realmCfg.runeName && !day.skip;
   const runeHtml = isBossFight
-    ? `<div class="boss-rune" aria-hidden="true">${runeChar}</div>`
-    : (runeChar && !day.skip ? `<div class="realm-rune" aria-hidden="true">${runeChar}</div>` : '');
+    ? `<button class="boss-rune rune-clickable" data-rune-sk="${sessionKey}" aria-label="Ver significado da runa ${realmCfg.runeName || ''}">${runeChar}</button>`
+    : (runeChar && !day.skip ? `<button class="realm-rune rune-clickable" data-rune-sk="${sessionKey}" aria-label="Ver significado da runa ${realmCfg.runeName || ''}">${runeChar}</button>` : '');
   
   html += `
     <div class="day-header fade-in">
@@ -6672,6 +6888,46 @@ function closeGymModal() {
   gymModal.classList.remove('open');
   document.body.style.overflow = '';
 }
+
+// ============================================================
+// RUNE LORE MODAL — significado da runa de cada reino
+// ============================================================
+const runeModal = document.getElementById('runeModal');
+const runeModalInner = document.getElementById('runeModalInner');
+
+function openRuneModal(sessionKey) {
+  const cfg = REALM_CONFIG[sessionKey];
+  if (!cfg || !cfg.runeName) return;
+  document.getElementById('runeModalSymbol').textContent = cfg.rune;
+  document.getElementById('runeModalName').textContent = cfg.runeName;
+  document.getElementById('runeModalTranslit').textContent = cfg.runeTranslit || '';
+  document.getElementById('runeModalMeaning').textContent = cfg.runeMeaning || '';
+  document.getElementById('runeModalConnection').textContent = cfg.runeConnection || '';
+  // Tema do modal pela cor do reino
+  runeModalInner.className = 'modal rune-modal realm-' + sessionKey;
+  runeModal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  if (navigator.vibrate) navigator.vibrate(12);
+}
+
+function closeRuneModal() {
+  runeModal.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('runeModalClose').addEventListener('click', closeRuneModal);
+runeModal.addEventListener('click', (e) => {
+  if (e.target === runeModal) closeRuneModal();
+});
+
+// Delegação: runas são recriadas a cada render, então captura no document
+document.addEventListener('click', (e) => {
+  const runeBtn = e.target.closest('.rune-clickable');
+  if (runeBtn && runeBtn.dataset.runeSk) {
+    e.preventDefault();
+    openRuneModal(runeBtn.dataset.runeSk);
+  }
+});
 
 // ============================================================
 // EXPORT WEEKLY REPORT
