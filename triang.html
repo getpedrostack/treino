@@ -260,6 +260,8 @@
   .log-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:10px;flex:0 0 auto}
   .dot-hit{background:var(--green);box-shadow:0 0 8px var(--green-soft)}
   .dot-miss{background:var(--red)}
+  .dot-pending{background:var(--muted-2)}
+  .stat.hits.masked .v{color:var(--muted-2)}
   .log-left{display:flex;align-items:center;font-size:13.5px;font-weight:520}
   .log-meta{color:var(--muted-2);font-size:11.5px;text-align:right;flex:0 0 auto;font-family:var(--mono)}
   .ref-table{font-size:13px;line-height:2;font-family:var(--mono)}
@@ -360,10 +362,62 @@
   }
 
   @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+
+  /* ---------- header: marca + botão de ajuda ---------- */
+  .header-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+  .brand{display:inline-flex;align-items:center;gap:9px;font-size:13.5px;font-weight:620;color:var(--ink-2);letter-spacing:-0.01em}
+  .brand::before{content:"";width:9px;height:9px;border-radius:50%;border:2px solid var(--green);background:var(--green-soft);flex:0 0 auto}
+  .header-top .eyebrow{margin-bottom:0}
+  header .eyebrow{margin-bottom:14px}
+  .help-btn{font-family:var(--mono);font-size:12px;font-weight:560;color:var(--ink-2);background:var(--surface-2);border:1px solid var(--line);border-radius:30px;padding:8px 15px;min-height:auto;letter-spacing:.01em;display:inline-flex;align-items:center;gap:6px;transition:all .18s var(--ease);flex:0 0 auto}
+  .help-btn:hover{border-color:var(--green-deep);color:var(--green-bright);background:var(--green-soft-2)}
+
+  /* ---------- setup: divisor, nomes, n ---------- */
+  .setup-divider{height:1px;background:var(--line-soft);margin:22px 0 4px}
+  .n-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .n-step{width:48px;height:48px;min-height:48px;flex:0 0 auto;background:var(--surface-2);border:1.5px solid var(--line);color:var(--ink);font-size:22px;font-weight:500;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;line-height:1;transition:all .15s var(--ease)}
+  .n-step:hover{border-color:var(--green-deep);background:var(--surface-3);color:var(--green-bright)}
+  .n-step:active{transform:scale(.94)}
+  #targetN{width:80px;flex:0 0 auto;background:var(--surface-2);border:1.5px solid var(--line);color:var(--ink);font-family:var(--mono);font-size:22px;font-weight:600;text-align:center;padding:11px 6px;border-radius:var(--r-md);outline:none;-moz-appearance:textfield;transition:border-color .18s,box-shadow .18s}
+  #targetN::-webkit-outer-spin-button,#targetN::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  #targetN:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--green-soft-2)}
+  .n-hint{font-size:12px;color:var(--muted);letter-spacing:-0.01em;font-family:var(--mono)}
+  .n-hint b{color:var(--green-bright);font-weight:600}
+  .n-note{font-size:12.5px;color:var(--muted);line-height:1.5;margin:12px 0 0;padding:11px 13px;background:var(--surface-2);border:1px solid var(--line-soft);border-radius:var(--r-sm)}
+  .n-note b{color:var(--ink-2);font-weight:600}
+
+  /* ---------- confirmação neutra entre triângulos ---------- */
+  .trial-ack{text-align:center;padding:30px 16px 22px}
+  .ack-ring{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:26px;color:var(--ink-2);border:2px solid var(--line-strong);background:var(--surface-2);animation:pop .4s cubic-bezier(.2,1.4,.4,1)}
+  .ack-title{font-family:var(--sans);font-size:20px;font-weight:640;color:var(--ink);letter-spacing:-0.02em;margin-bottom:6px}
+  .ack-sub{font-family:var(--mono);font-size:14px;color:var(--green-bright);font-weight:600;margin-bottom:14px}
+  .ack-note{font-size:12.5px;color:var(--muted);line-height:1.55;max-width:340px;margin:0 auto}
+  .ack-note b{color:var(--ink-2);font-weight:600}
+
+  /* ---------- modal de ajuda ---------- */
+  .modal-help{max-width:520px;max-height:88vh;overflow-y:auto;position:relative;padding-top:30px}
+  .modal-close{position:absolute;top:16px;right:16px;width:36px;height:36px;min-height:36px;border-radius:50%;background:var(--surface-2);border:1px solid var(--line);color:var(--muted);font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+  .modal-close:hover{color:var(--ink);border-color:var(--line-strong);background:var(--surface-3)}
+  .help-body{margin-bottom:22px}
+  .help-block{padding:14px 0;border-bottom:1px solid var(--line-soft)}
+  .help-block:first-child{padding-top:4px}
+  .help-q{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--green-bright);font-weight:620;margin-bottom:7px;font-family:var(--mono)}
+  .help-block p{margin:0;font-size:14px;color:var(--ink-2);line-height:1.6}
+  .help-block p b{color:var(--ink);font-weight:620}
+  .help-block.accent{background:var(--amber-deep);border:1px solid var(--amber-line);border-radius:var(--r-md);padding:16px;margin-top:8px}
+  .help-block.accent .help-q{color:var(--amber)}
+  .help-block.accent ul{margin:10px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:8px}
+  .help-block.accent li{font-size:13px;color:var(--ink-2);line-height:1.5}
+  .help-block.accent li b{color:#ffd98a;font-weight:620}
+  .help-block.accent li::marker{color:var(--amber)}
 </style>
 </head>
 <body>
 <header>
+  <div class="header-top">
+    <div class="brand" id="brand">Original Coffee Roaster</div>
+    <button class="help-btn" id="helpBtn" aria-label="Por que este teste?">? Por quê</button>
+  </div>
   <div class="eyebrow">ISO 4120 · α 0,05</div>
   <h1>Teste Triangular Cego</h1>
   <p class="tagline">Há diferença perceptível entre duas torras? · revezamento de embaralhador</p>
@@ -390,6 +444,23 @@
   </div>
   <label for="varTested">Variável testada (opcional)</label>
   <input type="text" id="varTested" placeholder="corte de gás @213°C vs gás mantido" autocomplete="off">
+
+  <div class="setup-divider"></div>
+  <label>Avaliadores</label>
+  <div class="field-row">
+    <div><input type="text" id="nameA" placeholder="Nome do avaliador 1" autocomplete="off"></div>
+    <div><input type="text" id="nameB" placeholder="Nome do avaliador 2" autocomplete="off"></div>
+  </div>
+
+  <label for="targetN">Número de triângulos (n)</label>
+  <div class="n-row">
+    <button class="n-step" id="nMinus" aria-label="Diminuir n" type="button">−</button>
+    <input type="number" id="targetN" min="6" max="60" step="1" value="6" inputmode="numeric">
+    <button class="n-step" id="nPlus" aria-label="Aumentar n" type="button">+</button>
+    <span class="n-hint" id="nHint">mín. 6 · limiar <b id="nCrit">5</b> acertos</span>
+  </div>
+  <p class="n-note">O resultado fica <b>oculto</b> até o último triângulo. Cada prova é independente — o provador só vê o placar (acertos/erros) ao fim dos n.</p>
+
   <div style="height:18px"></div>
   <button class="btn-primary" id="startPair">Iniciar série →</button>
 </section>
@@ -411,7 +482,7 @@
         <div class="pv">
           <label for="grindClick" class="grind-label">Seu clique calibrado</label>
           <div class="grind-row">
-            <input type="text" id="grindClick" inputmode="decimal" placeholder="7,5" autocomplete="off">
+            <input type="text" id="grindClick" inputmode="decimal" value="7,5" placeholder="7,5" autocomplete="off">
             <span class="grind-unit">no dial 0–16</span>
           </div>
           <div class="pdim" style="margin-top:7px">Partida sugerida: <b>7,5</b>. Calibre até <b>70–75% passar na peneira mesh 20</b> (≈800 µm) — esse é o alvo SCA, o número é só o começo. Mais grosso que cupping puro (7,0), na faixa do seu filtro.</div>
@@ -436,22 +507,17 @@
   <div class="pair-head"><span class="pair-name" id="pairName">—</span></div>
   <div class="pair-var" id="pairVar"></div>
   <div class="stat-grid">
-    <div class="stat"><div class="v" id="sN">0</div><div class="l">avaliações</div></div>
-    <div class="stat hits"><div class="v" id="sHits">0</div><div class="l">acertos</div></div>
+    <div class="stat"><div class="v" id="sN">0</div><div class="l">feitos</div></div>
+    <div class="stat hits" id="hitsCell"><div class="v" id="sHits">—</div><div class="l" id="hitsLabel">acertos</div></div>
     <div class="stat"><div class="v" id="sCrit">—</div><div class="l">limiar p&lt;0,05</div></div>
   </div>
   <div class="progress-wrap">
-    <div class="progress-meta"><span>progresso ao limiar</span><span id="progPct">0%</span></div>
+    <div class="progress-meta"><span id="progLabel">progresso da série</span><span id="progPct">0%</span></div>
     <div class="progress"><i id="bar"></i></div>
   </div>
   <div class="conclusion pending" id="conclusion">
-    <div class="ctitle" id="cTitle">Aguardando avaliações</div>
-    <div class="cbody" id="cBody">Registre triângulos cegos até cruzar o limiar.</div>
-  </div>
-  <button class="btn-primary hide" id="goDescr" style="margin-top:14px">Prova descritiva: caracterizar a diferença →</button>
-  <div class="desc-locked hide" id="descLocked">
-    <span class="lock-ico" aria-hidden="true">🔒</span>
-    <span>Prova descritiva destrava quando o triângulo confirma diferença. Caracterizar antes disso é descrever ruído.</span>
+    <div class="ctitle" id="cTitle">Série em andamento</div>
+    <div class="cbody" id="cBody">Resultado revelado ao fim de todos os triângulos.</div>
   </div>
 </section>
 
@@ -489,13 +555,30 @@
   <p class="footer-note" style="margin-top:12px">Não vire nem levante as xícaras — o OCR embaixo revelaria a identidade.</p>
 </section>
 
+<!-- confirmação neutra entre triângulos (não revela acerto/erro) -->
+<section class="card hide" id="ackCard">
+  <div class="trial-ack">
+    <div class="ack-ring" aria-hidden="true">✓</div>
+    <div class="ack-title">Resposta registrada</div>
+    <div class="ack-sub" id="ackSub">—</div>
+    <div class="ack-note">Acertos e erros revelados só ao fim dos <b id="ackN">6</b> triângulos. Não comente a resposta com o provador.</div>
+  </div>
+  <button class="btn-primary" id="nextTriangle">Próximo triângulo →</button>
+</section>
+
+<!-- revelação final da série (mostrada uma única vez) -->
 <section class="card hide" id="resultCard" aria-labelledby="vBig">
   <div class="verdict" id="verdict">
     <div class="seal" id="vSeal" aria-hidden="true"></div>
     <div class="big" id="vBig"></div>
     <div class="det" id="vDet"></div>
   </div>
-  <button class="btn-primary" id="nextTriangle">Próximo triângulo →</button>
+  <button class="btn-primary hide" id="goDescr" style="margin-top:6px">Prova descritiva: caracterizar a diferença →</button>
+  <div class="desc-locked hide" id="descLocked">
+    <span class="lock-ico" aria-hidden="true">🔒</span>
+    <span>Sem diferença detectável, não há o que caracterizar. A prova descritiva fica indisponível para este resultado.</span>
+  </div>
+  <button class="btn-ghost" id="newSeries" style="margin-top:10px">Nova série (mesmo par)</button>
 </section>
 
 <!-- ===== DESCRITIVA 1: MONTAGEM CEGA ===== -->
@@ -565,6 +648,46 @@
   </div>
 </div>
 
+<!-- ===== MODAL DE AJUDA: POR QUE O TESTE ===== -->
+<div class="modal-overlay hide" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="hmTitle">
+  <div class="modal modal-help">
+    <button class="modal-close" id="hmClose" aria-label="Fechar">✕</button>
+    <h3 id="hmTitle">Por que este teste?</h3>
+    <div class="help-body">
+      <div class="help-block">
+        <div class="help-q">O que ele responde</div>
+        <p>Uma única pergunta objetiva: <b>existe diferença perceptível entre as duas torras?</b> Não diz qual é melhor nem o que mudou — só se a diferença é real ou se é ruído.</p>
+      </div>
+      <div class="help-block">
+        <div class="help-q">Como funciona</div>
+        <p>São 3 amostras: duas iguais e uma diferente. O provador aponta a <b>diferente</b>. Acertar por sorte tem chance de 1 em 3, então um acerto isolado não prova nada — é preciso acertar muitas vezes seguidas para descartar o acaso.</p>
+      </div>
+      <div class="help-block">
+        <div class="help-q">Por que cego e com revezamento</div>
+        <p>Quem monta as xícaras sabe a resposta e por isso <b>não prova</b> aquela rodada. O provador decide só pelo paladar, sem saber qual posição é qual torra. Isso elimina o viés de expectativa.</p>
+      </div>
+      <div class="help-block">
+        <div class="help-q">Por que o resultado só aparece no fim</div>
+        <p>Se o provador descobrisse o acerto a cada rodada, isso enviesaria as próximas (ele ajustaria a estratégia). Escondendo até o fim, cada uma das n provas permanece <b>independente</b> — é o que dá validade estatística.</p>
+      </div>
+      <div class="help-block">
+        <div class="help-q">O que significa "diferença confirmada"</div>
+        <p>O número de acertos cruzou o limiar estatístico (ISO 4120, 5% de chance de erro). A diferença que você criou na torra <b>chega à xícara</b> de forma detectável. O passo seguinte é a prova descritiva, que diz <i>qual</i> é a diferença e qual lado é preferido.</p>
+      </div>
+      <div class="help-block accent">
+        <div class="help-q">E se NÃO identificar diferença?</div>
+        <p>Não quer dizer que as torras são idênticas. Quer dizer que, nas condições do teste, a diferença <b>não foi grande o bastante</b> para ser detectada acima do acaso. As causas possíveis:</p>
+        <ul>
+          <li>A mudança no perfil realmente <b>não move a xícara</b> de forma perceptível — achado valioso: evita otimizar uma variável que não importa.</li>
+          <li>A diferença existe mas é <b>sutil demais</b> para o tamanho do painel — aumente o n.</li>
+          <li><b>Ruído de preparo</b> mascarou o sinal — moagem, dose, temperatura ou tempo inconsistentes entre as xícaras.</li>
+        </ul>
+      </div>
+    </div>
+    <button class="btn-primary" id="hmOk" style="margin-top:4px">Entendi</button>
+  </div>
+</div>
+
 <script>
 const KEY='triangulo_ocr_v2';
 function lgamma(z){
@@ -586,7 +709,7 @@ function announce(m){$('srStatus').textContent=m;}
 // clique de moagem: parâmetro persistente, independente da série
 const GRIND_KEY='triangulo_grind_v1';
 (function initGrind(){
-  try{const g=localStorage.getItem(GRIND_KEY);if(g)$('grindClick').value=g;}catch(e){}
+  try{const g=localStorage.getItem(GRIND_KEY);if(g)$('grindClick').value=g;else localStorage.setItem(GRIND_KEY,'7,5');}catch(e){}
   $('grindClick').addEventListener('input',e=>{try{localStorage.setItem(GRIND_KEY,e.target.value);}catch(err){}});
 })();
 function setFlow(step){
@@ -596,44 +719,83 @@ function setFlow(step){
 }
 function renderStats(){
   if(!state)return;
-  const n=state.evals.length,hits=state.evals.filter(e=>e.hit).length,crit=critical(n,0.05);
-  $('sN').textContent=n;$('sHits').textContent=hits;$('sCrit').textContent=n>=1?crit:'—';
+  const n=state.evals.length, done=n, target=state.targetN||6;
+  const hits=state.evals.filter(e=>e.hit).length, crit=critical(target,0.05);
   $('pairName').textContent=state.ocrA+'  vs  '+state.ocrB;
   $('pairVar').textContent=state.varTested||'';$('pairVar').style.display=state.varTested?'block':'none';
-  const pct=n>=1?Math.min(100,Math.round(hits/crit*100)):0;
-  $('bar').style.width=pct+'%';$('progPct').textContent=pct+'%';
+  $('sCrit').textContent=crit;
   const c=$('conclusion');c.className='conclusion';
-  if(n<6){c.classList.add('pending');$('cTitle').textContent='Aguardando avaliações';$('cBody').innerHTML='n='+n+'. Mínimo para qualquer significância é <b>n=6</b> (5 acertos). Continue.';}
-  else if(hits>=crit){const p=tailP(n,hits);c.classList.add('sig');$('cTitle').innerHTML='✓ Diferença confirmada';$('cBody').innerHTML='<b>'+hits+'/'+n+'</b> acertos ≥ '+crit+' · p = '+p.toFixed(3)+'. As torras diferem na xícara de forma detectável. Próximo passo: prova descritiva para caracterizar a diferença.';}
-  else{const need=crit-hits;c.classList.add('nsig');$('cTitle').textContent='Ainda não significativo';$('cBody').innerHTML='<b>'+hits+'/'+n+'</b> · faltam <b>'+need+'</b> acerto(s) para o limiar de '+crit+' no n atual. Acumular muitos n sem atingir = a mudança não move a xícara perceptivelmente (achado válido).';}
-  unlockDescr();
+
+  if(!state.revealed){
+    // DURANTE A SÉRIE — acertos ocultos, mostra progresso de triângulos
+    $('sN').textContent=done+'/'+target;
+    $('sHits').textContent='—';
+    $('hitsLabel').textContent='oculto';
+    $('hitsCell').classList.add('masked');
+    const pct=Math.round(done/target*100);
+    $('bar').style.width=pct+'%';$('progPct').textContent=done+' de '+target;
+    $('progLabel').textContent='triângulos feitos';
+    c.classList.add('pending');
+    $('cTitle').textContent='Série em andamento';
+    $('cBody').innerHTML='Faltam <b>'+(target-done)+'</b> de '+target+'. Acertos e erros revelados só ao fim — cada prova é independente.';
+  } else {
+    // REVELAÇÃO FINAL — mostra acertos e veredito
+    $('sN').textContent=n;
+    $('sHits').textContent=hits;
+    $('hitsLabel').textContent='acertos';
+    $('hitsCell').classList.remove('masked');
+    const pct=Math.min(100,Math.round(hits/crit*100));
+    $('bar').style.width=pct+'%';$('progPct').textContent=pct+'%';
+    $('progLabel').textContent='progresso ao limiar';
+    if(hits>=crit){const p=tailP(n,hits);c.classList.add('sig');$('cTitle').innerHTML='✓ Diferença confirmada';$('cBody').innerHTML='<b>'+hits+'/'+n+'</b> acertos ≥ '+crit+' · p = '+p.toFixed(3)+'. As torras diferem na xícara de forma detectável.';}
+    else{const need=crit-hits;c.classList.add('nsig');$('cTitle').textContent='Sem diferença detectável';$('cBody').innerHTML='<b>'+hits+'/'+n+'</b> · seriam necessários '+crit+' acertos. Nas condições do teste, a diferença não superou o acaso. Pode ser que a mudança não mova a xícara, que seja sutil demais para este n, ou ruído de preparo. Veja o "Por quê".';}
+  }
 }
 function renderLog(){
   if(!state||!state.evals.length){show('logWrap',false);return;}
   show('logWrap',true);
-  $('log').innerHTML=state.evals.map((e,i)=>'<div class="log-item"><span class="log-left"><span class="log-dot '+(e.hit?'dot-hit':'dot-miss')+'"></span>#'+(i+1)+' · '+(e.hit?'acerto':'erro')+'</span><span class="log-meta">prov: '+e.taster.replace('Avaliador ','A')+' · ímpar pos '+(e.oddPos+1)+' · marcou pos '+(e.pick+1)+'</span></div>').reverse().join('');
+  const nm=t=>t===state.nameA?state.nameA:state.nameB;
+  $('log').innerHTML=state.evals.map((e,i)=>{
+    if(!state.revealed){
+      return '<div class="log-item"><span class="log-left"><span class="log-dot dot-pending"></span>Triângulo #'+(i+1)+'</span><span class="log-meta">prova: '+e.taster+' · registrado</span></div>';
+    }
+    return '<div class="log-item"><span class="log-left"><span class="log-dot '+(e.hit?'dot-hit':'dot-miss')+'"></span>#'+(i+1)+' · '+(e.hit?'acerto':'erro')+'</span><span class="log-meta">'+e.taster+' · ímpar pos '+(e.oddPos+1)+' · marcou pos '+(e.pick+1)+'</span></div>';
+  }).reverse().join('');
 }
-$('startPair').onclick=()=>{state={ocrA:$('ocrA').value.trim()||'A',ocrB:$('ocrB').value.trim()||'B',varTested:$('varTested').value.trim(),evals:[]};save();enterShuffle();};
+$('startPair').onclick=()=>{
+  let n=parseInt($('targetN').value)||6; if(n<6)n=6; if(n>60)n=60;
+  const nameA=$('nameA').value.trim()||'Avaliador 1';
+  const nameB=$('nameB').value.trim()||'Avaliador 2';
+  state={ocrA:$('ocrA').value.trim()||'A',ocrB:$('ocrB').value.trim()||'B',varTested:$('varTested').value.trim(),
+         nameA,nameB,targetN:n,evals:[],revealed:false};
+  save();enterShuffle();
+};
 function enterShuffle(){
   show('setupCard',false);show('prepCard',false);show('statCard',true);
-  ['mapCard','handoffCard','tasteCard','resultCard','dMapCard','dScoreCard','dRecapCard'].forEach(id=>show(id,false));
+  ['mapCard','handoffCard','tasteCard','resultCard','ackCard','dMapCard','dScoreCard','dRecapCard'].forEach(id=>show(id,false));
   show('shuffleCard',true);pending=null;picked=null;setFlow('shuffle');renderStats();renderLog();
-  announce('Nova rodada. Escolha quem vai embaralhar.');
+  // rótulos com nomes reais + quem prova
+  $('shufA').innerHTML='<span class="role-name">'+state.nameA+'</span><span class="role-sub">embaralha · '+state.nameB+' prova</span>';
+  $('shufB').innerHTML='<span class="role-name">'+state.nameB+'</span><span class="role-sub">embaralha · '+state.nameA+' prova</span>';
+  $('shuffleH').textContent='Triângulo '+(state.evals.length+1)+' de '+state.targetN+' · quem embaralha?';
+  const k=state.evals.length+1;
+  announce('Triângulo '+k+' de '+state.targetN+'. Escolha quem vai embaralhar.');
 }
-function pickShuffler(who){
-  const taster=(who==='Avaliador 1')?'Avaliador 2':'Avaliador 1';
+function pickShuffler(whoKey){
+  const shuffler=(whoKey==='A')?state.nameA:state.nameB;
+  const taster=(whoKey==='A')?state.nameB:state.nameA;
   const arr=ARR[Math.floor(Math.random()*6)];
   const oddLetter=(arr.filter(x=>x==='A').length===1)?'A':'B',oddPos=arr.indexOf(oddLetter);
-  pending={shuffler:who,taster,arr,oddPos,oddLetter};
+  pending={shuffler,taster,arr,oddPos,oddLetter};
   $('mapList').innerHTML=arr.map((letter,i)=>{
     const ocr=(letter==='A')?state.ocrA:state.ocrB,cls=(letter==='A')?'pill-a':'pill-b';
     return '<div class="map-row"><div><div class="map-pos">Posição na mesa</div><div class="map-code">'+(i+1)+'</div></div><span class="pill '+cls+'">'+ocr+'</span></div>';
   }).join('');
   show('shuffleCard',false);show('mapCard',true);
-  announce(who+' está montando as posições secretamente.');
+  announce(shuffler+' está montando as posições secretamente.');
 }
-$('shufA').onclick=()=>pickShuffler('Avaliador 1');
-$('shufB').onclick=()=>pickShuffler('Avaliador 2');
+$('shufA').onclick=()=>pickShuffler('A');
+$('shufB').onclick=()=>pickShuffler('B');
 $('toHandoff').onclick=()=>{show('mapCard',false);show('handoffCard',true);setFlow('handoff');$('handoffWho').textContent=pending.taster;announce('Entregue o tablet para '+pending.taster);};
 $('startTaste').onclick=()=>{
   show('handoffCard',false);show('tasteCard',true);setFlow('taste');picked=null;
@@ -649,14 +811,39 @@ $('confirmPick').onclick=()=>{
   if(picked===null)return;
   const hit=(picked===pending.oddPos);
   state.evals.push({hit,taster:pending.taster,shuffler:pending.shuffler,oddPos:pending.oddPos,pick:picked,t:Date.now()});save();
-  show('tasteCard',false);show('resultCard',true);setFlow('result');
-  const v=$('verdict');v.className='verdict '+(hit?'hit':'miss');
-  $('vSeal').textContent=hit?'✓':'✗';$('vBig').textContent=hit?'Acertou a ímpar':'Não distinguiu';
-  const oddOcr=pending.oddLetter==='A'?state.ocrA:state.ocrB;
-  $('vDet').innerHTML='A diferente estava na <span class="reveal">posição '+(pending.oddPos+1)+'</span> = '+oddOcr+'. '+(hit?'O provador distinguiu as duas torras.':'O provador não conseguiu distinguir.');
-  renderStats();renderLog();
-  announce((hit?'Acerto. ':'Erro. ')+'A ímpar era a posição '+(pending.oddPos+1)+', '+oddOcr+'. '+$('cTitle').textContent);
+  const done=state.evals.length, target=state.targetN;
+  show('tasteCard',false);
+  if(done>=target){
+    revealFinal();
+  } else {
+    // confirmação NEUTRA — não revela acerto/erro
+    show('ackCard',true);setFlow('result');
+    $('ackSub').textContent='Triângulo '+done+' de '+target+' · faltam '+(target-done);
+    $('ackN').textContent=target;
+    renderStats();renderLog();
+    announce('Resposta registrada. Triângulo '+done+' de '+target+'. Faltam '+(target-done)+'.');
+  }
 };
+function revealFinal(){
+  state.revealed=true;save();
+  const n=state.evals.length, hits=state.evals.filter(e=>e.hit).length, crit=critical(n,0.05);
+  const sig=hits>=crit;
+  show('ackCard',false);show('resultCard',true);setFlow('result');
+  const v=$('verdict');v.className='verdict '+(sig?'hit':'miss');
+  $('vSeal').textContent=sig?'✓':'✕';
+  $('vBig').textContent=sig?'Diferença confirmada':'Sem diferença detectável';
+  if(sig){
+    const p=tailP(n,hits);
+    $('vDet').innerHTML='<span class="reveal">'+hits+' de '+n+'</span> acertos (limiar '+crit+', p = '+p.toFixed(3)+'). A diferença entre as torras chega à xícara de forma perceptível.';
+  } else {
+    $('vDet').innerHTML='<span class="reveal">'+hits+' de '+n+'</span> acertos — abaixo do limiar de '+crit+'. Nas condições do teste, a diferença não superou o acaso. Toque em "Por quê" para os motivos possíveis.';
+  }
+  show('goDescr',sig);
+  show('descLocked',!sig);
+  renderStats();renderLog();
+  announce('Série completa. '+(sig?'Diferença confirmada, '+hits+' de '+n+' acertos.':'Sem diferença detectável, '+hits+' de '+n+' acertos.'));
+}
+$('newSeries').onclick=()=>{ state.evals=[];state.revealed=false;save();enterShuffle(); };
 $('nextTriangle').onclick=enterShuffle;
 
 /* ===================== PROVA DESCRITIVA ===================== */
@@ -670,16 +857,8 @@ const AXES=[
 ];
 let dPending=null; // {posLetter:['A'|'B','A'|'B'], scores:{0:{},1:{}}}
 
-function unlockDescr(){
-  if(!state){show('goDescr',false);show('descLocked',false);return;}
-  const n=state.evals.length, hits=state.evals.filter(e=>e.hit).length, crit=critical(n,0.05);
-  const sig=(n>=1 && hits>=crit);
-  show('goDescr',sig);
-  show('descLocked',!sig);
-}
-
 function enterDescrMap(){
-  ['shuffleCard','mapCard','handoffCard','tasteCard','resultCard','dScoreCard','dRecapCard'].forEach(id=>show(id,false));
+  ['shuffleCard','mapCard','handoffCard','tasteCard','resultCard','ackCard','dScoreCard','dRecapCard'].forEach(id=>show(id,false));
   show('flow',false);
   // 2 posições, atribuição A/B aleatória de qual torra vai em cada posição
   const flip=Math.random()<0.5;
@@ -765,14 +944,14 @@ $('dReveal').onclick=()=>{
 };
 
 $('dNewDescr').onclick=enterDescrMap;
-$('dBackTri').onclick=()=>{ show('dRecapCard',false); enterShuffle(); };
+$('dBackTri').onclick=()=>{ show('dRecapCard',false);show('dMapCard',false);show('dScoreCard',false); revealFinal(); };
 
 function doReset(){
   state=null;
   try{localStorage.removeItem(KEY);}catch(e){}
-  ['statCard','shuffleCard','mapCard','handoffCard','tasteCard','resultCard','dMapCard','dScoreCard','dRecapCard','logWrap','flow','goDescr','descLocked'].forEach(id=>show(id,false));
+  ['statCard','shuffleCard','mapCard','handoffCard','tasteCard','resultCard','ackCard','dMapCard','dScoreCard','dRecapCard','logWrap','flow','goDescr','descLocked'].forEach(id=>show(id,false));
   show('setupCard',true);show('prepCard',true);
-  $('ocrA').value='';$('ocrB').value='';$('varTested').value='';
+  $('ocrA').value='';$('ocrB').value='';$('varTested').value='';$('nameA').value='';$('nameB').value='';$('targetN').value='6';syncNHint();
   pending=null;dPending=null;picked=null;
   announce('Série apagada. Defina um novo par.');
 }
@@ -780,8 +959,30 @@ $('resetAll').onclick=()=>{ show('resetModal',true); $('rmConfirm').focus(); };
 $('rmCancel').onclick=()=>show('resetModal',false);
 $('rmConfirm').onclick=()=>{ show('resetModal',false); doReset(); };
 $('resetModal').onclick=(e)=>{ if(e.target===$('resetModal')) show('resetModal',false); };
-document.addEventListener('keydown',e=>{ if(e.key==='Escape' && !$('resetModal').classList.contains('hide')) show('resetModal',false); });
-if(state&&state.ocrA)enterShuffle();else show('setupCard',true);
+
+/* ---------- steppers de n + hint de limiar ---------- */
+function syncNHint(){
+  let n=parseInt($('targetN').value)||6;
+  $('nCrit').textContent=critical(Math.max(6,Math.min(60,n)),0.05);
+}
+$('nMinus').onclick=()=>{let n=parseInt($('targetN').value)||6;n=Math.max(6,n-1);$('targetN').value=n;syncNHint();};
+$('nPlus').onclick=()=>{let n=parseInt($('targetN').value)||6;n=Math.min(60,n+1);$('targetN').value=n;syncNHint();};
+$('targetN').addEventListener('input',syncNHint);
+$('targetN').addEventListener('blur',()=>{let n=parseInt($('targetN').value)||6;$('targetN').value=Math.max(6,Math.min(60,n));syncNHint();});
+syncNHint();
+
+/* ---------- modal de ajuda ---------- */
+$('helpBtn').onclick=()=>{ show('helpModal',true); $('hmOk').focus(); };
+$('hmClose').onclick=()=>show('helpModal',false);
+$('hmOk').onclick=()=>show('helpModal',false);
+$('helpModal').onclick=(e)=>{ if(e.target===$('helpModal')) show('helpModal',false); };
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && !$('helpModal').classList.contains('hide')) show('helpModal',false); });
+
+/* ---------- boot ---------- */
+if(state&&state.ocrA){
+  if(state.revealed){ show('setupCard',false);show('prepCard',false);show('statCard',true);renderStats();renderLog(); revealFinal(); }
+  else enterShuffle();
+} else show('setupCard',true);
 </script>
 </body>
 </html>
