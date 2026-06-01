@@ -2,8 +2,10 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="description" content="Timer automático para receitas campeãs do World Brewers Cup 2015–2025, com despejos guiados, contagem regressiva e dose ajustável.">
 <meta name="theme-color" content="#0a0a0a">
 <title>WBrC Timer</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -17,12 +19,46 @@
 }
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
 height:100vh;overflow:hidden;-webkit-font-smoothing:antialiased}
+
+/* ══ ACESSIBILIDADE ══ */
+/* Foco visível por teclado (não aparece em toque/mouse) */
+:focus-visible{outline:3px solid var(--green);outline-offset:3px;border-radius:6px}
+/* Conteúdo só para leitores de tela */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+/* Respeita preferência de movimento reduzido (WCAG 2.3.3) */
+@media (prefers-reduced-motion:reduce){
+*,*::before,*::after{animation-duration:.001ms!important;
+animation-iteration-count:1!important;transition-duration:.001ms!important}
+}
+
 .screen{position:fixed;inset:0;display:flex;flex-direction:column;
 opacity:0;pointer-events:none;transition:opacity .2s}
 .screen.active{opacity:1;pointer-events:all}
 
+/* ══ MODAL CUSTOM (substitui confirm nativo) ══ */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);
+backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+display:flex;align-items:center;justify-content:center;padding:32px;
+z-index:120;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-overlay.show{opacity:1;pointer-events:all}
+.modal-card{background:var(--surface);border:2px solid var(--border);
+border-radius:20px;padding:28px 24px;max-width:340px;width:100%;text-align:center;
+box-shadow:0 20px 60px rgba(0,0,0,.6);transform:scale(.92);transition:transform .2s}
+.modal-overlay.show .modal-card{transform:scale(1)}
+.modal-icon{font-size:40px;margin-bottom:12px}
+.modal-title{font-size:20px;font-weight:800;color:var(--text);margin-bottom:8px}
+.modal-text{font-size:13px;color:var(--text-dim);line-height:1.5;margin-bottom:24px}
+.modal-actions{display:flex;gap:12px}
+.modal-btn{flex:1;height:52px;border-radius:12px;font-size:15px;font-weight:800;
+cursor:pointer;font-family:inherit;border:2px solid transparent}
+.modal-btn-cancel{background:transparent;border-color:var(--border);color:var(--text)}
+.modal-btn-cancel:active{background:var(--border)}
+.modal-btn-confirm{background:var(--red);color:#fff}
+.modal-btn-confirm:active{filter:brightness(.85)}
+
 /* ══ HEADER ══ */
-.s1-top{padding:24px 20px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.s1-top{padding:max(24px,env(safe-area-inset-top)) 20px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
 .s1-brand{display:inline-flex;align-items:center;gap:8px;
 background:linear-gradient(135deg,#f09433,#dc2743);padding:6px 14px;
 border-radius:20px;text-decoration:none;margin-bottom:16px;
@@ -41,9 +77,10 @@ font-weight:700;color:var(--text-dim);margin-bottom:12px;
 padding-bottom:8px;border-bottom:1px solid var(--border)}
 
 /* ══ RECIPE CARD ══ */
-.recipe-card{background:var(--surface);border:2px solid var(--border);
+.recipe-card{display:block;width:100%;text-align:left;font-family:inherit;color:inherit;
+background:var(--surface);border:2px solid var(--border);
 border-radius:12px;padding:14px 16px;margin-bottom:8px;cursor:pointer;
-transition:all .15s;position:relative}
+transition:transform .15s,border-color .15s,background .15s;position:relative}
 .recipe-card:active{transform:scale(.98);border-color:var(--green);background:#151515}
 .recipe-card.place-1{border-left:4px solid var(--gold)}
 .recipe-card.place-2{border-left:4px solid var(--silver)}
@@ -51,21 +88,22 @@ transition:all .15s;position:relative}
 .rc-top{display:flex;align-items:center;gap:10px;margin-bottom:6px}
 .rc-place{font-size:26px;line-height:1;flex-shrink:0}
 .rc-flag{font-size:26px;flex-shrink:0}
-.rc-info{flex:1;min-width:0}
-.rc-name{font-size:15px;font-weight:800;color:var(--text);
+.rc-info{display:block;flex:1;min-width:0}
+.rc-name{display:block;font-size:15px;font-weight:800;color:var(--text);
 white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.3px}
-.rc-method{font-size:11px;font-weight:600;color:var(--text-dim);margin-top:1px}
+.rc-method{display:block;font-size:11px;font-weight:600;color:var(--text-dim);margin-top:1px}
 .rc-ratio{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
 background:var(--green);color:#fff;padding:2px 8px;border-radius:10px;
-flex-shrink:0;align-self:flex-start;margin-top:2px}
-.rc-variant-hint{font-size:11px;font-weight:700;color:var(--green);margin-top:4px;
+flex-shrink:0;align-self:flex-start;margin-top:2px;white-space:nowrap}
+.rc-variant-hint{display:block;font-size:11px;font-weight:700;color:var(--green);margin-top:4px;
 padding-left:36px}
 
 /* ══ VARIANTS SCREEN ══ */
 .var-list{flex:1;overflow-y:auto;padding:12px 20px 24px}
 .var-list::-webkit-scrollbar{display:none}
-.var-card{background:var(--surface);border:2px solid var(--border);
-border-radius:12px;padding:16px;margin-bottom:10px;cursor:pointer;transition:all .15s}
+.var-card{display:block;width:100%;text-align:left;font-family:inherit;color:inherit;
+background:var(--surface);border:2px solid var(--border);
+border-radius:12px;padding:16px;margin-bottom:10px;cursor:pointer;transition:transform .15s,border-color .15s,background .15s}
 .var-card:active{transform:scale(.98);border-color:var(--green);background:#151515}
 .var-top{display:flex;align-items:center;gap:8px;margin-bottom:6px}
 .var-name{font-size:16px;font-weight:800}
@@ -73,10 +111,10 @@ border-radius:12px;padding:16px;margin-bottom:10px;cursor:pointer;transition:all
 .var-formula{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;
 color:var(--green);background:var(--green-bg);display:inline-block;
 padding:3px 10px;border-radius:6px;margin-bottom:6px}
-.var-desc{font-size:12px;color:var(--text-dim)}
+.var-desc{display:block;font-size:12px;color:var(--text-dim)}
 
 /* ══ NAV BAR ══ */
-.s2-nav{display:flex;align-items:center;padding:20px;
+.s2-nav{display:flex;align-items:center;padding:max(20px,env(safe-area-inset-top)) 20px 20px;
 border-bottom:1px solid var(--border);flex-shrink:0}
 .back-btn{width:48px;height:48px;background:var(--surface);
 border:2px solid var(--border);border-radius:12px;color:var(--text);
@@ -110,7 +148,7 @@ align-items:center;justify-content:center;gap:12px}
 .water-value{font-family:'JetBrains Mono',monospace;font-size:36px;font-weight:700;color:var(--blue)}
 .water-unit{font-size:14px;font-weight:700;color:var(--text-dim)}
 .pours-section{background:var(--surface);border:2px solid var(--border);
-border-radius:16px;padding:20px;margin-bottom:100px}
+border-radius:16px;padding:20px;margin-bottom:calc(110px + env(safe-area-inset-bottom))}
 .pours-title{font-size:12px;font-weight:700;color:var(--text-dim);
 text-transform:uppercase;letter-spacing:1px;margin-bottom:16px}
 .pour-row{display:grid;grid-template-columns:1fr 52px 60px;gap:12px;
@@ -121,7 +159,7 @@ padding:12px 0;border-bottom:1px solid var(--border)}
 font-weight:700;color:var(--blue);text-align:center}
 .pour-amt{font-family:'JetBrains Mono',monospace;font-size:14px;
 font-weight:700;color:var(--text);text-align:right}
-.start-btn{position:fixed;bottom:24px;left:20px;right:20px;height:72px;
+.start-btn{position:fixed;bottom:max(24px,env(safe-area-inset-bottom));left:20px;right:20px;height:72px;
 background:var(--green);border:none;border-radius:16px;color:#000;
 font-size:20px;font-weight:900;letter-spacing:.5px;cursor:pointer;
 font-family:inherit;box-shadow:0 8px 32px rgba(0,200,83,.4)}
@@ -246,87 +284,100 @@ z-index:99;transition:opacity .05s}
 <div class="countdown-msg" id="cd-msg">Prepare-se…</div>
 </div>
 
-<div class="finish-overlay" id="finish">
-<div class="finish-icon">☕</div>
-<div class="finish-title">Pronto!</div>
+<div class="finish-overlay" id="finish" role="dialog" aria-modal="true" aria-labelledby="finish-title" aria-hidden="true">
+<div class="finish-icon" aria-hidden="true">☕</div>
+<div class="finish-title" id="finish-title">Pronto!</div>
 <div class="finish-time" id="finish-time">00:00</div>
 <div class="finish-sub" id="finish-sub"></div>
 <button class="finish-btn" onclick="goHome()">Nova Extração</button>
 </div>
 
+<!-- MODAL CONFIRMAÇÃO (substitui confirm nativo) -->
+<div class="modal-overlay" id="reset-modal" role="dialog" aria-modal="true" aria-labelledby="reset-modal-title" aria-describedby="reset-modal-text" aria-hidden="true">
+<div class="modal-card">
+<div class="modal-icon" aria-hidden="true">⟲</div>
+<div class="modal-title" id="reset-modal-title">Reiniciar preparo?</div>
+<div class="modal-text" id="reset-modal-text">O cronômetro voltará ao início e você retornará à tela de configuração.</div>
+<div class="modal-actions">
+<button class="modal-btn modal-btn-cancel" onclick="closeResetModal()">Cancelar</button>
+<button class="modal-btn modal-btn-confirm" onclick="doReset()">Reiniciar</button>
+</div>
+</div>
+</div>
+
 <!-- SCREEN 1: SELECT -->
-<div id="s-select" class="screen active">
-<div class="s1-top">
-<a href="https://www.instagram.com/original.coffee.roaster/" target="_blank" class="s1-brand">
-<span class="s1-brand-icon">📷</span>
+<main id="s-select" class="screen active" aria-label="Seleção de receita">
+<header class="s1-top">
+<a href="https://www.instagram.com/original.coffee.roaster/" target="_blank" rel="noopener" class="s1-brand" aria-label="Instagram: @original.coffee.roaster (abre em nova aba)">
+<span class="s1-brand-icon" aria-hidden="true">📷</span>
 <span class="s1-brand-text">@original.coffee.roaster</span>
 </a>
-<div class="s1-title">WBrC Timer</div>
-<div class="s1-sub">Timer automático · Top 3 Campeões 2015–2025</div>
-</div>
-<div class="s1-list" id="recipe-list"></div>
-</div>
+<h1 class="s1-title">WBrC Timer</h1>
+<p class="s1-sub">Timer automático · Top 3 Campeões 2015–2025</p>
+</header>
+<div class="s1-list" id="recipe-list" aria-label="Receitas por ano"></div>
+</main>
 
 <!-- SCREEN: KASUYA VARIANTS -->
-<div id="s-variants" class="screen">
-<div class="s2-nav">
-<button class="back-btn" onclick="goBack()">←</button>
-<div class="s2-title">🇯🇵 Tetsu Kasuya · Método 4:6</div>
-<div style="width:48px"></div>
-</div>
-<div class="var-list" id="var-list"></div>
-</div>
+<section id="s-variants" class="screen" aria-label="Variantes do método 4:6 de Tetsu Kasuya">
+<nav class="s2-nav" aria-label="Navegação">
+<button class="back-btn" onclick="goBack()" aria-label="Voltar para a lista de receitas">←</button>
+<h2 class="s2-title">🇯🇵 Tetsu Kasuya · Método 4:6</h2>
+<div style="width:48px" aria-hidden="true"></div>
+</nav>
+<div class="var-list" id="var-list" aria-label="Perfis de extração"></div>
+</section>
 
 <!-- SCREEN 2: SETUP -->
-<div id="s-setup" class="screen">
-<div class="s2-nav">
-<button class="back-btn" onclick="goBack()">←</button>
-<div class="s2-title" id="s2-title">Setup</div>
-<div style="width:48px"></div>
-</div>
+<section id="s-setup" class="screen" aria-label="Configuração da dose">
+<nav class="s2-nav" aria-label="Navegação">
+<button class="back-btn" onclick="goBack()" aria-label="Voltar">←</button>
+<h2 class="s2-title" id="s2-title">Setup</h2>
+<div style="width:48px" aria-hidden="true"></div>
+</nav>
 <div class="s2-body">
 <div class="dose-section">
-<div class="dose-label">Dose de Café</div>
+<div class="dose-label" id="dose-label">Dose de Café</div>
 <div class="dose-control">
-<button class="dose-btn" onclick="changeDose(-1)">−</button>
+<button class="dose-btn" onclick="changeDose(-1)" aria-label="Diminuir dose em 1 grama">−</button>
 <div>
-<div class="dose-value" id="dose-val">18</div>
+<div class="dose-value" id="dose-val" role="status" aria-live="polite" aria-labelledby="dose-label">18</div>
 <div class="dose-unit">gramas</div>
 </div>
-<button class="dose-btn" onclick="changeDose(1)">+</button>
+<button class="dose-btn" onclick="changeDose(1)" aria-label="Aumentar dose em 1 grama">+</button>
 </div>
 <div class="water-sum">
 <span class="water-label">Total</span>
-<span class="water-value" id="water-val">270</span>
+<span class="water-value" id="water-val" aria-live="polite">270</span>
 <span class="water-unit">ml</span>
 </div>
 </div>
 <div class="pours-section">
-<div class="pours-title">Despejos</div>
+<h3 class="pours-title">Despejos</h3>
 <div id="pours-table"></div>
 </div>
 </div>
 <button class="start-btn" onclick="beginCountdown()">Iniciar Timer</button>
-</div>
+</section>
 
 <!-- SCREEN 3: BREW -->
-<div id="s-brew" class="screen">
+<section id="s-brew" class="screen" aria-label="Preparo em andamento">
 <div class="s3-top">
-<div class="timer-clock" id="brew-clock">00:00</div>
-<div class="progress-dots" id="prog-dots"></div>
-<button class="reset-btn" onclick="confirmReset()">Reset</button>
+<div class="timer-clock" id="brew-clock" role="timer" aria-label="Tempo decorrido">00:00</div>
+<div class="progress-dots" id="prog-dots" role="progressbar" aria-label="Progresso das etapas"></div>
+<button class="reset-btn" onclick="confirmReset()" aria-label="Reiniciar preparo">Reset</button>
 </div>
 <div class="s3-main">
-<div class="next-bar" id="next-bar">
+<div class="next-bar" id="next-bar" aria-live="polite">
 <div class="next-content">
 <span class="next-label">A seguir</span>
 <span class="next-action">—</span>
 <span class="next-countdown">—</span>
 </div>
 </div>
-<div class="step-area" id="step-area"></div>
+<div class="step-area" id="step-area" role="region" aria-live="assertive" aria-label="Etapa atual"></div>
 </div>
-</div>
+</section>
 
 <script>
 /* ═══════════════════════════════════════════
@@ -633,13 +684,27 @@ ratio:15,steps:[
    ═══════════════════════════════════════════ */
 let R=null,dose=18,t0=null,curIdx=0,ticker=null,audioCtx=null,wlock=null;
 let cameFromVariants=false;
+let lastDose=18;            // R4: lembra a última dose escolhida na sessão
+let finishTimeout=null;     // C1: handle cancelável do overlay de finish
+let accumCache=[];          // R2: acumulado pré-computado por step
 const medals={1:'🥇',2:'🥈',3:'🥉'};
 const rnd=v=>Math.round(v);
 const totalW=()=>dose*R.ratio;
 const pourMl=s=>s.frac?s.frac*totalW():0;
+/* R1: ratio derivado (ex.: 270/17) é exibido arredondado ao inteiro mais próximo
+   quando a diferença é pequena, comunicando a intenção do barista sem perder precisão no cálculo */
+function ratioLabel(r){
+const round=Math.round(r);
+return Math.abs(r-round)<0.15?`1:${round}`:`1:${r.toFixed(1)}`;
+}
 const fmtMs=ms=>{const s=Math.floor(ms/1000),m=Math.floor(s/60);return`${String(m).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`};
 const fmtS=s=>{s=Math.max(0,s);return`${String(Math.floor(s/60)).padStart(2,'0')}:${String(Math.floor(s%60)).padStart(2,'0')}`};
-function accumulatedAt(idx){let sum=0;for(let i=0;i<=idx;i++)if(R.steps[i].type==='pour')sum+=pourMl(R.steps[i]);return sum;}
+/* R2: pré-computa o volume acumulado em cada índice ao carregar a receita (O(n) uma vez, não por render) */
+function buildAccumCache(){
+accumCache=[];let sum=0;
+R.steps.forEach(s=>{if(s.type==='pour')sum+=pourMl(s);accumCache.push(sum);});
+}
+const accumulatedAt=idx=>accumCache[idx]||0;
 
 /* Audio — resume() é obrigatório no mobile (iOS/Android bloqueiam AudioContext até interação) */
 function ensureAudio(){
@@ -676,7 +741,7 @@ if(cameFromVariants){show('s-variants');}
 else{wakeLockOff();show('s-select');}
 }else{wakeLockOff();show('s-select');}
 }
-function goHome(){stopBrew();document.getElementById('finish').classList.remove('show');wakeLockOff();show('s-select');}
+function goHome(){stopBrew();const f=document.getElementById('finish');f.classList.remove('show');f.setAttribute('aria-hidden','true');wakeLockOff();show('s-select');}
 
 /* ═══════════════════════════════════════════
    BUILD RECIPE LIST
@@ -685,49 +750,53 @@ function buildList(){
 const byYear={};
 RECIPES.forEach(r=>{if(!byYear[r.year])byYear[r.year]=[];byYear[r.year].push(r);});
 const years=Object.keys(byYear).sort((a,b)=>b-a);
+const placeName={1:'1º lugar',2:'2º lugar',3:'3º lugar'};
 document.getElementById('recipe-list').innerHTML=years.map(year=>`
-<div class="year-group">
-<div class="year-header">${year}</div>
+<section class="year-group" aria-labelledby="yr-${year}">
+<h2 class="year-header" id="yr-${year}">${year}</h2>
 ${byYear[year].map(r=>{
 if(r.isVariantGroup){
-return `<div class="recipe-card place-${r.place}" onclick="openVariants()">
-<div class="rc-top">
-<div class="rc-place">${medals[r.place]}</div>
-<div class="rc-info">
-<div class="rc-name">${r.champion}</div>
-<div class="rc-method">${r.dripper}</div>
-</div>
-<div class="rc-flag">${r.flag}</div>
-</div>
-<div class="rc-variant-hint">5 variações de perfil →</div>
-</div>`;
+return `<button type="button" class="recipe-card place-${r.place}" onclick="openVariants()"
+aria-label="${placeName[r.place]}, ${year}: ${r.champion}, ${r.country}, ${r.dripper}. Cinco variações de perfil.">
+<span class="rc-top">
+<span class="rc-place" aria-hidden="true">${medals[r.place]}</span>
+<span class="rc-info">
+<span class="rc-name">${r.champion}</span>
+<span class="rc-method">${r.dripper}</span>
+</span>
+<span class="rc-flag" aria-hidden="true">${r.flag}</span>
+</span>
+<span class="rc-variant-hint">5 variações de perfil →</span>
+</button>`;
 }
-return `<div class="recipe-card place-${r.place}" onclick="pickRecipe('${r.id}')">
-<div class="rc-top">
-<div class="rc-place">${medals[r.place]}</div>
-<div class="rc-info">
-<div class="rc-name">${r.champion}</div>
-<div class="rc-method">${r.dripper}</div>
-</div>
-<span class="rc-ratio">1:${r.ratio.toFixed?r.ratio.toFixed(1):r.ratio}</span>
-<div class="rc-flag">${r.flag}</div>
-</div>
-</div>`;
+return `<button type="button" class="recipe-card place-${r.place}" onclick="pickRecipe('${r.id}')"
+aria-label="${placeName[r.place]}, ${year}: ${r.champion}, ${r.country}. ${r.dripper}, proporção ${ratioLabel(r.ratio).replace(':',' para ')}.">
+<span class="rc-top">
+<span class="rc-place" aria-hidden="true">${medals[r.place]}</span>
+<span class="rc-info">
+<span class="rc-name">${r.champion}</span>
+<span class="rc-method">${r.dripper}</span>
+</span>
+<span class="rc-ratio" aria-hidden="true">${ratioLabel(r.ratio)}</span>
+<span class="rc-flag" aria-hidden="true">${r.flag}</span>
+</span>
+</button>`;
 }).join('')}
-</div>`).join('');
+</section>`).join('');
 }
 
 /* ═══ KASUYA VARIANTS SCREEN ═══ */
 function openVariants(){
 document.getElementById('var-list').innerHTML=KASUYA.map((v,i)=>`
-<div class="var-card" onclick="pickKasuya(${i})">
-<div class="var-top">
+<button type="button" class="var-card" onclick="pickKasuya(${i})"
+aria-label="Perfil ${v.variantName}. ${v.desc}. Despejos: ${v.pourFormula}.">
+<span class="var-top">
 <span class="var-name">${v.variantName}</span>
-<span class="var-emoji">${v.emoji}</span>
-</div>
-<div class="var-formula">${v.pourFormula}</div>
-<div class="var-desc">${v.desc}</div>
-</div>`).join('');
+<span class="var-emoji" aria-hidden="true">${v.emoji}</span>
+</span>
+<span class="var-formula">${v.pourFormula}</span>
+<span class="var-desc">${v.desc}</span>
+</button>`).join('');
 show('s-variants');
 }
 
@@ -737,7 +806,8 @@ const v=KASUYA[i];
 R={...v,champion:'Tetsu Kasuya',country:'Japão',flag:'🇯🇵',year:2016,place:1,
 dripper:'V60 · 4:6 '+v.variantName+' '+v.emoji,
 steps:JSON.parse(JSON.stringify(v.steps))};
-dose=18;cameFromVariants=true;
+dose=lastDose;cameFromVariants=true;
+buildAccumCache();
 document.getElementById('s2-title').textContent=`🥇 2016 · Kasuya · ${v.variantName} ${v.emoji}`;
 renderSetup();show('s-setup');
 }
@@ -746,8 +816,9 @@ renderSetup();show('s-setup');
 function pickRecipe(id){
 ensureAudio();wakeLockOn();
 R=JSON.parse(JSON.stringify(RECIPES.find(r=>r.id===id)));
-dose=18;cameFromVariants=false;
-document.getElementById('s2-title').textContent=`${medals[R.place]} ${R.year} · ${R.champion.split(' ').pop()} · 1:${R.ratio.toFixed?R.ratio.toFixed(1):R.ratio}`;
+dose=lastDose;cameFromVariants=false;
+buildAccumCache();
+document.getElementById('s2-title').textContent=`${medals[R.place]} ${R.year} · ${R.champion.split(' ').pop()} · ${ratioLabel(R.ratio)}`;
 renderSetup();show('s-setup');
 }
 
@@ -763,7 +834,12 @@ document.getElementById('pours-table').innerHTML=R.steps.filter(s=>s.type==='pou
 <div class="pour-amt">${rnd(pourMl(s))}ml</div>
 </div>`).join('');
 }
-function changeDose(d){dose=Math.max(1,Math.min(80,dose+d));renderSetup();}
+function changeDose(d){
+dose=Math.max(1,Math.min(80,dose+d));
+lastDose=dose;          // R4: memoriza para a próxima receita
+buildAccumCache();      // R2: ml absolutos mudam com a dose, recomputa
+renderSetup();
+}
 
 /* ═══════════════════════════════════════════
    COUNTDOWN 3-2-1
@@ -804,9 +880,12 @@ tick();
    BREW ENGINE
    ═══════════════════════════════════════════ */
 function startBrew(){
+if(finishTimeout){clearTimeout(finishTimeout);finishTimeout=null;}
 t0=Date.now();curIdx=0;
 buildDots();
-renderStep(0);
+renderStep(0);          // 1º pour renderizado em silêncio: o beep "DESPEJE!" do countdown é a deixa
+updateDots();
+buildNextBar();
 clearInterval(ticker);
 ticker=setInterval(brewTick,80);
 }
@@ -818,9 +897,8 @@ const steps=R.steps;
 let newIdx=0;
 for(let i=0;i<steps.length;i++){if(elapsed>=steps[i].atSec)newIdx=i;}
 if(newIdx!==curIdx){curIdx=newIdx;onStepChange(curIdx);}
-updateNextBar(elapsed);
+tickNextBar(elapsed);   // M1: só atualiza o número do countdown
 updateRing(elapsed);
-updateDots();
 }
 
 function onStepChange(idx){
@@ -830,14 +908,28 @@ if(s.type==='pour'){beepSeq([[600,.1,.25,0],[880,.35,.35,.12]]);vib([90,30,150])
 else if(s.type==='serve'){beepSeq([[440,.12,.2,0],[550,.12,.2,.18],[660,.12,.2,.36],[880,.3,.3,.54]]);vib([80,40,100,40,200]);}
 else{beep(440,.18,.2);vib(70);}
 renderStep(idx);
+updateDots();           // M1: dots atualizados na transição, não 12×/s
+buildNextBar();         // M1: estrutura da next-bar reconstruída só ao trocar de passo
+/* C2: ao atingir o "servir", para o cronômetro imediatamente (não 4,5s depois) */
+if(s.type==='serve'){
+clearInterval(ticker);ticker=null;
+document.getElementById('brew-clock').textContent=fmtMs(Date.now()-t0);
+if(finishTimeout)clearTimeout(finishTimeout);
+finishTimeout=setTimeout(showFinish,4500);   // C1: cancelável
+}
 }
 
 /* ═══ PROGRESS DOTS ═══ */
 function buildDots(){
 const el=document.getElementById('prog-dots');
-el.innerHTML=R.steps.map((_,i)=>`<div class="pdot" id="dot${i}"></div>`).join('');
+el.setAttribute('aria-valuemin','1');
+el.setAttribute('aria-valuemax',String(R.steps.length));
+el.innerHTML=R.steps.map((_,i)=>`<span class="pdot" id="dot${i}" aria-hidden="true"></span>`).join('');
 }
 function updateDots(){
+const el=document.getElementById('prog-dots');
+if(el){el.setAttribute('aria-valuenow',String(curIdx+1));
+el.setAttribute('aria-valuetext',`Etapa ${curIdx+1} de ${R.steps.length}`);}
 R.steps.forEach((_,i)=>{
 const d=document.getElementById('dot'+i);
 if(!d)return;
@@ -916,11 +1008,11 @@ stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="0"/>
 }
 else if(s.type==='serve'){
 area.innerHTML=`<div class="step-serve">
-<div class="serve-icon">☕</div>
+<div class="serve-icon" aria-hidden="true">☕</div>
 <div class="step-type">✓ PRONTO</div>
 <div class="step-name">${s.label}</div>
 </div>`;
-setTimeout(showFinish,4500);
+/* finish é agendado de forma cancelável em onStepChange (C1/C2) */
 }
 }
 
@@ -940,49 +1032,85 @@ if(fill)fill.style.strokeDashoffset=(C*(1-prog)).toFixed(1);
 if(time)time.textContent=fmtS(Math.ceil(remaining));
 }
 
-/* ═══ NEXT BAR ═══ */
-function updateNextBar(elapsed){
-const steps=R.steps;
+/* ═══ NEXT BAR (M1: build 1×/passo, tick só atualiza o número) ═══ */
+function buildNextBar(){
 const bar=document.getElementById('next-bar');
-const nextIdx=curIdx+1;
-if(nextIdx>=steps.length){
-bar.innerHTML='<div class="next-content"><span class="next-action" style="text-align:center;color:var(--text-dim)">Última etapa</span></div>';
+const ns=R.steps[curIdx+1];
+if(!ns){
 bar.className='next-bar';
+bar.innerHTML='<div class="next-content"><span class="next-action" style="text-align:center;color:var(--text-dim)">Última etapa</span></div>';
 return;
 }
-const ns=steps[nextIdx];
-const secsLeft=ns.atSec-elapsed;
-let typeStr='';
-if(ns.type==='pour')typeStr=`☕ ${ns.label} · ${rnd(pourMl(ns))}ml · ${ns.temp}°C`;
-else if(ns.type==='serve')typeStr='✓ Servir';
-else if(ns.type==='wait')typeStr=`⏱ ${ns.label}`;
-else if(ns.type==='drain')typeStr=`⬇ ${ns.label}`;
-else typeStr=ns.label;
-
+let txt='';
+if(ns.type==='pour')txt=`☕ ${ns.label} · ${rnd(pourMl(ns))}ml · ${ns.temp}°C`;
+else if(ns.type==='serve')txt='✓ Servir';
+else if(ns.type==='wait')txt=`⏱ ${ns.label}`;
+else if(ns.type==='drain')txt=`⬇ ${ns.label}`;
+else txt=ns.label;
 bar.className='next-bar';
-if(secsLeft<=8&&secsLeft>3)bar.className='next-bar urgent';
-if(secsLeft<=3&&secsLeft>0)bar.className='next-bar critical';
-
 bar.innerHTML=`<div class="next-content">
 <span class="next-label">A seguir</span>
-<span class="next-action">${typeStr}</span>
-<span class="next-countdown">${secsLeft>0?fmtS(Math.ceil(secsLeft)):'agora'}</span>
+<span class="next-action">${txt}</span>
+<span class="next-countdown" id="next-cd">—</span>
 </div>`;
+}
+function tickNextBar(elapsed){
+const ns=R.steps[curIdx+1];
+if(!ns)return;
+const secsLeft=ns.atSec-elapsed;
+const bar=document.getElementById('next-bar');
+const cd=document.getElementById('next-cd');
+let cls='next-bar';
+if(secsLeft<=8&&secsLeft>3)cls='next-bar urgent';
+else if(secsLeft<=3&&secsLeft>0)cls='next-bar critical';
+if(bar.className!==cls)bar.className=cls;   // só toca no DOM quando a classe muda
+if(cd)cd.textContent=secsLeft>0?fmtS(Math.ceil(secsLeft)):'agora';
 }
 
 /* ═══ FINISH ═══ */
 function showFinish(){
-clearInterval(ticker);wakeLockOff();
+if(finishTimeout){clearTimeout(finishTimeout);finishTimeout=null;}
+clearInterval(ticker);ticker=null;wakeLockOff();
 document.getElementById('finish-time').textContent=fmtMs(Date.now()-t0);
 document.getElementById('finish-sub').innerHTML=`${medals[R.place]||''} ${R.champion} · ${R.year}<br>${R.dripper}`;
-document.getElementById('finish').classList.add('show');
+const f=document.getElementById('finish');
+f.classList.add('show');f.setAttribute('aria-hidden','false');
 }
 
-function stopBrew(){clearInterval(ticker);ticker=null;wakeLockOff();}
-function confirmReset(){if(confirm('Reiniciar?')){stopBrew();show('s-setup');}}
+function stopBrew(){
+if(finishTimeout){clearTimeout(finishTimeout);finishTimeout=null;}
+clearInterval(ticker);ticker=null;wakeLockOff();
+}
+
+/* ═══ RESET (M5: modal custom; M4: mantém tela acesa pós-reset) ═══ */
+function confirmReset(){
+const m=document.getElementById('reset-modal');
+m.classList.add('show');m.setAttribute('aria-hidden','false');
+}
+function closeResetModal(){
+const m=document.getElementById('reset-modal');
+m.classList.remove('show');m.setAttribute('aria-hidden','true');
+}
+function doReset(){
+closeResetModal();
+stopBrew();
+wakeLockOn();          // M4: reset volta ao setup (fluxo ativo) → tela permanece acesa
+show('s-setup');
+}
 
 /* ═══ INIT ═══ */
 buildList();
+
+/* Esc fecha o modal de reset; toque no fundo escuro também fecha */
+document.addEventListener('keydown',e=>{
+if(e.key==='Escape'){
+const m=document.getElementById('reset-modal');
+if(m.classList.contains('show'))closeResetModal();
+}
+});
+document.getElementById('reset-modal').addEventListener('click',e=>{
+if(e.target.id==='reset-modal')closeResetModal();
+});
 </script>
 </body>
 </html>
