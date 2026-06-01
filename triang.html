@@ -3,7 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Triângulo OCR · Teste Cego</title>
+<meta name="description" content="Teste triangular cego (ISO 4120) para comparar torras de café — Original Coffee Roaster.">
+<meta name="theme-color" content="#08090c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Triângulo OCR">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23101319'/%3E%3Cpath d='M32 16 L48 46 L16 46 Z' fill='none' stroke='%2334e9ad' stroke-width='4' stroke-linejoin='round'/%3E%3Ccircle cx='32' cy='38' r='3.5' fill='%2334e9ad'/%3E%3C/svg%3E">
+<title>Triângulo OCR · Original Coffee Roaster</title>
 <style>
   /* ============================================================
      TRIÂNGULO OCR — Design System v3
@@ -43,7 +49,7 @@
 
     /* tipografia */
     --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,'Inter',sans-serif;
-    --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+    --mono:ui-monospace,'SF Mono','Menlo','Cascadia Code','Consolas','Roboto Mono',monospace;
 
     /* raios */
     --r-xl:22px; --r-lg:16px; --r-md:12px; --r-sm:9px; --r-xs:7px;
@@ -287,7 +293,7 @@
   .slider::-webkit-slider-thumb:hover{background:var(--green-bright)}
   .slider::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:var(--green);cursor:pointer;border:3px solid var(--bg)}
   .slider:focus-visible{outline:2px solid var(--green-bright);outline-offset:5px}
-  .scale-marks{display:flex;justify-content:space-between;font-size:10px;color:var(--muted-2);margin-top:5px;padding:0 2px;font-family:var(--mono)}
+  .scale-marks{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:5px;padding:0 2px;font-family:var(--mono)}
 
   /* ---------- recap ---------- */
   .rc-axis{margin-bottom:20px}
@@ -363,13 +369,31 @@
 
   @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
 
+  /* ---------- utilitários (R1/R2: substituem spacer-divs e inline) ---------- */
+  .mt-sm{margin-top:10px}
+  .mt-md{margin-top:16px}
+  .mt-lg{margin-top:18px}
+  .center{text-align:center}
+  .pdim-spaced{margin-top:7px}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+  .btn-narrow{max-width:280px;margin-left:auto;margin-right:auto}
+  /* R3: heading recebe foco ao trocar de etapa, sem outline duplicado feio */
+  h2[tabindex="-1"],[tabindex="-1"].handoff-h{outline:none}
+  /* ---------- exportação de série ---------- */
+  .export-row{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+  .export-row button{flex:1;min-width:130px;font-size:13.5px;padding:13px}
+  .btn-export{background:var(--surface-2);color:var(--ink-2);border:1.5px solid var(--line);font-weight:560}
+  .btn-export:hover{border-color:var(--green-deep);background:var(--surface-3);color:var(--green-bright)}
+  .copy-toast{position:fixed;left:50%;bottom:calc(28px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(8px);background:var(--green);color:#04130d;font-weight:620;font-size:13px;padding:11px 20px;border-radius:30px;box-shadow:var(--el-3);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:200}
+  .copy-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
   /* ---------- header: marca + botão de ajuda ---------- */
   .header-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
   .brand{display:inline-flex;align-items:center;gap:9px;font-size:13.5px;font-weight:620;color:var(--ink-2);letter-spacing:-0.01em}
   .brand::before{content:"";width:9px;height:9px;border-radius:50%;border:2px solid var(--green);background:var(--green-soft);flex:0 0 auto}
   .header-top .eyebrow{margin-bottom:0}
   header .eyebrow{margin-bottom:14px}
-  .help-btn{font-family:var(--mono);font-size:12px;font-weight:560;color:var(--ink-2);background:var(--surface-2);border:1px solid var(--line);border-radius:30px;padding:8px 15px;min-height:auto;letter-spacing:.01em;display:inline-flex;align-items:center;gap:6px;transition:all .18s var(--ease);flex:0 0 auto}
+  .help-btn{font-family:var(--mono);font-size:12px;font-weight:560;color:var(--ink-2);background:var(--surface-2);border:1px solid var(--line);border-radius:30px;padding:10px 16px;min-height:44px;letter-spacing:.01em;display:inline-flex;align-items:center;gap:6px;transition:all .18s var(--ease);flex:0 0 auto}
   .help-btn:hover{border-color:var(--green-deep);color:var(--green-bright);background:var(--green-soft-2)}
 
   /* ---------- setup: divisor, nomes, n ---------- */
@@ -396,7 +420,7 @@
 
   /* ---------- modal de ajuda ---------- */
   .modal-help{max-width:520px;max-height:88vh;overflow-y:auto;position:relative;padding-top:30px}
-  .modal-close{position:absolute;top:16px;right:16px;width:36px;height:36px;min-height:36px;border-radius:50%;background:var(--surface-2);border:1px solid var(--line);color:var(--muted);font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+  .modal-close{position:absolute;top:14px;right:14px;width:44px;height:44px;min-height:44px;border-radius:50%;background:var(--surface-2);border:1px solid var(--line);color:var(--muted);font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .15s}
   .modal-close:hover{color:var(--ink);border-color:var(--line-strong);background:var(--surface-3)}
   .help-body{margin-bottom:22px}
   .help-block{padding:14px 0;border-bottom:1px solid var(--line-soft)}
@@ -457,12 +481,11 @@
     <button class="n-step" id="nMinus" aria-label="Diminuir n" type="button">−</button>
     <input type="number" id="targetN" min="6" max="60" step="1" value="6" inputmode="numeric">
     <button class="n-step" id="nPlus" aria-label="Aumentar n" type="button">+</button>
-    <span class="n-hint" id="nHint">mín. 6 · limiar <b id="nCrit">5</b> acertos</span>
+    <span class="n-hint">mín. 6 · limiar <b id="nCrit">5</b> acertos</span>
   </div>
   <p class="n-note">O resultado fica <b>oculto</b> até o último triângulo. Cada prova é independente — o provador só vê o placar (acertos/erros) ao fim dos n.</p>
 
-  <div style="height:18px"></div>
-  <button class="btn-primary" id="startPair">Iniciar série →</button>
+  <button class="btn-primary mt-lg" id="startPair">Iniciar série →</button>
 </section>
 
 <!-- ===== PROTOCOLO DE PREPARO ===== -->
@@ -485,7 +508,7 @@
             <input type="text" id="grindClick" inputmode="decimal" value="7,5" placeholder="7,5" autocomplete="off">
             <span class="grind-unit">no dial 0–16</span>
           </div>
-          <div class="pdim" style="margin-top:7px">Partida sugerida: <b>7,5</b>. Calibre até <b>70–75% passar na peneira mesh 20</b> (≈800 µm) — esse é o alvo SCA, o número é só o começo. Mais grosso que cupping puro (7,0), na faixa do seu filtro.</div>
+          <div class="pdim pdim-spaced">Partida sugerida: <b>7,5</b>. Calibre até <b>70–75% passar na peneira mesh 20</b> (≈800 µm) — esse é o alvo SCA, o número é só o começo. Mais grosso que cupping puro (7,0), na faixa do seu filtro.</div>
         </div>
       </div>
     </div>
@@ -534,32 +557,30 @@
   <h2 id="mapH">Montagem secreta</h2>
   <div class="secret-banner"><span class="ico">⚠</span><span>Marque a mesa com <b>3 posições fixas</b> (fita: 1 · 2 · 3, alças alinhadas). Coloque cada xícara — já identificada com o OCR embaixo — na posição indicada. <b>Não conte ao provador</b> qual é qual.</span></div>
   <div id="mapList"></div>
-  <div style="height:6px"></div>
-  <button class="btn-primary" id="toHandoff">Posições montadas →</button>
+  <button class="btn-primary mt-sm" id="toHandoff">Posições montadas →</button>
 </section>
 
 <section class="handoff hide" id="handoffCard" role="region" aria-labelledby="handoffH">
   <span class="swap-ico" aria-hidden="true">⇄</span>
   <h2 id="handoffH">Entregue o tablet</h2>
   <p>Passe o aparelho para <span class="who" id="handoffWho">o provador</span>. Ele não deve ter visto a tela anterior.</p>
-  <button class="btn-primary" id="startTaste" style="max-width:280px;margin:0 auto">Estou pronto para provar →</button>
+  <button class="btn-primary btn-narrow" id="startTaste">Estou pronto para provar →</button>
 </section>
 
 <section class="card hide" id="tasteCard" aria-labelledby="tasteH">
   <h2 id="tasteH" class="sr-only">Prova cega</h2>
-  <p class="taste-instr">Prove as posições <b>1 → 2 → 3</b>. Enxágue com água entre cada xícara.</p>
-  <div style="text-align:center"><span class="odd-hint">Toque na posição <b>diferente</b> das outras duas</span></div>
+  <p class="taste-instr" id="tasteInstr" tabindex="-1">Prove as posições <b>1 → 2 → 3</b>. Enxágue com água entre cada xícara.</p>
+  <div class="center"><span class="odd-hint">Toque na posição <b>diferente</b> das outras duas</span></div>
   <div class="cups" id="cups" role="radiogroup" aria-label="Escolha a posição diferente"></div>
-  <div style="height:10px"></div>
-  <button class="btn-primary" id="confirmPick" disabled>Confirmar escolha</button>
-  <p class="footer-note" style="margin-top:12px">Não vire nem levante as xícaras — o OCR embaixo revelaria a identidade.</p>
+  <button class="btn-primary mt-sm" id="confirmPick" disabled>Confirmar escolha</button>
+  <p class="footer-note mt-md">Não vire nem levante as xícaras — o OCR embaixo revelaria a identidade.</p>
 </section>
 
 <!-- confirmação neutra entre triângulos (não revela acerto/erro) -->
 <section class="card hide" id="ackCard">
   <div class="trial-ack">
     <div class="ack-ring" aria-hidden="true">✓</div>
-    <div class="ack-title">Resposta registrada</div>
+    <div class="ack-title" id="ackTitle" tabindex="-1">Resposta registrada</div>
     <div class="ack-sub" id="ackSub">—</div>
     <div class="ack-note">Acertos e erros revelados só ao fim dos <b id="ackN">6</b> triângulos. Não comente a resposta com o provador.</div>
   </div>
@@ -570,15 +591,20 @@
 <section class="card hide" id="resultCard" aria-labelledby="vBig">
   <div class="verdict" id="verdict">
     <div class="seal" id="vSeal" aria-hidden="true"></div>
-    <div class="big" id="vBig"></div>
+    <div class="big" id="vBig" tabindex="-1"></div>
     <div class="det" id="vDet"></div>
   </div>
-  <button class="btn-primary hide" id="goDescr" style="margin-top:6px">Prova descritiva: caracterizar a diferença →</button>
+  <div class="export-row" id="exportRow">
+    <button class="btn-export" id="expCopy">Copiar resumo</button>
+    <button class="btn-export" id="expCsv">Baixar CSV</button>
+    <button class="btn-export" id="expJson">Baixar JSON</button>
+  </div>
+  <button class="btn-primary hide mt-sm" id="goDescr">Prova descritiva: caracterizar a diferença →</button>
   <div class="desc-locked hide" id="descLocked">
     <span class="lock-ico" aria-hidden="true">🔒</span>
     <span>Sem diferença detectável, não há o que caracterizar. A prova descritiva fica indisponível para este resultado.</span>
   </div>
-  <button class="btn-ghost" id="newSeries" style="margin-top:10px">Nova série (mesmo par)</button>
+  <button class="btn-ghost mt-sm" id="newSeries">Nova série (mesmo par)</button>
 </section>
 
 <!-- ===== DESCRITIVA 1: MONTAGEM CEGA ===== -->
@@ -587,8 +613,7 @@
   <p class="lead">Quem monta <b>não pontua</b>. Coloque as 2 xícaras (uma de cada torra) nas posições indicadas. O provador pontua por posição, sem saber qual é qual.</p>
   <div class="secret-banner"><span class="ico">⚠</span><span>Marque a mesa com <b>2 posições fixas</b> (1 · 2). Coloque cada xícara — OCR embaixo — na posição indicada e <b>não conte ao provador</b>.</span></div>
   <div id="dMapList"></div>
-  <div style="height:6px"></div>
-  <button class="btn-primary" id="dToScore">Posições montadas — entregar ao provador →</button>
+  <button class="btn-primary mt-sm" id="dToScore">Posições montadas — entregar ao provador →</button>
 </section>
 
 <!-- ===== DESCRITIVA 2: FICHA DE PONTUAÇÃO ===== -->
@@ -596,12 +621,10 @@
   <h2 id="dScoreH">Pontue cada amostra · 1 a 10</h2>
   <p class="lead">Prove às cegas. Pontue as <b>duas posições</b> em cada eixo. Sem pressa, enxágue entre as provas.</p>
   <div id="dScoreBody"></div>
-  <div style="height:8px"></div>
   <label for="dNotes">Notas livres (opcional)</label>
   <input type="text" id="dNotes" placeholder="ex: posição 1 tem caramelo mais nítido; posição 2 finaliza seco" autocomplete="off">
-  <div style="height:16px"></div>
-  <button class="btn-primary" id="dReveal" disabled>Revelar resultado →</button>
-  <p class="footer-note" id="dProgress" style="margin-top:10px"></p>
+  <button class="btn-primary mt-md" id="dReveal" disabled>Revelar resultado →</button>
+  <p class="footer-note mt-sm" id="dProgress"></p>
 </section>
 
 <!-- ===== DESCRITIVA 3: RECAP COM DELTA ===== -->
@@ -609,10 +632,9 @@
   <h2 id="dRecapH">Perfil comparado</h2>
   <p class="lead" id="dRecapLead"></p>
   <div id="dRecapBody"></div>
-  <div class="conclusion sig" id="dPref" style="margin-top:14px"></div>
-  <div style="height:16px"></div>
-  <button class="btn-primary" id="dNewDescr">Nova prova descritiva (outro provador) →</button>
-  <button class="btn-ghost" id="dBackTri" style="margin-top:10px">Voltar ao triângulo</button>
+  <div class="conclusion" id="dPref"></div>
+  <button class="btn-primary mt-md" id="dNewDescr">Nova prova descritiva (outro provador) →</button>
+  <button class="btn-ghost mt-sm" id="dBackTri">Voltar ao triângulo</button>
 </section>
 
 <details id="logWrap" class="hide">
@@ -624,12 +646,12 @@
   <summary><span class="chev">▸</span> Tabela de significância</summary>
   <div class="details-body">
     Acertos mínimos para diferença perceptível, por nº de avaliações (n), α = 0,05:
-    <div class="ref-table" style="margin-top:8px">
+    <div class="ref-table mt-sm">
       n=6 → <span class="n">5</span> &nbsp;·&nbsp; n=8 → <span class="n">6</span> &nbsp;·&nbsp; n=10 → <span class="n">7</span> &nbsp;·&nbsp; n=12 → <span class="n">8</span><br>
       n=15 → <span class="n">9</span> &nbsp;·&nbsp; n=18 → <span class="n">10</span> &nbsp;·&nbsp; n=20 → <span class="n">11</span><br>
       n=24 → <span class="n">13</span> &nbsp;·&nbsp; n=30 → <span class="n">15</span>
     </div>
-    <div style="margin-top:10px">Acaso = 1/3. O app calcula o limiar exato para qualquer n. O triângulo diz <b>se</b> há diferença — não qual atributo nem a magnitude. Caracterize com prova descritiva depois que passar.</div>
+    <div class="mt-sm">Acaso = 1/3. O app calcula o limiar exato para qualquer n. O triângulo diz <b>se</b> há diferença — não qual atributo nem a magnitude. Caracterize com prova descritiva depois que passar.</div>
   </div>
 </details>
 
@@ -684,9 +706,11 @@
         </ul>
       </div>
     </div>
-    <button class="btn-primary" id="hmOk" style="margin-top:4px">Entendi</button>
+    <button class="btn-primary" id="hmOk">Entendi</button>
   </div>
 </div>
+
+<div class="copy-toast" id="copyToast" role="status" aria-live="polite">Copiado ✓</div>
 
 <script>
 const KEY='triangulo_ocr_v2';
@@ -713,8 +737,15 @@ const GRIND_KEY='triangulo_grind_v1';
   $('grindClick').addEventListener('input',e=>{try{localStorage.setItem(GRIND_KEY,e.target.value);}catch(err){}});
 })();
 function setFlow(step){
-  show('flow',true);const order=['shuffle','handoff','taste','result'],idx=order.indexOf(step);
-  document.querySelectorAll('.flow-step').forEach(el=>{const i=order.indexOf(el.dataset.step);el.classList.toggle('active',i===idx);el.classList.toggle('done',i<idx);});
+  show('flow',true);
+  const order=['shuffle','handoff','taste','result'];
+  // 'ack' = resposta registrada mas SEM revelar: trata taste como concluído, não acende Veredito
+  const idx = step==='ack' ? 2.5 : order.indexOf(step);
+  document.querySelectorAll('.flow-step').forEach(el=>{
+    const i=order.indexOf(el.dataset.step);
+    el.classList.toggle('active', i===Math.floor(idx) && idx===i);
+    el.classList.toggle('done', i<idx);
+  });
   document.querySelectorAll('.flow-line').forEach(l=>{l.classList.toggle('done',parseInt(l.dataset.line)<=idx);});
 }
 function renderStats(){
@@ -748,13 +779,13 @@ function renderStats(){
     $('bar').style.width=pct+'%';$('progPct').textContent=pct+'%';
     $('progLabel').textContent='progresso ao limiar';
     if(hits>=crit){const p=tailP(n,hits);c.classList.add('sig');$('cTitle').innerHTML='✓ Diferença confirmada';$('cBody').innerHTML='<b>'+hits+'/'+n+'</b> acertos ≥ '+crit+' · p = '+p.toFixed(3)+'. As torras diferem na xícara de forma detectável.';}
-    else{const need=crit-hits;c.classList.add('nsig');$('cTitle').textContent='Sem diferença detectável';$('cBody').innerHTML='<b>'+hits+'/'+n+'</b> · seriam necessários '+crit+' acertos. Nas condições do teste, a diferença não superou o acaso. Pode ser que a mudança não mova a xícara, que seja sutil demais para este n, ou ruído de preparo. Veja o "Por quê".';}
+    else{c.classList.add('nsig');$('cTitle').textContent='Sem diferença detectável';$('cBody').innerHTML='<b>'+hits+'/'+n+'</b> · seriam necessários '+crit+' acertos. Nas condições do teste, a diferença não superou o acaso. Pode ser que a mudança não mova a xícara, que seja sutil demais para este n, ou ruído de preparo. Veja o "Por quê".';}
   }
 }
+function focusHeading(id){ try{const el=$(id); if(el){el.setAttribute('tabindex','-1'); el.focus();}}catch(e){} }
 function renderLog(){
   if(!state||!state.evals.length){show('logWrap',false);return;}
   show('logWrap',true);
-  const nm=t=>t===state.nameA?state.nameA:state.nameB;
   $('log').innerHTML=state.evals.map((e,i)=>{
     if(!state.revealed){
       return '<div class="log-item"><span class="log-left"><span class="log-dot dot-pending"></span>Triângulo #'+(i+1)+'</span><span class="log-meta">prova: '+e.taster+' · registrado</span></div>';
@@ -778,6 +809,7 @@ function enterShuffle(){
   $('shufA').innerHTML='<span class="role-name">'+state.nameA+'</span><span class="role-sub">embaralha · '+state.nameB+' prova</span>';
   $('shufB').innerHTML='<span class="role-name">'+state.nameB+'</span><span class="role-sub">embaralha · '+state.nameA+' prova</span>';
   $('shuffleH').textContent='Triângulo '+(state.evals.length+1)+' de '+state.targetN+' · quem embaralha?';
+  focusHeading('shuffleH');
   const k=state.evals.length+1;
   announce('Triângulo '+k+' de '+state.targetN+'. Escolha quem vai embaralhar.');
 }
@@ -791,14 +823,14 @@ function pickShuffler(whoKey){
     const ocr=(letter==='A')?state.ocrA:state.ocrB,cls=(letter==='A')?'pill-a':'pill-b';
     return '<div class="map-row"><div><div class="map-pos">Posição na mesa</div><div class="map-code">'+(i+1)+'</div></div><span class="pill '+cls+'">'+ocr+'</span></div>';
   }).join('');
-  show('shuffleCard',false);show('mapCard',true);
+  show('shuffleCard',false);show('mapCard',true);focusHeading('mapH');
   announce(shuffler+' está montando as posições secretamente.');
 }
 $('shufA').onclick=()=>pickShuffler('A');
 $('shufB').onclick=()=>pickShuffler('B');
-$('toHandoff').onclick=()=>{show('mapCard',false);show('handoffCard',true);setFlow('handoff');$('handoffWho').textContent=pending.taster;announce('Entregue o tablet para '+pending.taster);};
+$('toHandoff').onclick=()=>{show('mapCard',false);show('handoffCard',true);setFlow('handoff');focusHeading('handoffH');$('handoffWho').textContent=pending.taster;announce('Entregue o tablet para '+pending.taster);};
 $('startTaste').onclick=()=>{
-  show('handoffCard',false);show('tasteCard',true);setFlow('taste');picked=null;
+  show('handoffCard',false);show('tasteCard',true);setFlow('taste');picked=null;focusHeading('tasteInstr');
   $('cups').innerHTML=[0,1,2].map(i=>'<div class="cup" data-pos="'+i+'" role="radio" aria-checked="false" tabindex="0" aria-label="Posição '+(i+1)+'"><span class="check" aria-hidden="true">●</span><div class="cup-pos">posição</div><div class="cup-code">'+(i+1)+'</div></div>').join('');
   $('confirmPick').disabled=true;
   document.querySelectorAll('.cup').forEach(el=>{
@@ -808,16 +840,19 @@ $('startTaste').onclick=()=>{
   announce('Prove e toque na posição diferente.');
 };
 $('confirmPick').onclick=()=>{
-  if(picked===null)return;
-  const hit=(picked===pending.oddPos);
-  state.evals.push({hit,taster:pending.taster,shuffler:pending.shuffler,oddPos:pending.oddPos,pick:picked,t:Date.now()});save();
+  const p=picked; picked=null;            // consome a escolha (anti double-submit)
+  if(p===null||!pending)return;
+  $('confirmPick').disabled=true;
+  const hit=(p===pending.oddPos);
+  state.evals.push({hit,taster:pending.taster,shuffler:pending.shuffler,oddPos:pending.oddPos,pick:p,t:Date.now()});save();
   const done=state.evals.length, target=state.targetN;
+  pending=null;                            // invalida a rodada
   show('tasteCard',false);
   if(done>=target){
     revealFinal();
   } else {
-    // confirmação NEUTRA — não revela acerto/erro
-    show('ackCard',true);setFlow('result');
+    show('ackCard',true);setFlow('ack');
+    focusHeading('ackTitle');
     $('ackSub').textContent='Triângulo '+done+' de '+target+' · faltam '+(target-done);
     $('ackN').textContent=target;
     renderStats();renderLog();
@@ -840,7 +875,7 @@ function revealFinal(){
   }
   show('goDescr',sig);
   show('descLocked',!sig);
-  renderStats();renderLog();
+  renderStats();renderLog();focusHeading('vBig');
   announce('Série completa. '+(sig?'Diferença confirmada, '+hits+' de '+n+' acertos.':'Sem diferença detectável, '+hits+' de '+n+' acertos.'));
 }
 $('newSeries').onclick=()=>{ state.evals=[];state.revealed=false;save();enterShuffle(); };
@@ -907,6 +942,9 @@ function checkDescrComplete(){
 }
 
 $('dReveal').onclick=()=>{
+  if(!dPending||dPending.done)return;     // anti double-submit
+  dPending.done=true;
+  $('dReveal').disabled=true;
   // posLetter[pos] diz qual torra (A/B) estava em cada posição
   const posA=dPending.posLetter.indexOf('A'); // posição que continha a torra A
   const posB=dPending.posLetter.indexOf('B');
@@ -977,6 +1015,78 @@ $('hmClose').onclick=()=>show('helpModal',false);
 $('hmOk').onclick=()=>show('helpModal',false);
 $('helpModal').onclick=(e)=>{ if(e.target===$('helpModal')) show('helpModal',false); };
 document.addEventListener('keydown',e=>{ if(e.key==='Escape' && !$('helpModal').classList.contains('hide')) show('helpModal',false); });
+
+/* ---------- exportação de dados ---------- */
+function fileStamp(){const d=new Date();const p=x=>String(x).padStart(2,'0');return d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+'_'+p(d.getHours())+p(d.getMinutes());}
+function slug(s){return (s||'').replace(/[^\w-]+/g,'_').slice(0,40);}
+function download(name,text,mime){
+  try{
+    const blob=new Blob([text],{type:mime+';charset=utf-8'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();
+    setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},100);
+  }catch(e){}
+}
+function showToast(msg){const t=$('copyToast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800);}
+function seriesStats(){
+  const n=state.evals.length, hits=state.evals.filter(e=>e.hit).length, crit=critical(n,0.05);
+  const p=tailP(n,hits), sig=hits>=crit;
+  return {n,hits,crit,p,sig};
+}
+function summaryText(){
+  if(!state)return '';
+  const s=seriesStats();
+  const L=[];
+  L.push('TESTE TRIANGULAR — Original Coffee Roaster');
+  L.push('Par: '+state.ocrA+' vs '+state.ocrB+(state.varTested?'  ('+state.varTested+')':''));
+  L.push('Avaliadores: '+state.nameA+' / '+state.nameB);
+  L.push('Triângulos: '+s.n+' · acertos: '+s.hits+' · limiar p<0,05: '+s.crit);
+  L.push('p-valor: '+s.p.toFixed(4));
+  L.push('Resultado: '+(s.sig?'DIFERENÇA CONFIRMADA':'sem diferença detectável'));
+  if(state.descr&&state.descr.length){
+    L.push('');L.push('PROVAS DESCRITIVAS ('+state.descr.length+'):');
+    state.descr.forEach((d,i)=>{
+      L.push('  #'+(i+1)+': '+state.ocrA+' total '+d.totA+' vs '+state.ocrB+' total '+d.totB+(d.notes?'  | '+d.notes:''));
+    });
+  }
+  L.push('');L.push('Exportado: '+new Date().toLocaleString('pt-BR'));
+  return L.join('\n');
+}
+function csvText(){
+  const rows=[['triangulo','provador','embaralhador','posicao_impar','posicao_marcada','acerto']];
+  state.evals.forEach((e,i)=>rows.push([i+1,e.taster,e.shuffler,e.oddPos+1,e.pick+1,e.hit?'1':'0']));
+  rows.push([]);
+  const s=seriesStats();
+  rows.push(['n',s.n]);rows.push(['acertos',s.hits]);rows.push(['limiar_p05',s.crit]);
+  rows.push(['p_valor',s.p.toFixed(4)]);rows.push(['significativo',s.sig?'sim':'nao']);
+  if(state.descr&&state.descr.length){
+    rows.push([]);rows.push(['descritiva','eixo',state.ocrA,state.ocrB]);
+    state.descr.forEach((d,i)=>{
+      AXES.forEach(ax=>{const pa=d.scores[d.posA]||{},pb=d.scores[d.posB]||{};rows.push([i+1,ax.name,pa[ax.k],pb[ax.k]]);});
+    });
+  }
+  return rows.map(r=>r.map(c=>{c=String(c==null?'':c);return /[",;\n]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c;}).join(',')).join('\n');
+}
+$('expCopy').onclick=()=>{
+  const txt=summaryText();
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(()=>showToast('Resumo copiado ✓')).catch(()=>showToast('Não foi possível copiar'));}
+  else{try{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showToast('Resumo copiado ✓');}catch(e){showToast('Não foi possível copiar');}}
+};
+$('expCsv').onclick=()=>{ download('triangulo_'+slug(state.ocrA)+'_vs_'+slug(state.ocrB)+'_'+fileStamp()+'.csv', csvText(), 'text/csv'); showToast('CSV gerado ✓'); };
+$('expJson').onclick=()=>{ const data={meta:{app:'Triângulo OCR',exported:new Date().toISOString()},...state,stats:seriesStats()}; download('triangulo_'+slug(state.ocrA)+'_vs_'+slug(state.ocrB)+'_'+fileStamp()+'.json', JSON.stringify(data,null,2), 'application/json'); showToast('JSON gerado ✓'); };
+
+/* ---------- R5: focus trap nos modais abertos ---------- */
+function trapFocus(e){
+  if(e.key!=='Tab')return;
+  const open=document.querySelector('.modal-overlay:not(.hide)');
+  if(!open)return;
+  const f=open.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
+  if(!f.length)return;
+  const first=f[0], last=f[f.length-1];
+  if(e.shiftKey && document.activeElement===first){e.preventDefault();last.focus();}
+  else if(!e.shiftKey && document.activeElement===last){e.preventDefault();first.focus();}
+}
+document.addEventListener('keydown',trapFocus);
 
 /* ---------- boot ---------- */
 if(state&&state.ocrA){
