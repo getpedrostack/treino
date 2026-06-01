@@ -1146,13 +1146,13 @@
     background: linear-gradient(90deg, transparent, var(--gold-deep), transparent);
   }
   
-  .cardio-card h3 {
+  .cardio-card .cardio-card-title {
     font-family: 'JetBrains Mono', monospace;
     font-size: 10px;
     letter-spacing: 0.18em;
     color: var(--gold-bright);
     text-transform: uppercase;
-    margin-bottom: 10px;
+    margin: 0 0 10px 0;
     font-weight: 700;
     text-shadow: 0 0 8px rgba(240,198,116,0.3);
   }
@@ -3893,7 +3893,7 @@
     text-shadow: 0 2px 12px rgba(0,0,0,0.5), 0 0 24px rgba(90,184,184,0.2);
   }
   
-  body.skin-lake .cardio-card h3 {
+  body.skin-lake .cardio-card .cardio-card-title {
     color: #5ab8b8;
     text-shadow: 0 0 8px rgba(90,184,184,0.3);
   }
@@ -3970,7 +3970,7 @@
     text-shadow: 0 2px 12px rgba(0,0,0,0.5), 0 0 24px rgba(168,188,212,0.18);
   }
   
-  body.skin-tundra .cardio-card h3 {
+  body.skin-tundra .cardio-card .cardio-card-title {
     color: #a8bcd4;
     text-shadow: 0 0 8px rgba(168,188,212,0.3);
   }
@@ -4686,6 +4686,86 @@
     margin: 0;
   }
   .ex-load-input { -moz-appearance: textfield; }
+  
+  /* ============================================================ */
+  /* === ACESSIBILIDADE: prefers-reduced-motion ================= */
+  /* ============================================================ */
+  /* Usuários com sensibilidade vestibular / enxaqueca: corta o movimento.
+     Mantém transições instantâneas pra UI continuar respondendo. */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+    /* Partículas ambientais somem por completo (são puramente decorativas) */
+    .skin-atmosphere,
+    .boss-particles,
+    .title-embers,
+    .tap-fx-layer {
+      display: none !important;
+    }
+    /* Fogo do boss e auras viram estáticos mas continuam visíveis */
+    .boss-fire .fire-layer,
+    .boss-fire .fire-ember {
+      animation: none !important;
+    }
+  }
+  
+  /* ============================================================ */
+  /* === ACESSIBILIDADE: foco visível por teclado =============== */
+  /* ============================================================ */
+  /* :focus-visible só aparece em navegação por teclado, não no toque/clique */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid var(--gold-bright);
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+  /* Remove o outline default feio em quem usa mouse/toque */
+  a:focus:not(:focus-visible),
+  button:focus:not(:focus-visible),
+  input:focus:not(:focus-visible) {
+    outline: none;
+  }
+  
+  /* ============================================================ */
+  /* === ACESSIBILIDADE: alvos de toque >= 44px ================= */
+  /* ============================================================ */
+  /* Botões pequenos ganham área de toque ampliada via ::after invisível,
+     preservando o visual compacto. */
+  .set-reset-btn,
+  .modal-close,
+  .week-btn {
+    position: relative;
+  }
+  .set-reset-btn::after,
+  .modal-close::after,
+  .week-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 44px;
+    min-height: 44px;
+    width: 100%;
+    height: 100%;
+  }
+  
+  /* Classe utilitária pra leitores de tela (texto invisível visualmente) */
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
 </style>
 </head>
 <body>
@@ -4754,7 +4834,7 @@
       <button class="info-btn" id="gymInfoBtn" title="Horários das academias">GYM</button>
     </div>
   </div>
-  <nav class="day-tabs" id="dayTabs"></nav>
+  <nav class="day-tabs" id="dayTabs" aria-label="Dias da semana"></nav>
   <div class="heatmap" id="heatmap" aria-label="Progresso da semana"></div>
 </header>
 
@@ -4766,7 +4846,7 @@
 
 <!-- RPE Info Modal -->
 <div class="modal-backdrop" id="rpeModal">
-  <div class="modal" role="dialog" aria-labelledby="rpeModalTitle">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="rpeModalTitle">
     <div class="modal-handle"></div>
     <div class="modal-header">
       <div class="modal-title" id="rpeModalTitle">Escala RPE</div>
@@ -4837,14 +4917,14 @@
 
 <!-- Session Swap Modal -->
 <div class="modal-backdrop" id="swapModal">
-  <div class="modal" role="dialog">
+  <div class="modal" role="dialog" aria-modal="true">
     <!-- Conteúdo populado dinamicamente -->
   </div>
 </div>
 
 <!-- Gym Hours Modal -->
 <div class="modal-backdrop" id="gymModal">
-  <div class="modal" role="dialog">
+  <div class="modal" role="dialog" aria-modal="true">
     <div class="modal-handle"></div>
     <div class="modal-header">
       <div class="modal-title">Horários das academias · Macaé</div>
@@ -4899,7 +4979,7 @@
 
 <!-- Rune Lore Modal (dinâmico, preenchido por JS) -->
 <div class="modal-backdrop" id="runeModal">
-  <div class="modal rune-modal" role="dialog" aria-labelledby="runeModalName" id="runeModalInner">
+  <div class="modal rune-modal" role="dialog" aria-modal="true" aria-labelledby="runeModalName" id="runeModalInner">
     <div class="modal-handle"></div>
     <button class="modal-close" id="runeModalClose" aria-label="Fechar">×</button>
     <div class="rune-modal-symbol" id="runeModalSymbol"></div>
@@ -4919,7 +4999,7 @@
 
 <!-- Skip Justification Modal -->
 <div class="modal-backdrop" id="skipModal">
-  <div class="modal" role="dialog">
+  <div class="modal" role="dialog" aria-modal="true">
     <div class="modal-handle"></div>
     <div class="modal-header">
       <div class="modal-title" id="skipModalTitle">Justificar dia sem treino</div>
@@ -5486,6 +5566,17 @@ const REALM_CONFIG = {
   }
 };
 
+// Cor da status bar / barra do navegador por reino (combina com a skin)
+const REALM_THEME_COLORS = {
+  squat: '#120a06', bench: '#0c0a08', deadlift: '#0a0604',
+  upper_hiper: '#0e0d08', cardio_mid: '#06100f', cardio_long: '#0a0d11',
+  rest: '#070b12', skip: '#0a0a0b'
+};
+function updateThemeColor(sessionKey) {
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', REALM_THEME_COLORS[sessionKey] || '#0c0a08');
+}
+
 const DAYS = ['seg','ter','qua','qui','sex','sab','dom'];
 const DAY_LABELS = { seg:'SEG', ter:'TER', qua:'QUA', qui:'QUI', sex:'SEX', sab:'SAB', dom:'DOM' };
 const DAY_LABELS_FULL = { seg:'Segunda', ter:'Terça', qua:'Quarta', qui:'Quinta', sex:'Sexta', sab:'Sábado', dom:'Domingo' };
@@ -5654,14 +5745,6 @@ function getWeeklyNotes(week) {
   return STATE.weeklyNotes[week] || null;
 }
 
-function setWeeklyNotes(week, data) {
-  STATE.weeklyNotes[week] = {
-    ...data,
-    timestamp: new Date().toISOString()
-  };
-  saveWeeklyNotes();
-}
-
 // Exercise swap helpers
 function exerciseSwapKey(week, day, exId) { return `${week}::${day}::${exId}`; }
 
@@ -5790,13 +5873,6 @@ function checkKey(week, day, exId) { return `${week}::${day}::${exId}`; }
 function loadKey(week, day, exId) { return `${week}::${day}::${exId}`; }
 
 function isChecked(week, day, exId) { return !!STATE.checks[checkKey(week, day, exId)]; }
-function setChecked(week, day, exId, val) {
-  const k = checkKey(week, day, exId);
-  if (val) STATE.checks[k] = true;
-  else delete STATE.checks[k];
-  saveChecks();
-}
-
 function getLoad(week, day, exId) { return STATE.loads[loadKey(week, day, exId)] || ''; }
 function setLoad(week, day, exId, val) {
   const k = loadKey(week, day, exId);
@@ -5825,20 +5901,6 @@ function getPr(exId) {
 }
 
 // Recalcula PR de um exercício varrendo todas as cargas (usado quando carga é apagada/diminuída)
-function recalculatePr(exId) {
-  let max = 0;
-  Object.keys(STATE.loads).forEach(k => {
-    const parts = k.split('::');
-    if (parts[2] === exId) {
-      const v = parseFloat(STATE.loads[k]);
-      if (!isNaN(v) && v > max) max = v;
-    }
-  });
-  if (max > 0) STATE.prHistory[exId] = max;
-  else delete STATE.prHistory[exId];
-  savePrHistory();
-}
-
 function isPrLoad(exId, loadValue) {
   if (!loadValue || isNaN(loadValue)) return false;
   return loadValue >= (STATE.prHistory[exId] || 0) && loadValue > 0;
@@ -5888,8 +5950,6 @@ function getPrescription(ex, week) {
 }
 
 function shouldHideOnDeload(ex) { return !!ex.deloadCut; }
-function shouldDimOnDeload(ex) { return !!ex.deloadHalf; }
-
 function renderDayTabs() {
   const container = document.getElementById('dayTabs');
   const todayKey = JS_DAY_TO_KEY[new Date().getDay()];
@@ -5899,7 +5959,7 @@ function renderDayTabs() {
     const isToday = todayKey === d ? 'today' : '';
     const isTrtDay = TRT_DAYS.includes(d);
     const trtDot = isTrtDay ? '<span class="trt-dot"></span>' : '';
-    return `<button class="day-tab ${isActive} ${isToday}" data-day="${d}">${DAY_LABELS[d]}${trtDot}</button>`;
+    return `<button class="day-tab ${isActive} ${isToday}" data-day="${d}" aria-label="${DAY_LABELS_FULL[d] || DAY_LABELS[d]}${isToday ? ' (hoje)' : ''}"${isActive ? ' aria-current="page"' : ''}>${DAY_LABELS[d]}${trtDot}</button>`;
   }).join('');
   
   container.querySelectorAll('.day-tab').forEach(btn => {
@@ -6011,6 +6071,9 @@ function renderMain() {
   // No deload, deadlift não é boss — usa skin neutra de força
   document.body.classList.add(isBossFight ? 'skin-boss' : (sessionKey === 'deadlift' ? 'skin-warhall' : activeSkin));
   
+  // Atualiza a theme-color do navegador pra combinar com o reino do dia
+  updateThemeColor(isBossFight ? 'deadlift' : sessionKey);
+  
   // Atualiza heatmap (estado dos dias da semana)
   renderHeatmap();
   
@@ -6118,17 +6181,17 @@ function renderMain() {
     html += `
       <div class="cardio-day fade-in">
         <div class="cardio-card">
-          <h3>${c.protocol}</h3>
+          <h2 class="cardio-card-title">${c.protocol}</h2>
           <p><strong>FC alvo:</strong> ${c.heartRate}</p>
           <p><strong>Duração:</strong> ${c.duration}</p>
           <p><strong>Modalidades:</strong> ${c.modes}</p>
         </div>
         <div class="cardio-card">
-          <h3>Cue subjetivo</h3>
+          <h2 class="cardio-card-title">Cue subjetivo</h2>
           <p>${c.cue}</p>
         </div>
         <div class="cardio-card">
-          <h3>Por quê</h3>
+          <h2 class="cardio-card-title">Por quê</h2>
           <p>${c.why}</p>
         </div>
         <button class="cardio-complete-btn ${cardioComplete ? 'done' : ''}" id="cardioCompleteBtn" data-sk="${sessionKey}">
@@ -6211,7 +6274,7 @@ function renderMain() {
   }
   
   // Exercises
-  html += '<div class="exercises">';
+  html += '<div class="exercises" role="list">';
   day.exercises.forEach((ex, idx) => {
     if (isDeload && shouldHideOnDeload(ex)) return;
     
@@ -6263,7 +6326,7 @@ function renderMain() {
               data-max-sets="${maxSets}" 
               data-fire="${setsCompleted}"
               style="--progress: ${Math.round((setsCompleted / maxSets) * 100)}; --sets-done: ${setsCompleted}; --sets-max: ${maxSets}; --intensity: ${maxSets > 0 ? (setsCompleted / maxSets).toFixed(3) : 0}; --fire-step: ${setsCompleted}"
-              aria-label="Marcar série">
+              aria-label="${displayName}: ${setsCompleted} de ${maxSets} séries${checked ? ' (completo)' : ''}. Tocar para marcar série.">
         ${isBossFight ? `
           <div class="boss-fire" aria-hidden="true">
             <span class="fire-layer fire-base"></span>
@@ -6294,7 +6357,7 @@ function renderMain() {
     `;
     
     html += `
-      <div class="${classes.join(' ')}" data-ex-id="${ex.id}">
+      <div class="${classes.join(' ')}" data-ex-id="${ex.id}" role="listitem">
         <div class="ex-side">
           ${setTrackerHtml}
           ${setsCompleted > 0 ? `<button class="set-reset-btn" data-ex-id="${ex.id}" aria-label="Resetar séries">↺</button>` : ''}
@@ -6463,13 +6526,11 @@ function openSkipModal() {
   });
   
   const modal = document.getElementById('skipModal');
-  modal.classList.add('open');
-  document.body.style.overflow = 'hidden';
+  openModalEl(modal);
 }
 
 function closeSkipModal() {
-  document.getElementById('skipModal').classList.remove('open');
-  document.body.style.overflow = '';
+  closeModalEl(document.getElementById('skipModal'));
 }
 
 document.getElementById('skipModalClose').addEventListener('click', closeSkipModal);
@@ -6805,24 +6866,6 @@ function attachExerciseHandlers() {
   });
 }
 
-function updateProgress() {
-  const day = getSessionForDay(STATE.day);
-  const isDeload = STATE.week === 'deload';
-  if (!day.exercises) return;
-  
-  let total = 0, done = 0;
-  day.exercises.forEach(ex => {
-    if (isDeload && shouldHideOnDeload(ex)) return;
-    total++;
-    if (isChecked(STATE.week, STATE.day, ex.id)) done++;
-  });
-  
-  const el = document.querySelector('.day-progress');
-  if (el) {
-    el.innerHTML = `<span class="done">${String(done).padStart(2,'0')}</span> / ${String(total).padStart(2,'0')}`;
-  }
-}
-
 // Reset day — confirmação por duplo toque (não usa confirm() que falha em PWA)
 let resetConfirmTimer = null;
 document.getElementById('resetBtn').addEventListener('click', () => {
@@ -6865,20 +6908,75 @@ document.getElementById('resetBtn').addEventListener('click', () => {
 });
 
 // ============================================================
+// === GESTÃO CENTRALIZADA DE MODAIS (foco + teclado + a11y) ==
+// ============================================================
+// Rastreia o modal aberto, gerencia foco (move pra dentro ao abrir,
+// devolve ao elemento de origem ao fechar), trap de Tab, e Escape global.
+let _activeModal = null;
+let _modalOpener = null;
+
+function openModalEl(backdropEl) {
+  if (!backdropEl) return;
+  _modalOpener = document.activeElement; // lembra quem abriu
+  backdropEl.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  _activeModal = backdropEl;
+  // Move o foco pro primeiro elemento focável do modal (ou o botão fechar)
+  const focusable = backdropEl.querySelector('.modal-close, button, [href], input, [tabindex]:not([tabindex="-1"])');
+  if (focusable) {
+    // pequeno timeout deixa a transição de abertura ocorrer antes do foco
+    setTimeout(() => focusable.focus(), 50);
+  }
+}
+
+function closeModalEl(backdropEl) {
+  if (!backdropEl) return;
+  backdropEl.classList.remove('open');
+  document.body.style.overflow = '';
+  if (_activeModal === backdropEl) _activeModal = null;
+  // Devolve o foco a quem abriu (importante pra usuários de teclado)
+  if (_modalOpener && typeof _modalOpener.focus === 'function') {
+    _modalOpener.focus();
+    _modalOpener = null;
+  }
+}
+
+// Escape fecha o modal aberto; Tab fica preso dentro dele (focus trap)
+document.addEventListener('keydown', (e) => {
+  if (!_activeModal) return;
+  if (e.key === 'Escape') {
+    e.preventDefault();
+    closeModalEl(_activeModal);
+    return;
+  }
+  if (e.key === 'Tab') {
+    const focusables = _activeModal.querySelectorAll(
+      'button:not([disabled]), [href], input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    );
+    if (focusables.length === 0) return;
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault(); last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault(); first.focus();
+    }
+  }
+});
+
+// ============================================================
 // RPE INFO MODAL
 // ============================================================
 const rpeModal = document.getElementById('rpeModal');
 document.getElementById('rpeInfoBtn').addEventListener('click', () => {
-  rpeModal.classList.add('open');
-  document.body.style.overflow = 'hidden';
+  openModalEl(rpeModal);
 });
 document.getElementById('rpeModalClose').addEventListener('click', closeRpeModal);
 rpeModal.addEventListener('click', (e) => {
   if (e.target === rpeModal) closeRpeModal();
 });
 function closeRpeModal() {
-  rpeModal.classList.remove('open');
-  document.body.style.overflow = '';
+  closeModalEl(rpeModal);
 }
 
 // ============================================================
@@ -6886,16 +6984,14 @@ function closeRpeModal() {
 // ============================================================
 const gymModal = document.getElementById('gymModal');
 document.getElementById('gymInfoBtn').addEventListener('click', () => {
-  gymModal.classList.add('open');
-  document.body.style.overflow = 'hidden';
+  openModalEl(gymModal);
 });
 document.getElementById('gymModalClose').addEventListener('click', closeGymModal);
 gymModal.addEventListener('click', (e) => {
   if (e.target === gymModal) closeGymModal();
 });
 function closeGymModal() {
-  gymModal.classList.remove('open');
-  document.body.style.overflow = '';
+  closeModalEl(gymModal);
 }
 
 // ============================================================
@@ -6914,14 +7010,12 @@ function openRuneModal(sessionKey) {
   document.getElementById('runeModalConnection').textContent = cfg.runeConnection || '';
   // Tema do modal pela cor do reino
   runeModalInner.className = 'modal rune-modal realm-' + sessionKey;
-  runeModal.classList.add('open');
-  document.body.style.overflow = 'hidden';
+  openModalEl(runeModal);
   if (navigator.vibrate) navigator.vibrate(12);
 }
 
 function closeRuneModal() {
-  runeModal.classList.remove('open');
-  document.body.style.overflow = '';
+  closeModalEl(runeModal);
 }
 
 document.getElementById('runeModalClose').addEventListener('click', closeRuneModal);
@@ -6953,94 +7047,6 @@ function formatDateBR(d) {
   const mm = String(d.getMonth() + 1).padStart(2, '0');
   const yyyy = d.getFullYear();
   return `${dd}/${mm}/${yyyy}`;
-}
-
-function buildWeekReport(week) {
-  const weekLabel = week === 'deload' ? 'DELOAD' : `W${week}`;
-  let md = `\n## Semana ${weekLabel}\n\n`;
-  
-  // Reflete o schedule customizado da semana, se houver
-  const weekSchedule = STATE.schedules[week] || { ...DEFAULT_SCHEDULE };
-  const isCustomWeek = DAYS.some(d => weekSchedule[d] !== DEFAULT_SCHEDULE[d]);
-  
-  if (isCustomWeek) {
-    md += `> **Reorganização ativa nesta semana:**\n`;
-    DAYS.forEach(d => {
-      if (weekSchedule[d] !== DEFAULT_SCHEDULE[d]) {
-        const orig = SESSIONS[DEFAULT_SCHEDULE[d]];
-        const novo = SESSIONS[weekSchedule[d]];
-        md += `> - ${DAY_LABELS_FULL[d]}: ${orig.title} → ${novo.title}\n`;
-      }
-    });
-    md += `\n`;
-  }
-  
-  const trainingDays = [];
-  const cardioDays = [];
-  DAYS.forEach(d => {
-    const sk = weekSchedule[d];
-    if (sk === 'cardio_mid' || sk === 'cardio_long') cardioDays.push(d);
-    else if (sk !== 'rest') trainingDays.push(d);
-  });
-  
-  let totalExercises = 0, totalDone = 0, totalLoaded = 0;
-  
-  // Training days
-  trainingDays.forEach(dayKey => {
-    const day = SESSIONS[weekSchedule[dayKey]];
-    if (!day || !day.exercises) return;
-    
-    // Skip Friday (or whichever day has upper_hiper) on deload
-    if (week === 'deload' && day.deloadCutAll) {
-      md += `### ${DAY_LABELS[dayKey]} — ${day.title}\n_Cortado na semana de deload._\n\n`;
-      return;
-    }
-    
-    md += `### ${DAY_LABELS[dayKey]} — ${day.title}\n`;
-    md += `_${day.eyebrow}_\n\n`;
-    
-    let dayDone = 0, dayTotal = 0;
-    const rows = [];
-    
-    day.exercises.forEach(ex => {
-      if (week === 'deload' && shouldHideOnDeload(ex)) return;
-      dayTotal++;
-      totalExercises++;
-      
-      const checked = isChecked(week, dayKey, ex.id);
-      const load = getLoad(week, dayKey, ex.id);
-      const presc = getPrescription(ex, week);
-      const activeSwap = STATE.exerciseSwaps[exerciseSwapKey(week, dayKey, ex.id)];
-      
-      if (checked) { dayDone++; totalDone++; }
-      if (load) totalLoaded++;
-      
-      const checkmark = checked ? '✅' : '⬜';
-      const loadStr = load ? `**${load}kg**` : '—';
-      const intensityStr = presc.intensity || (presc.rpe ? `RPE ${presc.rpe}` : '—');
-      
-      // Nome do exercício: se houve swap, mostrar nome novo + indicação do original
-      const nameCell = activeSwap 
-        ? `${activeSwap.name} _(substituiu: ${ex.name})_`
-        : ex.name;
-      
-      rows.push(`| ${checkmark} | ${nameCell} | ${presc.sets}×${presc.reps} | ${intensityStr} | ${loadStr} |`);
-    });
-    
-    md += `**Conclusão:** ${dayDone}/${dayTotal} exercícios\n\n`;
-    md += `| ✓ | Exercício | Sets×Reps | Intens. | Carga |\n`;
-    md += `|---|-----------|-----------|---------|-------|\n`;
-    md += rows.join('\n') + '\n\n';
-  });
-  
-  // Cardio days
-  const cardioStatus = cardioDays.map(d => {
-    // Cardio doesn't have checkboxes; we just label the day
-    return `${DAY_LABELS[d]}`;
-  });
-  md += `### Cardio Z2\n${cardioStatus.join(' · ')} — _registrar manualmente abaixo._\n\n`;
-  
-  return { md, totalExercises, totalDone, totalLoaded };
 }
 
 function buildFullBackup() {
@@ -7485,8 +7491,7 @@ function openSessionSwapModal() {
   
   const modal = document.getElementById('swapModal');
   modal.querySelector('.modal').innerHTML = modalHtml;
-  modal.classList.add('open');
-  document.body.style.overflow = 'hidden';
+  openModalEl(modal);
   
   // Listeners do backdrop são anexados UMA VEZ só (evita leak)
   if (!swapModalListenersWired) {
@@ -7561,9 +7566,7 @@ function openSessionSwapModal() {
 }
 
 function closeSwapModal() {
-  const modal = document.getElementById('swapModal');
-  modal.classList.remove('open');
-  document.body.style.overflow = '';
+  closeModalEl(document.getElementById('swapModal'));
 }
 
 function renderSwapWarnings() {
