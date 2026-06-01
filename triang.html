@@ -312,6 +312,36 @@
   .rc-fill.b{background:linear-gradient(90deg,#6b5219,var(--amber))}
   .rc-bar .num{width:30px;flex:0 0 auto;text-align:right;color:var(--ink-2);font-weight:600;font-size:13px}
 
+  /* ---------- módulo de defeitos ---------- */
+  .defects{margin-top:18px;padding-top:18px;border-top:1px solid var(--line-soft)}
+  .def-head{margin-bottom:12px}
+  .def-title{font-size:15px;font-weight:640;color:var(--ink);letter-spacing:-0.01em;display:flex;align-items:center;gap:9px}
+  .def-opt{font-size:10px;font-weight:560;color:var(--muted);background:var(--surface-3);border:1px solid var(--line);border-radius:20px;padding:2px 9px;text-transform:uppercase;letter-spacing:.04em}
+  .def-sub{display:block;font-size:12px;color:var(--muted);margin-top:5px;line-height:1.45}
+  .def-legend{display:flex;gap:10px;align-items:flex-start;background:var(--amber-deep);border:1px solid var(--amber-line);border-radius:var(--r-md);padding:11px 13px;margin-bottom:16px;font-size:12px;color:var(--amber);line-height:1.45}
+  .def-legend .ico{flex:0 0 auto}
+  .def-legend b{color:#ffd98a;font-weight:620}
+  .def-sample{margin-bottom:16px}
+  .def-sample:last-child{margin-bottom:0}
+  .def-sample-name{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:9px;letter-spacing:-0.01em;font-family:var(--mono)}
+  .def-chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{position:relative;font-size:13px;font-weight:540;color:var(--ink-2);background:var(--surface-2);border:1.5px solid var(--line);border-radius:30px;padding:9px 15px;cursor:pointer;transition:all .15s var(--ease);min-height:42px;display:inline-flex;align-items:center;gap:7px;user-select:none}
+  .chip:hover{border-color:var(--line-strong);background:var(--surface-3)}
+  .chip:focus-visible{outline:2px solid var(--green-bright);outline-offset:2px}
+  .chip .dot{width:7px;height:7px;border-radius:50%;background:var(--muted-2);transition:.15s;flex:0 0 auto}
+  .chip.on{border-color:var(--red);background:var(--red-deep);color:var(--red)}
+  .chip.on .dot{background:var(--red)}
+  .chip .info{width:16px;height:16px;border-radius:50%;border:1px solid var(--line-strong);color:var(--muted);font-size:10px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}
+  .chip.on .info{border-color:var(--red);color:var(--red)}
+  .def-tip{font-size:11.5px;color:var(--muted);line-height:1.5;margin-top:9px;padding:9px 12px;background:var(--surface-2);border-left:2px solid var(--line-strong);border-radius:0 var(--r-sm) var(--r-sm) 0;display:none}
+  .def-tip.show{display:block}
+  .def-tip b{color:var(--ink-2)}
+  .def-adv{margin-top:14px;box-shadow:none;background:transparent}
+  .def-adv summary{padding:11px 0;font-size:11.5px}
+  .def-adv .details-body{padding:6px 0 4px}
+  .def-adv-note{font-size:11.5px;color:var(--muted);line-height:1.5;margin:0 0 14px;padding:10px 12px;background:var(--amber-deep);border:1px solid var(--amber-line);border-radius:var(--r-sm);color:var(--amber)}
+  .def-adv-note b{color:#ffd98a}
+
   /* ---------- modal ---------- */
   .modal-overlay{position:fixed;inset:0;background:rgba(4,5,7,.82);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:24px;z-index:100;animation:fade .22s}
   @keyframes fade{from{opacity:0}to{opacity:1}}
@@ -633,6 +663,24 @@
   <p class="lead" id="dRecapLead"></p>
   <div id="dRecapBody"></div>
   <div class="conclusion" id="dPref"></div>
+
+  <!-- MÓDULO DE DEFEITOS DE TORRA -->
+  <div class="defects" id="defectsBlock">
+    <div class="def-head">
+      <span class="def-title">Defeitos de torra <span class="def-opt">opcional</span></span>
+      <span class="def-sub">Marque só o que sentiu na xícara. Em branco = sem defeito.</span>
+    </div>
+    <div class="def-legend"><span class="ico" aria-hidden="true">ℹ</span><span>Defeito vem da <b>torra</b>. Fruta, fermentado e adega vêm do grão/processo — <b>não marque</b> como defeito.</span></div>
+    <div id="defGrid"></div>
+    <details class="def-adv">
+      <summary><span class="chev">▸</span> Defeitos avançados (confirmar fora da bebida)</summary>
+      <div class="details-body">
+        <p class="def-adv-note">Estes têm assinatura principalmente <b>visual (no grão)</b> ou <b>na curva RoR</b>. Marque apenas se confirmou pela evidência indicada, não só pelo gosto.</p>
+        <div id="defGridAdv"></div>
+      </div>
+    </details>
+  </div>
+
   <button class="btn-primary mt-md" id="dNewDescr">Nova prova descritiva (outro provador) →</button>
   <button class="btn-ghost mt-sm" id="dBackTri">Voltar ao triângulo</button>
 </section>
@@ -892,6 +940,20 @@ const AXES=[
 ];
 let dPending=null; // {posLetter:['A'|'B','A'|'B'], scores:{0:{},1:{}}}
 
+/* defeitos de torra — essenciais (assinatura gustativa) e avançados (visual/curva) */
+const DEFECTS_ESS=[
+  {k:'facing',name:'Facing',tip:'Superfície superaquecida; queimado leve, amargor áspero e secura que embaça a limpeza.'},
+  {k:'baked',name:'Assado',tip:'Torra sem energia; perfil plano, apagado, doçura morta, sem vivacidade.'},
+  {k:'subdev',name:'Subdesenvolvido',tip:'Interior cru; verde, herbáceo, adstringente, acidez azeda agressiva.'},
+  {k:'overdev',name:'Sobredesenvolvido',tip:'Pirólise excessiva; torrado-cinza, fumaça, perda de doçura e acidez.'}
+];
+const DEFECTS_ADV=[
+  {k:'scorching',name:'Scorching',tip:'Queima por contato no tambor; carbonizado pontual. Confirme olhando o grão.'},
+  {k:'tipping',name:'Tipping',tip:'Pontas queimadas do grão; cinza, aspereza. Confirme olhando o grão.'},
+  {k:'crash',name:'Crash',tip:'Queda abrupta do RoR pós-FC; aroma achatado. Confirme na curva.'},
+  {k:'flick',name:'Flick',tip:'RoR sobe de novo no FC; aspereza e amargor extra. Confirme na curva.'}
+];
+
 function enterDescrMap(){
   ['shuffleCard','mapCard','handoffCard','tasteCard','resultCard','ackCard','dScoreCard','dRecapCard'].forEach(id=>show(id,false));
   show('flow',false);
@@ -975,11 +1037,50 @@ $('dReveal').onclick=()=>{
     pref.innerHTML='<div class="ctitle">Preferência: '+win+'</div><div class="cbody"><b>'+win+'</b> somou '+ws+' vs '+ls+' ('+Math.abs(diff)+' pontos). 1 provador, 1 prova — indicativo, não conclusivo. Replique com outro provador para confirmar a direção.</div>';
   }
   if(!state.descr)state.descr=[];
-  state.descr.push({posA,posB,scores:dPending.scores,notes:$('dNotes').value.trim(),totA,totB,t:Date.now()});
+  const rec={posA,posB,scores:dPending.scores,notes:$('dNotes').value.trim(),totA,totB,defects:{A:[],B:[]},t:Date.now()};
+  state.descr.push(rec);
+  dPending.rec=rec;            // referência para o módulo de defeitos atualizar
   save();
+  renderDefects(rec);
   show('dScoreCard',false);show('dRecapCard',true);
+  focusHeading('dRecapH');
   announce('Resultado revelado. '+(diff===0?'Empate no total.':('Preferência por '+(diff>0?state.ocrA:state.ocrB))));
 };
+
+function renderDefects(rec){
+  const chip=(d,sample)=>{
+    const on=rec.defects[sample].includes(d.k);
+    return '<button type="button" class="chip'+(on?' on':'')+'" data-def="'+d.k+'" data-sample="'+sample+'" aria-pressed="'+on+'" aria-label="'+d.name+' — '+d.tip+'">'+
+      '<span class="dot" aria-hidden="true"></span>'+d.name+'<span class="info" aria-hidden="true">i</span></button>';
+  };
+  const block=(sample,ocr)=>
+    '<div class="def-sample"><div class="def-sample-name">'+ocr+'</div>'+
+    '<div class="def-chips">'+DEFECTS_ESS.map(d=>chip(d,sample)).join('')+'</div>'+
+    '<div class="def-tip" id="deftip_'+sample+'"></div></div>';
+  const blockAdv=(sample,ocr)=>
+    '<div class="def-sample"><div class="def-sample-name">'+ocr+'</div>'+
+    '<div class="def-chips">'+DEFECTS_ADV.map(d=>chip(d,sample)).join('')+'</div>'+
+    '<div class="def-tip" id="deftipadv_'+sample+'"></div></div>';
+  $('defGrid').innerHTML=block('A',state.ocrA)+block('B',state.ocrB);
+  $('defGridAdv').innerHTML=blockAdv('A',state.ocrA)+blockAdv('B',state.ocrB);
+  // ligar handlers
+  const all=DEFECTS_ESS.concat(DEFECTS_ADV);
+  const byKey=k=>all.find(d=>d.k===k);
+  document.querySelectorAll('#defectsBlock .chip').forEach(el=>{
+    el.onclick=()=>{
+      const k=el.dataset.def, s=el.dataset.sample, arr=rec.defects[s];
+      const i=arr.indexOf(k);
+      if(i>=0)arr.splice(i,1);else arr.push(k);
+      const on=arr.includes(k);
+      el.classList.toggle('on',on);el.setAttribute('aria-pressed',on);
+      // mostrar tooltip do último tocado
+      const isAdv=DEFECTS_ADV.some(d=>d.k===k);
+      const tip=$( (isAdv?'deftipadv_':'deftip_')+s );
+      if(tip){tip.innerHTML='<b>'+byKey(k).name+':</b> '+byKey(k).tip;tip.classList.add('show');}
+      save();
+    };
+  });
+}
 
 $('dNewDescr').onclick=enterDescrMap;
 $('dBackTri').onclick=()=>{ show('dRecapCard',false);show('dMapCard',false);show('dScoreCard',false); revealFinal(); };
@@ -1047,6 +1148,11 @@ function summaryText(){
     L.push('');L.push('PROVAS DESCRITIVAS ('+state.descr.length+'):');
     state.descr.forEach((d,i)=>{
       L.push('  #'+(i+1)+': '+state.ocrA+' total '+d.totA+' vs '+state.ocrB+' total '+d.totB+(d.notes?'  | '+d.notes:''));
+      if(d.defects){
+        const fa=(d.defects.A||[]).join(', '), fb=(d.defects.B||[]).join(', ');
+        if(fa)L.push('      defeitos '+state.ocrA+': '+fa);
+        if(fb)L.push('      defeitos '+state.ocrB+': '+fb);
+      }
     });
   }
   L.push('');L.push('Exportado: '+new Date().toLocaleString('pt-BR'));
@@ -1063,6 +1169,10 @@ function csvText(){
     rows.push([]);rows.push(['descritiva','eixo',state.ocrA,state.ocrB]);
     state.descr.forEach((d,i)=>{
       AXES.forEach(ax=>{const pa=d.scores[d.posA]||{},pb=d.scores[d.posB]||{};rows.push([i+1,ax.name,pa[ax.k],pb[ax.k]]);});
+    });
+    rows.push([]);rows.push(['descritiva','defeitos_'+state.ocrA,'defeitos_'+state.ocrB]);
+    state.descr.forEach((d,i)=>{
+      if(d.defects)rows.push([i+1,(d.defects.A||[]).join(' | '),(d.defects.B||[]).join(' | ')]);
     });
   }
   return rows.map(r=>r.map(c=>{c=String(c==null?'':c);return /[",;\n]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c;}).join(',')).join('\n');
