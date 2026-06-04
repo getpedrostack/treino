@@ -2026,25 +2026,7 @@
   }
   
   /* Swap modal options */
-  .swap-options {
-    display: grid;
-    gap: 4px;
-    margin: 12px 0 18px;
-  }
   
-  .swap-option {
-    background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-card-done) 100%);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 14px 16px;
-    cursor: pointer;
-    text-align: left;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    border-radius: 0;
-    -webkit-tap-highlight-color: transparent;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
-  }
   
   .swap-option:hover, .swap-option:active {
     border-color: var(--gold);
@@ -2073,55 +2055,14 @@
     box-shadow: 0 0 8px var(--gold);
   }
   
-  .swap-option-title {
-    font-family: 'Cinzel', Georgia, serif;
-    font-weight: 700;
-    font-size: 15px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    line-height: 1.1;
-    color: var(--text);
-  }
   
   .swap-option.current .swap-option-title {
     color: var(--gold-bright);
     text-shadow: 0 0 10px rgba(240,198,116,0.4);
   }
   
-  .swap-option-meta {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.15em;
-    color: var(--gold-deep);
-    text-transform: uppercase;
-    margin-top: 5px;
-    font-weight: 700;
-  }
   
-  .swap-option-current {
-    position: absolute;
-    top: 12px;
-    right: 14px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    color: var(--accent);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    font-weight: 700;
-  }
   
-  .swap-divider {
-    text-align: center;
-    font-family: 'Cinzel', Georgia, serif;
-    font-size: 10px;
-    letter-spacing: 0.25em;
-    color: var(--gold);
-    text-transform: uppercase;
-    margin: 22px 0 12px;
-    position: relative;
-    font-weight: 700;
-    text-shadow: 0 0 12px rgba(200,155,60,0.25);
-  }
   
   .swap-divider::before, .swap-divider::after {
     content: '';
@@ -2134,22 +2075,7 @@
   .swap-divider::before { left: 0; }
   .swap-divider::after { right: 0; }
   
-  .swap-preview {
-    background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-card-done) 100%);
-    border: 1px solid var(--border-bright);
-    padding: 10px 0;
-    margin-bottom: 14px;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 2px 8px rgba(0,0,0,0.3);
-  }
   
-  .swap-preview-row {
-    display: flex;
-    align-items: baseline;
-    padding: 6px 16px;
-    border-bottom: 1px dashed var(--border);
-    transition: background 0.2s;
-  }
-  .swap-preview-row:last-child { border-bottom: none; }
   
   .swap-preview-row.today {
     background: 
@@ -2158,29 +2084,12 @@
     padding-left: 14px;
   }
   
-  .swap-preview-day {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    color: var(--gold-deep);
-    width: 52px;
-    flex-shrink: 0;
-    font-weight: 700;
-  }
   
   .swap-preview-row.today .swap-preview-day { 
     color: var(--gold-bright);
     text-shadow: 0 0 6px rgba(240,198,116,0.4);
   }
   
-  .swap-preview-session {
-    font-family: 'Cinzel', Georgia, serif;
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--text);
-  }
   
   .swap-preview-session.modified {
     color: var(--gold-bright);
@@ -2220,23 +2129,6 @@
     font-style: italic;
   }
   
-  .restore-btn {
-    width: 100%;
-    background: linear-gradient(180deg, var(--bg-elev) 0%, var(--bg-card-done) 100%);
-    border: 1px solid var(--border-bright);
-    color: var(--text-3);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    padding: 13px;
-    cursor: pointer;
-    text-transform: uppercase;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    margin-top: 18px;
-    border-radius: 0;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
-  }
   
   .restore-btn:hover, .restore-btn:active {
     border-color: var(--blood);
@@ -2245,57 +2137,11 @@
     box-shadow: inset 0 1px 0 rgba(255,68,68,0.1), 0 0 16px rgba(168,50,50,0.2);
   }
   
-  .restore-section { margin-top: 18px; }
   
-  .restore-confirm {
-    background: 
-      radial-gradient(ellipse 30% 100% at 0% 50%, rgba(168,50,50,0.08) 0%, transparent 70%),
-      linear-gradient(180deg, var(--bg-card) 0%, var(--bg-card-done) 100%);
-    border: 1px solid var(--blood);
-    border-left-width: 3px;
-    padding: 16px;
-    box-shadow: 
-      inset 0 1px 0 rgba(255,68,68,0.08),
-      0 0 16px rgba(168,50,50,0.15);
-  }
   
-  .restore-confirm-text {
-    font-family: 'Cormorant Garamond', Georgia, serif;
-    font-size: 14px;
-    color: var(--text-2);
-    line-height: 1.55;
-    margin-bottom: 14px;
-    font-style: italic;
-  }
   
-  .restore-confirm-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
   
-  .restore-confirm-yes, .restore-confirm-no {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    padding: 12px;
-    cursor: pointer;
-    text-transform: uppercase;
-    border-radius: 0;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    -webkit-tap-highlight-color: transparent;
-  }
   
-  .restore-confirm-yes {
-    background: linear-gradient(180deg, #c04444 0%, var(--blood) 100%);
-    border: 1px solid var(--blood-glow);
-    color: #fff;
-    text-shadow: 0 1px 0 rgba(0,0,0,0.3);
-    box-shadow: 
-      0 0 16px rgba(168,50,50,0.4),
-      inset 0 1px 0 rgba(255,255,255,0.2);
-  }
   
   .restore-confirm-yes:hover, .restore-confirm-yes:active {
     background: linear-gradient(180deg, #d44444 0%, #c03030 100%);
@@ -2304,11 +2150,6 @@
       inset 0 1px 0 rgba(255,255,255,0.25);
   }
   
-  .restore-confirm-no {
-    background: linear-gradient(180deg, var(--bg-elev) 0%, var(--bg-card-done) 100%);
-    border: 1px solid var(--border-bright);
-    color: var(--text-2);
-  }
   
   .restore-confirm-no:hover, .restore-confirm-no:active {
     border-color: var(--text);
@@ -4672,6 +4513,82 @@
     filter: drop-shadow(0 0 20px rgba(255,255,255,0.3)) drop-shadow(1px 1px 2px rgba(0,0,0,0.5));
   }
   
+
+  /* ============================================================ */
+  /* === PAINEL SEMANAL (gerenciar semana inteira) ============== */
+  /* ============================================================ */
+  .wk-intro { font-family:'Inter',sans-serif; font-size:11.5px; color:var(--text-3); margin:0 0 14px; line-height:1.5; }
+  .wk-actions { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+  .wk-action {
+    flex:1; min-width:90px; padding:9px 10px; background:linear-gradient(180deg,var(--bg-elev),var(--bg-card));
+    border:1px solid var(--border-bright); border-radius:3px; cursor:pointer;
+    font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--text-2); -webkit-tap-highlight-color:transparent; transition:all 0.2s;
+  }
+  .wk-action:active { transform:scale(0.97); border-color:var(--gold); color:var(--gold-pale); }
+  .wk-action[disabled] { opacity:0.35; pointer-events:none; }
+  .wk-days { display:flex; flex-direction:column; gap:7px; margin-bottom:14px; }
+  .wk-row {
+    display:flex; align-items:center; gap:10px; padding:11px 12px;
+    background:linear-gradient(180deg,var(--bg-elev),var(--bg-card));
+    border:1px solid var(--border); border-radius:3px; position:relative;
+    transition: border-color 0.2s, box-shadow 0.2s, opacity 0.2s;
+  }
+  .wk-row.pending { border-left:3px solid var(--gold); padding-left:10px; }
+  .wk-row.pending::after { content:'●'; position:absolute; top:6px; right:8px; font-size:7px; color:var(--gold-bright); }
+  .wk-row.dragging { opacity:0.35; border-style:dashed; }
+  .wk-row.drop-target { border-color:var(--gold-bright); box-shadow:0 0 14px rgba(240,198,116,0.35), inset 0 0 10px rgba(240,198,116,0.08); }
+  .wk-row.is-skip .wk-session-title { color:var(--text-3); font-style:italic; }
+  .wk-ghost { background:linear-gradient(180deg,var(--bg-elev),var(--bg-card)); border:1px solid var(--gold); border-radius:3px; display:flex; align-items:center; gap:10px; padding:11px 12px; }
+  .wk-handle {
+    cursor:grab; font-size:15px; color:var(--text-3); padding:8px 6px; margin:-8px -2px -8px 0;
+    touch-action:none; user-select:none; -webkit-user-select:none; line-height:1; border:none; background:transparent;
+  }
+  .wk-handle:active { cursor:grabbing; color:var(--gold); }
+  .wk-day-label { font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:0.1em; color:var(--gold-pale); width:34px; flex-shrink:0; }
+  .wk-trt-dot { width:5px; height:5px; border-radius:50%; background:var(--gold-bright); box-shadow:0 0 4px var(--gold); flex-shrink:0; margin-left:-5px; }
+  .wk-session-btn {
+    flex:1; display:flex; align-items:center; gap:9px; background:transparent; border:none; cursor:pointer;
+    padding:4px 2px; -webkit-tap-highlight-color:transparent; min-width:0; font: inherit;
+  }
+  .wk-realm-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; box-shadow:0 0 6px currentColor; }
+  .wk-session-title { font-family:'Cinzel',Georgia,serif; font-size:13px; font-weight:700; color:var(--text); letter-spacing:0.03em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .wk-chevron { margin-left:auto; color:var(--text-3); font-size:10px; transition:transform 0.25s; flex-shrink:0; }
+  .wk-row.expanded .wk-chevron { transform:rotate(180deg); color:var(--gold); }
+  .wk-selector {
+    display:grid; grid-template-columns:1fr 1fr; gap:6px; padding:10px 12px 12px;
+    background:var(--bg-card-done); border:1px solid var(--border); border-top:none; border-radius:0 0 3px 3px;
+    margin-top:-7px;
+  }
+  .wk-chip {
+    display:flex; align-items:center; gap:7px; padding:9px 10px; background:var(--bg-elev);
+    border:1px solid var(--border); border-radius:3px; cursor:pointer; -webkit-tap-highlight-color:transparent;
+    font-family:'Inter',sans-serif; font-size:11.5px; color:var(--text-2); transition:all 0.15s; text-align:left;
+  }
+  .wk-chip:active { transform:scale(0.97); }
+  .wk-chip.current { border-color:var(--gold); color:var(--gold-pale); background:linear-gradient(180deg,rgba(200,155,60,0.08),var(--bg-elev)); }
+  .wk-warnings { display:flex; flex-direction:column; gap:6px; margin-bottom:4px; }
+  .wk-warn {
+    font-family:'Inter',sans-serif; font-size:11px; color:#d4a574; padding:8px 11px;
+    background:rgba(168,100,40,0.08); border-left:2px solid #a86428; border-radius:0 3px 3px 0; line-height:1.4;
+  }
+  .wk-footer {
+    display:flex; gap:10px; position:sticky; bottom:-20px; margin:14px -16px -18px; padding:14px 16px 18px;
+    background:linear-gradient(180deg, transparent 0%, #15110d 22%, #15110d 100%);
+  }
+  .wk-cancel {
+    flex:1; padding:13px; background:transparent; border:1px solid var(--border-bright); border-radius:3px;
+    font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.1em; color:var(--text-2); cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .wk-apply {
+    flex:2; padding:13px; background:linear-gradient(180deg,var(--gold),var(--gold-deep)); border:none; border-radius:3px;
+    font-family:'Cinzel',Georgia,serif; font-size:12.5px; font-weight:700; letter-spacing:0.08em; color:#1a1208; cursor:pointer;
+    box-shadow:0 0 16px rgba(200,155,60,0.3); transition:all 0.2s; -webkit-tap-highlight-color:transparent;
+  }
+  .wk-apply[disabled] { opacity:0.4; box-shadow:none; pointer-events:none; }
+  .wk-apply.applied { background:linear-gradient(180deg,#5ab87a,#3a8a55); color:#0a1a0f; }
+
   /* ============ DESKTOP BREAKPOINT ============ */
   @media (min-width: 720px) {
     .header-row { padding: 18px 24px 14px; }
@@ -6314,7 +6231,7 @@ function renderMain() {
         <div class="day-eyebrow">${day.eyebrow} ${customBadge}</div>
         ${progressHtml}
       </div>
-      <button class="day-title-btn ${isBossFight ? 'boss-title-btn' : ''}" id="dayTitleBtn" aria-label="Trocar sessão deste dia">
+      <button class="day-title-btn ${isBossFight ? 'boss-title-btn' : ''}" id="dayTitleBtn" aria-label="Gerenciar semana de treinos">
         <h1 class="day-title ${isBossFight ? 'boss-title-forged' : ''}" ${isBossFight ? `data-title="${day.title}"` : ''}>${day.title}${isBossFight ? '<span class="title-embers"><span class="te t1"></span><span class="te t2"></span><span class="te t3"></span><span class="te t4"></span><span class="te t5"></span><span class="te t6"></span></span>' : ''}</h1>
         <span class="day-title-swap">⇄</span>
       </button>
@@ -7743,161 +7660,279 @@ function todayKeyForBanner() { return STATE.day; }
 // ============================================================
 // SESSION SWAP MODAL
 // ============================================================
-let swapModalListenersWired = false;
+// === PAINEL SEMANAL — gerencia a semana inteira num só lugar
+// ============================================================
+// Sistema de rascunho: edições ficam pendentes até APLICAR.
+// Suporta troca por seletor inline e drag-and-drop entre dias.
+
+const SESSION_DOT_COLORS = {
+  squat: '#e8801e', bench: '#c89b3c', deadlift: '#d4502a', upper_hiper: '#b4a04a',
+  cardio_mid: '#5ab8b8', cardio_long: '#8499b0', rest: '#7da8c8', skip: '#6b5c47'
+};
+// Labels do painel — desambiguam os dois cardios e traduzem rest/skip
+const SESSION_PANEL_LABELS = {
+  cardio_mid: 'Cardio Z2 · 40-50min',
+  cardio_long: 'Cardio Z2 · Longo',
+  rest: 'Descanso',
+  skip: 'Pular dia'
+};
+function sessionPanelLabel(key) {
+  return SESSION_PANEL_LABELS[key] || SESSIONS[key].title;
+}
+const WEEK_KEY_ORDER = ['1', '2', '3', 'deload'];
+
+function getPreviousWeekKey(week) {
+  const i = WEEK_KEY_ORDER.indexOf(week);
+  return i > 0 ? WEEK_KEY_ORDER[i - 1] : null;
+}
+
+let weekDraft = null;        // rascunho da semana em edição
+let weekDragState = null;    // estado do drag em andamento
+let swapModalListenersWired = false; // backdrop listener anexado uma vez só
 
 function openSessionSwapModal() {
-  const currentSession = getSessionKeyForDay(STATE.day);
-  const currentSessionData = SESSIONS[currentSession];
-  
-  // Build options
-  const options = SESSION_ORDER.map(key => {
-    const s = SESSIONS[key];
-    const isCurrent = key === currentSession;
-    return `
-      <button class="swap-option ${isCurrent ? 'current' : ''}" data-session-key="${key}">
-        <div class="swap-option-title">${s.title}</div>
-        <div class="swap-option-meta">${s.typeLabel}</div>
-        ${isCurrent ? '<div class="swap-option-current">Atual</div>' : ''}
-      </button>
-    `;
-  }).join('');
-  
-  // Status do schedule
-  const isCustom = isCustomSchedule();
-  const restoreBtn = isCustom ? `
-    <div class="restore-section" id="restoreSection">
-      <button class="restore-btn" id="restoreScheduleBtn" type="button">↻ RESTAURAR PADRÃO DA SEMANA</button>
-      <div class="restore-confirm" id="restoreConfirm" style="display:none;">
-        <div class="restore-confirm-text">Restaurar o calendário padrão? Cargas e checks ficam intactos.</div>
-        <div class="restore-confirm-actions">
-          <button class="restore-confirm-yes" id="restoreConfirmYes" type="button">SIM, RESTAURAR</button>
-          <button class="restore-confirm-no" id="restoreConfirmNo" type="button">CANCELAR</button>
-        </div>
-      </div>
-    </div>
-  ` : '';
-  
-  // Preview do schedule atual
-  const currentSchedule = getCurrentSchedule();
-  const previewRows = DAYS.map(d => {
-    const sk = currentSchedule[d];
-    const s = SESSIONS[sk];
-    const modified = sk !== DEFAULT_SCHEDULE[d];
-    const today = d === STATE.day ? 'today' : '';
-    return `
-      <div class="swap-preview-row ${today}">
-        <span class="swap-preview-day">${DAY_LABELS[d]}</span>
-        <span class="swap-preview-session ${modified ? 'modified' : ''}">${s.title}</span>
-      </div>
-    `;
-  }).join('');
-  
-  const modalHtml = `
-    <div class="modal-handle"></div>
-    <div class="modal-header">
-      <div class="modal-title">Trocar sessão · ${DAY_LABELS_FULL[STATE.day]}</div>
-      <button class="modal-close" id="swapModalClose" type="button" aria-label="Fechar">×</button>
-    </div>
-    <p class="modal-intro">
-      Move uma sessão de treino para este dia. As outras sessões ficam onde estão — você reorganiza manualmente cada dia que quiser mexer.
-    </p>
-    <div class="swap-options">${options}</div>
-    <div class="swap-divider">Calendário desta semana</div>
-    <div class="swap-preview">${previewRows}</div>
-    <div class="swap-warnings" id="swapWarnings"></div>
-    ${restoreBtn}
-  `;
-  
+  weekDraft = { ...getCurrentSchedule() };
+  renderWeekPanel();
   const modal = document.getElementById('swapModal');
-  modal.querySelector('.modal').innerHTML = modalHtml;
   openModalEl(modal);
-  
-  // Listeners do backdrop são anexados UMA VEZ só (evita leak)
   if (!swapModalListenersWired) {
     modal.addEventListener('click', (e) => {
-      if (e.target === modal) closeSwapModal();
+      if (e.target === modal) closeSwapModal(); // backdrop = cancelar (descarta rascunho)
     });
     swapModalListenersWired = true;
   }
+}
+
+function countPendingChanges() {
+  const committed = getCurrentSchedule();
+  return DAYS.filter(d => weekDraft[d] !== committed[d]).length;
+}
+
+function computeWeekWarnings(draft) {
+  const w = [];
+  const values = DAYS.map(d => draft[d]);
+  ['squat', 'bench', 'deadlift', 'upper_hiper'].forEach(core => {
+    const count = values.filter(v => v === core).length;
+    if (count === 0) w.push(`Sem <b>${SESSIONS[core].title}</b> nesta semana`);
+    if (count > 1) w.push(`${count}× <b>${SESSIONS[core].title}</b> na mesma semana`);
+  });
+  if (!values.includes('cardio_mid') && !values.includes('cardio_long')) {
+    w.push('Nenhum cardio Zona 2 nesta semana');
+  }
+  const skips = DAYS.filter(d => draft[d] === 'skip');
+  if (skips.length) w.push(`${skips.length} dia(s) marcado(s) como pulado: ${skips.map(d => DAY_LABELS[d]).join(', ')}`);
+  return w;
+}
+
+function renderWeekPanel(expandedDay) {
+  const modal = document.getElementById('swapModal');
+  const committed = getCurrentSchedule();
+  const prevKey = getPreviousWeekKey(STATE.week);
+  const weekLabel = STATE.week === 'deload' ? 'DELOAD' : 'W' + STATE.week;
   
-  // Render warnings
-  renderSwapWarnings();
+  const rows = DAYS.map(d => {
+    const sk = weekDraft[d];
+    const s = SESSIONS[sk];
+    const pending = sk !== committed[d];
+    const isTrt = TRT_DAYS.includes(d);
+    const expanded = d === expandedDay;
+    const color = SESSION_DOT_COLORS[sk] || '#6b5c47';
+    
+    const chips = SESSION_ORDER.map(key => {
+      const cc = SESSION_DOT_COLORS[key];
+      const isCur = key === sk;
+      return `<button class="wk-chip ${isCur ? 'current' : ''}" data-day="${d}" data-session="${key}" type="button">
+        <span class="wk-realm-dot" style="color:${cc};background:${cc}"></span>${sessionPanelLabel(key)}${isCur ? ' · atual' : ''}
+      </button>`;
+    }).join('');
+    
+    return `
+      <div class="wk-row ${pending ? 'pending' : ''} ${sk === 'skip' ? 'is-skip' : ''} ${expanded ? 'expanded' : ''}" data-day="${d}">
+        <button class="wk-handle" data-day="${d}" aria-label="Arrastar ${DAY_LABELS_FULL[d]} para trocar com outro dia" type="button">⠿</button>
+        <span class="wk-day-label">${DAY_LABELS[d]}</span>
+        ${isTrt ? '<span class="wk-trt-dot" title="Dia de TRT"></span>' : ''}
+        <button class="wk-session-btn" data-day="${d}" aria-expanded="${expanded}" type="button">
+          <span class="wk-realm-dot" style="color:${color};background:${color}"></span>
+          <span class="wk-session-title">${sessionPanelLabel(sk)}</span>
+          <span class="wk-chevron">▼</span>
+        </button>
+      </div>
+      ${expanded ? `<div class="wk-selector">${chips}</div>` : ''}
+    `;
+  }).join('');
   
-  // Wire up listeners dos elementos dinâmicos (recriados a cada abertura)
-  const closeBtn = document.getElementById('swapModalClose');
-  if (closeBtn) closeBtn.addEventListener('click', closeSwapModal);
+  const warnings = computeWeekWarnings(weekDraft);
+  const warningsHtml = warnings.length
+    ? `<div class="wk-warnings">${warnings.map(w => `<div class="wk-warn">⚠ ${w}</div>`).join('')}</div>`
+    : '';
   
-  document.querySelectorAll('.swap-option').forEach(btn => {
+  const pendingCount = countPendingChanges();
+  
+  modal.querySelector('.modal').innerHTML = `
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title">Gerenciar Semana · ${weekLabel}</div>
+      <button class="modal-close" id="swapModalClose" type="button" aria-label="Fechar">×</button>
+    </div>
+    <p class="wk-intro">Toque na sessão para trocar · arraste ⠿ para reorganizar dois dias</p>
+    <div class="wk-actions">
+      <button class="wk-action" id="wkActionDefault" type="button">↻ Padrão</button>
+      <button class="wk-action" id="wkActionPrev" type="button" ${prevKey ? '' : 'disabled'}>⧉ Semana ant.</button>
+      <button class="wk-action" id="wkActionClear" type="button">○ Limpar</button>
+    </div>
+    <div class="wk-days" id="wkDays">${rows}</div>
+    ${warningsHtml}
+    <div class="wk-footer">
+      <button class="wk-cancel" id="wkCancel" type="button">CANCELAR</button>
+      <button class="wk-apply" id="wkApply" type="button" ${pendingCount === 0 ? 'disabled' : ''}>APLICAR${pendingCount > 0 ? ` (${pendingCount})` : ''}</button>
+    </div>
+  `;
+  
+  wireWeekPanel(expandedDay);
+}
+
+function wireWeekPanel(expandedDay) {
+  document.getElementById('swapModalClose').addEventListener('click', closeSwapModal);
+  document.getElementById('wkCancel').addEventListener('click', closeSwapModal);
+  document.getElementById('wkApply').addEventListener('click', applyWeekDraft);
+  
+  // Ações rápidas — agem no RASCUNHO (pendente até aplicar)
+  document.getElementById('wkActionDefault').addEventListener('click', () => {
+    weekDraft = { ...DEFAULT_SCHEDULE };
+    if (navigator.vibrate) navigator.vibrate(10);
+    renderWeekPanel();
+  });
+  const prevBtn = document.getElementById('wkActionPrev');
+  if (prevBtn && !prevBtn.disabled) {
+    prevBtn.addEventListener('click', () => {
+      const prevKey = getPreviousWeekKey(STATE.week);
+      weekDraft = { ...(STATE.schedules[prevKey] || DEFAULT_SCHEDULE) };
+      if (navigator.vibrate) navigator.vibrate(10);
+      renderWeekPanel();
+    });
+  }
+  document.getElementById('wkActionClear').addEventListener('click', () => {
+    weekDraft = {};
+    DAYS.forEach(d => weekDraft[d] = 'rest');
+    if (navigator.vibrate) navigator.vibrate(10);
+    renderWeekPanel();
+  });
+  
+  // Tocar na sessão → expande/recolhe o seletor inline
+  document.querySelectorAll('.wk-session-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      const newSession = btn.dataset.sessionKey;
-      if (newSession === getSessionKeyForDay(STATE.day)) {
-        closeSwapModal();
-        return;
-      }
-      // Se ao sair de skip pra outra sessão, limpa justificativa
-      const prevSession = getSessionKeyForDay(STATE.day);
-      if (prevSession === 'skip' && newSession !== 'skip') {
-        clearSkipJustification(STATE.week, STATE.day);
-      }
-      setSessionForDay(STATE.day, newSession);
-      if (navigator.vibrate) navigator.vibrate(15);
-      closeSwapModal();
-      renderDayTabs();
-      renderMain();
-      // Se trocou pra skip, abre modal de justificativa automaticamente
-      if (newSession === 'skip' && !getSkipJustification(STATE.week, STATE.day)) {
-        setTimeout(() => openSkipModal(), 300);
-      }
+      const d = btn.dataset.day;
+      renderWeekPanel(d === expandedDay ? null : d);
     });
   });
   
-  if (isCustom) {
-    const restoreBtnEl = document.getElementById('restoreScheduleBtn');
-    const restoreConfirmEl = document.getElementById('restoreConfirm');
-    const restoreYesEl = document.getElementById('restoreConfirmYes');
-    const restoreNoEl = document.getElementById('restoreConfirmNo');
+  // Tocar num chip → atribui sessão ao dia no rascunho
+  document.querySelectorAll('.wk-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      weekDraft[chip.dataset.day] = chip.dataset.session;
+      if (navigator.vibrate) navigator.vibrate(12);
+      renderWeekPanel(); // recolhe e atualiza pendências
+    });
+  });
+  
+  // Drag-and-drop pelas alças
+  wireWeekDrag();
+}
+
+function wireWeekDrag() {
+  document.querySelectorAll('.wk-handle').forEach(h => {
+    h.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      const row = h.closest('.wk-row');
+      const day = row.dataset.day;
+      const r = row.getBoundingClientRect();
+      const ghost = document.createElement('div');
+      ghost.className = 'wk-ghost';
+      ghost.innerHTML = row.innerHTML;
+      ghost.style.cssText = `position:fixed;left:${r.left}px;top:${r.top}px;width:${r.width}px;z-index:300;pointer-events:none;opacity:0.93;box-shadow:0 10px 32px rgba(0,0,0,0.65);`;
+      document.body.appendChild(ghost);
+      row.classList.add('dragging');
+      weekDragState = { day, row, ghost, offsetY: e.clientY - r.top, target: null };
+      h.setPointerCapture(e.pointerId);
+      if (navigator.vibrate) navigator.vibrate(8);
+    });
     
-    if (restoreBtnEl) {
-      restoreBtnEl.addEventListener('click', () => {
-        // Toggle confirmação inline (sem usar confirm() que falha em PWA standalone)
-        restoreBtnEl.style.display = 'none';
-        if (restoreConfirmEl) restoreConfirmEl.style.display = 'block';
-      });
-    }
+    h.addEventListener('pointermove', (e) => {
+      if (!weekDragState) return;
+      weekDragState.ghost.style.top = (e.clientY - weekDragState.offsetY) + 'px';
+      weekDragState.ghost.style.display = 'none';
+      const el = document.elementFromPoint(e.clientX, e.clientY);
+      weekDragState.ghost.style.display = '';
+      const overRow = el ? el.closest('.wk-row') : null;
+      const valid = overRow && !overRow.classList.contains('dragging');
+      if (weekDragState.target && weekDragState.target !== overRow) {
+        weekDragState.target.classList.remove('drop-target');
+      }
+      if (valid) overRow.classList.add('drop-target');
+      weekDragState.target = valid ? overRow : null;
+    });
     
-    if (restoreYesEl) {
-      restoreYesEl.addEventListener('click', () => {
-        restoreDefaultSchedule();
-        if (navigator.vibrate) navigator.vibrate([10, 30, 10]);
-        closeSwapModal();
-        renderDayTabs();
-        renderMain();
-      });
+    const finishDrag = () => {
+      if (!weekDragState) return;
+      const { day, row, ghost, target } = weekDragState;
+      ghost.remove();
+      row.classList.remove('dragging');
+      if (target) {
+        target.classList.remove('drop-target');
+        const other = target.dataset.day;
+        if (other && other !== day) {
+          // TROCA as sessões dos dois dias no rascunho
+          const tmp = weekDraft[day];
+          weekDraft[day] = weekDraft[other];
+          weekDraft[other] = tmp;
+          if (navigator.vibrate) navigator.vibrate([12, 25]);
+          renderWeekPanel();
+        }
+      }
+      weekDragState = null;
+    };
+    h.addEventListener('pointerup', finishDrag);
+    h.addEventListener('pointercancel', finishDrag);
+  });
+}
+
+function applyWeekDraft() {
+  const committed = getCurrentSchedule();
+  const changed = DAYS.filter(d => weekDraft[d] !== committed[d]);
+  if (changed.length === 0) { closeSwapModal(); return; }
+  
+  changed.forEach(d => {
+    // Saiu de skip → limpa justificativa antiga
+    if (committed[d] === 'skip' && weekDraft[d] !== 'skip') {
+      clearSkipJustification(STATE.week, d);
     }
-    
-    if (restoreNoEl) {
-      restoreNoEl.addEventListener('click', () => {
-        if (restoreBtnEl) restoreBtnEl.style.display = '';
-        if (restoreConfirmEl) restoreConfirmEl.style.display = 'none';
-      });
-    }
+    setSessionForDay(d, weekDraft[d]);
+  });
+  
+  // Feedback de sucesso no botão antes de fechar
+  const applyBtn = document.getElementById('wkApply');
+  if (applyBtn) {
+    applyBtn.classList.add('applied');
+    applyBtn.textContent = '✓ SEMANA ATUALIZADA';
+    applyBtn.disabled = true;
   }
+  if (navigator.vibrate) navigator.vibrate([15, 30, 50]);
+  
+  setTimeout(() => {
+    closeSwapModal();
+    renderDayTabs();
+    renderMain();
+    // Se o dia ATUAL virou skip sem justificativa, abre o modal de motivo
+    if (weekDraft[STATE.day] === 'skip' && !getSkipJustification(STATE.week, STATE.day)) {
+      setTimeout(() => openSkipModal(), 300);
+    }
+  }, 650);
 }
 
 function closeSwapModal() {
   closeModalEl(document.getElementById('swapModal'));
 }
 
-function renderSwapWarnings() {
-  const el = document.getElementById('swapWarnings');
-  if (!el) return;
-  const warnings = validateSchedule(getCurrentSchedule());
-  if (warnings.length === 0) {
-    el.innerHTML = '<div class="swap-ok">✓ Calendário com recovery adequado.</div>';
-  } else {
-    el.innerHTML = warnings.map(w => `<div class="swap-warning-item">⚠ ${w.message}</div>`).join('');
-  }
-}
 
 // ============================================================
 // INIT
