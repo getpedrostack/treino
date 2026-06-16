@@ -5110,23 +5110,27 @@
   .hud-cry::after { content: ' ⚔'; color: var(--gold-deep); font-style: normal; }
   .hud-cry b { color: var(--gold-pale); font-weight: 700; font-style: normal; }
 
+  /* Maioria dos celulares (≤420px): esconde rótulos pra caber patente longa
+     (ex.: Úlfheðinn) + barra + 🔥 sequência + tonelagem sem cortar nada.
+     Os ícones (⚡, 🔥) já comunicam o sentido. */
+  @media (max-width: 420px) {
+    .hud-xp-head .lbl { display: none; }
+    .hud-stat-lbl { display: none; }
+    .hud-stats { gap: 11px; }
+  }
   @media (max-width: 360px) {
     .pwr-hud { gap: 9px; padding: 9px 12px; }
     .hud-stats { gap: 10px; }
     .hud-rank { gap: 7px; }
     .hud-emblem { width: 36px; height: 36px; }
     .hud-emblem .he-rune { font-size: 17px; }
-    /* Nome da patente sem letter-spacing pra caber inteiro (ex.: Úlfheðinn) */
-    .hud-rank-name { max-width: 84px; font-size: 10px; letter-spacing: 0; }
-    /* Garante chão pra barra de PODER e remove rótulos que roubam espaço */
-    .hud-xp { flex: 1 1 56px; min-width: 52px; }
-    .hud-xp-head .lbl { display: none; }
-    .hud-stat-lbl { display: none; }
+    .hud-rank-name { max-width: 96px; font-size: 10px; letter-spacing: 0; }
+    .hud-xp { flex: 1 1 52px; min-width: 48px; }
   }
   @media (max-width: 330px) {
     /* Telas minúsculas: esconde a tonelagem, mantém patente + PODER + sequência */
     .hud-stats .hud-stat:last-child { display: none; }
-    .hud-rank-name { max-width: 72px; }
+    .hud-rank-name { max-width: 80px; }
   }
 
   /* ---- Surto de força (shockwave ao concluir séries) --------- */
@@ -7144,8 +7148,8 @@ function attachCardioHandlers() {
   if (!btn) return;
   btn.addEventListener('click', () => {
     toggleCardioDone(STATE.week, STATE.day);
-    // Conta no streak quando marca como concluído
-    if (isCardioDone(STATE.week, STATE.day)) recordActivityToday();
+    // Conta no streak quando marca como concluído (cardio = treino do dia)
+    if (isCardioDone(STATE.week, STATE.day)) markTodayFire();
     if (navigator.vibrate) {
       // Vibração de conquista ao concluir
       if (isCardioDone(STATE.week, STATE.day)) navigator.vibrate([20, 40, 80]);
@@ -7391,7 +7395,8 @@ function attachExerciseHandlers() {
       // === SURTO DE FORÇA + XP (gamificação) ===
       // Shockwave dourada + número de PODER (delta real) subindo a cada série.
       if (newCount > prevCount) {
-        recordActivityToday();
+        // Sequência de fogo: o dia só conta como treino ao atingir 80%
+        if (evaluateDayStatus(STATE.week, STATE.day) === 'fire') markTodayFire();
         firePowerSurge(btn, nowComplete);
         const dxp = Math.max(0, computeGamState().xp - xpBefore);
         spawnXpPop(btn, dxp);
@@ -8577,16 +8582,83 @@ function localDateKey(d) {
   const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, '0'), dd = String(d.getDate()).padStart(2, '0');
   return `${y}-${m}-${dd}`;
 }
-function recordActivityToday() {
-  const k = localDateKey(new Date());
-  if (!ACTIVITY[k]) { ACTIVITY[k] = true; saveActivity(); }
+function sameLocalDay(a, b) { return localDateKey(a) === localDateKey(b); }
+
+// Status de um slot do programa (semana::dia) pra fins de sequência:
+//   'fire' = treinado (≥80% do dia concluído, ou cardio feito)
+//   'rest' = dia legítimo sem treino (descanso prescrito OU skip justificado) → faz ponte
+//   null   = não treinado e sem justificativa → quebra a sequência
+function evaluateDayStatus(week, day) {
+  const session = getSessionForDay(day, week);
+  if (!session) return null;
+  if (session.rest) return 'rest';                                  // descanso prescrito
+  if (session.skip) return getSkipJustification(week, day) ? 'rest' : null; // skip: justificado faz ponte
+  if (session.cardio) return isCardioDone(week, day) ? 'fire' : null;
+  if (session.exercises) {
+    const isDeload = week === 'deload';
+    let total = 0, done = 0;
+    session.exercises.forEach(ex => {
+      if (isDeload && shouldHideOnDeload(ex)) return;
+      total++;
+      const ms = parseInt(getPrescription(ex, week).sets, 10) || 3;
+      if (getSetProgress(week, day, ex.id) >= ms) done++;
+    });
+    if (total === 0) return null;
+    // Conta como treino a partir de 80% dos exercícios concluídos
+    return done >= Math.ceil(total * 0.8) ? 'fire' : null;
+  }
+  return null;
 }
+
+// Marca HOJE (data real) como dia de treino. Disparado por EVENTO real
+// (série/cardio concluídos) pra refletir esforço de hoje, não dado antigo.
+// Fogo é "pegajoso": resetar o registro do dia não desfaz o treino feito.
+function markTodayFire() {
+  const k = localDateKey(new Date());
+  if (ACTIVITY[k] !== 'fire') { ACTIVITY[k] = 'fire'; saveActivity(); }
+}
+
+// No render, marca HOJE como 'rest' (ponte) se o slot real de hoje for
+// descanso prescrito ou skip justificado. Nunca rebaixa um 'fire'.
+function syncTodayRest() {
+  const k = localDateKey(new Date());
+  if (ACTIVITY[k] === 'fire') return;
+  const wd = JS_DAY_TO_KEY[new Date().getDay()];
+  if (!DAYS.includes(wd)) return;
+  const st = evaluateDayStatus(STATE.week, wd);
+  if (st === 'rest' && ACTIVITY[k] !== 'rest') { ACTIVITY[k] = 'rest'; saveActivity(); }
+}
+
+// Status de uma DATA do calendário (pra caminhar a sequência pra trás)
+function statusForDate(d) {
+  const k = localDateKey(d);
+  if (ACTIVITY[k] === 'fire') return 'fire';
+  if (ACTIVITY[k] === 'rest') return 'rest';
+  // Ponte automática nos dias de descanso PRESCRITOS no calendário padrão
+  // (ex.: domingo), mesmo que o app não tenha sido aberto naquele dia.
+  const wd = JS_DAY_TO_KEY[d.getDay()];
+  if (DEFAULT_SCHEDULE[wd] === 'rest') return 'rest';
+  return null;
+}
+
+// Sequência de fogo: dias de treino consecutivos por DATA real.
+// 'fire' soma; 'rest' (descanso/justificado) faz ponte sem somar;
+// dia não treinado e sem justificativa quebra. Hoje tem graça: não treinar
+// ainda hoje não zera a sequência conquistada até ontem.
 function computeStreak() {
-  let cursor = new Date();
-  // Graça de 1 dia: se hoje ainda não treinou, conta a partir de ontem.
-  if (!ACTIVITY[localDateKey(cursor)]) cursor.setDate(cursor.getDate() - 1);
-  let n = 0;
-  while (ACTIVITY[localDateKey(cursor)]) { n++; cursor.setDate(cursor.getDate() - 1); if (n > 3650) break; }
+  const today = new Date();
+  let cursor = new Date(today);
+  let n = 0, guard = 0;
+  while (guard++ < 3660) {
+    const s = statusForDate(cursor);
+    if (s === 'fire') { n++; }
+    else if (s === 'rest') { /* ponte: não soma, não quebra */ }
+    else {
+      // lacuna: tolera só se for hoje (ainda dá tempo de treinar); senão quebra
+      if (!sameLocalDay(cursor, today)) break;
+    }
+    cursor.setDate(cursor.getDate() - 1);
+  }
   return n;
 }
 
@@ -8597,6 +8669,10 @@ let PR_RECORDS = 0;
 function loadGam() {
   try { const raw = localStorage.getItem('pwr.gam'); GAM_STORE = raw ? JSON.parse(raw) : null; } catch (e) { GAM_STORE = null; }
   try { const d = localStorage.getItem('pwr.activityDates'); ACTIVITY = d ? JSON.parse(d) : {}; } catch (e) { ACTIVITY = {}; }
+  // Migração: o formato antigo guardava `true`; agora guardamos 'fire'/'rest'.
+  let migrated = false;
+  for (const k in ACTIVITY) { if (ACTIVITY[k] === true) { ACTIVITY[k] = 'fire'; migrated = true; } }
+  if (migrated) saveActivity();
   try { PR_RECORDS = parseInt(localStorage.getItem('pwr.prBreaks'), 10) || 0; } catch (e) { PR_RECORDS = 0; }
 }
 function saveGam() { try { localStorage.setItem('pwr.gam', JSON.stringify(GAM_STORE)); } catch (e) {} }
@@ -8676,6 +8752,7 @@ function fxOn() {
 function renderHud() {
   const hud = document.getElementById('pwrHud');
   if (!hud) return;
+  syncTodayRest();           // marca hoje como ponte se for descanso/skip justificado
   const g = computeGamState();
   const pct = Math.min(100, Math.round((g.intoLevel / g.forLevel) * 100));
   const tonStr = g.tonnage >= 1000
