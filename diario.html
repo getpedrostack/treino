@@ -2223,6 +2223,201 @@ body.sabbath section:not(.keystone-section):not(.reflection-section):not(.histor
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   V2 — NÚCLEO RÁPIDO, CORRELAÇÕES, RECOMPENSA NO TRACKER
+═══════════════════════════════════════════════════════════════ */
+
+/* Micro-insight contextual no tracker */
+.micro-insight {
+  margin-bottom: var(--s-4);
+  padding: var(--s-2) var(--s-4);
+  background: var(--surface-1);
+  border-left: 3px solid var(--info);
+  border-radius: var(--r-sm);
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.5;
+  display: none;
+}
+.micro-insight.show { display: block; animation: viewFadeIn var(--t-base); }
+.micro-insight strong { color: var(--text-1); font-weight: 600; }
+
+/* HUD de XP/nível no header do tracker */
+.tracker-hud {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  margin-top: var(--s-3);
+  padding: var(--s-2) var(--s-3);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+}
+.hud-level {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--brand-bright);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  text-shadow: 0 0 10px rgba(200,155,60,0.3);
+}
+.hud-xp-bar { flex: 1; height: 6px; background: var(--surface-3); border-radius: 3px; overflow: hidden; }
+.hud-xp-fill { height: 100%; background: linear-gradient(90deg, var(--brand-dim), var(--brand-bright)); border-radius: 3px; transition: width 500ms cubic-bezier(0.16,1,0.3,1); }
+.hud-xp-text { font-family: var(--font-mono); font-size: 11px; color: var(--text-3); white-space: nowrap; }
+
+/* Bloco de métrica em largura total (sono) */
+.metric-block { padding: var(--s-3) var(--s-4); }
+.metric-block > label {
+  display: flex; align-items: center; gap: var(--s-2);
+  font-size: 14px; color: var(--text-2); margin-bottom: var(--s-2);
+}
+.metric-hint { font-family: var(--font-mono); font-size: 11px; color: var(--text-4); }
+.sleep-chips, .min-chips { display: grid; gap: 6px; }
+.sleep-chips { grid-template-columns: repeat(8, 1fr); }
+.min-chips { grid-template-columns: repeat(4, 1fr); margin-top: var(--s-2); }
+.sleep-chip, .min-chip {
+  background: var(--surface-3); border: 1px solid transparent; color: var(--text-3);
+  padding: var(--s-3) 0; border-radius: var(--r-sm);
+  font-family: var(--font-mono); font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all var(--t-fast);
+  min-height: 44px; display: grid; place-items: center;
+}
+.sleep-chip:hover, .min-chip:hover { background: var(--surface-2); color: var(--text-2); }
+.sleep-chip.active, .min-chip.active {
+  background: var(--brand-tint); border-color: var(--brand); color: var(--brand-bright);
+  transform: scale(0.96);
+}
+
+/* Grades de hábitos compactas (trabalho/corpo/mente) — 2 colunas */
+section[data-layer="work"] .section-body,
+section[data-layer="body"] .section-body,
+section[data-layer="mind"] .section-body {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
+  padding: 0 var(--s-3) var(--s-3);
+}
+section[data-layer="work"] .habit,
+section[data-layer="body"] .habit,
+section[data-layer="mind"] .habit {
+  background: var(--surface-2); border-radius: var(--r-sm);
+  padding: var(--s-3); min-height: 54px;
+}
+@media (max-width: 380px) {
+  section[data-layer="work"] .section-body,
+  section[data-layer="body"] .section-body,
+  section[data-layer="mind"] .section-body { grid-template-columns: 1fr; }
+  .sleep-chips { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* Chips de tag/contexto (multi-seleção) */
+.tag-chips { display: flex; flex-wrap: wrap; gap: var(--s-2); padding: var(--s-2) var(--s-4) var(--s-3); }
+.tag-chips-label { font-size: 11px; color: var(--text-4); text-transform: uppercase; letter-spacing: 0.08em; padding: 0 var(--s-4); margin-top: var(--s-2); }
+.tag-chip {
+  background: var(--surface-3); border: 1px solid transparent; color: var(--text-3);
+  padding: 8px var(--s-3); border-radius: 999px;
+  font-family: inherit; font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all var(--t-fast); min-height: 38px;
+}
+.tag-chip:hover { background: var(--surface-2); color: var(--text-2); }
+.tag-chip.active { background: var(--brand-tint); border-color: var(--brand); color: var(--brand-bright); }
+.tag-chip.ctx.active { background: var(--warn-tint); border-color: var(--warn); color: var(--warn); }
+
+/* Divisor "Opcional" */
+.optional-divider {
+  display: flex; align-items: center; justify-content: center; gap: var(--s-2);
+  margin: var(--s-2) 0 var(--s-3); padding: var(--s-2);
+  cursor: pointer; color: var(--text-3);
+  font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  user-select: none;
+}
+.optional-divider:hover { color: var(--text-2); }
+.optional-divider::before, .optional-divider::after { content: ""; height: 1px; flex: 1; background: var(--border); }
+.optional-divider .opt-caret { transition: transform var(--t-base); }
+.optional-divider.open .opt-caret { transform: rotate(180deg); }
+.optional-block.collapsed { display: none; }
+
+/* Botão "ajustar" da música */
+.btn-adjust {
+  background: transparent; border: none; color: var(--text-3);
+  font-family: inherit; font-size: 12px; cursor: pointer;
+  padding: var(--s-2); margin-top: var(--s-1);
+}
+.btn-adjust:hover { color: var(--brand); }
+
+/* Card de Veredito / Alavancas (narrativa) */
+.verdict-card {
+  background: linear-gradient(135deg, var(--brand-tint) 0%, var(--surface-1) 55%);
+  border: 1px solid var(--brand-tint-strong);
+  border-radius: var(--r-lg);
+  padding: var(--s-4);
+  margin-bottom: var(--s-3);
+  animation: pillarFadeIn 400ms cubic-bezier(0.16,1,0.3,1);
+}
+.verdict-title {
+  font-family: var(--font-display); font-size: 12px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--brand);
+  margin-bottom: var(--s-3); text-shadow: 0 0 12px rgba(200,155,60,0.25);
+}
+.verdict-body { font-size: 14px; line-height: 1.6; color: var(--text-2); }
+.verdict-body p { margin-bottom: var(--s-2); display: flex; gap: var(--s-2); }
+.verdict-body p::before { content: "▸"; color: var(--brand); flex-shrink: 0; }
+.verdict-body strong { color: var(--text-1); font-weight: 600; }
+.verdict-action {
+  margin-top: var(--s-3); padding-top: var(--s-3); border-top: 1px solid var(--border);
+  font-size: 14px; color: var(--brand-bright); font-weight: 600; line-height: 1.5;
+}
+.verdict-empty { color: var(--text-3); font-size: 13px; }
+
+/* Deltas vs semana anterior */
+.delta-up { color: var(--success); }
+.delta-down { color: var(--danger); }
+.delta-flat { color: var(--text-4); }
+
+/* Progresso de conquistas bloqueadas */
+.achievement-progress { font-family: var(--font-mono); font-size: 9px; color: var(--text-3); margin-top: 2px; }
+
+/* XP flutuante ao marcar hábito */
+.xp-float {
+  position: fixed; z-index: 300;
+  font-family: var(--font-mono); font-weight: 700; font-size: 15px;
+  color: var(--brand-bright); pointer-events: none;
+  text-shadow: 0 0 8px rgba(240,198,116,0.6);
+  animation: xpFloat 900ms cubic-bezier(0.16,1,0.3,1) forwards;
+}
+@keyframes xpFloat {
+  0% { opacity: 0; transform: translateY(0) scale(0.7); }
+  20% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-46px) scale(1.1); }
+}
+
+/* Overlay de celebração (level-up, conquista, marco de streak, review) */
+.celebrate-overlay {
+  position: fixed; inset: 0; z-index: 400;
+  display: none; align-items: center; justify-content: center;
+  background: radial-gradient(ellipse at center, rgba(200,155,60,0.18), rgba(0,0,0,0.78));
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  animation: fadeIn var(--t-base);
+}
+.celebrate-overlay.show { display: flex; }
+.celebrate-card { text-align: center; padding: var(--s-7); animation: celebPop 520ms cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes celebPop { from { opacity: 0; transform: scale(0.6) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+.celebrate-icon { font-size: 64px; line-height: 1; filter: drop-shadow(0 0 24px rgba(240,198,116,0.6)); margin-bottom: var(--s-3); }
+.celebrate-title {
+  font-family: var(--font-display); font-size: 26px; font-weight: 900;
+  color: var(--brand-bright); letter-spacing: 0.06em; text-transform: uppercase;
+  text-shadow: 0 0 24px rgba(200,155,60,0.5);
+}
+.celebrate-sub { font-size: 15px; color: var(--text-2); margin-top: var(--s-2); max-width: 320px; }
+
+/* Cofre da Semana */
+.vault-rows { display: flex; flex-direction: column; gap: var(--s-2); margin-top: var(--s-3); }
+.vault-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: var(--s-2) var(--s-3); background: var(--surface-2); border-radius: var(--r-sm);
+  font-size: 13px; color: var(--text-2);
+}
+.vault-row .vault-val { font-family: var(--font-mono); font-weight: 700; color: var(--brand-bright); }
 </style>
 </head>
 <body>
@@ -2264,6 +2459,12 @@ body.sabbath section:not(.keystone-section):not(.reflection-section):not(.histor
           <span class="score-value">0</span>
         </div>
       </div>
+
+      <div class="tracker-hud" id="trackerHUD">
+        <div class="hud-level" id="hudLevel">Nv 1</div>
+        <div class="hud-xp-bar"><div class="hud-xp-fill" id="hudXpFill" style="width:0%"></div></div>
+        <div class="hud-xp-text" id="hudXpText">0 XP</div>
+      </div>
     </div>
   </header>
 
@@ -2271,10 +2472,11 @@ body.sabbath section:not(.keystone-section):not(.reflection-section):not(.histor
   <div id="trackerView" class="tracker-view">
 
     <div id="modeBanner"></div>
+    <div id="microInsight" class="micro-insight"></div>
 
     <!-- KEYSTONES -->
     <section class="keystone-section" data-layer="keystone">
-      <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-header" style="cursor:default;">
         <h2>Base não-negociável</h2>
         <span class="section-count">0/4</span>
       </div>
@@ -2286,77 +2488,24 @@ body.sabbath section:not(.keystone-section):not(.reflection-section):not(.histor
       </div>
     </section>
 
-    <!-- TRABALHO -->
-    <section data-layer="work">
-      <div class="section-header" onclick="toggleSection(this)">
-        <h2>Trabalho · 1+ por dia</h2>
-        <span class="section-count">0/4</span>
-      </div>
-      <div class="section-body">
-        <div class="habit" data-id="w_torra"><div class="habit-check"></div><div class="habit-label">Sessão de torra ou análise de log</div></div>
-        <div class="habit" data-id="w_pkm"><div class="habit-check"></div><div class="habit-label">PKM · 1 nota processada</div></div>
-        <div class="habit" data-id="w_ig"><div class="habit-check"></div><div class="habit-label">Conteúdo IG · ideia ou rascunho</div></div>
-        <div class="habit" data-id="w_estudo"><div class="habit-check"></div><div class="habit-label">Estudo técnico</div></div>
-      </div>
-    </section>
-
-    <!-- CORPO -->
-    <section data-layer="body">
-      <div class="section-header" onclick="toggleSection(this)">
-        <h2>Corpo</h2>
-        <span class="section-count">0/2</span>
-      </div>
-      <div class="section-body">
-        <div class="habit" data-id="b_academia"><div class="habit-check"></div><div class="habit-label">Academia</div></div>
-        <div class="habit" data-id="b_mobilidade"><div class="habit-check"></div><div class="habit-label">Cardio leve ou mobilidade</div></div>
-      </div>
-    </section>
-
-    <!-- MENTE -->
-    <section data-layer="mind">
-      <div class="section-header" onclick="toggleSection(this)">
-        <h2>Mente · cultura</h2>
-        <span class="section-count">0/2</span>
-      </div>
-      <div class="section-body">
-        <div class="habit" data-id="m_xadrez"><div class="habit-check"></div><div class="habit-label">Xadrez · 1 partida</div></div>
-        <div class="habit" data-id="m_leitura"><div class="habit-check"></div><div class="habit-label">Leitura · 20min+</div></div>
-
-        <div class="music-block">
-          <div class="music-suggestion-row">
-            <div class="sug-info">
-              Hoje: <strong id="sugTone">—</strong><strong id="sugRhythm">—</strong>
-            </div>
-            <button class="btn-use-sug" onclick="useSuggestion()">Usar sugestão</button>
-          </div>
-          <div class="music-grid">
-            <select id="musicInstrument" onchange="saveData()">
-              <option value="">Instrumento</option>
-              <option value="acordeon">Acordeon</option>
-              <option value="zabumba">Zabumba</option>
-              <option value="triangulo">Triângulo</option>
-              <option value="multiplos">Múltiplos</option>
-            </select>
-            <input type="text" id="musicTone" placeholder="Tom trabalhado" onchange="saveData()">
-            <input type="text" id="musicRhythm" placeholder="Ritmo" onchange="saveData()">
-            <input type="number" id="musicMinutes" placeholder="minutos" min="0" onchange="saveData()">
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- MÉTRICAS -->
+    <!-- ESTADO (métricas por toque) -->
     <section class="metrics-section" data-layer="metrics">
-      <div class="section-header" onclick="toggleSection(this)">
-        <h2>Métricas</h2>
-        <span class="section-count" style="background:transparent;">numérico</span>
+      <div class="section-header" style="cursor:default;">
+        <h2>Estado</h2>
+        <span class="section-count" style="background:transparent;">toque</span>
       </div>
       <div class="section-body">
-        <div class="metric-row">
-          <label for="sleepHours">Sono</label>
-          <div class="input-wrap">
-            <input type="number" id="sleepHours" step="0.5" min="0" max="14" onchange="saveData()" placeholder="7.5">
-            <span class="unit">horas</span>
+        <div class="metric-block">
+          <label>Sono <span class="metric-hint" id="sleepHint"></span></label>
+          <div class="sleep-chips" data-scale="sleep">
+            <button class="sleep-chip" data-val="5.5">&lt;6</button>
+            <button class="sleep-chip" data-val="6">6</button>
+            <button class="sleep-chip" data-val="6.5">6.5</button>
+            <button class="sleep-chip" data-val="7">7</button>
+            <button class="sleep-chip" data-val="7.5">7.5</button>
+            <button class="sleep-chip" data-val="8">8</button>
+            <button class="sleep-chip" data-val="8.5">8.5</button>
+            <button class="sleep-chip" data-val="9.5">9+</button>
           </div>
         </div>
         <div class="metric-row">
@@ -2379,45 +2528,184 @@ body.sabbath section:not(.keystone-section):not(.reflection-section):not(.histor
             <button class="scale-btn" data-val="5" title="Flow">5</button>
           </div>
         </div>
+        <div class="metric-row">
+          <label>Humor</label>
+          <div class="scale" data-scale="mood">
+            <button class="scale-btn" data-val="1" title="Péssimo">1</button>
+            <button class="scale-btn" data-val="2" title="Baixo">2</button>
+            <button class="scale-btn" data-val="3" title="Neutro">3</button>
+            <button class="scale-btn" data-val="4" title="Bom">4</button>
+            <button class="scale-btn" data-val="5" title="Ótimo">5</button>
+          </div>
+        </div>
+        <div class="metric-row">
+          <label>Estresse</label>
+          <div class="scale" data-scale="stress">
+            <button class="scale-btn" data-val="1" title="Calmo">1</button>
+            <button class="scale-btn" data-val="2" title="Leve">2</button>
+            <button class="scale-btn" data-val="3" title="Médio">3</button>
+            <button class="scale-btn" data-val="4" title="Alto">4</button>
+            <button class="scale-btn" data-val="5" title="Pico">5</button>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- REFLEXÃO -->
-    <section class="reflection-section" data-layer="reflection">
-      <div class="section-header" onclick="toggleSection(this)">
-        <h2>Reflexão</h2>
-        <span class="section-count" style="background:transparent;">→ obsidian</span>
+    <!-- TRABALHO -->
+    <section data-layer="work">
+      <div class="section-header" style="cursor:default;">
+        <h2>Trabalho · 1+ por dia</h2>
+        <span class="section-count">0/4</span>
       </div>
       <div class="section-body">
-        <div class="text-card empty"
-             data-key="reflAvancei"
-             data-label="Avancei"
-             data-eyebrow="Reflexão diária"
-             data-placeholder="O que avançou hoje? Qual frente caminhou?"
-             onclick="openTextDrawer(this)" role="button" tabindex="0">
-          <div class="text-card-label"><span>Avancei</span></div>
-          <div class="text-card-preview">Toque para escrever…</div>
-        </div>
-        <div class="text-card empty"
-             data-key="reflTravei"
-             data-label="Travei"
-             data-eyebrow="Reflexão diária"
-             data-placeholder="Onde travei? Que padrão se repetiu?"
-             onclick="openTextDrawer(this)" role="button" tabindex="0">
-          <div class="text-card-label"><span>Travei</span></div>
-          <div class="text-card-preview">Toque para escrever…</div>
-        </div>
-        <div class="text-card empty"
-             data-key="reflProximo"
-             data-label="Próximo passo"
-             data-eyebrow="Reflexão diária"
-             data-placeholder="Amanhã, o primeiro movimento concreto é..."
-             onclick="openTextDrawer(this)" role="button" tabindex="0">
-          <div class="text-card-label"><span>Próximo passo</span></div>
-          <div class="text-card-preview">Toque para escrever…</div>
+        <div class="habit" data-id="w_torra"><div class="habit-check"></div><div class="habit-label">Torra / análise de log</div></div>
+        <div class="habit" data-id="w_pkm"><div class="habit-check"></div><div class="habit-label">PKM · 1 nota</div></div>
+        <div class="habit" data-id="w_ig"><div class="habit-check"></div><div class="habit-label">Conteúdo IG</div></div>
+        <div class="habit" data-id="w_estudo"><div class="habit-check"></div><div class="habit-label">Estudo técnico</div></div>
+      </div>
+    </section>
+
+    <!-- CORPO -->
+    <section data-layer="body">
+      <div class="section-header" style="cursor:default;">
+        <h2>Corpo</h2>
+        <span class="section-count">0/2</span>
+      </div>
+      <div class="section-body">
+        <div class="habit" data-id="b_academia"><div class="habit-check"></div><div class="habit-label">Academia</div></div>
+        <div class="habit" data-id="b_mobilidade"><div class="habit-check"></div><div class="habit-label">Cardio / mobilidade</div></div>
+      </div>
+    </section>
+
+    <!-- MENTE -->
+    <section data-layer="mind">
+      <div class="section-header" style="cursor:default;">
+        <h2>Mente · cultura</h2>
+        <span class="section-count">0/2</span>
+      </div>
+      <div class="section-body">
+        <div class="habit" data-id="m_xadrez"><div class="habit-check"></div><div class="habit-label">Xadrez · 1 partida</div></div>
+        <div class="habit" data-id="m_leitura"><div class="habit-check"></div><div class="habit-label">Leitura · 20min+</div></div>
+      </div>
+    </section>
+
+    <!-- COMO FOI O DIA (tags rápidas) -->
+    <section class="tags-section">
+      <div class="section-header" style="cursor:default;">
+        <h2>Como foi o dia</h2>
+        <span class="section-count" style="background:transparent;">opcional</span>
+      </div>
+      <div class="section-body">
+        <div class="tag-chips" id="tagChips">
+          <button class="tag-chip" data-tag="fluxo">em fluxo</button>
+          <button class="tag-chip" data-tag="travado">travado</button>
+          <button class="tag-chip" data-tag="cansado">cansado</button>
+          <button class="tag-chip" data-tag="disperso">disperso</button>
+          <button class="tag-chip" data-tag="vitoria">vitória</button>
+          <button class="tag-chip" data-tag="imprevisto">imprevisto</button>
         </div>
       </div>
     </section>
+
+    <!-- DIVISOR OPCIONAL -->
+    <div class="optional-divider" id="optionalDivider" onclick="toggleOptional()">
+      <span>Opcional</span><span class="opt-caret">▾</span>
+    </div>
+
+    <div id="optionalBlock" class="optional-block collapsed">
+
+      <!-- MÚSICA -->
+      <section data-layer="musicopt">
+        <div class="section-header" style="cursor:default;">
+          <h2>Música · prática</h2>
+          <span class="section-count" style="background:transparent;" id="musicMinLabel">0 min</span>
+        </div>
+        <div class="section-body">
+          <div class="music-block">
+            <div class="music-suggestion-row">
+              <div class="sug-info">
+                Hoje: <strong id="sugTone">—</strong><strong id="sugRhythm">—</strong>
+              </div>
+              <button class="btn-use-sug" onclick="quickLogMusic()">Pratiquei</button>
+            </div>
+            <div class="min-chips" data-scale="musicminutes">
+              <button class="min-chip" data-val="20">20</button>
+              <button class="min-chip" data-val="40">40</button>
+              <button class="min-chip" data-val="60">60</button>
+              <button class="min-chip" data-val="90">90+</button>
+            </div>
+            <button class="btn-adjust" onclick="toggleMusicAdvanced()">ajustar detalhes ▾</button>
+            <div class="music-grid" id="musicAdvanced" style="display:none;">
+              <select id="musicInstrument" onchange="saveData()">
+                <option value="">Instrumento</option>
+                <option value="acordeon">Acordeon</option>
+                <option value="zabumba">Zabumba</option>
+                <option value="triangulo">Triângulo</option>
+                <option value="multiplos">Múltiplos</option>
+              </select>
+              <input type="text" id="musicTone" placeholder="Tom trabalhado" onchange="saveData()">
+              <input type="text" id="musicRhythm" placeholder="Ritmo" onchange="saveData()">
+              <input type="number" id="musicMinutes" placeholder="minutos" min="0" onchange="saveData()">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTEXTO / CONFOUNDERS -->
+      <section class="ctx-section">
+        <div class="section-header" style="cursor:default;">
+          <h2>Contexto</h2>
+          <span class="section-count" style="background:transparent;">confounders</span>
+        </div>
+        <div class="section-body">
+          <div class="tag-chips" id="ctxChips">
+            <button class="tag-chip ctx" data-ctx="cafe">café pós-16h</button>
+            <button class="tag-chip ctx" data-ctx="alcool">álcool</button>
+            <button class="tag-chip ctx" data-ctx="viagem">viagem</button>
+            <button class="tag-chip ctx" data-ctx="doente">doente</button>
+            <button class="tag-chip ctx" data-ctx="social">social</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- REFLEXÃO -->
+      <section class="reflection-section" data-layer="reflection">
+        <div class="section-header" style="cursor:default;">
+          <h2>Reflexão</h2>
+          <span class="section-count" style="background:transparent;">→ obsidian</span>
+        </div>
+        <div class="section-body">
+          <div class="text-card empty"
+               data-key="reflAvancei"
+               data-label="Avancei"
+               data-eyebrow="Reflexão diária"
+               data-placeholder="O que avançou hoje? Qual frente caminhou?"
+               onclick="openTextDrawer(this)" role="button" tabindex="0">
+            <div class="text-card-label"><span>Avancei</span></div>
+            <div class="text-card-preview">Toque para escrever…</div>
+          </div>
+          <div class="text-card empty"
+               data-key="reflTravei"
+               data-label="Travei"
+               data-eyebrow="Reflexão diária"
+               data-placeholder="Onde travei? Que padrão se repetiu?"
+               onclick="openTextDrawer(this)" role="button" tabindex="0">
+            <div class="text-card-label"><span>Travei</span></div>
+            <div class="text-card-preview">Toque para escrever…</div>
+          </div>
+          <div class="text-card empty"
+               data-key="reflProximo"
+               data-label="Próximo passo"
+               data-eyebrow="Reflexão diária"
+               data-placeholder="Amanhã, o primeiro movimento concreto é..."
+               onclick="openTextDrawer(this)" role="button" tabindex="0">
+            <div class="text-card-label"><span>Próximo passo</span></div>
+            <div class="text-card-preview">Toque para escrever…</div>
+          </div>
+        </div>
+      </section>
+
+    </div>
 
     <!-- HISTÓRICO -->
     <section class="history-section">
@@ -2571,6 +2859,15 @@ body.sabbath section:not(.keystone-section):not(.reflection-section):not(.histor
   <span class="toast-text">salvo</span>
 </div>
 
+<!-- Celebração (level-up · conquista · marco de streak · review) -->
+<div class="celebrate-overlay" id="celebrate" onclick="hideCelebrate()">
+  <div class="celebrate-card">
+    <div class="celebrate-icon" id="celebrateIcon">⬆</div>
+    <div class="celebrate-title" id="celebrateTitle">Nível</div>
+    <div class="celebrate-sub" id="celebrateSub"></div>
+  </div>
+</div>
+
 <!-- Modal -->
 <div class="modal-bg" id="modalBg" onclick="closeModal(event)">
   <div class="modal" onclick="event.stopPropagation()">
@@ -2647,18 +2944,30 @@ function dateKey(d) {
 
 function loadDay(date) {
   const key = STORAGE_PREFIX + dateKey(date);
+  const base = emptyDay();
   try {
     const raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : emptyDay();
-  } catch(e) { return emptyDay(); }
+    if (!raw) return base;
+    const p = JSON.parse(raw);
+    // Normaliza: garante que TODAS as chaves novas existam em dias antigos
+    // (evita NaN silencioso em mood/stress/tags/contexto sobre o histórico).
+    return {
+      ...p,
+      habits: p.habits || {},
+      music: { ...base.music, ...(p.music || {}) },
+      metrics: { ...base.metrics, ...(p.metrics || {}) },
+      reflection: { ...base.reflection, ...(p.reflection || {}) },
+      weekly: { ...base.weekly, ...(p.weekly || {}) }
+    };
+  } catch(e) { return base; }
 }
 
 function emptyDay() {
   return {
     habits: {},
     music: { instrument: '', tone: '', rhythm: '', minutes: '' },
-    metrics: { sleep: '', energy: 0, focus: 0 },
-    reflection: { avancei: '', travei: '', proximo: '' },
+    metrics: { sleep: '', energy: 0, focus: 0, mood: 0, stress: 0, bedtime: '', waketime: '' },
+    reflection: { avancei: '', travei: '', proximo: '', tags: [], contexto: [] },
     weekly: { pattern: '', next: '' }
   };
 }
@@ -2774,13 +3083,36 @@ function render() {
   document.getElementById('musicTone').value = day.music.tone || '';
   document.getElementById('musicRhythm').value = day.music.rhythm || '';
   document.getElementById('musicMinutes').value = day.music.minutes || '';
-  document.getElementById('sleepHours').value = day.metrics.sleep || '';
+  document.getElementById('musicMinLabel').textContent = (parseInt(day.music.minutes) || 0) + ' min';
 
-  document.querySelectorAll('[data-scale="energy"] .scale-btn').forEach(btn => {
-    btn.classList.toggle('active', parseInt(btn.dataset.val) === day.metrics.energy);
+  // Escalas 1–5 (energia, foco, humor, estresse)
+  ['energy','focus','mood','stress'].forEach(scale => {
+    document.querySelectorAll('[data-scale="'+scale+'"] .scale-btn').forEach(btn => {
+      btn.classList.toggle('active', parseInt(btn.dataset.val) === (day.metrics[scale] || 0));
+    });
   });
-  document.querySelectorAll('[data-scale="focus"] .scale-btn').forEach(btn => {
-    btn.classList.toggle('active', parseInt(btn.dataset.val) === day.metrics.focus);
+
+  // Sono — chips de faixa
+  const sleepVal = (day.metrics.sleep === '' || day.metrics.sleep == null) ? null : parseFloat(day.metrics.sleep);
+  document.querySelectorAll('.sleep-chip').forEach(btn => {
+    btn.classList.toggle('active', sleepVal !== null && parseFloat(btn.dataset.val) === sleepVal);
+  });
+  const yest = loadDay(new Date(currentDate.getTime() - 86400000));
+  document.getElementById('sleepHint').textContent = yest.metrics.sleep ? ('ontem ' + yest.metrics.sleep + 'h') : '';
+
+  // Música — chips de minutos
+  document.querySelectorAll('.min-chip').forEach(btn => {
+    btn.classList.toggle('active', parseInt(btn.dataset.val) === (parseInt(day.music.minutes) || 0));
+  });
+
+  // Tags e contexto (multi-seleção)
+  const tags = day.reflection.tags || [];
+  document.querySelectorAll('#tagChips .tag-chip').forEach(btn => {
+    btn.classList.toggle('active', tags.includes(btn.dataset.tag));
+  });
+  const ctx = day.reflection.contexto || [];
+  document.querySelectorAll('#ctxChips .tag-chip').forEach(btn => {
+    btn.classList.toggle('active', ctx.includes(btn.dataset.ctx));
   });
 
   updateTextCard('reflAvancei', day.reflection.avancei || '');
@@ -2789,6 +3121,8 @@ function render() {
 
   updateScores(day);
   renderHistory();
+  updateTrackerHUD();
+  renderMicroInsight();
 }
 
 function useSuggestion() {
@@ -2827,16 +3161,25 @@ function updateScores(day) {
   document.querySelector('#streakScore .score-value').textContent = computeStreak();
 }
 
+// Streak resiliente ("Escudo de Atena"):
+//  - 4/4 keystones = dia pleno
+//  - 3/4 = dia protegido (conta, não quebra)
+//  - 1 escudo absorve um único dia <3/4 antes de quebrar
+//  - hoje ainda sem registro não penaliza
 function computeStreak() {
   let streak = 0;
+  let shield = 1;
   for (let i = 0; i < 365; i++) {
     const dd = new Date(currentDate);
     dd.setDate(currentDate.getDate() - i);
     const data = loadDay(dd);
     const ks = KEYSTONES.filter(id => data.habits[id]).length;
-    if (ks === 4) streak++;
-    else if (i > 0) break;
-    else break;
+    const hasAny = Object.keys(data.habits).length > 0 ||
+      (data.metrics.sleep !== '' && data.metrics.sleep != null) || data.reflection.avancei;
+    if (ks >= 3) { streak++; continue; }          // pleno ou protegido
+    if (i === 0 && !hasAny) continue;              // hoje ainda não logado
+    if (shield > 0) { shield--; continue; }        // escudo absorve a falha
+    break;
   }
   return streak;
 }
@@ -2880,12 +3223,18 @@ document.querySelectorAll('.habit').forEach(el => {
   el.addEventListener('click', () => {
     const id = el.dataset.id;
     const day = loadDay(currentDate);
+    const turningOn = !day.habits[id];
     day.habits[id] = !day.habits[id];
     saveDay(currentDate, day);
     el.classList.toggle('done', day.habits[id]);
+    if (turningOn) {
+      const amount = KEYSTONES.includes(id) ? 10 : 4;
+      floatXP('+' + amount, el);
+    }
     updateScores(day);
     renderHistory();
     syncDayXP(currentDate);
+    updateTrackerHUD();
   });
 });
 
@@ -2902,13 +3251,69 @@ document.querySelectorAll('.scale-btn').forEach(btn => {
   });
 });
 
+// Sono — chips de faixa (toggle, grava metrics.sleep)
+document.querySelectorAll('.sleep-chip').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const val = parseFloat(btn.dataset.val);
+    const day = loadDay(currentDate);
+    const cur = (day.metrics.sleep === '' || day.metrics.sleep == null) ? null : parseFloat(day.metrics.sleep);
+    day.metrics.sleep = (cur === val) ? '' : val;
+    saveDay(currentDate, day);
+    document.querySelectorAll('.sleep-chip').forEach(b =>
+      b.classList.toggle('active', day.metrics.sleep !== '' && parseFloat(b.dataset.val) === day.metrics.sleep));
+  });
+});
+
+// Música — chips de minutos (reaproveita o input existente + saveData)
+document.querySelectorAll('.min-chip').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const val = parseInt(btn.dataset.val);
+    const input = document.getElementById('musicMinutes');
+    const cur = parseInt(input.value) || 0;
+    input.value = (cur === val) ? '' : val;
+    document.getElementById('musicMinLabel').textContent = (parseInt(input.value) || 0) + ' min';
+    document.querySelectorAll('.min-chip').forEach(b =>
+      b.classList.toggle('active', parseInt(b.dataset.val) === (parseInt(input.value) || 0)));
+    saveData();
+  });
+});
+
+// Tags rápidas — multi-seleção (reflection.tags)
+document.querySelectorAll('#tagChips .tag-chip').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tag = btn.dataset.tag;
+    const day = loadDay(currentDate);
+    const arr = day.reflection.tags || [];
+    const i = arr.indexOf(tag);
+    if (i >= 0) arr.splice(i, 1); else arr.push(tag);
+    day.reflection.tags = arr;
+    saveDay(currentDate, day);
+    btn.classList.toggle('active', arr.includes(tag));
+    syncDayXP(currentDate);
+    updateTrackerHUD();
+  });
+});
+
+// Contexto / confounders — multi-seleção (reflection.contexto)
+document.querySelectorAll('#ctxChips .tag-chip').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const ctx = btn.dataset.ctx;
+    const day = loadDay(currentDate);
+    const arr = day.reflection.contexto || [];
+    const i = arr.indexOf(ctx);
+    if (i >= 0) arr.splice(i, 1); else arr.push(ctx);
+    day.reflection.contexto = arr;
+    saveDay(currentDate, day);
+    btn.classList.toggle('active', arr.includes(ctx));
+  });
+});
+
 function saveData() {
   const day = loadDay(currentDate);
   day.music.instrument = document.getElementById('musicInstrument').value;
   day.music.tone = document.getElementById('musicTone').value;
   day.music.rhythm = document.getElementById('musicRhythm').value;
   day.music.minutes = document.getElementById('musicMinutes').value;
-  day.metrics.sleep = document.getElementById('sleepHours').value;
   day.reflection.avancei = getTextCardValue('reflAvancei');
   day.reflection.travei = getTextCardValue('reflTravei');
   day.reflection.proximo = getTextCardValue('reflProximo');
@@ -2965,6 +3370,7 @@ function renderDashboard() {
   checkAchievements();
   container.innerHTML = '';
   container.appendChild(renderGamificationPanel());
+  container.appendChild(renderVerdictCard(agg, aggregateData(getPrevDateRange(currentRange)), 'Veredito · ' + rangeLabel));
   container.appendChild(renderPillarFoundation(agg, rangeLabel));
   container.appendChild(renderPillarConstruction(agg, rangeLabel));
   container.appendChild(renderPillarVitality(agg, rangeLabel));
@@ -3200,26 +3606,124 @@ function renderPillarVitality(agg, rangeLabel) {
   return card;
 }
 
+// Generalizado: contrasta sono contra FOCO, ENERGIA e nº de frentes de trabalho
+// (o desfecho que importa), não mais contra outros keystones.
 function computeSleepInsight(agg) {
-  const lowSleep = [], highSleep = [];
+  const low = [], high = [];
   agg.forEach(({data}) => {
     const s = parseFloat(data.metrics.sleep);
     if (isNaN(s) || s === 0) return;
-    const otherKs = ['k_jejum','k_alimentacao','k_porn'].filter(id => data.habits[id]).length;
-    const pct = otherKs / 3 * 100;
-    if (s < 7) lowSleep.push(pct);
-    else highSleep.push(pct);
+    const rec = {
+      focus: data.metrics.focus || null,
+      energy: data.metrics.energy || null,
+      work: WORK.filter(w => data.habits[w]).length
+    };
+    if (s < 6.5) low.push(rec);
+    else if (s >= 7) high.push(rec);
   });
-  if (lowSleep.length < 2 || highSleep.length < 2) return null;
-  const meanLow = lowSleep.reduce((a,b)=>a+b,0)/lowSleep.length;
-  const meanHigh = highSleep.reduce((a,b)=>a+b,0)/highSleep.length;
-  const diff = Math.round(meanHigh - meanLow);
-  if (Math.abs(diff) < 10) return null;
-  if (diff > 0) {
-    return `Quando você dorme 7h+, cumpre <strong>${diff}pp a mais</strong> de outros keystones. Sono é alavanca.`;
-  } else {
-    return `Curiosamente, dias com menos sono têm ${-diff}pp mais cumprimento. Investigar viés.`;
+  if (low.length < 2 || high.length < 2) return null;
+  const avg = (arr, k) => {
+    const v = arr.map(r => r[k]).filter(x => x !== null && !isNaN(x));
+    return v.length ? v.reduce((a,b)=>a+b,0)/v.length : null;
+  };
+  const fLow = avg(low,'focus'), fHigh = avg(high,'focus');
+  const wLow = avg(low,'work'), wHigh = avg(high,'work');
+  const eLow = avg(low,'energy'), eHigh = avg(high,'energy');
+  if (fLow !== null && fHigh !== null && (fHigh - fLow) >= 0.5) {
+    let extra = '';
+    if (wLow !== null && wHigh !== null && wHigh > 0 && (wHigh - wLow) >= 0.3) {
+      const pct = wLow >= 0 ? Math.round((1 - wLow / wHigh) * 100) : 0;
+      extra = pct > 0 ? ` e você executou ${pct}% menos frentes de trabalho` : '';
+    }
+    return `Nos ${low.length} dias com sono abaixo de 6.5h, seu foco caiu de ${fHigh.toFixed(1)} para ${fLow.toFixed(1)} (−${(fHigh-fLow).toFixed(1)})${extra}. <strong>Alavanca: proteger 7h de sono.</strong>`;
   }
+  if (eLow !== null && eHigh !== null && (eHigh - eLow) >= 0.5) {
+    return `Dormir 7h+ elevou sua energia de ${eLow.toFixed(1)} para ${eHigh.toFixed(1)} (+${(eHigh-eLow).toFixed(1)}). <strong>Sono é a alavanca da vitalidade.</strong>`;
+  }
+  if (wLow !== null && wHigh !== null && (wHigh - wLow) >= 0.4) {
+    return `Com 7h+ de sono você abriu ${wHigh.toFixed(1)} frentes/dia vs ${wLow.toFixed(1)} nas noites curtas. <strong>Sono puxa execução.</strong>`;
+  }
+  return null;
+}
+
+// Motor de correlações binárias por limiar — alimenta o veredito e o export JSON.
+function computeCorrelations(agg) {
+  const out = [];
+  const rows = agg.map(({date, data}) => ({
+    dow: date.getDay(),
+    sleep: parseFloat(data.metrics.sleep) || null,
+    energy: data.metrics.energy || null,
+    focus: data.metrics.focus || null,
+    mood: data.metrics.mood || null,
+    stress: data.metrics.stress || null,
+    work: WORK.filter(w => data.habits[w]).length,
+    gym: !!data.habits.b_academia,
+    porn: !!data.habits.k_porn,
+    ks: KEYSTONES.filter(k => data.habits[k]).length,
+    ctx: data.reflection.contexto || []
+  }));
+  const mean = arr => arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : null;
+  const pick = (arr, k) => arr.map(r => r[k]).filter(v => v !== null && !isNaN(v));
+
+  // 1. Sono → foco/execução (reaproveita o insight de sono)
+  const si = computeSleepInsight(agg);
+  if (si) out.push(si);
+
+  // 2. Academia → energia (mesmo dia)
+  const gymDays = rows.filter(r => r.gym), noGym = rows.filter(r => !r.gym);
+  if (gymDays.length >= 2 && noGym.length >= 2) {
+    const eG = mean(pick(gymDays,'energy')), eN = mean(pick(noGym,'energy'));
+    if (eG !== null && eN !== null && (eG - eN) >= 0.6)
+      out.push(`Nos ${gymDays.length} dias com academia, sua energia foi ${eG.toFixed(1)} vs ${eN.toFixed(1)} sem (+${(eG-eN).toFixed(1)}). <strong>Academia paga juros em energia.</strong>`);
+  }
+
+  // 3. Sem pornografia → fundação
+  const pornOk = rows.filter(r => r.porn), pornFail = rows.filter(r => !r.porn);
+  if (pornOk.length >= 2 && pornFail.length >= 2) {
+    const kOk = mean(pick(pornOk,'ks')), kFail = mean(pick(pornFail,'ks'));
+    if (kOk !== null && kFail !== null && (kOk - kFail) >= 0.8)
+      out.push(`"Sem pornografia" cumprido → ${kOk.toFixed(1)}/4 keystones; falhou → ${kFail.toFixed(1)}/4 (−${(kOk-kFail).toFixed(1)}). <strong>É o keystone mais ligado ao colapso da fundação.</strong>`);
+  }
+
+  // 4. Foco alto + estresse alto → burnout invisível
+  const burnout = rows.filter(r => r.stress >= 4 && r.focus >= 4);
+  if (burnout.length >= 2) {
+    const e = mean(pick(burnout,'energy'));
+    out.push(`Em ${burnout.length} dias você combinou foco alto com estresse alto${e !== null ? ` — energia média de ${e.toFixed(1)}` : ''}. <strong>Risco de burnout invisível: recupere antes de empurrar.</strong>`);
+  }
+
+  // 5. Café pós-16h → sono
+  const cafe = rows.filter(r => r.ctx.includes('cafe') && r.sleep !== null);
+  const semCafe = rows.filter(r => !r.ctx.includes('cafe') && r.sleep !== null);
+  if (cafe.length >= 2 && semCafe.length >= 2) {
+    const sC = mean(pick(cafe,'sleep')), sS = mean(pick(semCafe,'sleep'));
+    if (sC !== null && sS !== null && (sS - sC) >= 0.4)
+      out.push(`Nos dias com café pós-16h seu sono caiu ${(sS-sC).toFixed(1)}h (${sC.toFixed(1)}h vs ${sS.toFixed(1)}h baseline). <strong>Cafeína tardia contamina a fundação.</strong>`);
+  }
+
+  // 6. Humor segue o sono
+  const moodRows = rows.filter(r => r.mood !== null && r.sleep !== null);
+  if (moodRows.length >= 4) {
+    const lowS = moodRows.filter(r => r.sleep < 6.5), highS = moodRows.filter(r => r.sleep >= 7);
+    if (lowS.length >= 2 && highS.length >= 2) {
+      const mL = mean(pick(lowS,'mood')), mH = mean(pick(highS,'mood'));
+      if (mL !== null && mH !== null && (mH - mL) >= 0.6)
+        out.push(`Humor médio ${mL.toFixed(1)} nas noites curtas vs ${mH.toFixed(1)} dormindo bem (+${(mH-mL).toFixed(1)}). <strong>Humor está seguindo o sono, não o trabalho.</strong>`);
+    }
+  }
+
+  // 7. Pior dia da semana por foco
+  const byDow = {};
+  rows.forEach(r => { if (r.focus !== null) { (byDow[r.dow] = byDow[r.dow] || []).push(r.focus); } });
+  const dowMeans = Object.entries(byDow).filter(([_, v]) => v.length >= 2).map(([d, v]) => ({ d: +d, m: mean(v) }));
+  if (dowMeans.length >= 3) {
+    dowMeans.sort((a,b) => a.m - b.m);
+    const worst = dowMeans[0], best = dowMeans[dowMeans.length - 1];
+    if (best.m - worst.m >= 1)
+      out.push(`Seu pior dia de foco é ${DAY_NAMES[worst.d].toLowerCase()} (${worst.m.toFixed(1)}); o melhor é ${DAY_NAMES[best.d].toLowerCase()} (${best.m.toFixed(1)}). <strong>Algo na ${DAY_NAMES[worst.d].toLowerCase()} drena execução — investigar a agenda.</strong>`);
+  }
+
+  return out;
 }
 
 /* PILAR 4: CULTURA */
@@ -3307,7 +3811,8 @@ function renderPillarCulture(agg, rangeLabel) {
 /* PILAR 5: CONSCIÊNCIA */
 function renderPillarAwareness(agg, rangeLabel) {
   const reflDays = agg.filter(({data}) =>
-    data.reflection.avancei || data.reflection.travei || data.reflection.proximo).length;
+    data.reflection.avancei || data.reflection.travei || data.reflection.proximo ||
+    (data.reflection.tags && data.reflection.tags.length)).length;
   const reflFull = agg.filter(({data}) =>
     data.reflection.avancei && data.reflection.travei && data.reflection.proximo).length;
   const pct = Math.round((reflDays / agg.length) * 100);
@@ -3552,9 +4057,13 @@ function computeAllStats(agg) {
   const sleeps = agg.map(({data}) => parseFloat(data.metrics.sleep)).filter(v => !isNaN(v) && v > 0);
   const energies = agg.map(({data}) => data.metrics.energy).filter(v => v > 0);
   const focuses = agg.map(({data}) => data.metrics.focus).filter(v => v > 0);
+  const moods = agg.map(({data}) => data.metrics.mood).filter(v => v > 0);
+  const stresses = agg.map(({data}) => data.metrics.stress).filter(v => v > 0);
   const meanSleep = sleeps.length ? sleeps.reduce((a,b)=>a+b,0)/sleeps.length : 0;
   const meanEnergy = energies.length ? energies.reduce((a,b)=>a+b,0)/energies.length : 0;
   const meanFocus = focuses.length ? focuses.reduce((a,b)=>a+b,0)/focuses.length : 0;
+  const meanMood = moods.length ? moods.reduce((a,b)=>a+b,0)/moods.length : 0;
+  const meanStress = stresses.length ? stresses.reduce((a,b)=>a+b,0)/stresses.length : 0;
   const sleepStd = sleeps.length > 1 ? Math.sqrt(sleeps.reduce((a,b)=>a+Math.pow(b-meanSleep,2),0)/sleeps.length) : 0;
   const academiaCount = agg.filter(({data}) => data.habits.b_academia).length;
   const mobilidadeCount = agg.filter(({data}) => data.habits.b_mobilidade).length;
@@ -3586,7 +4095,8 @@ function computeAllStats(agg) {
   const untouchedTones = ALL_TONES.filter(t => !recent14.has(t));
 
   const reflDays = agg.filter(({data}) =>
-    data.reflection.avancei || data.reflection.travei || data.reflection.proximo).length;
+    data.reflection.avancei || data.reflection.travei || data.reflection.proximo ||
+    (data.reflection.tags && data.reflection.tags.length)).length;
   const reflFull = agg.filter(({data}) =>
     data.reflection.avancei && data.reflection.travei && data.reflection.proximo).length;
   const awarenessPct = days > 0 ? Math.round((reflDays / days) * 100) : 0;
@@ -3595,62 +4105,108 @@ function computeAllStats(agg) {
     avgPct, daysWithData, bestDay, worstDay, driftAlerts,
     foundation: { pct: foundationPct, days4of4, streakNow: computeStreak(), streakMax: computeMaxStreak(), byHabit: ksByHabit },
     construction: { pctActive, balance, activeFronts, byHabit: workByHabit },
-    vitality: { meanSleep, meanEnergy, meanFocus, sleepStd, academiaCount, mobilidadeCount, sleepInsight },
+    vitality: { meanSleep, meanEnergy, meanFocus, meanMood, meanStress, sleepStd, academiaCount, mobilidadeCount, sleepInsight },
     culture: { totalMinutes, leitura, xadrez, tonesRecent, tonesInRange: tonesInRangeCount, instrumentMin, untouchedTones },
     awareness: { reflDays, reflFull, pct: awarenessPct }
   };
 }
 
-function generateNarrative(stats, prevStats, days) {
+// Linhas de veredito por regras (retorna array de HTML). Combinado com computeCorrelations.
+function generateNarrativeLines(stats, prevStats, days) {
   const lines = [];
+  prevStats = prevStats || { daysWithData: 0, foundation: { pct: 0, byHabit: {} }, construction: { balance: 100, activeFronts: 0, byHabit: {} } };
 
   if (stats.foundation.pct >= 80) {
-    lines.push(`- **Fundação sólida** (${stats.foundation.pct}%). Base estável é capital — protege os outros pilares.`);
+    lines.push(`<strong>Fundação sólida</strong> (${stats.foundation.pct}%). Base estável protege os outros pilares.`);
   } else if (stats.foundation.pct < 60 && stats.daysWithData > 3) {
     const weakest = Object.entries(stats.foundation.byHabit).sort((a,b)=>a[1]-b[1])[0];
-    lines.push(`- **Fundação fraca** (${stats.foundation.pct}%). Antes de otimizar outros pilares, recuperar os keystones. Comece pelo menos cumprido: ${LABELS[weakest[0]]} (${weakest[1]}/${days} dias).`);
+    if (weakest) lines.push(`<strong>Fundação fraca</strong> (${stats.foundation.pct}%). Recuperar os keystones — comece pelo menos cumprido: ${LABELS[weakest[0]]} (${weakest[1]}/${days} dias).`);
   }
 
   const fDelta = stats.foundation.pct - prevStats.foundation.pct;
   if (fDelta < -10 && prevStats.daysWithData > 0) {
-    lines.push(`- ⚠️ Regressão na fundação: queda de ${Math.abs(fDelta).toFixed(0)}pp vs período anterior. Investigar causa.`);
+    lines.push(`⚠️ Regressão na fundação: queda de ${Math.abs(fDelta).toFixed(0)}pp vs período anterior.`);
   } else if (fDelta > 10 && prevStats.daysWithData > 0) {
-    lines.push(`- ✓ Recuperação da fundação: +${fDelta.toFixed(0)}pp vs período anterior.`);
+    lines.push(`✓ Recuperação da fundação: +${fDelta.toFixed(0)}pp vs período anterior.`);
   }
 
   if (stats.construction.balance < 50 && stats.construction.activeFronts > 1) {
     const dominant = Object.entries(stats.construction.byHabit).sort((a,b) => b[1] - a[1])[0];
     const neglected = Object.entries(stats.construction.byHabit).sort((a,b) => a[1] - b[1])[0];
-    lines.push(`- **Desbalanço de frentes**: ${LABELS[dominant[0]]} dominando (${dominant[1]} dias), ${LABELS[neglected[0]]} negligenciada (${neglected[1]} dias). Decidir se é foco deliberado ou drift.`);
+    lines.push(`<strong>Desbalanço de frentes</strong>: ${LABELS[dominant[0]]} dominando (${dominant[1]} dias), ${LABELS[neglected[0]]} negligenciada (${neglected[1]} dias).`);
   }
 
   if (stats.driftAlerts.length >= 2) {
-    lines.push(`- **${stats.driftAlerts.length} frentes em drift simultâneo**. Sintoma de foco excessivo em uma única, ou período de baixa energia geral.`);
+    lines.push(`<strong>${stats.driftAlerts.length} frentes em drift simultâneo</strong>. Foco excessivo numa só, ou período de baixa energia.`);
   }
 
   if (stats.vitality.meanSleep && stats.vitality.meanSleep < 6.5) {
-    lines.push(`- **Sono crítico** (${stats.vitality.meanSleep.toFixed(1)}h). Para um torrador que depende de palato, isso é performance profissional.`);
+    lines.push(`<strong>Sono crítico</strong> (${stats.vitality.meanSleep.toFixed(1)}h). Para quem depende de palato, isso é performance profissional.`);
   }
   if (stats.vitality.sleepStd > 1.5) {
-    lines.push(`- **Sono instável** (±${stats.vitality.sleepStd.toFixed(1)}h). Consistência supera duração.`);
+    lines.push(`<strong>Sono instável</strong> (±${stats.vitality.sleepStd.toFixed(1)}h). Consistência supera duração.`);
+  }
+  if (stats.vitality.meanStress && stats.vitality.meanStress >= 3.5) {
+    lines.push(`<strong>Estresse elevado</strong> (média ${stats.vitality.meanStress.toFixed(1)}/5 no período).`);
   }
 
   if (stats.culture.tonesRecent < 8 && stats.culture.totalMinutes > 30) {
-    lines.push(`- **Cobertura tonal baixa** (${stats.culture.tonesRecent}/12 em 14 dias). Não tocados recentemente: ${stats.culture.untouchedTones.slice(0,4).join(', ')}${stats.culture.untouchedTones.length > 4 ? '...' : ''}.`);
-  }
-  if (stats.culture.totalMinutes / days < 15 && stats.daysWithData > 5) {
-    lines.push(`- **Música abaixo do limiar** (média ${(stats.culture.totalMinutes/days).toFixed(0)}min/dia). Abaixo de 20min/dia raramente gera fluência mensurável.`);
+    lines.push(`<strong>Cobertura tonal baixa</strong> (${stats.culture.tonesRecent}/12 em 14 dias). Não tocados: ${stats.culture.untouchedTones.slice(0,4).join(', ')}${stats.culture.untouchedTones.length > 4 ? '…' : ''}.`);
   }
 
   if (stats.awareness.pct < 40 && stats.daysWithData > 5) {
-    lines.push(`- **Reflexão escassa** (${stats.awareness.pct}%). Tracker sem reflexão é coleta sem aprendizado.`);
+    lines.push(`<strong>Reflexão escassa</strong> (${stats.awareness.pct}%). Tracker sem reflexão é coleta sem aprendizado.`);
   }
 
-  if (lines.length === 0) {
-    lines.push('- Sem padrões críticos detectados. Continuar a rotina atual e voltar a olhar em uma semana.');
-  }
+  return lines;
+}
 
-  return lines.join('\n');
+// Janela anterior equivalente (para deltas no dashboard)
+function getPrevDateRange(range) {
+  const days = range === 'week' ? 7 : range === 'month' ? 30 : 365;
+  const end = new Date(); end.setHours(0,0,0,0);
+  end.setDate(end.getDate() - days);
+  const dates = [];
+  for (let i = days - 1; i >= 0; i--) { const d = new Date(end); d.setDate(end.getDate() - i); dates.push(d); }
+  return dates;
+}
+
+// A recomendação #1 (imperativa) do período
+function pickAction(corrLines, stats) {
+  for (const l of corrLines) {
+    const m = l.match(/<strong>(.*?)<\/strong>/);
+    if (m) return m[1].replace(/^Alavanca:\s*/i, '');
+  }
+  if (stats.foundation.pct < 60 && stats.daysWithData > 2) {
+    const weakest = Object.entries(stats.foundation.byHabit).sort((a,b)=>a[1]-b[1])[0];
+    if (weakest) return `Recuperar a fundação começando por ${LABELS[weakest[0]]}.`;
+  }
+  if (stats.driftAlerts.length) return `Retomar ${stats.driftAlerts[0].label} — maior drift do período.`;
+  if (stats.vitality.meanSleep && stats.vitality.meanSleep < 6.5) return `Proteger 7h de sono — alavanca de maior efeito.`;
+  if (stats.vitality.meanStress && stats.vitality.meanStress >= 3.5) return `Reduzir estresse antes de aumentar carga.`;
+  return `Manter a consistência e reavaliar na próxima semana.`;
+}
+
+// Card de veredito (dois call sites: dashboard e review) — antes era dead code.
+function renderVerdictCard(agg, prevAgg, title) {
+  const stats = computeAllStats(agg);
+  const prevStats = computeAllStats(prevAgg || []);
+  const corrLines = computeCorrelations(agg);
+  const ruleLines = generateNarrativeLines(stats, prevStats, agg.length);
+  const all = [...corrLines, ...ruleLines];
+  const card = document.createElement('div');
+  card.className = 'verdict-card';
+  if (all.length === 0) {
+    card.innerHTML = `<div class="verdict-title">${title}</div><div class="verdict-body verdict-empty">Sem padrões fortes ainda. Continue registrando — correlações aparecem a partir de ~5 dias com dados.</div>`;
+    return card;
+  }
+  const top = all.slice(0, 3);
+  const action = pickAction(corrLines, stats);
+  card.innerHTML = `
+    <div class="verdict-title">${title}</div>
+    <div class="verdict-body">${top.map(l => '<p>' + l + '</p>').join('')}</div>
+    <div class="verdict-action">▶ ${action}</div>`;
+  return card;
 }
 
 function exportAll() {
@@ -3721,7 +4277,10 @@ function summarizeForAnalysis(agg, periodo) {
     leitura_dias: s.culture.leitura,
     xadrez: s.culture.xadrez,
     reflexao_pct: s.awareness.pct,
-    insight_sono: s.vitality.sleepInsight ? s.vitality.sleepInsight.replace(/<[^>]+>/g, '') : null
+    humor_medio: s.vitality.meanMood,
+    estresse_medio: s.vitality.meanStress,
+    insight_sono: s.vitality.sleepInsight ? s.vitality.sleepInsight.replace(/<[^>]+>/g, '') : null,
+    correlacoes: computeCorrelations(agg).map(c => c.replace(/<[^>]+>/g, ''))
   };
 }
 
@@ -3877,8 +4436,17 @@ function renderReview() {
   const weekAgg = aggregateData(weekDates);
   const weekStats = computeAllStats(weekAgg);
 
+  // Janela da semana anterior (deltas + alavancas)
+  const prevWeekDates = [];
+  for (let i = 13; i >= 7; i--) { const d = new Date(weekEnd); d.setDate(weekEnd.getDate() - i); prevWeekDates.push(d); }
+  const prevWeekAgg = aggregateData(prevWeekDates);
+  const prevWeekStats = computeAllStats(prevWeekAgg);
+
   renderPrevGoalsEvaluation(weekStats);
-  renderWeekSummary(weekStats);
+  renderWeekSummary(weekStats, prevWeekStats);
+  // Card "Alavancas da semana" (veredito automático) no topo do resumo
+  const wsBody = document.getElementById('weekSummaryBody');
+  wsBody.insertBefore(renderVerdictCard(weekAgg, prevWeekAgg, 'Alavancas da semana'), wsBody.firstChild);
   renderGoalsList();
 
   updateTextCard('reviewPattern', reviewState.pattern);
@@ -3955,21 +4523,34 @@ function formatActual(goal) {
   return String(goal.actual);
 }
 
-function renderWeekSummary(stats) {
+function renderWeekSummary(stats, prevStats) {
   const body = document.getElementById('weekSummaryBody');
   const meanSleep = stats.vitality.meanSleep;
+  const meanFocus = stats.vitality.meanFocus;
   const musicAvg = (stats.culture.totalMinutes / 7).toFixed(0);
+  const has = prevStats && prevStats.daysWithData > 0;
+
+  const dScore = has ? deltaSpan(stats.avgPct, prevStats.avgPct, 'pp', true, 0) : '';
+  const dKs = has ? deltaSpan(stats.foundation.pct, prevStats.foundation.pct, 'pp', true, 0) : '';
+  const dSleep = (has && meanSleep && prevStats.vitality.meanSleep) ? deltaSpan(meanSleep, prevStats.vitality.meanSleep, 'h', true, 1) : '';
+  const dFocus = (has && meanFocus && prevStats.vitality.meanFocus) ? deltaSpan(meanFocus, prevStats.vitality.meanFocus, '', true, 1) : '';
 
   body.innerHTML = `
     <div class="week-stats">
       <div class="week-stat">
         <div class="week-stat-label">Score médio</div>
         <div class="week-stat-value ${stats.avgPct >= 70 ? 'good' : stats.avgPct >= 50 ? 'warn' : 'bad'}">${stats.avgPct}%</div>
+        <div class="week-stat-meta">${dScore}</div>
       </div>
       <div class="week-stat">
         <div class="week-stat-label">Keystones</div>
         <div class="week-stat-value ${stats.foundation.pct >= 80 ? 'good' : stats.foundation.pct >= 60 ? 'warn' : 'bad'}">${stats.foundation.pct}%</div>
-        <div class="week-stat-meta">${stats.foundation.days4of4} dias 4/4</div>
+        <div class="week-stat-meta">${stats.foundation.days4of4} dias 4/4 ${dKs}</div>
+      </div>
+      <div class="week-stat">
+        <div class="week-stat-label">Foco médio</div>
+        <div class="week-stat-value ${meanFocus >= 3.5 ? 'good' : meanFocus >= 2.5 ? 'warn' : meanFocus > 0 ? 'bad' : ''}">${meanFocus ? meanFocus.toFixed(1) : '—'}</div>
+        <div class="week-stat-meta">${dFocus}</div>
       </div>
       <div class="week-stat">
         <div class="week-stat-label">Streak</div>
@@ -3979,7 +4560,7 @@ function renderWeekSummary(stats) {
       <div class="week-stat">
         <div class="week-stat-label">Sono médio</div>
         <div class="week-stat-value ${meanSleep >= 7 ? 'good' : meanSleep >= 6 ? 'warn' : meanSleep > 0 ? 'bad' : ''}">${meanSleep ? meanSleep.toFixed(1) + 'h' : '—'}</div>
-        <div class="week-stat-meta">±${stats.vitality.sleepStd.toFixed(1)}h</div>
+        <div class="week-stat-meta">±${stats.vitality.sleepStd.toFixed(1)}h ${dSleep}</div>
       </div>
       <div class="week-stat">
         <div class="week-stat-label">Música</div>
@@ -4330,9 +4911,13 @@ function buildReviewObject() {
 function saveReviewNow() {
   const review = buildReviewObject();
   localStorage.setItem('review_' + review.week_ending, JSON.stringify(review));
-  // XP por concluir review
-  awardXP(40, 'Review semanal concluído');
-  showToast('Review salvo ✓');
+  // Cofre da Semana: bônus escalonado por consistência (no lugar do +40 fixo)
+  const d4 = review.summary.days_4of4 || 0;
+  let bonus = 40, selo = 'Review concluído', icone = '🧭';
+  if (d4 >= 7) { bonus = 90; selo = 'Semana Inabalável'; icone = '👑'; }
+  else if (d4 >= 5) { bonus = 60; selo = 'Semana Sólida'; icone = '🛡️'; }
+  awardXP(bonus, 'Review semanal · ' + selo);
+  celebrate(icone, selo, '+' + bonus + ' XP · ' + d4 + ' dias 4/4 nesta semana');
   renderReview();
 }
 
@@ -4534,16 +5119,25 @@ function syncDayXP(date) {
   // reflexão completa: +10
   const refl = day.reflection || {};
   if (refl.avancei && refl.travei && refl.proximo) dayXP += 10;
+  // registro de tags do dia: +2
+  if ((refl.tags || []).length > 0) dayXP += 2;
 
   const prevAwarded = day._xpAwarded || 0;
   const delta = dayXP - prevAwarded;
   if (delta !== 0) {
     const g = loadGamification();
+    const oldLevel = levelFromXP(g.xp);
     g.xp = Math.max(0, g.xp + delta);
+    const newLevel = levelFromXP(g.xp);
     saveGamification(g);
     day._xpAwarded = dayXP;
     // salvar sem toast (evita "Salvo" duplicado)
     localStorage.setItem(STORAGE_PREFIX + dateKey(date), JSON.stringify(day));
+    // CORREÇÃO: o level-up diário era silencioso — agora dispara celebração
+    if (newLevel > oldLevel) {
+      celebrate('⬆', 'Nível ' + newLevel, LEVEL_TITLES[Math.min(newLevel - 1, LEVEL_TITLES.length - 1)]);
+    }
+    updateTrackerHUD();
   }
   checkAchievements();
 }
@@ -4627,11 +5221,29 @@ function checkAchievements() {
   });
   if (newUnlocks.length > 0) {
     saveGamification(g);
-    // Notifica a primeira conquista nova
+    // Celebra a primeira conquista nova
     const first = newUnlocks[0];
-    setTimeout(() => showToast(`${first.icon} Conquista: ${first.name}`), 600);
+    setTimeout(() => celebrate(first.icon, 'Conquista desbloqueada', first.name), 600);
   }
   return g;
+}
+
+// Progresso de conquistas bloqueadas (cenoura visível no Tracker/Dashboard)
+function achievementProgress(id, ctx) {
+  switch (id) {
+    case 'first_day':   return [ctx.totalDaysWithData, 1];
+    case 'streak_3':    return [ctx.maxStreak, 3];
+    case 'streak_7':    return [ctx.maxStreak, 7];
+    case 'streak_21':   return [ctx.maxStreak, 21];
+    case 'streak_30':   return [ctx.maxStreak, 30];
+    case 'music_300':   return [ctx.totalMusicMin, 300];
+    case 'tones_12':    return [ctx.tonesRecent, 12];
+    case 'gym_20':      return [ctx.totalGym, 20];
+    case 'reflect_14':  return [ctx.totalReflect, 14];
+    case 'level_5':     return [ctx.level, 5];
+    case 'review_first':return [ctx.reviewCount, 1];
+    default: return null;
+  }
 }
 
 /* ─── RENDER DO PAINEL DE GAMIFICAÇÃO (no topo do dashboard) ─── */
@@ -4690,14 +5302,129 @@ function renderGamificationPanel() {
     const badge = document.createElement('div');
     badge.className = 'achievement-badge ' + (unlocked ? 'unlocked' : 'locked');
     badge.title = a.name + ' — ' + a.desc;
+    let progHtml = '';
+    if (!unlocked) {
+      const p = achievementProgress(a.id, ctx);
+      if (p && p[0] > 0) progHtml = `<div class="achievement-progress">${Math.min(p[0], p[1])}/${p[1]}</div>`;
+    }
     badge.innerHTML = `
       <div class="achievement-icon" style="${unlocked ? '--ach-color:' + a.color : ''}">${unlocked ? a.icon : '🔒'}</div>
       <div class="achievement-name">${unlocked ? a.name : '???'}</div>
+      ${progHtml}
     `;
     grid.appendChild(badge);
   });
 
   return panel;
+}
+
+/* ═══════════════════════════════════════════════════════
+   V2 — UI HELPERS (celebração, XP flutuante, HUD, micro-insight)
+═══════════════════════════════════════════════════════ */
+let celebrateTimer;
+function celebrate(icon, title, sub) {
+  const ov = document.getElementById('celebrate');
+  if (!ov) return;
+  document.getElementById('celebrateIcon').textContent = icon;
+  document.getElementById('celebrateTitle').textContent = title;
+  document.getElementById('celebrateSub').textContent = sub || '';
+  ov.classList.add('show');
+  try { if (navigator.vibrate) navigator.vibrate([10, 40, 10]); } catch(e) {}
+  clearTimeout(celebrateTimer);
+  celebrateTimer = setTimeout(hideCelebrate, 2600);
+}
+function hideCelebrate() {
+  const ov = document.getElementById('celebrate');
+  if (ov) ov.classList.remove('show');
+}
+
+function floatXP(text, anchorEl) {
+  try {
+    const r = anchorEl.getBoundingClientRect();
+    const el = document.createElement('div');
+    el.className = 'xp-float';
+    el.textContent = text;
+    el.style.left = (r.left + r.width * 0.5) + 'px';
+    el.style.top = (r.top + r.height * 0.3) + 'px';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 950);
+  } catch(e) {}
+}
+
+function updateTrackerHUD() {
+  const g = loadGamification();
+  const level = levelFromXP(g.xp);
+  const curXP = xpForLevel(level), nextXP = xpForLevel(level + 1);
+  const pct = Math.min(100, Math.round(((g.xp - curXP) / Math.max(1, nextXP - curXP)) * 100));
+  const lvlEl = document.getElementById('hudLevel');
+  const fillEl = document.getElementById('hudXpFill');
+  const txtEl = document.getElementById('hudXpText');
+  if (lvlEl) lvlEl.textContent = 'Nv ' + level + ' · ' + LEVEL_TITLES[Math.min(level - 1, LEVEL_TITLES.length - 1)];
+  if (fillEl) fillEl.style.width = pct + '%';
+  if (txtEl) txtEl.textContent = Math.max(0, nextXP - g.xp) + ' XP p/ subir';
+}
+
+function renderMicroInsight() {
+  const el = document.getElementById('microInsight');
+  if (!el) return;
+  const today = loadDay(currentDate);
+  const yest = loadDay(new Date(currentDate.getTime() - 86400000));
+  let msg = '';
+  const ys = parseFloat(yest.metrics.sleep);
+  if (!isNaN(ys) && ys > 0 && ys < 6.5) {
+    msg = `Ontem você dormiu <strong>${ys}h</strong> — costuma puxar o foco para baixo. Atenção hoje.`;
+  } else if (yest.habits.b_academia && !today.habits.b_academia) {
+    msg = `Treinou ontem — sua energia costuma render mais hoje. Aproveite a janela.`;
+  } else {
+    const streak = computeStreak();
+    if (streak >= 2) {
+      const goal = [3, 7, 21, 30].find(n => n > streak);
+      if (goal) msg = `🔥 Streak de <strong>${streak}</strong> dias. Faltam <strong>${goal - streak}</strong> para o próximo marco.`;
+    }
+  }
+  if (msg) { el.innerHTML = msg; el.classList.add('show'); }
+  else { el.classList.remove('show'); el.innerHTML = ''; }
+}
+
+function quickLogMusic() {
+  const tone = getToneOfDay(currentDate);
+  const rhythm = getRhythmOfDay(currentDate);
+  document.getElementById('musicTone').value = tone.tone || '';
+  document.getElementById('musicRhythm').value = rhythm || '';
+  if (!document.getElementById('musicInstrument').value) {
+    document.getElementById('musicInstrument').value = 'acordeon';
+  }
+  const minEl = document.getElementById('musicMinutes');
+  if (!minEl.value) minEl.value = 20;
+  document.getElementById('musicMinLabel').textContent = (parseInt(minEl.value) || 0) + ' min';
+  document.querySelectorAll('.min-chip').forEach(b =>
+    b.classList.toggle('active', parseInt(b.dataset.val) === (parseInt(minEl.value) || 0)));
+  saveData();
+  showToast('Música registrada');
+}
+
+function toggleOptional() {
+  const block = document.getElementById('optionalBlock');
+  const div = document.getElementById('optionalDivider');
+  const nowCollapsed = block.classList.toggle('collapsed');
+  div.classList.toggle('open', !nowCollapsed);
+}
+
+function toggleMusicAdvanced() {
+  const adv = document.getElementById('musicAdvanced');
+  adv.style.display = (adv.style.display === 'none' || !adv.style.display) ? 'grid' : 'none';
+}
+
+function deltaSpan(cur, prev, unit, higherBetter, dec) {
+  if (prev === null || prev === undefined || isNaN(prev) || isNaN(cur)) return '';
+  if (prev === 0 && cur === 0) return '';
+  const d = cur - prev;
+  const thr = dec ? 0.05 : 0.5;
+  if (Math.abs(d) < thr) return '<span class="delta-flat">→ estável</span>';
+  const up = d > 0;
+  const good = higherBetter ? up : !up;
+  const val = (dec ? Math.abs(d).toFixed(dec) : Math.round(Math.abs(d))) + (unit || '');
+  return `<span class="${good ? 'delta-up' : 'delta-down'}">${up ? '▲' : '▼'}${val}</span>`;
 }
 
 /* INIT */
