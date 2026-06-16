@@ -4857,6 +4857,540 @@
     white-space: nowrap;
     border: 0;
   }
+
+  /* ============================================================ */
+  /* ============ CAMADA DE GAMIFICAÇÃO ÉPICA ================== */
+  /* ============================================================ */
+  /* HUD do guerreiro (patente, nível, barra de PODER, sequência  */
+  /* de fogo, tonelagem), surtos de força ao concluir séries,     */
+  /* números de XP flutuantes, ascensão de nível e feitos.        */
+
+  /* ---- Vinheta de batalha (cinematográfica, tela inteira) ---- */
+  .battle-vignette {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    box-shadow:
+      inset 0 0 150px 40px rgba(0,0,0,0.55),
+      inset 0 0 70px rgba(200,155,60, calc(0.03 + var(--rage,0) * 0.10)),
+      inset 0 -40px 90px rgba(168,50,50, calc(var(--rage,0) * 0.05));
+    transition: box-shadow 1.2s ease;
+  }
+  .battle-vignette::before {
+    /* respiração de fúria no topo — luz divina que pulsa com o poder do dia */
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 42%;
+    background: radial-gradient(ellipse 70% 100% at 50% 0%,
+      rgba(240,198,116, calc(0.04 + var(--rage,0) * 0.09)) 0%, transparent 70%);
+    animation: rageBreath 6s ease-in-out infinite;
+  }
+  @keyframes rageBreath {
+    0%, 100% { opacity: 0.65; }
+    50% { opacity: 1; }
+  }
+  body.rage-max .battle-vignette {
+    animation: vignettePulse 2.4s ease-in-out infinite;
+  }
+  @keyframes vignettePulse {
+    0%, 100% { box-shadow:
+      inset 0 0 150px 40px rgba(0,0,0,0.55),
+      inset 0 0 70px rgba(200,155,60,0.12),
+      inset 0 -50px 100px rgba(168,50,50,0.06); }
+    50% { box-shadow:
+      inset 0 0 150px 40px rgba(0,0,0,0.5),
+      inset 0 0 90px rgba(240,198,116,0.18),
+      inset 0 -50px 110px rgba(168,50,50,0.10); }
+  }
+
+  /* ---- HUD: a barra de status do guerreiro (no header) ------- */
+  .pwr-hud {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px 11px;
+    background:
+      linear-gradient(180deg, rgba(22,16,10,0.96) 0%, rgba(13,10,8,0.94) 100%);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid transparent;
+    border-image: linear-gradient(90deg, transparent 0%, var(--gold-deep) 25%, var(--gold) 50%, var(--gold-deep) 75%, transparent 100%) 1;
+    position: relative;
+    overflow: hidden;
+  }
+  .pwr-hud::before {
+    /* brilho metálico que cruza o HUD ocasionalmente */
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 30%, rgba(240,198,116,0.06) 48%, rgba(255,255,255,0.05) 50%, transparent 70%);
+    transform: translateX(-120%);
+    animation: hudSheen 7s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes hudSheen {
+    0%, 70% { transform: translateX(-120%); }
+    85%, 100% { transform: translateX(120%); }
+  }
+
+  /* Emblema da patente — medalhão losango rúnico */
+  .hud-emblem {
+    position: relative;
+    width: 42px; height: 42px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+  }
+  .hud-emblem::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    transform: rotate(45deg);
+    background: linear-gradient(135deg, rgba(200,155,60,0.18) 0%, rgba(12,10,8,0.6) 60%);
+    border: 1.5px solid var(--gold);
+    box-shadow:
+      0 0 14px rgba(200,155,60,0.35),
+      inset 0 0 10px rgba(240,198,116,0.25);
+  }
+  .hud-emblem::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    transform: rotate(45deg);
+    border: 1px solid var(--gold-deep);
+    opacity: 0.55;
+  }
+  .hud-emblem .he-rune {
+    position: relative;
+    z-index: 2;
+    font-family: 'Cinzel', Georgia, serif;
+    font-weight: 900;
+    font-size: 20px;
+    line-height: 1;
+    color: var(--gold-bright);
+    text-shadow: 0 0 10px rgba(240,198,116,0.7), 0 0 2px #fff3d0, 0 1px 1px rgba(0,0,0,0.6);
+  }
+  .hud-emblem.tier-up { animation: emblemForge 0.9s cubic-bezier(0.34,1.56,0.64,1); }
+  @keyframes emblemForge {
+    0% { transform: scale(0.6) rotate(-12deg); filter: brightness(2); }
+    60% { transform: scale(1.18) rotate(4deg); }
+    100% { transform: scale(1) rotate(0); }
+  }
+
+  .hud-rank {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex-shrink: 0;
+  }
+  .hud-rank-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .hud-rank-name {
+    font-family: 'Cinzel', Georgia, serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    color: var(--gold-pale);
+    text-shadow: 0 0 8px rgba(200,155,60,0.3);
+    white-space: nowrap;
+    max-width: 112px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .hud-level {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    color: var(--text-3);
+    text-transform: uppercase;
+  }
+  .hud-level b { color: var(--gold-bright); font-size: 11px; }
+
+  /* Barra de PODER (XP) */
+  .hud-xp { flex: 1 1 70px; min-width: 60px; display: flex; flex-direction: column; gap: 4px; }
+  .hud-xp-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 6px;
+    white-space: nowrap;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .hud-xp-head .lbl, .hud-xp-head .val { overflow: hidden; text-overflow: ellipsis; }
+  .hud-xp-head .lbl { color: var(--text-3); font-weight: 700; }
+  .hud-xp-head .val { color: var(--text-2); font-weight: 700; }
+  .hud-xp-bar {
+    position: relative;
+    height: 9px;
+    background: linear-gradient(180deg, #080604 0%, #15110d 100%);
+    border: 1px solid var(--border-bright);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.6);
+    overflow: hidden;
+  }
+  .hud-xp-fill {
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    width: var(--xp, 0%);
+    background: linear-gradient(90deg, var(--gold-deep) 0%, var(--gold) 55%, var(--gold-bright) 100%);
+    box-shadow: 0 0 10px rgba(240,198,116,0.55), 0 0 3px rgba(255,255,255,0.4) inset;
+    transition: width 0.85s cubic-bezier(0.2,0.8,0.2,1);
+  }
+  .hud-xp-fill::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
+    transform: translateX(-100%);
+    animation: hudShimmer 2.6s linear infinite;
+  }
+  @keyframes hudShimmer {
+    0% { transform: translateX(-100%); }
+    60%, 100% { transform: translateX(220%); }
+  }
+
+  /* Estatísticas: sequência de fogo + tonelagem */
+  .hud-stats { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+  .hud-stat { display: flex; flex-direction: column; align-items: center; gap: 1px; line-height: 1; }
+  .hud-stat-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--gold-pale);
+    text-shadow: 0 0 8px rgba(200,155,60,0.35);
+  }
+  .hud-stat-lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 7.5px;
+    letter-spacing: 0.1em;
+    color: var(--text-3);
+    text-transform: uppercase;
+  }
+  .hud-streak { display: flex; align-items: center; gap: 4px; }
+  .hud-flame {
+    font-size: 17px;
+    line-height: 1;
+    filter: drop-shadow(0 0 6px rgba(255,140,40,0.7));
+    animation: flameFlicker 1.4s ease-in-out infinite;
+  }
+  .hud-streak.cold .hud-flame { filter: grayscale(0.8) brightness(0.6); animation: none; }
+  @keyframes flameFlicker {
+    0%, 100% { transform: scale(1) rotate(-2deg); filter: drop-shadow(0 0 6px rgba(255,140,40,0.7)); }
+    50% { transform: scale(1.12) rotate(2deg); filter: drop-shadow(0 0 12px rgba(255,180,60,0.95)); }
+  }
+  .hud-streak.blaze .hud-flame { animation-duration: 0.8s; font-size: 19px; }
+  .hud-streak-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--gold-bright);
+    text-shadow: 0 0 8px rgba(255,160,50,0.5);
+  }
+  .hud-streak.cold .hud-streak-num { color: var(--text-3); text-shadow: none; }
+
+  /* Frase de guerra rotativa (kicker) */
+  .hud-cry {
+    width: 100%;
+    text-align: center;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-style: italic;
+    font-size: 12px;
+    color: var(--text-2);
+    padding: 5px 16px 7px;
+    background: linear-gradient(180deg, rgba(13,10,8,0.94), rgba(10,8,6,0.9));
+    border-bottom: 1px solid var(--border);
+    letter-spacing: 0.02em;
+    position: relative;
+  }
+  .hud-cry::before { content: '⚔ '; color: var(--gold-deep); font-style: normal; }
+  .hud-cry::after { content: ' ⚔'; color: var(--gold-deep); font-style: normal; }
+  .hud-cry b { color: var(--gold-pale); font-weight: 700; font-style: normal; }
+
+  @media (max-width: 360px) {
+    .pwr-hud { gap: 9px; padding: 9px 12px; }
+    .hud-stats { gap: 10px; }
+    .hud-rank { gap: 7px; }
+    .hud-emblem { width: 36px; height: 36px; }
+    .hud-emblem .he-rune { font-size: 17px; }
+    /* Nome da patente sem letter-spacing pra caber inteiro (ex.: Úlfheðinn) */
+    .hud-rank-name { max-width: 84px; font-size: 10px; letter-spacing: 0; }
+    /* Garante chão pra barra de PODER e remove rótulos que roubam espaço */
+    .hud-xp { flex: 1 1 56px; min-width: 52px; }
+    .hud-xp-head .lbl { display: none; }
+    .hud-stat-lbl { display: none; }
+  }
+  @media (max-width: 330px) {
+    /* Telas minúsculas: esconde a tonelagem, mantém patente + PODER + sequência */
+    .hud-stats .hud-stat:last-child { display: none; }
+    .hud-rank-name { max-width: 72px; }
+  }
+
+  /* ---- Surto de força (shockwave ao concluir séries) --------- */
+  .power-surge {
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    transform: translate(-50%,-50%) scale(0);
+    border: 2px solid var(--gold-bright);
+    box-shadow: 0 0 20px var(--gold), 0 0 44px rgba(200,155,60,0.4);
+    pointer-events: none;
+    z-index: 6;
+    animation: powerSurge 0.75s cubic-bezier(0.15,0.6,0.3,1) forwards;
+  }
+  @keyframes powerSurge {
+    0% { transform: translate(-50%,-50%) scale(0); opacity: 0.95; border-width: 3px; }
+    70% { opacity: 0.45; }
+    100% { transform: translate(-50%,-50%) scale(7); opacity: 0; border-width: 0.5px; }
+  }
+  .power-surge.big {
+    border-color: #fff3d0;
+    box-shadow: 0 0 28px var(--gold-bright), 0 0 70px rgba(255,68,68,0.35);
+    animation: powerSurgeBig 1s cubic-bezier(0.15,0.6,0.3,1) forwards;
+  }
+  @keyframes powerSurgeBig {
+    0% { transform: translate(-50%,-50%) scale(0); opacity: 1; border-width: 4px; }
+    70% { opacity: 0.5; }
+    100% { transform: translate(-50%,-50%) scale(12); opacity: 0; border-width: 0.5px; }
+  }
+
+  /* Número de XP flutuante */
+  .xp-pop {
+    position: absolute;
+    left: 50%; top: 2px;
+    transform: translateX(-50%);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--gold-bright);
+    text-shadow: 0 0 10px var(--gold), 0 1px 1px rgba(0,0,0,0.8);
+    pointer-events: none;
+    z-index: 7;
+    white-space: nowrap;
+    animation: xpPop 1.05s ease-out forwards;
+  }
+  @keyframes xpPop {
+    0% { opacity: 0; transform: translate(-50%, 6px) scale(0.7); }
+    18% { opacity: 1; transform: translate(-50%, -8px) scale(1.15); }
+    100% { opacity: 0; transform: translate(-50%, -40px) scale(1); }
+  }
+
+  /* ---- Ascensão de nível / nova patente (takeover) ----------- */
+  .levelup-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 5000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    background: radial-gradient(circle at 50% 42%, rgba(45,30,12,0.86) 0%, rgba(6,5,4,0.95) 70%);
+    backdrop-filter: blur(7px) saturate(130%);
+    -webkit-backdrop-filter: blur(7px) saturate(130%);
+    opacity: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .levelup-overlay.show { animation: luFade 2.8s ease forwards; }
+  @keyframes luFade {
+    0% { opacity: 0; } 8% { opacity: 1; } 82% { opacity: 1; } 100% { opacity: 0; }
+  }
+  .lu-rays {
+    position: absolute;
+    width: 200vmax; height: 200vmax;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    background: repeating-conic-gradient(from 0deg at 50% 50%,
+      rgba(240,198,116,0.10) 0deg, transparent 6deg, transparent 12deg, rgba(240,198,116,0.10) 18deg);
+    animation: luSpin 14s linear infinite;
+    opacity: 0.5;
+  }
+  @keyframes luSpin { to { transform: translate(-50%,-50%) rotate(360deg); } }
+  .lu-emblem {
+    position: relative;
+    width: 110px; height: 110px;
+    display: grid; place-items: center;
+    margin-bottom: 6px;
+    animation: luEmblem 2.8s cubic-bezier(0.22,1,0.36,1) forwards;
+  }
+  @keyframes luEmblem {
+    0% { transform: scale(0.2) rotate(-30deg); opacity: 0; }
+    14% { transform: scale(1.25) rotate(6deg); opacity: 1; }
+    30% { transform: scale(1) rotate(0); }
+    82% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(1.1); }
+  }
+  .lu-emblem::after {
+    content: '';
+    position: absolute; inset: 0;
+    transform: rotate(45deg);
+    background: radial-gradient(circle, rgba(200,155,60,0.3) 0%, rgba(12,10,8,0.7) 70%);
+    border: 2px solid var(--gold-bright);
+    box-shadow: 0 0 40px rgba(240,198,116,0.6), inset 0 0 24px rgba(240,198,116,0.3);
+  }
+  .lu-emblem .lu-rune {
+    position: relative; z-index: 2;
+    font-family: 'Cinzel', Georgia, serif;
+    font-weight: 900; font-size: 52px;
+    color: #fff7e2;
+    text-shadow: 0 0 24px var(--gold-bright), 0 0 8px var(--gold);
+  }
+  .lu-kicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700; font-size: 11px;
+    letter-spacing: 0.4em;
+    text-indent: 0.4em;
+    color: var(--gold);
+    text-transform: uppercase;
+    animation: luText 2.8s ease forwards;
+  }
+  .lu-title {
+    font-family: 'Cinzel', Georgia, serif;
+    font-weight: 900; font-size: 34px;
+    letter-spacing: 0.06em;
+    color: var(--gold-pale);
+    text-shadow: 0 0 24px rgba(240,198,116,0.6), 0 2px 2px rgba(0,0,0,0.6);
+    text-align: center;
+    line-height: 1.05;
+    animation: luText 2.8s ease forwards;
+  }
+  .lu-sub {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-style: italic; font-size: 15px;
+    color: var(--text-2);
+    margin-top: 8px;
+    text-align: center;
+    max-width: 78%;
+    animation: luText 2.8s ease 0.1s forwards;
+    opacity: 0;
+  }
+  @keyframes luText {
+    0% { opacity: 0; transform: translateY(10px); }
+    14% { opacity: 1; transform: translateY(0); }
+    82% { opacity: 1; } 100% { opacity: 0; }
+  }
+
+  /* ---- Toast de feito (achievement) -------------------------- */
+  .feat-toast-wrap {
+    position: fixed;
+    top: calc(env(safe-area-inset-top) + 8px);
+    left: 0; right: 0;
+    z-index: 4000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 0 12px;
+    pointer-events: none;
+  }
+  .feat-toast {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    max-width: 430px;
+    background: linear-gradient(180deg, rgba(28,21,14,0.98) 0%, rgba(16,13,9,0.98) 100%);
+    border: 1px solid var(--gold);
+    box-shadow:
+      0 10px 34px rgba(0,0,0,0.6),
+      0 0 26px rgba(200,155,60,0.25),
+      inset 0 1px 0 rgba(240,198,116,0.25);
+    padding: 11px 15px;
+    transform: translateY(-140%);
+    opacity: 0;
+  }
+  .feat-toast.show { animation: featIn 0.55s cubic-bezier(0.2,1.3,0.4,1) forwards; }
+  .feat-toast.hide { animation: featOut 0.4s ease forwards; }
+  @keyframes featIn { to { transform: translateY(0); opacity: 1; } }
+  @keyframes featOut { to { transform: translateY(-140%); opacity: 0; } }
+  .feat-glyph {
+    flex-shrink: 0;
+    width: 40px; height: 40px;
+    display: grid; place-items: center;
+    position: relative;
+    font-family: 'Cinzel', Georgia, serif;
+    font-weight: 900; font-size: 19px;
+    color: var(--gold-bright);
+    text-shadow: 0 0 10px var(--gold);
+  }
+  .feat-glyph::after {
+    content: '';
+    position: absolute; inset: 2px;
+    transform: rotate(45deg);
+    border: 1px solid var(--gold-deep);
+    background: radial-gradient(circle, rgba(200,155,60,0.18), transparent 70%);
+  }
+  .feat-glyph span { position: relative; z-index: 2; }
+  .feat-text { min-width: 0; }
+  .feat-kicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700; font-size: 8.5px;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+  .feat-name {
+    font-family: 'Cinzel', Georgia, serif;
+    font-weight: 700; font-size: 15px;
+    color: var(--gold-pale);
+    line-height: 1.1;
+    margin: 1px 0 2px;
+  }
+  .feat-desc {
+    font-size: 11px;
+    color: var(--text-2);
+    line-height: 1.25;
+  }
+
+  /* Shake de PR — tremor de impacto na tela */
+  body.pr-shake #main { animation: prShake 0.5s cubic-bezier(0.36,0.07,0.19,0.97); }
+  @keyframes prShake {
+    0%, 100% { transform: translateX(0); }
+    15% { transform: translateX(-5px) rotate(-0.3deg); }
+    30% { transform: translateX(5px) rotate(0.3deg); }
+    45% { transform: translateX(-4px); }
+    60% { transform: translateX(4px); }
+    75% { transform: translateX(-2px); }
+  }
+
+  /* Logo mais "viril": leve respiração de brasa + acento de lâmina */
+  .logo { position: relative; }
+  .logo::after {
+    content: '';
+    position: absolute;
+    left: 0; bottom: -4px;
+    width: 100%; height: 1px;
+    background: linear-gradient(90deg, var(--gold) 0%, transparent 80%);
+    opacity: 0.4;
+  }
+
+  /* ---- Respeito ao toggle de animações / reduced-motion ------ */
+  body.anims-off .battle-vignette,
+  body.anims-off .battle-vignette::before,
+  body.anims-off .pwr-hud::before,
+  body.anims-off .hud-xp-fill::after,
+  body.anims-off .hud-flame { animation: none !important; }
+  /* O toggle manual não zera transições por padrão — zeramos as novas */
+  body.anims-off .battle-vignette,
+  body.anims-off .hud-xp-fill { transition: none !important; }
+  body.anims-off .power-surge,
+  body.anims-off .xp-pop { display: none !important; }
+  @media (prefers-reduced-motion: reduce) {
+    body:not(.anims-on) .battle-vignette,
+    body:not(.anims-on) .battle-vignette::before,
+    body:not(.anims-on) .pwr-hud::before,
+    body:not(.anims-on) .hud-xp-fill::after,
+    body:not(.anims-on) .hud-flame { animation: none !important; }
+    body:not(.anims-on) .battle-vignette,
+    body:not(.anims-on) .hud-xp-fill { transition: none !important; }
+    body:not(.anims-on) .power-surge,
+    body:not(.anims-on) .xp-pop { display: none !important; }
+  }
 </style>
 </head>
 <body>
@@ -4911,6 +5445,9 @@
   </div>
 </div>
 
+<!-- Vinheta de batalha — escurecimento cinematográfico + luz de fúria no topo -->
+<div class="battle-vignette" id="battleVignette" aria-hidden="true"></div>
+
 <header>
   <div class="header-row">
     <div class="logo">PWR<span class="slash">/</span><span class="dim">PEDRO</span></div>
@@ -4925,6 +5462,9 @@
       <button class="info-btn" id="gymInfoBtn" title="Horários das academias">GYM</button>
     </div>
   </div>
+  <!-- HUD do guerreiro: patente, nível, PODER (XP), sequência de fogo, tonelagem -->
+  <div class="pwr-hud" id="pwrHud" aria-label="Status do guerreiro"></div>
+  <div class="hud-cry" id="hudCry"></div>
   <nav class="day-tabs" id="dayTabs" aria-label="Dias da semana"></nav>
   <div class="heatmap" id="heatmap" aria-label="Progresso da semana"></div>
 </header>
@@ -5125,6 +5665,13 @@
     <button class="skip-save-btn" id="skipSaveBtn">SALVAR JUSTIFICATIVA</button>
   </div>
 </div>
+
+<!-- Ascensão de nível / nova patente (takeover, preenchido por JS) -->
+<div class="levelup-overlay" id="levelupOverlay" aria-hidden="true"></div>
+<div id="luStatus" class="sr-only" role="status" aria-live="polite"></div>
+
+<!-- Toasts de feitos desbloqueados (achievements) -->
+<div class="feat-toast-wrap" id="featToastWrap" aria-live="polite" aria-atomic="false"></div>
 
 <script>
 // ============================================================
@@ -5997,6 +6544,12 @@ function updatePrHistory(exId, loadValue) {
   if (loadValue > current) {
     STATE.prHistory[exId] = loadValue;
     savePrHistory();
+    // Gamificação: conta o evento de recorde (1º PR ou superação real)
+    // pra disparar o tremor de impacto e os feitos de "recordes".
+    if (typeof PR_RECORDS === 'number') {
+      PR_RECORDS++;
+      try { localStorage.setItem('pwr.prBreaks', String(PR_RECORDS)); } catch (e) {}
+    }
   }
 }
 
@@ -6180,7 +6733,11 @@ function renderMain() {
   
   // Atualiza heatmap (estado dos dias da semana)
   renderHeatmap();
-  
+
+  // Atualiza o HUD do guerreiro + detecta viradas (nível/patente/feitos)
+  renderHud();
+  checkProgression();
+
   let html = '';
   
   // Day header
@@ -6587,6 +7144,8 @@ function attachCardioHandlers() {
   if (!btn) return;
   btn.addEventListener('click', () => {
     toggleCardioDone(STATE.week, STATE.day);
+    // Conta no streak quando marca como concluído
+    if (isCardioDone(STATE.week, STATE.day)) recordActivityToday();
     if (navigator.vibrate) {
       // Vibração de conquista ao concluir
       if (isCardioDone(STATE.week, STATE.day)) navigator.vibrate([20, 40, 80]);
@@ -6813,9 +7372,10 @@ function attachExerciseHandlers() {
       const maxSets = parseInt(btn.dataset.maxSets, 10);
       const wasComplete = btn.classList.contains('complete');
       const prevCount = getSetProgress(STATE.week, STATE.day, exId);
-      
+      const xpBefore = computeGamState().xp;
+
       incrementSetProgress(STATE.week, STATE.day, exId, maxSets);
-      
+
       const newCount = getSetProgress(STATE.week, STATE.day, exId);
       const nowComplete = newCount >= maxSets;
       const sessionKey = getSessionKeyForDay(STATE.day);
@@ -6827,7 +7387,20 @@ function attachExerciseHandlers() {
         // intensidade 1..maxSets — escala o burst
         spawnTapBurst(btn, effect, newCount, maxSets, nowComplete);
       }
-      
+
+      // === SURTO DE FORÇA + XP (gamificação) ===
+      // Shockwave dourada + número de PODER (delta real) subindo a cada série.
+      if (newCount > prevCount) {
+        recordActivityToday();
+        firePowerSurge(btn, nowComplete);
+        const dxp = Math.max(0, computeGamState().xp - xpBefore);
+        spawnXpPop(btn, dxp);
+      }
+      // Atualiza HUD e dispara ascensão/feitos imediatamente (cobre o
+      // caminho in-place, que não chama renderMain).
+      renderHud();
+      checkProgression();
+
       // Haptic temático por reino
       if (navigator.vibrate && newCount > prevCount) {
         triggerThemedVibration(effect, nowComplete && !wasComplete);
@@ -7229,6 +7802,15 @@ if (animToggleBtn) {
 
 // Aplica a preferência salva ao carregar (sem reload)
 applyAnimationsPreference(getAnimationsEnabled());
+
+// Reage a uma mudança AO VIVO da preferência do sistema (reduzir movimento),
+// desde que o usuário não tenha feito uma escolha explícita no menu GYM.
+try {
+  const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const onMqChange = () => { if (!hasExplicitAnimationChoice()) applyAnimationsPreference(getAnimationsEnabled()); };
+  if (mq.addEventListener) mq.addEventListener('change', onMqChange);
+  else if (mq.addListener) mq.addListener(onMqChange);
+} catch (e) {}
 
 // ============================================================
 // RUNE LORE MODAL — significado da runa de cada reino
@@ -7935,9 +8517,362 @@ function closeSwapModal() {
 
 
 // ============================================================
+// === MOTOR DE GAMIFICAÇÃO — Patente · PODER · Sequência · Feitos
+// ============================================================
+// Tudo aqui é DERIVADO do estado real (séries, checks, PRs, cargas),
+// então nunca dessincroniza: o "save" só guarda o que já foi visto
+// (nível e feitos), pra disparar a animação no momento da virada.
+
+// Metadados de exercício (primary + reps) extraídos das SESSIONS —
+// usados pra estimar a tonelagem (peso total efetivamente movido).
+const EX_META = (() => {
+  const m = {};
+  Object.values(SESSIONS).forEach(s => {
+    if (!s || !s.exercises) return;
+    s.exercises.forEach(ex => {
+      const repsStr = String(ex.reps || '');
+      let r;
+      // Prescrições por tempo/isometria ("30-45s", "20 seg") não são reps:
+      // contam como 1 "rep" pra não inflar a tonelagem.
+      if (/\d\s*s(eg)?\b/i.test(repsStr)) {
+        r = 1;
+      } else {
+        const match = repsStr.match(/\d+/);
+        r = match ? parseInt(match[0], 10) : 5;
+      }
+      m[ex.id] = { primary: !!ex.primary, reps: (isNaN(r) || r <= 0) ? 5 : r };
+    });
+  });
+  return m;
+})();
+
+// Escada de patentes nórdicas — da servidão à lenda imortal.
+const RANKS = [
+  { min: 1,  rune: 'ᚦ', name: 'Þræll',     pt: 'Servo' },
+  { min: 3,  rune: 'ᚱ', name: 'Bóndi',     pt: 'Lavrador Armado' },
+  { min: 5,  rune: 'ᛏ', name: 'Drengr',    pt: 'Jovem Guerreiro' },
+  { min: 8,  rune: 'ᚲ', name: 'Karl',      pt: 'Homem Livre' },
+  { min: 11, rune: 'ᛗ', name: 'Hirðmaðr',  pt: 'Guarda Real' },
+  { min: 15, rune: 'ᚹ', name: 'Víkingr',   pt: 'Viking' },
+  { min: 19, rune: 'ᚷ', name: 'Berserkr',  pt: 'O Furioso' },
+  { min: 24, rune: 'ᛟ', name: 'Úlfheðinn', pt: 'Pele-de-Lobo' },
+  { min: 30, rune: 'ᛜ', name: 'Jarl',      pt: 'Senhor da Guerra' },
+  { min: 37, rune: 'ᛉ', name: 'Einherji',  pt: 'Escolhido de Odin' },
+  { min: 46, rune: 'ᛞ', name: 'Drottinn',  pt: 'Soberano' },
+  { min: 56, rune: 'ᛋ', name: 'Ragnar',    pt: 'Lenda Imortal' }
+];
+function rankForLevel(L) { let r = RANKS[0]; for (const x of RANKS) { if (L >= x.min) r = x; } return r; }
+
+// Curva de XP: cada nível pede um pouco mais que o anterior.
+function reqForLevel(L) { return 80 + (L - 1) * 40; }
+function levelFromXp(xp) {
+  let lvl = 1, acc = 0;
+  while (acc + reqForLevel(lvl) <= xp) { acc += reqForLevel(lvl); lvl++; if (lvl > 999) break; }
+  return { level: lvl, intoLevel: xp - acc, forLevel: reqForLevel(lvl) };
+}
+
+// Registro de dias com atividade (pra sequência/streak)
+let ACTIVITY = {};
+function localDateKey(d) {
+  const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, '0'), dd = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${dd}`;
+}
+function recordActivityToday() {
+  const k = localDateKey(new Date());
+  if (!ACTIVITY[k]) { ACTIVITY[k] = true; saveActivity(); }
+}
+function computeStreak() {
+  let cursor = new Date();
+  // Graça de 1 dia: se hoje ainda não treinou, conta a partir de ontem.
+  if (!ACTIVITY[localDateKey(cursor)]) cursor.setDate(cursor.getDate() - 1);
+  let n = 0;
+  while (ACTIVITY[localDateKey(cursor)]) { n++; cursor.setDate(cursor.getDate() - 1); if (n > 3650) break; }
+  return n;
+}
+
+// Estado guardado: último nível/feitos vistos (pra detectar a virada)
+let GAM_STORE = null;
+// Contador monotônico de recordes (1º PR ou superação) — alimenta o shake e os feitos
+let PR_RECORDS = 0;
+function loadGam() {
+  try { const raw = localStorage.getItem('pwr.gam'); GAM_STORE = raw ? JSON.parse(raw) : null; } catch (e) { GAM_STORE = null; }
+  try { const d = localStorage.getItem('pwr.activityDates'); ACTIVITY = d ? JSON.parse(d) : {}; } catch (e) { ACTIVITY = {}; }
+  try { PR_RECORDS = parseInt(localStorage.getItem('pwr.prBreaks'), 10) || 0; } catch (e) { PR_RECORDS = 0; }
+}
+function saveGam() { try { localStorage.setItem('pwr.gam', JSON.stringify(GAM_STORE)); } catch (e) {} }
+function saveActivity() { try { localStorage.setItem('pwr.activityDates', JSON.stringify(ACTIVITY)); } catch (e) {} }
+
+// Estado de jogo computado a partir do estado real
+function computeGamState() {
+  let sets = 0;
+  for (const k in STATE.setProgress) sets += (STATE.setProgress[k] || 0);
+  let exDone = 0;
+  for (const k in STATE.checks) if (STATE.checks[k]) exDone++;
+  const prCount = Object.keys(STATE.prHistory || {}).length;
+  const cardioCount = Object.keys(STATE.cardioDone || {}).length;
+  let tonnage = 0;
+  for (const k in STATE.loads) {
+    const load = parseFloat(STATE.loads[k]);
+    if (!load || load <= 0) continue;
+    const done = STATE.setProgress[k] || 0;
+    if (done <= 0) continue;
+    const exId = k.split('::')[2];
+    const reps = (EX_META[exId] && EX_META[exId].reps) || 5;
+    tonnage += load * done * reps;
+  }
+  const xp = sets * 14 + exDone * 30 + prCount * 80 + cardioCount * 45;
+  const lv = levelFromXp(xp);
+  return {
+    xp, sets, exDone, prCount, prRecords: PR_RECORDS, cardioCount, tonnage,
+    level: lv.level, intoLevel: lv.intoLevel, forLevel: lv.forLevel,
+    rank: rankForLevel(lv.level), streak: computeStreak()
+  };
+}
+
+// Feitos (achievements) — verdadeiros à métrica que disparam
+const FEATS = [
+  { id: 'first_blood', glyph: 'ᚲ', name: 'Primeiro Sangue',   desc: 'A primeira série caiu. A jornada começou.',          test: g => g.sets >= 1 },
+  { id: 'iron_grip',   glyph: 'ᛏ', name: 'Punho de Ferro',    desc: 'Primeiro exercício dominado por completo.',          test: g => g.exDone >= 1 },
+  { id: 'pr_break',    glyph: 'ᚦ', name: 'Quebra-Correntes',  desc: 'Teu primeiro recorde pessoal foi cravado.',          test: g => g.prCount >= 1 },
+  { id: 'wolf_heart',  glyph: 'ᚹ', name: 'Coração de Lobo',   desc: '3 dias seguidos sem recuar.',                        test: g => g.streak >= 3 },
+  { id: 'unstoppable', glyph: 'ᚷ', name: 'Imparável',         desc: '7 dias de fogo ininterrupto.',                       test: g => g.streak >= 7 },
+  { id: 'cold_blood',  glyph: 'ᛁ', name: 'Sangue de Gelo',    desc: '14 dias. O frio de Fimbulwinter não te detém.',      test: g => g.streak >= 14 },
+  { id: 'centurion',   glyph: 'ᛗ', name: 'Centurião',         desc: '100 séries forjadas no ferro.',                      test: g => g.sets >= 100 },
+  { id: 'legion',      glyph: 'ᛟ', name: 'Legião',            desc: '300 séries. Um exército de repetições.',             test: g => g.sets >= 300 },
+  { id: 'thor_fist',   glyph: 'ᛉ', name: 'Punho de Thor',     desc: '5 recordes despedaçados.',                           test: g => g.prRecords >= 5 },
+  { id: 'mjolnir',     glyph: 'ᚦ', name: 'Martelo de Mjölnir',desc: '12 recordes. A barra te teme.',                      test: g => g.prRecords >= 12 },
+  { id: 'crossing',    glyph: 'ᛚ', name: 'Travessia dos Nove',desc: '5 travessias de cardio vencidas.',                   test: g => g.cardioCount >= 5 },
+  { id: 'ton_moved',   glyph: 'ᚱ', name: 'Mil Erguidos',      desc: '10 toneladas movidas do chão.',                      test: g => g.tonnage >= 10000 },
+  { id: 'mountain',    glyph: 'ᛜ', name: 'Montanha Movida',   desc: '50 toneladas. Moveste uma montanha.',                test: g => g.tonnage >= 50000 },
+  { id: 'titan',       glyph: 'ᚦ', name: 'Titã',              desc: '150 toneladas erguidas. Força de gigante.',          test: g => g.tonnage >= 150000 },
+  { id: 'chosen',      glyph: 'ᛞ', name: 'Escolhido',         desc: 'Nível 20. Os deuses observam tua forja.',            test: g => g.level >= 20 },
+  { id: 'immortal',    glyph: 'ᛋ', name: 'Imortal',           desc: 'Nível 40. Teu nome ecoa em Valhalla.',               test: g => g.level >= 40 }
+];
+
+// Frases de guerra rotativas (HUD)
+const CRIES = [
+  'A dor de hoje é a <b>força</b> de amanhã.',
+  'O <b>aço</b> não se forja no conforto.',
+  'Levanta o peso. Levanta o teu <b>nome</b>.',
+  'Cada série é uma <b>martelada</b> na bigorna.',
+  'Disciplina é a ponte entre <b>meta</b> e conquista.',
+  'O corpo cede. A <b>vontade</b> não.',
+  'Hoje tu forjas o guerreiro de <b>amanhã</b>.',
+  'A gravidade é o teu <b>adversário</b>. Vença-a.',
+  'Não conte os dias. Faça os dias <b>contarem</b>.',
+  'Quem domina o ferro, domina a si <b>mesmo</b>.',
+  'Sangue, suor e <b>aço</b> — nada mais é necessário.',
+  'O fraco desiste. O forte <b>repete</b>.'
+];
+function pickLevelCry(g) {
+  return CRIES[(g.level + g.sets) % CRIES.length].replace(/<\/?b>/g, '');
+}
+
+function fxOn() {
+  return getAnimationsEnabled() && !document.body.classList.contains('anims-off');
+}
+
+// Renderiza o HUD do guerreiro (header)
+function renderHud() {
+  const hud = document.getElementById('pwrHud');
+  if (!hud) return;
+  const g = computeGamState();
+  const pct = Math.min(100, Math.round((g.intoLevel / g.forLevel) * 100));
+  const tonStr = g.tonnage >= 1000
+    ? (g.tonnage / 1000).toFixed(g.tonnage >= 10000 ? 0 : 1) + 't'
+    : Math.round(g.tonnage) + 'kg';
+  const streakCls = g.streak === 0 ? 'cold' : (g.streak >= 7 ? 'blaze' : '');
+  hud.innerHTML = `
+    <div class="hud-rank">
+      <div class="hud-emblem" id="hudEmblem" aria-hidden="true"><span class="he-rune">${g.rank.rune}</span></div>
+      <div class="hud-rank-text">
+        <span class="hud-rank-name" title="${g.rank.name} · ${g.rank.pt}">${g.rank.name}</span>
+        <span class="hud-level">Nível <b>${g.level}</b></span>
+      </div>
+    </div>
+    <div class="hud-xp">
+      <div class="hud-xp-head"><span class="lbl"><span aria-hidden="true">⚡ </span>Poder</span><span class="val">${g.intoLevel} / ${g.forLevel}</span></div>
+      <div class="hud-xp-bar"><div class="hud-xp-fill" style="--xp:${pct}%"></div></div>
+    </div>
+    <div class="hud-stats">
+      <div class="hud-stat">
+        <span class="hud-streak ${streakCls}"><span class="hud-flame" aria-hidden="true">🔥</span><span class="hud-streak-num">${g.streak}</span></span>
+        <span class="hud-stat-lbl">sequência</span>
+      </div>
+      <div class="hud-stat">
+        <span class="hud-stat-val">${tonStr}</span>
+        <span class="hud-stat-lbl">erguido</span>
+      </div>
+    </div>
+  `;
+  updateRage(g);
+  renderCry(g);
+}
+
+function renderCry(g) {
+  const el = document.getElementById('hudCry');
+  if (!el) return;
+  const di = Math.max(0, DAYS.indexOf(STATE.day));
+  const idx = (di + (parseInt(STATE.week, 10) || 0)) % CRIES.length;
+  el.innerHTML = CRIES[idx] || CRIES[0];
+}
+
+// Intensidade de "fúria" pra vinheta cinematográfica (0..1)
+function updateRage(g) {
+  let dprog = 0;
+  try {
+    const day = getSessionForDay(STATE.day);
+    if (day && day.exercises) {
+      let t = 0, d = 0;
+      day.exercises.forEach(ex => {
+        if (STATE.week === 'deload' && shouldHideOnDeload(ex)) return;
+        t++;
+        const ms = parseInt(getPrescription(ex, STATE.week).sets, 10) || 3;
+        if (getSetProgress(STATE.week, STATE.day, ex.id) >= ms) d++;
+      });
+      if (t > 0) dprog = d / t;
+    } else if (day && day.cardio) {
+      dprog = isCardioDone(STATE.week, STATE.day) ? 1 : 0;
+    }
+  } catch (e) {}
+  const streakBoost = Math.min(g.streak, 10) / 10 * 0.4;
+  const rage = Math.min(1, dprog * 0.62 + streakBoost);
+  document.body.style.setProperty('--rage', rage.toFixed(3));
+  document.body.classList.toggle('rage-max', rage >= 0.85);
+}
+
+// Detecta viradas (nível, patente, PR, feitos) e dispara as celebrações
+function checkProgression() {
+  const g = computeGamState();
+  if (GAM_STORE === null) {
+    // Primeira execução: sincroniza silenciosamente com o estado atual
+    GAM_STORE = {
+      level: g.level,
+      prRecords: g.prRecords,
+      feats: FEATS.filter(f => f.test(g)).map(f => f.id)
+    };
+    saveGam();
+    return;
+  }
+  if (typeof GAM_STORE.level !== 'number') GAM_STORE.level = g.level;
+  if (typeof GAM_STORE.prRecords !== 'number') GAM_STORE.prRecords = g.prRecords;
+  if (!Array.isArray(GAM_STORE.feats)) GAM_STORE.feats = [];
+
+  let changed = false;
+  let leveledUp = false;
+
+  if (g.level > GAM_STORE.level) {
+    const prevRank = rankForLevel(GAM_STORE.level);
+    const rankUp = g.rank.name !== prevRank.name;
+    GAM_STORE.level = g.level;
+    changed = true; leveledUp = true;
+    if (fxOn()) showLevelUp(g, rankUp);
+  } else if (g.level < GAM_STORE.level) {
+    GAM_STORE.level = g.level; changed = true; // reset/edição reduziu XP
+  }
+
+  // Recorde batido (1º PR ou superação) → tremor de impacto
+  if (g.prRecords > GAM_STORE.prRecords) {
+    GAM_STORE.prRecords = g.prRecords; changed = true;
+    if (fxOn()) triggerPrShake();
+  } else if (g.prRecords < GAM_STORE.prRecords) {
+    GAM_STORE.prRecords = g.prRecords; changed = true;
+  }
+
+  // Feitos novos → toasts (escalonados, e adiados se houve level-up)
+  const fresh = FEATS.filter(f => f.test(g) && !GAM_STORE.feats.includes(f.id));
+  if (fresh.length) {
+    fresh.forEach(f => GAM_STORE.feats.push(f.id));
+    changed = true;
+    if (fxOn()) {
+      const base = leveledUp ? 3000 : 0;
+      fresh.forEach((f, i) => showFeatToast(f, base + i * 450));
+    }
+  }
+  if (changed) saveGam();
+}
+
+// ---- Efeitos visuais one-shot --------------------------------
+function firePowerSurge(btn, big) {
+  if (!fxOn() || !btn) return;
+  const s = document.createElement('span');
+  s.className = 'power-surge' + (big ? ' big' : '');
+  btn.appendChild(s);
+  s.addEventListener('animationend', () => s.remove(), { once: true });
+}
+
+function spawnXpPop(btn, amount) {
+  if (!fxOn() || !btn) return;
+  const p = document.createElement('span');
+  p.className = 'xp-pop';
+  p.textContent = '+' + amount + ' ⚡';
+  btn.appendChild(p);
+  p.addEventListener('animationend', () => p.remove(), { once: true });
+}
+
+function triggerPrShake() {
+  document.body.classList.remove('pr-shake');
+  void document.body.offsetWidth;
+  document.body.classList.add('pr-shake');
+  if (navigator.vibrate) navigator.vibrate([20, 40, 80]);
+  setTimeout(() => document.body.classList.remove('pr-shake'), 550);
+}
+
+function showFeatToast(feat, delay) {
+  const wrap = document.getElementById('featToastWrap');
+  if (!wrap) return;
+  const run = () => {
+    const t = document.createElement('div');
+    t.className = 'feat-toast';
+    t.innerHTML = `
+      <div class="feat-glyph" aria-hidden="true"><span>${feat.glyph}</span></div>
+      <div class="feat-text">
+        <div class="feat-kicker"><span aria-hidden="true">⚜ </span>Feito desbloqueado</div>
+        <div class="feat-name">${feat.name}</div>
+        <div class="feat-desc">${feat.desc}</div>
+      </div>`;
+    wrap.appendChild(t);
+    requestAnimationFrame(() => t.classList.add('show'));
+    if (navigator.vibrate) navigator.vibrate([15, 30, 60]);
+    setTimeout(() => {
+      t.classList.remove('show');
+      t.classList.add('hide');
+      setTimeout(() => t.remove(), 450);
+    }, 4200);
+  };
+  setTimeout(run, delay || 0);
+}
+
+let _luTimer = null;
+function showLevelUp(g, rankUp) {
+  const ov = document.getElementById('levelupOverlay');
+  if (!ov) return;
+  ov.innerHTML = `
+    <div class="lu-rays" aria-hidden="true"></div>
+    <div class="lu-emblem" aria-hidden="true"><span class="lu-rune">${g.rank.rune}</span></div>
+    <div class="lu-kicker">${rankUp ? 'Nova Patente' : 'Ascensão'}</div>
+    <div class="lu-title">${rankUp ? g.rank.name.toUpperCase() : 'NÍVEL ' + g.level}</div>
+    <div class="lu-sub">${rankUp ? ('“' + g.rank.pt + '” · Nível ' + g.level) : pickLevelCry(g)}</div>
+  `;
+  ov.classList.remove('show'); void ov.offsetWidth; ov.classList.add('show');
+  // Anúncio acessível (leitor de tela) — o overlay em si é decorativo
+  const st = document.getElementById('luStatus');
+  if (st) st.textContent = rankUp
+    ? `Nova patente: ${g.rank.name}, ${g.rank.pt}. Nível ${g.level}.`
+    : `Ascensão. Nível ${g.level}.`;
+  if (navigator.vibrate) navigator.vibrate(rankUp ? [40, 60, 40, 60, 120] : [30, 40, 80]);
+  const he = document.getElementById('hudEmblem');
+  if (he) { he.classList.remove('tier-up'); void he.offsetWidth; he.classList.add('tier-up'); }
+  if (_luTimer) clearTimeout(_luTimer);
+  _luTimer = setTimeout(() => ov.classList.remove('show'), 2850);
+}
+
+
+// ============================================================
 // INIT
 // ============================================================
 loadState();
+loadGam();
 
 // Default to today
 const todayKey = JS_DAY_TO_KEY[new Date().getDay()];
