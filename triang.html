@@ -244,10 +244,10 @@
   .verdict .seal{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:34px;border:2px solid;animation:pop .45s cubic-bezier(.2,1.4,.4,1)}
   @keyframes pop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
   .verdict.hit .seal{border-color:var(--green);color:var(--green-bright);background:var(--green-soft);box-shadow:0 0 0 6px var(--green-soft-2),0 8px 24px -6px var(--green-soft)}
-  .verdict.miss .seal{border-color:var(--red);color:var(--red);background:var(--red-deep);box-shadow:0 0 0 6px rgba(244,114,97,.06)}
+  .verdict.miss .seal{border-color:var(--line-strong);color:var(--ink-2);background:var(--surface-2);box-shadow:0 0 0 6px rgba(255,255,255,.03)}
   .verdict .big{font-size:24px;font-weight:660;font-family:var(--sans);margin-bottom:10px;letter-spacing:-0.02em}
   .verdict.hit .big{color:var(--green-bright)}
-  .verdict.miss .big{color:var(--red)}
+  .verdict.miss .big{color:var(--ink)}
   .verdict .det{font-size:14px;color:var(--ink-2);line-height:1.55;max-width:360px;margin:0 auto}
   .verdict .det .reveal{color:var(--ink);font-weight:620;font-family:var(--mono)}
 
@@ -464,6 +464,52 @@
   .help-block.accent li{font-size:13px;color:var(--ink-2);line-height:1.5}
   .help-block.accent li b{color:#ffd98a;font-weight:620}
   .help-block.accent li::marker{color:var(--amber)}
+
+  /* ============================================================
+     v2 — modo solo · presets de n · aceite de protocolo ·
+     retomada de série · caderno (histórico) · anti-viés
+     ============================================================ */
+  .mode-toggle{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:4px 0 8px}
+  .mode-btn{display:flex;flex-direction:column;align-items:flex-start;gap:3px;background:var(--surface-2);border:1.5px solid var(--line);color:var(--ink-2);padding:13px 15px;border-radius:var(--r-md);font-weight:640;text-align:left}
+  .mode-btn .mode-sub{font-size:11px;color:var(--muted-2);font-weight:500;font-family:var(--mono)}
+  .mode-btn.on{border-color:var(--green);background:var(--green-soft);color:var(--green-bright);box-shadow:0 0 0 3px var(--green-soft-2)}
+  .mode-btn.on .mode-sub{color:var(--green)}
+  .mode-note{font-size:12.5px;color:var(--muted);line-height:1.5;margin:0 0 6px}
+  .mode-note b{color:var(--ink-2);font-weight:600}
+  .n-presets{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .preset{flex:1;min-width:96px;background:var(--surface-2);border:1.5px solid var(--line);color:var(--ink-2);padding:11px 8px;border-radius:var(--r-sm);font-size:12.5px;font-weight:560}
+  .preset:hover{border-color:var(--green-deep);color:var(--green-bright)}
+  .preset.on{border-color:var(--green);background:var(--green-soft);color:var(--green-bright)}
+  .nSens{display:block;margin-top:10px;font-size:12px;color:var(--amber);line-height:1.5}
+  .accept-row{display:flex;gap:11px;align-items:flex-start;font-size:13px;color:var(--ink-2);line-height:1.45;margin:20px 0 2px;font-weight:500;cursor:pointer;letter-spacing:-0.01em}
+  .accept-row input{width:20px;height:20px;flex:0 0 auto;accent-color:var(--green);margin-top:1px}
+  .accept-row b{color:var(--ink);font-weight:620}
+  .setup-hint{display:none;font-size:12.5px;line-height:1.5;margin:14px 0 0;padding:11px 13px;border-radius:var(--r-sm)}
+  .setup-hint.err{background:var(--red-deep);border:1px solid var(--red-line);color:var(--red)}
+  .setup-hint.note{background:var(--amber-deep);border:1px solid var(--amber-line);color:var(--amber)}
+  .scramble-banner{background:var(--green-soft-2);border:1px solid var(--green-deep);font-size:13px;padding:14px 16px;border-radius:var(--r-md);margin:2px 0 16px;display:flex;gap:11px;align-items:flex-start;line-height:1.55}
+  .scramble-banner .ico{flex:0 0 auto;color:var(--green-bright)}
+  .scramble-banner b{color:var(--green-bright);font-weight:640}
+  .scramble-banner .sb-body{color:var(--ink-2)}
+  .solo-caveat{margin-top:16px;font-size:12.5px;color:var(--muted);line-height:1.55;padding:12px 14px;background:var(--surface-2);border:1px solid var(--line-soft);border-radius:var(--r-sm)}
+  .solo-caveat b{color:var(--ink-2);font-weight:600}
+  .resume-card .rz-pair{font-size:21px;font-weight:660;color:var(--ink);letter-spacing:-0.02em;margin-bottom:4px}
+  .resume-card .rz-meta{font-family:var(--mono);font-size:13px;color:var(--green-bright);margin-bottom:20px}
+  .hist-open{margin-top:16px}
+  .hist-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  .hist-filter{background:var(--surface-2);border:1px solid var(--line);color:var(--muted);font-size:11.5px;padding:7px 12px;border-radius:20px;font-family:var(--mono)}
+  .hist-filter.on{border-color:var(--green-deep);background:var(--green-soft);color:var(--green-bright)}
+  .hist-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 16px;background:var(--surface-2);border:1px solid var(--line-soft);border-radius:var(--r-md);margin-bottom:10px;box-shadow:var(--el-1)}
+  .hist-row .hl{min-width:0}
+  .hist-pair{font-size:14.5px;font-weight:620;color:var(--ink);letter-spacing:-0.01em}
+  .hist-var{font-size:11.5px;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:30ch}
+  .hist-meta{font-family:var(--mono);font-size:11px;color:var(--muted-2);margin-top:5px}
+  .hist-right{flex:0 0 auto;text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:7px}
+  .hist-empty{color:var(--muted);font-size:13.5px;text-align:center;padding:26px 8px;line-height:1.55}
+  .hist-disc{font-size:11.5px;color:var(--muted-2);line-height:1.5;margin:4px 0 16px;padding:10px 12px;background:var(--surface-2);border-left:2px solid var(--line-strong);border-radius:0 var(--r-sm) var(--r-sm) 0}
+  .slider.untouched::-webkit-slider-thumb{background:var(--muted-2);box-shadow:0 1px 3px rgba(0,0,0,.4);border-color:var(--bg)}
+  .slider.untouched::-moz-range-thumb{background:var(--muted-2)}
+  .seal{animation:rise .4s var(--ease)!important}
 </style>
 </head>
 <body>
@@ -474,7 +520,7 @@
   </div>
   <div class="eyebrow">ISO 4120 · α 0,05</div>
   <h1>Teste Triangular Cego</h1>
-  <p class="tagline">Há diferença perceptível entre duas torras? · revezamento de embaralhador</p>
+  <p class="tagline">Há diferença perceptível entre duas torras? · teste cego, solo ou em dupla</p>
 </header>
 
 <nav class="flow hide" id="flow" aria-label="Etapas do triângulo">
@@ -492,34 +538,53 @@
 <section class="card" id="setupCard" aria-labelledby="setupH">
   <h2 id="setupH">Definir o par</h2>
   <p class="lead">As duas torras devem diferir em <b>uma só variável</b>. Mesma idade pós-torra, mesma moagem, extração idêntica.</p>
+
+  <label>Como você vai testar?</label>
+  <div class="mode-toggle" role="radiogroup" aria-label="Modo de teste">
+    <button class="mode-btn on" data-mode="dupla" type="button" role="radio" aria-checked="true">Dupla<span class="mode-sub">2 pessoas · revezam</span></button>
+    <button class="mode-btn" data-mode="solo" type="button" role="radio" aria-checked="false">Solo<span class="mode-sub">1 pessoa · montagem cega</span></button>
+  </div>
+  <p class="mode-note" id="modeNote">Modo dupla: um embaralha (sem provar), o outro prova cego, revezando a cada triângulo.</p>
+
   <div class="field-row">
     <div><label for="ocrA">Amostra A</label><input type="text" id="ocrA" placeholder="OCR_344" autocomplete="off"></div>
     <div><label for="ocrB">Amostra B</label><input type="text" id="ocrB" placeholder="OCR_341" autocomplete="off"></div>
   </div>
-  <label for="varTested">Variável testada (opcional)</label>
+  <label for="varTested">Variável testada — a hipótese</label>
   <input type="text" id="varTested" placeholder="corte de gás @213°C vs gás mantido" autocomplete="off">
 
   <div class="setup-divider"></div>
-  <label>Avaliadores</label>
-  <div class="field-row">
-    <div><input type="text" id="nameA" placeholder="Nome do avaliador 1" autocomplete="off"></div>
-    <div><input type="text" id="nameB" placeholder="Nome do avaliador 2" autocomplete="off"></div>
+  <div id="evalBlock">
+    <label>Avaliadores <span class="pdim">(modo dupla)</span></label>
+    <div class="field-row">
+      <div><input type="text" id="nameA" placeholder="Nome do avaliador 1" autocomplete="off"></div>
+      <div><input type="text" id="nameB" placeholder="Nome do avaliador 2" autocomplete="off"></div>
+    </div>
   </div>
 
   <label for="targetN">Número de triângulos (n)</label>
   <div class="n-row">
     <button class="n-step" id="nMinus" aria-label="Diminuir n" type="button">−</button>
-    <input type="number" id="targetN" min="6" max="60" step="1" value="6" inputmode="numeric">
+    <input type="number" id="targetN" min="6" max="60" step="1" value="12" inputmode="numeric">
     <button class="n-step" id="nPlus" aria-label="Aumentar n" type="button">+</button>
-    <span class="n-hint">mín. 6 · limiar <b id="nCrit">5</b> acertos</span>
+    <span class="n-hint">mín. 6 · limiar <b id="nCrit">8</b> acertos</span>
   </div>
-  <p class="n-note">O resultado fica <b>oculto</b> até o último triângulo. Cada prova é independente — o provador só vê o placar (acertos/erros) ao fim dos n.</p>
+  <div class="n-presets">
+    <button class="preset" data-n="6" type="button">Rápido · n=6</button>
+    <button class="preset on" data-n="12" type="button">Recomendado · n=12</button>
+    <button class="preset" data-n="18" type="button">Robusto · n=18</button>
+  </div>
+  <p class="n-note">O resultado fica <b>oculto</b> até o último triângulo. Cada prova é independente — o placar (acertos/erros) só aparece ao fim dos n.<span class="nSens" id="nSens"></span></p>
+
+  <label class="accept-row" for="prepAccept"><input type="checkbox" id="prepAccept"><span>Li o protocolo de preparo (abaixo) e vou seguir: preparo <b>idêntico e simultâneo</b> nas duas amostras.</span></label>
+  <div class="setup-hint" id="setupHint" role="alert" aria-live="polite"></div>
 
   <button class="btn-primary mt-lg" id="startPair">Iniciar série →</button>
+  <div id="histEntry"></div>
 </section>
 
 <!-- ===== PROTOCOLO DE PREPARO ===== -->
-<details class="prep" id="prepCard" open>
+<details class="prep" id="prepCard">
   <summary><span class="chev">▸</span> Protocolo de preparo das amostras</summary>
   <div class="details-body prep-body">
     <p class="prep-intro">Cupping SCA por imersão. A única diferença permitida entre as xícaras é a torra — todo o resto é idêntico e simultâneo.</p>
@@ -574,6 +639,36 @@
   </div>
 </section>
 
+<!-- ===== RETOMADA DE SÉRIE (boot) ===== -->
+<section class="card hide resume-card" id="resumeCard" aria-labelledby="resumeH">
+  <h2 id="resumeH">Série em andamento</h2>
+  <div class="rz-pair" id="resumePair">—</div>
+  <div class="rz-meta" id="resumeMeta">—</div>
+  <button class="btn-primary" id="resumeContinue">Continuar de onde parei →</button>
+  <p class="footer-note mt-sm">Seu progresso fica salvo neste aparelho. A pausa não altera respostas já registradas.</p>
+  <button class="btn-ghost mt-sm" id="resumeDiscard">Apagar e definir novo par</button>
+</section>
+
+<!-- ===== MODO SOLO · MONTAGEM CEGA ===== -->
+<section class="card hide" id="soloMapCard" aria-labelledby="soloMapH">
+  <h2 id="soloMapH">Montagem cega solo</h2>
+  <p class="lead">Marque o <b>fundo</b> de 3 xícaras opacas iguais com 1 · 2 · 3 e sirva conforme abaixo. Você conhece a composição — mas vai <b>embaralhar as posições sem olhar</b> para não saber qual é qual ao provar.</p>
+  <div class="scramble-banner"><span class="ico" aria-hidden="true">⇄</span><span class="sb-body">Depois de servir: <b>cubra, embaralhe as posições sem olhar os fundos</b> até perder o rastro e disponha em fila. Prove pelo paladar; só então vire a xícara diferente e toque no número do fundo dela.</span></div>
+  <div id="soloMapList"></div>
+  <button class="btn-primary mt-sm" id="soloToTaste">Embaralhei às cegas — provar →</button>
+</section>
+
+<!-- ===== CADERNO OCR · HISTÓRICO ===== -->
+<section class="card hide" id="histCard" aria-labelledby="histH">
+  <h2 id="histH">Caderno OCR · histórico de testes</h2>
+  <p class="lead">Cada série revelada fica arquivada aqui. Filtre pela variável para ver a tendência ao longo da pesquisa.</p>
+  <div class="hist-disc">Histórico <b>descritivo</b>, não um meta-teste: comparar muitas séries entre si infla o risco de falso positivo. Cada linha vale pela própria estatística.</div>
+  <div class="hist-filters" id="histFilters"></div>
+  <div id="histList"></div>
+  <div class="export-row" id="histExportRow"><button class="btn-export" id="histExportAll">Exportar caderno (CSV)</button></div>
+  <button class="btn-ghost mt-md" id="histBack">← Voltar ao início</button>
+</section>
+
 <section class="card hide" id="shuffleCard" aria-labelledby="shuffleH">
   <h2 id="shuffleH">Quem vai embaralhar?</h2>
   <p class="lead">Quem embaralha conhece o mapa e <b>não prova</b> esta rodada. O outro será o provador cego.</p>
@@ -600,10 +695,10 @@
 <section class="card hide" id="tasteCard" aria-labelledby="tasteH">
   <h2 id="tasteH" class="sr-only">Prova cega</h2>
   <p class="taste-instr" id="tasteInstr" tabindex="-1">Prove as posições <b>1 → 2 → 3</b>. Enxágue com água entre cada xícara.</p>
-  <div class="center"><span class="odd-hint">Toque na posição <b>diferente</b> das outras duas</span></div>
+  <div class="center"><span class="odd-hint" id="oddHint">Toque na posição <b>diferente</b> das outras duas</span></div>
   <div class="cups" id="cups" role="radiogroup" aria-label="Escolha a posição diferente"></div>
   <button class="btn-primary mt-sm" id="confirmPick" disabled>Confirmar escolha</button>
-  <p class="footer-note mt-md">Não vire nem levante as xícaras — o OCR embaixo revelaria a identidade.</p>
+  <p class="footer-note mt-md" id="tasteFoot">Não vire nem levante as xícaras — o OCR embaixo revelaria a identidade.</p>
 </section>
 
 <!-- confirmação neutra entre triângulos (não revela acerto/erro) -->
@@ -625,6 +720,7 @@
     <div class="det" id="vDet"></div>
   </div>
   <div class="export-row" id="exportRow">
+    <button class="btn-export" id="expMd">Copiar nota Obsidian (.md)</button>
     <button class="btn-export" id="expCopy">Copiar resumo</button>
     <button class="btn-export" id="expCsv">Baixar CSV</button>
     <button class="btn-export" id="expJson">Baixar JSON</button>
@@ -634,6 +730,7 @@
     <span class="lock-ico" aria-hidden="true">🔒</span>
     <span>Sem diferença detectável, não há o que caracterizar. A prova descritiva fica indisponível para este resultado.</span>
   </div>
+  <button class="btn-ghost hide mt-sm" id="moreN">Série nova com mais provas (n maior) →</button>
   <button class="btn-ghost mt-sm" id="newSeries">Nova série (mesmo par)</button>
 </section>
 
@@ -663,6 +760,7 @@
   <p class="lead" id="dRecapLead"></p>
   <div id="dRecapBody"></div>
   <div class="conclusion" id="dPref"></div>
+  <div class="conclusion sig mt-sm" id="dFinding"></div>
 
   <!-- MÓDULO DE DEFEITOS DE TORRA -->
   <div class="defects" id="defectsBlock">
@@ -753,6 +851,10 @@
           <li><b>Ruído de preparo</b> mascarou o sinal — moagem, dose, temperatura ou tempo inconsistentes entre as xícaras.</li>
         </ul>
       </div>
+      <div class="help-block">
+        <div class="help-q">Por que sem pontos, XP ou streak aqui</div>
+        <p>De propósito. Premiar "acertos" faria o provador <b>querer</b> acertar — e isso contamina o cego. A sobriedade não é falta de capricho: é o que torna o veredito confiável. Um "sem diferença" tem aqui a <b>mesma dignidade</b> de um "confirmado" — os dois são achados de pesquisa. O reforço legítimo é a sua série crescendo no Caderno, não um placar.</p>
+      </div>
     </div>
     <button class="btn-primary" id="hmOk">Entendi</button>
   </div>
@@ -776,6 +878,48 @@ const $=id=>document.getElementById(id);
 let state=load(),pending=null,picked=null;
 function load(){try{const s=localStorage.getItem(KEY);if(s)return JSON.parse(s);}catch(e){}return null;}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+/* ---------- v2: arquivo append-only (Caderno) ---------- */
+const ARCH_KEY='triangulo_ocr_archive_v1';
+function loadArchive(){try{const s=localStorage.getItem(ARCH_KEY);if(s)return JSON.parse(s)||[];}catch(e){}return [];}
+function saveArchive(a){try{localStorage.setItem(ARCH_KEY,JSON.stringify(a));}catch(e){}}
+function archiveCurrent(){
+  if(!state||!state.revealed||!state.evals||!state.evals.length)return;
+  if(state.archived)return;            // idempotente: revealFinal reroda no boot e no dBackTri
+  state.archived=true;save();
+  try{
+    const snap=JSON.parse(JSON.stringify(state));
+    snap.archivedAt=Date.now();
+    if(!snap.seriesId)snap.seriesId='s'+((snap.evals[0]&&snap.evals[0].t)||Date.now());
+    const a=loadArchive();a.push(snap);saveArchive(a);
+  }catch(e){}
+}
+/* ---------- v2: modo solo / dupla ---------- */
+let currentMode='dupla';
+function setMode(m){
+  currentMode=m;
+  document.querySelectorAll('.mode-btn').forEach(b=>{const on=b.dataset.mode===m;b.classList.toggle('on',on);b.setAttribute('aria-checked',on?'true':'false');});
+  show('evalBlock',m!=='solo');
+  $('modeNote').innerHTML = m==='solo'
+    ? 'Modo solo: você monta marcando os fundos, <b>embaralha as posições sem olhar</b> e prova. Resultado <b>indicativo</b> — confirme com 2 pessoas para conclusão definitiva.'
+    : 'Modo dupla: um embaralha (sem provar), o outro prova cego, revezando a cada triângulo.';
+}
+/* ---------- v2: desenho balanceado da série (Fisher-Yates, nunca exibido) ---------- */
+function buildArrSeq(n){
+  const seq=[];
+  while(seq.length<n){
+    const block=[0,1,2,3,4,5];                 // 6 permutações: ímpar A/B 50/50, posições equilibradas
+    for(let i=block.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=block[i];block[i]=block[j];block[j]=t;}
+    for(const idx of block){if(seq.length<n)seq.push(idx);}
+  }
+  for(let i=seq.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=seq[i];seq[i]=seq[j];seq[j]=t;}
+  return seq;
+}
+function nextArrIdx(){
+  const i=state.evals.length;
+  if(state&&state.arrSeq&&state.arrSeq[i]!=null)return state.arrSeq[i];
+  return Math.floor(Math.random()*6);
+}
+function resetPrepAccept(){try{$('prepAccept').checked=false;}catch(e){}}
 function show(id,on){$(id).classList.toggle('hide',!on);}
 function announce(m){$('srStatus').textContent=m;}
 // clique de moagem: parâmetro persistente, independente da série
@@ -827,7 +971,7 @@ function renderStats(){
     $('bar').style.width=pct+'%';$('progPct').textContent=pct+'%';
     $('progLabel').textContent='progresso ao limiar';
     if(hits>=crit){const p=tailP(n,hits);c.classList.add('sig');$('cTitle').innerHTML='✓ Diferença confirmada';$('cBody').innerHTML='<b>'+hits+'/'+n+'</b> acertos ≥ '+crit+' · p = '+p.toFixed(3)+'. As torras diferem na xícara de forma detectável.';}
-    else{c.classList.add('nsig');$('cTitle').textContent='Sem diferença detectável';$('cBody').innerHTML='<b>'+hits+'/'+n+'</b> · seriam necessários '+crit+' acertos. Nas condições do teste, a diferença não superou o acaso. Pode ser que a mudança não mova a xícara, que seja sutil demais para este n, ou ruído de preparo. Veja o "Por quê".';}
+    else{const p=tailP(n,hits);c.classList.add('nsig');$('cTitle').textContent='Sem diferença detectável';$('cBody').innerHTML='<b>'+hits+'/'+n+'</b> · seriam necessários '+crit+' acertos · p = '+p.toFixed(3)+'. Nas condições do teste, a diferença não superou o acaso. Pode ser que a mudança não mova a xícara, que seja sutil demais para este n, ou ruído de preparo. Veja o "Por quê".';}
   }
 }
 function focusHeading(id){ try{const el=$(id); if(el){el.setAttribute('tabindex','-1'); el.focus();}}catch(e){} }
@@ -841,17 +985,50 @@ function renderLog(){
     return '<div class="log-item"><span class="log-left"><span class="log-dot '+(e.hit?'dot-hit':'dot-miss')+'"></span>#'+(i+1)+' · '+(e.hit?'acerto':'erro')+'</span><span class="log-meta">'+e.taster+' · ímpar pos '+(e.oddPos+1)+' · marcou pos '+(e.pick+1)+'</span></div>';
   }).reverse().join('');
 }
+function validateSetup(a,b,v){
+  const h=$('setupHint');
+  const fail=(msg)=>{h.textContent=msg;h.className='setup-hint err';h.style.display='block';return false;};
+  if(!a||!b)return fail('Informe os dois códigos de amostra (A e B).');
+  if(!v)return fail('Descreva a variável testada — é a hipótese do experimento (ex.: "corte de gás @213°C vs gás mantido", ou "A/A reprodutibilidade").');
+  if(!$('prepAccept').checked)return fail('Confirme que leu o protocolo de preparo — preparo idêntico e simultâneo é o que protege o resultado.');
+  if(a.toLowerCase()===b.toLowerCase()){h.textContent='Mesmo código nos dois lados — tratando como teste A/A (controle de reprodutibilidade). Prosseguindo.';h.className='setup-hint note';h.style.display='block';}
+  else{h.style.display='none';}
+  return true;
+}
 $('startPair').onclick=()=>{
-  let n=parseInt($('targetN').value)||6; if(n<6)n=6; if(n>60)n=60;
-  const nameA=$('nameA').value.trim()||'Avaliador 1';
+  const a=$('ocrA').value.trim(), b=$('ocrB').value.trim(), v=$('varTested').value.trim();
+  if(!validateSetup(a,b,v)){focusHeading('setupHint');return;}
+  archiveCurrent();                                  // não perde a série revelada anterior
+  let n=parseInt($('targetN').value)||12; if(n<6)n=6; if(n>60)n=60;
+  const solo=(currentMode==='solo');
+  const nameA=solo?'Você':($('nameA').value.trim()||'Avaliador 1');
   const nameB=$('nameB').value.trim()||'Avaliador 2';
-  state={ocrA:$('ocrA').value.trim()||'A',ocrB:$('ocrB').value.trim()||'B',varTested:$('varTested').value.trim(),
-         nameA,nameB,targetN:n,evals:[],revealed:false};
-  save();enterShuffle();
+  state={ocrA:a,ocrB:b,varTested:v,mode:solo?'solo':'dupla',
+         nameA,nameB,targetN:n,evals:[],revealed:false,arrSeq:buildArrSeq(n)};
+  save();
+  if(solo)enterSoloTrial();else enterShuffle();
 };
+function nextTrial(){ if(state&&state.mode==='solo')enterSoloTrial(); else enterShuffle(); }
+function enterSoloTrial(){
+  show('setupCard',false);show('prepCard',false);show('statCard',true);show('flow',false);
+  ['shuffleCard','mapCard','handoffCard','tasteCard','resultCard','ackCard','dMapCard','dScoreCard','dRecapCard','soloMapCard','resumeCard','histCard'].forEach(id=>show(id,false));
+  pending=null;picked=null;
+  renderStats();renderLog();
+  const arr=ARR[nextArrIdx()];
+  const oddLetter=(arr.filter(x=>x==='A').length===1)?'A':'B',oddPos=arr.indexOf(oddLetter);
+  pending={shuffler:'—',taster:state.nameA||'Você',arr,oddPos,oddLetter,solo:true};
+  $('soloMapList').innerHTML=arr.map((letter,i)=>{
+    const ocr=(letter==='A')?state.ocrA:state.ocrB,cls=(letter==='A')?'pill-a':'pill-b';
+    return '<div class="map-row"><div><div class="map-pos">Fundo da xícara</div><div class="map-code">'+(i+1)+'</div></div><span class="pill '+cls+'">'+ocr+'</span></div>';
+  }).join('');
+  $('soloMapH').textContent='Triângulo '+(state.evals.length+1)+' de '+state.targetN+' · montagem cega solo';
+  show('soloMapCard',true);focusHeading('soloMapH');
+  announce('Triângulo '+(state.evals.length+1)+'. Marque os fundos, sirva e embaralhe as posições sem olhar.');
+}
+$('soloToTaste').onclick=()=>beginTaste();
 function enterShuffle(){
   show('setupCard',false);show('prepCard',false);show('statCard',true);
-  ['mapCard','handoffCard','tasteCard','resultCard','ackCard','dMapCard','dScoreCard','dRecapCard'].forEach(id=>show(id,false));
+  ['mapCard','handoffCard','tasteCard','resultCard','ackCard','dMapCard','dScoreCard','dRecapCard','soloMapCard','resumeCard','histCard'].forEach(id=>show(id,false));
   show('shuffleCard',true);pending=null;picked=null;setFlow('shuffle');renderStats();renderLog();
   // rótulos com nomes reais + quem prova
   $('shufA').innerHTML='<span class="role-name">'+state.nameA+'</span><span class="role-sub">embaralha · '+state.nameB+' prova</span>';
@@ -864,7 +1041,7 @@ function enterShuffle(){
 function pickShuffler(whoKey){
   const shuffler=(whoKey==='A')?state.nameA:state.nameB;
   const taster=(whoKey==='A')?state.nameB:state.nameA;
-  const arr=ARR[Math.floor(Math.random()*6)];
+  const arr=ARR[nextArrIdx()];
   const oddLetter=(arr.filter(x=>x==='A').length===1)?'A':'B',oddPos=arr.indexOf(oddLetter);
   pending={shuffler,taster,arr,oddPos,oddLetter};
   $('mapList').innerHTML=arr.map((letter,i)=>{
@@ -877,31 +1054,51 @@ function pickShuffler(whoKey){
 $('shufA').onclick=()=>pickShuffler('A');
 $('shufB').onclick=()=>pickShuffler('B');
 $('toHandoff').onclick=()=>{show('mapCard',false);show('handoffCard',true);setFlow('handoff');focusHeading('handoffH');$('handoffWho').textContent=pending.taster;announce('Entregue o tablet para '+pending.taster);};
-$('startTaste').onclick=()=>{
-  show('handoffCard',false);show('tasteCard',true);setFlow('taste');picked=null;focusHeading('tasteInstr');
-  $('cups').innerHTML=[0,1,2].map(i=>'<div class="cup" data-pos="'+i+'" role="radio" aria-checked="false" tabindex="0" aria-label="Posição '+(i+1)+'"><span class="check" aria-hidden="true">●</span><div class="cup-pos">posição</div><div class="cup-code">'+(i+1)+'</div></div>').join('');
+function beginTaste(){
+  const solo=(state.mode==='solo');
+  show('handoffCard',false);show('soloMapCard',false);show('tasteCard',true);
+  show('flow',!solo);if(!solo)setFlow('taste');
+  picked=null;
+  // mascara a identidade do par e a hipótese durante a prova cega (anti-viés de expectativa)
+  $('pairName').textContent='Par em teste';$('pairVar').style.display='none';
+  $('tasteInstr').innerHTML = solo
+    ? 'Prove as <b>3 posições embaralhadas</b>. Enxágue entre cada xícara. Ao isolar a diferente, vire-a e toque no <b>número do fundo</b> dela.'
+    : 'Prove as posições <b>1 → 2 → 3</b>. Enxágue com água entre cada xícara.';
+  $('oddHint').innerHTML = solo ? 'Toque no <b>fundo</b> da xícara diferente das outras duas' : 'Toque na posição <b>diferente</b> das outras duas';
+  $('tasteFoot').textContent = solo
+    ? 'Não vire nenhuma xícara antes de decidir pelo paladar — só vire a que você isolou, para ler o fundo.'
+    : 'Não vire nem levante as xícaras — o OCR embaixo revelaria a identidade.';
+  const lbl=solo?'fundo':'posição', cap=solo?'Fundo':'Posição';
+  $('cups').innerHTML=[0,1,2].map(i=>'<div class="cup" data-pos="'+i+'" role="radio" aria-checked="false" tabindex="0" aria-label="'+cap+' '+(i+1)+'"><span class="check" aria-hidden="true">●</span><div class="cup-pos">'+lbl+'</div><div class="cup-code">'+(i+1)+'</div></div>').join('');
   $('confirmPick').disabled=true;
   document.querySelectorAll('.cup').forEach(el=>{
     const sel=()=>{document.querySelectorAll('.cup').forEach(c=>{c.classList.remove('sel');c.setAttribute('aria-checked','false');});el.classList.add('sel');el.setAttribute('aria-checked','true');picked=parseInt(el.dataset.pos);$('confirmPick').disabled=false;};
     el.onclick=sel;el.onkeydown=ev=>{if(ev.key===' '||ev.key==='Enter'){ev.preventDefault();sel();}};
   });
-  announce('Prove e toque na posição diferente.');
-};
+  focusHeading('tasteInstr');
+  announce(solo?'Prove as posições embaralhadas e toque no fundo da diferente.':'Prove e toque na posição diferente.');
+}
+$('startTaste').onclick=beginTaste;
 $('confirmPick').onclick=()=>{
   const p=picked; picked=null;            // consome a escolha (anti double-submit)
   if(p===null||!pending)return;
   $('confirmPick').disabled=true;
   const hit=(p===pending.oddPos);
-  state.evals.push({hit,taster:pending.taster,shuffler:pending.shuffler,oddPos:pending.oddPos,pick:p,t:Date.now()});save();
+  state.evals.push({hit,taster:pending.taster,shuffler:pending.shuffler,oddPos:pending.oddPos,pick:p,mode:(pending.solo?'solo':(state.mode||'dupla')),t:Date.now()});save();
   const done=state.evals.length, target=state.targetN;
+  const solo=(state.mode==='solo');
   pending=null;                            // invalida a rodada
   show('tasteCard',false);
   if(done>=target){
     revealFinal();
   } else {
-    show('ackCard',true);setFlow('ack');
+    show('ackCard',true);
+    if(solo)show('flow',false);else setFlow('ack');
     focusHeading('ackTitle');
-    $('ackSub').textContent='Triângulo '+done+' de '+target+' · faltam '+(target-done);
+    let ms='';
+    if(done===Math.ceil(target/2))ms=' · metade da coleta — mantenha o preparo';
+    else if(target-done===1)ms=' · último triângulo a seguir';
+    $('ackSub').textContent='Triângulo '+done+' de '+target+' · faltam '+(target-done)+ms;
     $('ackN').textContent=target;
     renderStats();renderLog();
     announce('Resposta registrada. Triângulo '+done+' de '+target+'. Faltam '+(target-done)+'.');
@@ -910,24 +1107,35 @@ $('confirmPick').onclick=()=>{
 function revealFinal(){
   state.revealed=true;save();
   const n=state.evals.length, hits=state.evals.filter(e=>e.hit).length, crit=critical(n,0.05);
-  const sig=hits>=crit;
-  show('ackCard',false);show('resultCard',true);setFlow('result');
+  const sig=hits>=crit, p=tailP(n,hits), solo=(state.mode==='solo');
+  show('ackCard',false);show('resultCard',true);
+  if(solo)show('flow',false);else setFlow('result');
   const v=$('verdict');v.className='verdict '+(sig?'hit':'miss');
   $('vSeal').textContent=sig?'✓':'✕';
   $('vBig').textContent=sig?'Diferença confirmada':'Sem diferença detectável';
   if(sig){
-    const p=tailP(n,hits);
     $('vDet').innerHTML='<span class="reveal">'+hits+' de '+n+'</span> acertos (limiar '+crit+', p = '+p.toFixed(3)+'). A diferença entre as torras chega à xícara de forma perceptível.';
   } else {
-    $('vDet').innerHTML='<span class="reveal">'+hits+' de '+n+'</span> acertos — abaixo do limiar de '+crit+'. Nas condições do teste, a diferença não superou o acaso. Toque em "Por quê" para os motivos possíveis.';
+    let neg='<span class="reveal">'+hits+' de '+n+'</span> acertos — abaixo do limiar de '+crit+' · p = '+p.toFixed(3)+'. Nas condições do teste, a diferença não superou o acaso (não conclui que são iguais).';
+    if(p>0.05&&p<=0.15)neg+=' <b>Resultado de borda</b>: pode ser diferença sutil. Para decidir, rode uma <b>série nova</b> com n maior — somar provas a esta invalidaria o p-valor.';
+    neg+=' Toque em "Por quê" para os motivos.';
+    $('vDet').innerHTML=neg;
   }
+  if(solo)$('vDet').innerHTML+='<div class="solo-caveat">Modo solo · auto-montagem cega: resultado <b>indicativo</b>. Para conclusão definitiva, replique com 2 pessoas se revezando.</div>';
+  show('moreN', !sig && p>0.05 && p<=0.15);
   show('goDescr',sig);
   show('descLocked',!sig);
   renderStats();renderLog();focusHeading('vBig');
   announce('Série completa. '+(sig?'Diferença confirmada, '+hits+' de '+n+' acertos.':'Sem diferença detectável, '+hits+' de '+n+' acertos.'));
 }
-$('newSeries').onclick=()=>{ state.evals=[];state.revealed=false;save();enterShuffle(); };
-$('nextTriangle').onclick=enterShuffle;
+$('newSeries').onclick=()=>{ archiveCurrent(); state.evals=[];state.revealed=false;state.archived=false;state.descr=[];state.arrSeq=buildArrSeq(state.targetN);save(); nextTrial(); };
+$('nextTriangle').onclick=nextTrial;
+$('moreN').onclick=()=>{
+  archiveCurrent();
+  const cur=state.targetN||12, bigger=cur<12?12:(cur<18?18:(cur<24?24:Math.min(60,cur+6)));
+  state=Object.assign({},state,{targetN:bigger,evals:[],revealed:false,archived:false,descr:[],arrSeq:buildArrSeq(bigger)});
+  save(); nextTrial();
+};
 
 /* ===================== PROVA DESCRITIVA ===================== */
 const AXES=[
@@ -976,7 +1184,7 @@ $('dToScore').onclick=()=>{
     const sample=pos=>
       '<div class="axis-sample">'+
         '<div class="axis-sample-label"><span class="code">Posição '+(pos+1)+'</span><span class="val empty" id="v_'+ax.k+'_'+pos+'">–</span></div>'+
-        '<input type="range" min="1" max="10" step="1" value="5" class="slider" data-axis="'+ax.k+'" data-pos="'+pos+'" aria-label="'+ax.name+', posição '+(pos+1)+', nota 1 a 10" disabled>'+
+        '<input type="range" min="1" max="10" step="1" value="1" class="slider untouched" data-axis="'+ax.k+'" data-pos="'+pos+'" aria-label="'+ax.name+', posição '+(pos+1)+', nota 1 a 10" disabled>'+
         '<div class="scale-marks"><span>1</span><span>5</span><span>10</span></div>'+
       '</div>';
     return '<div class="axis"><div class="axis-head"><span class="axis-name">'+ax.name+'</span><span class="axis-hint">'+ax.hint+'</span></div>'+sample(0)+sample(1)+'</div>';
@@ -984,15 +1192,18 @@ $('dToScore').onclick=()=>{
   document.querySelectorAll('#dScoreBody .slider').forEach(sl=>{
     sl.disabled=false;sl.dataset.touched='0';
     const valEl=$('v_'+sl.dataset.axis+'_'+sl.dataset.pos);
-    sl.oninput=()=>{
-      sl.dataset.touched='1';
+    const register=()=>{
+      sl.dataset.touched='1';sl.classList.remove('untouched');
       dPending.scores[sl.dataset.pos][sl.dataset.axis]=parseInt(sl.value);
       valEl.textContent=sl.value;valEl.classList.remove('empty');
       checkDescrComplete();
     };
+    sl.addEventListener('input',register);
+    sl.addEventListener('change',register);
+    sl.addEventListener('click',register);
   });
   checkDescrComplete();
-  announce('Pontue as duas posições em cada um dos seis eixos.');
+  announce('Pontue as duas posições em cada um dos seis eixos. Os controles começam em branco.');
 };
 
 function checkDescrComplete(){
@@ -1036,6 +1247,14 @@ $('dReveal').onclick=()=>{
     pref.className='conclusion sig';
     pref.innerHTML='<div class="ctitle">Preferência: '+win+'</div><div class="cbody"><b>'+win+'</b> somou '+ws+' vs '+ls+' ('+Math.abs(diff)+' pontos). 1 provador, 1 prova — indicativo, não conclusivo. Replique com outro provador para confirmar a direção.</div>';
   }
+  // frase-achado: dois níveis de evidência, deliberadamente separados
+  const sStat=seriesStats();
+  const deltas=AXES.map(ax=>({name:ax.name,d:(sA[ax.k]-sB[ax.k])})).filter(x=>Math.abs(x.d)>=2).sort((a,b)=>Math.abs(b.d)-Math.abs(a.d));
+  const l1='Triângulo (cego, rigoroso): '+(sStat.sig?('detectável — '+sStat.hits+'/'+sStat.n+' acertos, p = '+sStat.p.toFixed(3)):('não detectável — '+sStat.hits+'/'+sStat.n+', p = '+sStat.p.toFixed(3)));
+  const l2=deltas.length?('Direção (descritiva, indicativa — não é teste cego): '+deltas.slice(0,3).map(x=>(x.d>0?state.ocrA:state.ocrB)+' +'+Math.abs(x.d)+' '+x.name.toLowerCase()).join('; ')+'.'):'Direção: nenhum eixo com delta ≥ 2 — diferença difusa ou sutil.';
+  const faEl=$('dFinding');
+  faEl.className='conclusion sig mt-sm';
+  faEl.innerHTML='<div class="ctitle">Achado para o Manual</div><div class="cbody"><b>1.</b> '+l1+'<br><b>2.</b> '+l2+' <span class="pdim">Replique com outro provador para firmar a direção.</span></div>';
   if(!state.descr)state.descr=[];
   const rec={posA,posB,scores:dPending.scores,notes:$('dNotes').value.trim(),totA,totB,defects:{A:[],B:[]},t:Date.now()};
   state.descr.push(rec);
@@ -1086,11 +1305,14 @@ $('dNewDescr').onclick=enterDescrMap;
 $('dBackTri').onclick=()=>{ show('dRecapCard',false);show('dMapCard',false);show('dScoreCard',false); revealFinal(); };
 
 function doReset(){
+  archiveCurrent();                                  // série revelada vai pro Caderno antes de limpar
   state=null;
-  try{localStorage.removeItem(KEY);}catch(e){}
-  ['statCard','shuffleCard','mapCard','handoffCard','tasteCard','resultCard','ackCard','dMapCard','dScoreCard','dRecapCard','logWrap','flow','goDescr','descLocked'].forEach(id=>show(id,false));
+  try{localStorage.removeItem(KEY);}catch(e){}       // não toca no arquivo (Caderno) — chave separada
+  ['statCard','shuffleCard','mapCard','handoffCard','tasteCard','resultCard','ackCard','dMapCard','dScoreCard','dRecapCard','logWrap','flow','goDescr','descLocked','soloMapCard','resumeCard','histCard','moreN'].forEach(id=>show(id,false));
   show('setupCard',true);show('prepCard',true);
-  $('ocrA').value='';$('ocrB').value='';$('varTested').value='';$('nameA').value='';$('nameB').value='';$('targetN').value='6';syncNHint();
+  $('ocrA').value='';$('ocrB').value='';$('varTested').value='';$('nameA').value='';$('nameB').value='';$('targetN').value='12';
+  resetPrepAccept();setMode('dupla');$('setupHint').style.display='none';
+  syncNHint();markPreset();renderHistEntry();
   pending=null;dPending=null;picked=null;
   announce('Série apagada. Defina um novo par.');
 }
@@ -1100,14 +1322,25 @@ $('rmConfirm').onclick=()=>{ show('resetModal',false); doReset(); };
 $('resetModal').onclick=(e)=>{ if(e.target===$('resetModal')) show('resetModal',false); };
 
 /* ---------- steppers de n + hint de limiar ---------- */
-function syncNHint(){
-  let n=parseInt($('targetN').value)||6;
-  $('nCrit').textContent=critical(Math.max(6,Math.min(60,n)),0.05);
+function sensitivityPhrase(n){
+  if(n<=6)return 'Com n=6 só dá pra flagrar diferenças nítidas — um "sem diferença" aqui NÃO descarta diferença sutil.';
+  if(n<12)return 'n='+n+' pega diferenças médias. Para variáveis finas de torra, prefira n ≥ 12.';
+  if(n<18)return 'n='+n+' (recomendado): bom equilíbrio para a maioria dos pares de torra.';
+  return 'n='+n+' (robusto): sensível a diferenças sutis, ao custo de mais rodadas.';
 }
-$('nMinus').onclick=()=>{let n=parseInt($('targetN').value)||6;n=Math.max(6,n-1);$('targetN').value=n;syncNHint();};
-$('nPlus').onclick=()=>{let n=parseInt($('targetN').value)||6;n=Math.min(60,n+1);$('targetN').value=n;syncNHint();};
+function markPreset(){const v=String(parseInt($('targetN').value)||12);document.querySelectorAll('.preset').forEach(b=>b.classList.toggle('on',b.dataset.n===v));}
+function syncNHint(){
+  let n=parseInt($('targetN').value)||12; n=Math.max(6,Math.min(60,n));
+  $('nCrit').textContent=critical(n,0.05);
+  $('nSens').textContent=sensitivityPhrase(n);
+  markPreset();
+}
+$('nMinus').onclick=()=>{let n=parseInt($('targetN').value)||12;n=Math.max(6,n-1);$('targetN').value=n;syncNHint();};
+$('nPlus').onclick=()=>{let n=parseInt($('targetN').value)||12;n=Math.min(60,n+1);$('targetN').value=n;syncNHint();};
 $('targetN').addEventListener('input',syncNHint);
-$('targetN').addEventListener('blur',()=>{let n=parseInt($('targetN').value)||6;$('targetN').value=Math.max(6,Math.min(60,n));syncNHint();});
+$('targetN').addEventListener('blur',()=>{let n=parseInt($('targetN').value)||12;$('targetN').value=Math.max(6,Math.min(60,n));syncNHint();});
+document.querySelectorAll('.preset').forEach(b=>b.onclick=()=>{$('targetN').value=b.dataset.n;syncNHint();});
+document.querySelectorAll('.mode-btn').forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
 syncNHint();
 
 /* ---------- modal de ajuda ---------- */
@@ -1184,6 +1417,53 @@ $('expCopy').onclick=()=>{
 };
 $('expCsv').onclick=()=>{ download('triangulo_'+slug(state.ocrA)+'_vs_'+slug(state.ocrB)+'_'+fileStamp()+'.csv', csvText(), 'text/csv'); showToast('CSV gerado ✓'); };
 $('expJson').onclick=()=>{ const data={meta:{app:'Triângulo OCR',exported:new Date().toISOString()},...state,stats:seriesStats()}; download('triangulo_'+slug(state.ocrA)+'_vs_'+slug(state.ocrB)+'_'+fileStamp()+'.json', JSON.stringify(data,null,2), 'application/json'); showToast('JSON gerado ✓'); };
+function yamlEsc(s){return '"'+String(s==null?'':s).replace(/"/g,'\\"')+'"';}
+function mdText(){
+  if(!state)return '';
+  const s=seriesStats(), d=new Date();
+  const iso=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  const L=['---'];
+  L.push('tipo: teste-triangular');
+  L.push('app: Triângulo OCR');
+  L.push('data: '+iso);
+  L.push('amostra_A: '+yamlEsc(state.ocrA));
+  L.push('amostra_B: '+yamlEsc(state.ocrB));
+  L.push('variavel: '+yamlEsc(state.varTested));
+  L.push('modo: '+(state.mode||'dupla'));
+  L.push('n: '+s.n);
+  L.push('acertos: '+s.hits);
+  L.push('limiar_p05: '+s.crit);
+  L.push('p_valor: '+s.p.toFixed(4));
+  L.push('significativo: '+(s.sig?'sim':'nao'));
+  L.push('veredito: '+yamlEsc(s.sig?'diferença confirmada':'indicativo não conclusivo'));
+  L.push('tags: [qc, triangular, ocr, cafe]');
+  L.push('---','');
+  L.push('# Teste triangular — '+state.ocrA+' vs '+state.ocrB,'');
+  L.push('**Variável testada:** '+(state.varTested||'—'),'');
+  L.push('**Resultado:** '+(s.sig
+    ? ('✅ Diferença confirmada às cegas — '+s.hits+'/'+s.n+' acertos (limiar '+s.crit+'), p = '+s.p.toFixed(3)+'.')
+    : ('⬜ Sem diferença detectável — '+s.hits+'/'+s.n+' acertos (limiar '+s.crit+'), p = '+s.p.toFixed(3)+'. Não conclui que são iguais: a diferença não superou o acaso neste n.')));
+  if(state.mode==='solo')L.push('','> Modo solo (auto-montagem cega): resultado **indicativo**. Confirmar com 2 pessoas para conclusão definitiva.');
+  if(state.descr&&state.descr.length){
+    L.push('','## Caracterização (prova descritiva — indicativa, não cega)');
+    state.descr.forEach((dd,i)=>{
+      L.push('','- Prova #'+(i+1)+': '+state.ocrA+' total '+dd.totA+' vs '+state.ocrB+' total '+dd.totB+(dd.notes?(' — '+dd.notes):''));
+      const dl=AXES.map(ax=>{const pa=dd.scores[dd.posA]||{},pb=dd.scores[dd.posB]||{};return {name:ax.name,d:((pa[ax.k]||0)-(pb[ax.k]||0))};}).filter(x=>Math.abs(x.d)>=2).sort((a,b)=>Math.abs(b.d)-Math.abs(a.d));
+      if(dl.length)L.push('  - Direção: '+dl.map(x=>(x.d>0?state.ocrA:state.ocrB)+' +'+Math.abs(x.d)+' '+x.name.toLowerCase()).join('; '));
+      const fa=((dd.defects&&dd.defects.A)||[]).join(', '), fb=((dd.defects&&dd.defects.B)||[]).join(', ');
+      if(fa)L.push('  - Defeitos '+state.ocrA+': '+fa);
+      if(fb)L.push('  - Defeitos '+state.ocrB+': '+fb);
+    });
+  }
+  L.push('','---','*Gerado pelo Triângulo OCR · ISO 4120 · α 0,05 · '+d.toLocaleString('pt-BR')+'*');
+  return L.join('\n');
+}
+$('expMd').onclick=()=>{
+  const txt=mdText(), fn='triangulo_'+slug(state.ocrA)+'_vs_'+slug(state.ocrB)+'_'+fileStamp()+'.md';
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(()=>showToast('Nota Obsidian copiada ✓')).catch(()=>{download(fn,txt,'text/markdown');showToast('Nota .md baixada ✓');});
+  }else{download(fn,txt,'text/markdown');showToast('Nota .md baixada ✓');}
+};
 
 /* ---------- R5: focus trap nos modais abertos ---------- */
 function trapFocus(e){
@@ -1198,11 +1478,74 @@ function trapFocus(e){
 }
 document.addEventListener('keydown',trapFocus);
 
+/* ---------- v2: Caderno (histórico) ---------- */
+function renderHistEntry(){
+  const a=loadArchive(), el=$('histEntry');
+  if(!el)return;
+  if(!a.length){el.innerHTML='';return;}
+  el.innerHTML='<button class="btn-ghost hist-open" id="histOpen" type="button">Caderno OCR · '+a.length+(a.length===1?' série arquivada':' séries arquivadas')+' →</button>';
+  $('histOpen').onclick=openHistory;
+}
+let histFilter=null;
+function fmtDate(ts){try{return new Date(ts).toLocaleDateString('pt-BR');}catch(e){return '';}}
+function openHistory(){
+  histFilter=null;
+  ['setupCard','prepCard','statCard','shuffleCard','mapCard','handoffCard','tasteCard','resultCard','ackCard','dMapCard','dScoreCard','dRecapCard','soloMapCard','resumeCard','logWrap','flow'].forEach(id=>show(id,false));
+  show('histCard',true);renderHistory();focusHeading('histH');
+  announce('Caderno aberto.');
+}
+function renderHistory(){
+  const a=loadArchive().slice().reverse();
+  const vars=[...new Set(a.map(s=>s.varTested).filter(Boolean))];
+  $('histFilters').innerHTML=['Todas'].concat(vars).map(v=>{
+    const on=(v==='Todas'&&!histFilter)||(v===histFilter);
+    return '<button class="hist-filter'+(on?' on':'')+'" type="button" data-v="'+(v==='Todas'?'':encodeURIComponent(v))+'">'+v+'</button>';
+  }).join('');
+  document.querySelectorAll('#histFilters .hist-filter').forEach(b=>b.onclick=()=>{const dv=b.dataset.v;histFilter=dv?decodeURIComponent(dv):null;renderHistory();});
+  const list=a.filter(s=>!histFilter||s.varTested===histFilter);
+  if(!list.length){$('histList').innerHTML='<div class="hist-empty">Nenhuma série arquivada ainda. Termine uma série e ela aparece aqui.</div>';return;}
+  $('histList').innerHTML=list.map(s=>{
+    const n=s.evals.length, hits=s.evals.filter(e=>e.hit).length, crit=critical(n,0.05), sig=hits>=crit, p=tailP(n,hits);
+    const badge=sig?'<span class="pill pill-a">confirmado</span>':'<span class="pill pill-b">não detectado</span>';
+    const solo=(s.mode==='solo')?' · solo':'';
+    return '<div class="hist-row"><div class="hl"><div class="hist-pair">'+s.ocrA+' vs '+s.ocrB+'</div>'+
+      (s.varTested?'<div class="hist-var">'+s.varTested+'</div>':'')+
+      '<div class="hist-meta">'+hits+'/'+n+' · p='+p.toFixed(3)+solo+' · '+fmtDate(s.archivedAt||(s.evals[n-1]&&s.evals[n-1].t))+'</div></div>'+
+      '<div class="hist-right">'+badge+'</div></div>';
+  }).join('');
+}
+function archiveCsv(){
+  const rows=[['data','amostra_A','amostra_B','variavel','modo','n','acertos','limiar_p05','p_valor','significativo']];
+  loadArchive().forEach(s=>{
+    const n=s.evals.length, hits=s.evals.filter(e=>e.hit).length, crit=critical(n,0.05), p=tailP(n,hits);
+    rows.push([fmtDate(s.archivedAt),s.ocrA,s.ocrB,s.varTested||'',s.mode||'dupla',n,hits,crit,p.toFixed(4),(hits>=crit)?'sim':'nao']);
+  });
+  return rows.map(r=>r.map(c=>{c=String(c==null?'':c);return /[",;\n]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c;}).join(',')).join('\n');
+}
+$('histExportAll').onclick=()=>{ download('caderno_ocr_triangular_'+fileStamp()+'.csv', archiveCsv(), 'text/csv'); showToast('Caderno exportado ✓'); };
+$('histBack').onclick=()=>{ show('histCard',false); bootView(); };
+
+/* ---------- v2: retomada de série ---------- */
+function showResume(){
+  ['setupCard','prepCard','statCard','shuffleCard','mapCard','handoffCard','tasteCard','resultCard','ackCard','dMapCard','dScoreCard','dRecapCard','soloMapCard','histCard','flow'].forEach(id=>show(id,false));
+  const done=state.evals.length, target=state.targetN;
+  $('resumePair').textContent=state.ocrA+'  vs  '+state.ocrB;
+  $('resumeMeta').textContent='Triângulo '+(done+1)+' de '+target+(state.mode==='solo'?' · modo solo':'')+' · '+(target-done)+' restantes';
+  show('resumeCard',true);focusHeading('resumeH');
+  announce('Série em andamento. Continuar do triângulo '+(done+1)+' de '+target+'.');
+}
+$('resumeContinue').onclick=()=>{ show('resumeCard',false); nextTrial(); };
+$('resumeDiscard').onclick=()=>{ show('resetModal',true); $('rmConfirm').focus(); };
+
 /* ---------- boot ---------- */
-if(state&&state.ocrA){
-  if(state.revealed){ show('setupCard',false);show('prepCard',false);show('statCard',true);renderStats();renderLog(); revealFinal(); }
-  else enterShuffle();
-} else show('setupCard',true);
+function bootView(){
+  resetPrepAccept();
+  if(state&&state.ocrA){
+    if(state.revealed){ show('setupCard',false);show('prepCard',false);show('statCard',true);renderStats();renderLog(); revealFinal(); }
+    else { showResume(); }
+  } else { show('setupCard',true);show('prepCard',true);renderHistEntry(); }
+}
+bootView();
 </script>
 </body>
 </html>
