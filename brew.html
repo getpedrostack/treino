@@ -260,16 +260,44 @@ font-weight:700;color:var(--green);line-height:1;animation:pop .25s ease-out}
 .countdown-go{font-size:64px;font-weight:900;color:var(--green);animation:pop .25s ease-out}
 .finish-overlay{position:fixed;inset:0;background:var(--bg);
 display:flex;flex-direction:column;align-items:center;justify-content:center;
-padding:40px;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s}
+padding:24px;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s;overflow-y:auto}
+.finish-overlay::-webkit-scrollbar{display:none}
 .finish-overlay.show{opacity:1;pointer-events:all}
-.finish-icon{font-size:80px;margin-bottom:24px;animation:float 2s ease-in-out infinite}
-.finish-title{font-size:40px;font-weight:900;color:var(--text);margin-bottom:12px;letter-spacing:-1px}
-.finish-time{font-family:'JetBrains Mono',monospace;font-size:32px;
-font-weight:700;color:var(--green);margin-bottom:32px}
-.finish-sub{font-size:14px;color:var(--text-dim);text-align:center;line-height:1.6;margin-bottom:32px}
+.finish-icon{font-size:52px;margin-bottom:8px;animation:float 2s ease-in-out infinite}
+.finish-title{font-size:34px;font-weight:900;color:var(--text);margin-bottom:4px;letter-spacing:-1px}
+.finish-time{font-family:'JetBrains Mono',monospace;font-size:30px;
+font-weight:700;color:var(--green);margin-bottom:12px}
+.finish-sub{font-size:14px;color:var(--text-dim);text-align:center;line-height:1.6;margin-bottom:18px}
 .finish-btn{width:100%;max-width:320px;height:64px;background:var(--green);
 border:none;border-radius:16px;color:#000;font-size:18px;font-weight:900;
 cursor:pointer;font-family:inherit}
+/* ══ AVALIAÇÃO DE 2 EIXOS (finish) ══ */
+.finish-rate-label{font-size:12px;font-weight:800;color:var(--text-dim);
+text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+.finish-rate-label span{font-weight:600;color:var(--text-muted);text-transform:none;letter-spacing:0}
+.rate-grid{display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:6px;
+width:100%;max-width:300px;margin-bottom:14px}
+.rate-colh{font-size:9px;font-weight:800;color:var(--text-muted);text-transform:uppercase;
+letter-spacing:.3px;text-align:center;align-self:end;padding-bottom:4px;line-height:1.1}
+.rate-rowh{font-size:9px;font-weight:800;color:var(--text-muted);text-transform:uppercase;
+letter-spacing:.3px;align-self:center;text-align:right;padding-right:6px;line-height:1.1}
+.rate-cell{aspect-ratio:1;min-height:46px;background:var(--surface);border:2px solid var(--border);
+border-radius:10px;cursor:pointer;font-family:inherit;transition:transform .1s,border-color .15s,background .15s}
+.rate-cell:active{transform:scale(.93)}
+.rate-cell.ideal{border-color:#1f4d2e;background:#0d1f14}
+.rate-cell.sel{border-color:var(--green);background:var(--green);box-shadow:0 0 0 3px rgba(0,200,83,.25)}
+.finish-tip{font-size:14px;font-weight:700;color:var(--green);line-height:1.45;
+text-align:center;max-height:0;opacity:0;overflow:hidden;transition:max-height .25s,opacity .25s,margin .25s}
+.finish-tip.show{max-height:140px;opacity:1;margin-bottom:22px}
+/* ══ MEMÓRIA NA TELA SETUP ══ */
+.setup-memory{display:none;background:var(--green-bg);border:2px solid var(--green);
+border-radius:12px;padding:12px 14px;margin-bottom:16px;flex-direction:column;gap:3px}
+.setup-memory.show{display:flex}
+.setup-memory .sm-label{font-size:10px;font-weight:800;color:var(--green);
+text-transform:uppercase;letter-spacing:1px}
+.setup-memory .sm-tip{font-size:13px;font-weight:600;color:var(--text);line-height:1.4}
+/* nota por despejo (variantes Kasuya) */
+.pour-note{display:block;font-size:10px;font-weight:600;color:var(--text-muted);margin-top:3px}
 .flash{position:fixed;inset:0;background:var(--green);opacity:0;pointer-events:none;
 z-index:99;transition:opacity .05s}
 .flash.show{opacity:.15}
@@ -289,6 +317,9 @@ z-index:99;transition:opacity .05s}
 <div class="finish-title" id="finish-title">Pronto!</div>
 <div class="finish-time" id="finish-time">00:00</div>
 <div class="finish-sub" id="finish-sub"></div>
+<div class="finish-rate-label">Como ficou? <span>(1 toque · opcional)</span></div>
+<div id="finish-rate" role="group" aria-label="Avaliação da extração em dois eixos"></div>
+<div class="finish-tip" id="finish-tip" aria-live="polite"></div>
 <button class="finish-btn" onclick="goHome()">Nova Extração</button>
 </div>
 
@@ -336,6 +367,7 @@ z-index:99;transition:opacity .05s}
 <div style="width:48px" aria-hidden="true"></div>
 </nav>
 <div class="s2-body">
+<div class="setup-memory" id="setup-memory" aria-live="polite"></div>
 <div class="dose-section">
 <div class="dose-label" id="dose-label">Dose de Café</div>
 <div class="dose-control">
@@ -464,7 +496,7 @@ steps:[
 {atSec:190,type:'serve',label:'Servir'}]},
 // ═══ 2022 Melbourne ═══
 {id:'hsu2022',year:2022,place:1,flag:'🇹🇼',champion:'Sherry Hsu',country:'Taiwan',
-dripper:'Origami',ratio:200/14,
+dripper:'OREA V3',ratio:200/14,
 steps:[
 {atSec:0,type:'pour',label:'1º Despejo',frac:50/200,temp:70},
 {atSec:30,type:'pour',label:'2º Despejo',frac:50/200,temp:95},
@@ -706,6 +738,96 @@ R.steps.forEach(s=>{if(s.type==='pour')sum+=pourMl(s);accumCache.push(sum);});
 }
 const accumulatedAt=idx=>accumCache[idx]||0;
 
+/* ═══════════════════════════════════════════
+   PERSISTÊNCIA + APRENDIZADO (localStorage)
+   Loop de atrito-zero: salvar em 1 toque → avaliar em 2 eixos → coaching → memória por receita
+   ═══════════════════════════════════════════ */
+const STORE_KEY='wbrc_v1';
+function loadStore(){try{return JSON.parse(localStorage.getItem(STORE_KEY))||{};}catch(e){return{};}}
+function saveStore(s){try{localStorage.setItem(STORE_KEY,JSON.stringify(s));}catch(e){}}
+const recipeKey=()=>R?(R.key||R.id):null;
+
+/* Coaching determinístico — azedo/amargo = extração (moagem/temp); fraco/forte = concentração (dose/água).
+   Como o app não controla a moagem, a dica vira instrução verbal para o moedor do usuário. */
+function coachingTip(a,sg){
+const p=[];
+if(a===0)p.push('🍋 Azedo → moa mais fino ou suba a temperatura');
+else if(a===2)p.push('🔥 Amargo → moa mais grosso ou baixe 2–3°C');
+if(sg===0)p.push('💪 Forte → reduza a dose ou aumente a água');
+else if(sg===2)p.push('☁️ Fraco → aumente a dose ou reduza a água');
+return p.length?p.join(' · '):'✓ Equilibrado. Da próxima, repita igual.';
+}
+
+/* Restaura a dose memorizada desta receita (fallback: última dose da sessão) */
+function restoreDose(){
+const rec=loadStore().recipes&&loadStore().recipes[recipeKey()];
+dose=(rec&&rec.dose)?rec.dose:lastDose;
+lastDose=dose;
+}
+
+/* Salva a extração ao concluir (auto-log, zero formulário) e memoriza a dose por receita */
+function saveBrew(){
+const key=recipeKey();if(!key)return;
+const s=loadStore();
+s.recipes=s.recipes||{};
+s.recipes[key]={dose:dose,ts:Date.now()};   // avaliação é anexada depois por rateBrew
+s.log=s.log||[];
+s.log.push({key,champion:R.champion,year:R.year,dose:dose,water:rnd(totalW()),ratio:ratioLabel(R.ratio),ts:Date.now()});
+if(s.log.length>300)s.log=s.log.slice(-300);
+saveStore(s);
+}
+
+/* Avaliação de 2 eixos → coaching + persistência (1 toque) */
+function rateBrew(a,sg){
+const key=recipeKey();if(!key)return;
+const tip=coachingTip(a,sg);
+const s=loadStore();
+s.recipes=s.recipes||{};
+s.recipes[key]={...(s.recipes[key]||{}),dose:dose,acid:a,strength:sg,tip:tip,ts:Date.now()};
+if(s.log&&s.log.length){const L=s.log[s.log.length-1];if(L.key===key){L.acid=a;L.strength=sg;}}
+saveStore(s);
+document.querySelectorAll('#finish-rate .rate-cell').forEach(c=>{c.classList.remove('sel');c.setAttribute('aria-pressed','false');});
+const cell=document.querySelector(`#finish-rate .rate-cell[data-a="${a}"][data-s="${sg}"]`);
+if(cell){cell.classList.add('sel');cell.setAttribute('aria-pressed','true');}
+const tipEl=document.getElementById('finish-tip');
+if(tipEl){tipEl.textContent=tip;tipEl.classList.add('show');}
+beep(660,.12,.2);vib(40);
+}
+
+/* Matriz 3×3 reconstruída a cada finish: azedo↔amargo (colunas) × forte↔leve (linhas) */
+function buildFinishRating(){
+const wrap=document.getElementById('finish-rate');if(!wrap)return;
+const cols=['🍋 Azedo','Equilíbrio','🔥 Amargo'];
+const rows=['💪 Forte','Médio','☁️ Leve'];
+let h='<div class="rate-grid"><div class="rate-corner" aria-hidden="true"></div>';
+cols.forEach(c=>h+=`<div class="rate-colh">${c}</div>`);
+for(let si=0;si<3;si++){
+h+=`<div class="rate-rowh">${rows[si]}</div>`;
+for(let ai=0;ai<3;ai++){
+const ideal=(ai===1&&si===1)?' ideal':'';
+h+=`<button type="button" class="rate-cell${ideal}" data-a="${ai}" data-s="${si}" aria-pressed="false" aria-label="${rows[si]}, ${cols[ai]}" onclick="rateBrew(${ai},${si})"></button>`;
+}
+}
+h+='</div>';
+wrap.innerHTML=h;
+const tipEl=document.getElementById('finish-tip');
+if(tipEl){tipEl.textContent='';tipEl.classList.remove('show');}
+}
+
+/* Banner "da última vez" na tela Setup (memória do último ajuste) */
+function renderSetupMemory(){
+const el=document.getElementById('setup-memory');if(!el)return;
+const recs=loadStore().recipes||{};
+const rec=recs[recipeKey()];
+if(rec&&rec.acid!=null&&rec.strength!=null){
+el.innerHTML=`<span class="sm-label">↻ Da última vez (${rec.dose}g)</span><span class="sm-tip">${rec.tip}</span>`;
+el.classList.add('show');
+}else if(rec&&rec.dose){
+el.innerHTML=`<span class="sm-label">↻ Última vez</span><span class="sm-tip">você usou ${rec.dose}g nesta receita.</span>`;
+el.classList.add('show');
+}else{el.classList.remove('show');el.innerHTML='';}
+}
+
 /* Audio — resume() é obrigatório no mobile (iOS/Android bloqueiam AudioContext até interação) */
 function ensureAudio(){
 if(!audioCtx) audioCtx=new(window.AudioContext||window.webkitAudioContext)();
@@ -806,7 +928,8 @@ const v=KASUYA[i];
 R={...v,champion:'Tetsu Kasuya',country:'Japão',flag:'🇯🇵',year:2016,place:1,
 dripper:'V60 · 4:6 '+v.variantName+' '+v.emoji,
 steps:JSON.parse(JSON.stringify(v.steps))};
-dose=lastDose;cameFromVariants=true;
+R.key='kasuya_'+v.variantName;
+cameFromVariants=true;restoreDose();
 buildAccumCache();
 document.getElementById('s2-title').textContent=`🥇 2016 · Kasuya · ${v.variantName} ${v.emoji}`;
 renderSetup();show('s-setup');
@@ -816,7 +939,7 @@ renderSetup();show('s-setup');
 function pickRecipe(id){
 ensureAudio();wakeLockOn();
 R=JSON.parse(JSON.stringify(RECIPES.find(r=>r.id===id)));
-dose=lastDose;cameFromVariants=false;
+cameFromVariants=false;restoreDose();
 buildAccumCache();
 document.getElementById('s2-title').textContent=`${medals[R.place]} ${R.year} · ${R.champion.split(' ').pop()} · ${ratioLabel(R.ratio)}`;
 renderSetup();show('s-setup');
@@ -829,10 +952,11 @@ document.getElementById('dose-val').textContent=dose;
 document.getElementById('water-val').textContent=rnd(tw);
 document.getElementById('pours-table').innerHTML=R.steps.filter(s=>s.type==='pour').map(s=>`
 <div class="pour-row">
-<div class="pour-name">${s.label}</div>
+<div class="pour-name">${s.label}${s.note?`<span class="pour-note">${s.note}</span>`:''}</div>
 <div class="pour-temp">${s.temp}°C</div>
 <div class="pour-amt">${rnd(pourMl(s))}ml</div>
 </div>`).join('');
+renderSetupMemory();
 }
 function changeDose(d){
 dose=Math.max(1,Math.min(80,dose+d));
@@ -1073,6 +1197,8 @@ if(finishTimeout){clearTimeout(finishTimeout);finishTimeout=null;}
 clearInterval(ticker);ticker=null;wakeLockOff();
 document.getElementById('finish-time').textContent=fmtMs(Date.now()-t0);
 document.getElementById('finish-sub').innerHTML=`${medals[R.place]||''} ${R.champion} · ${R.year}<br>${R.dripper}`;
+saveBrew();             // item 2+3: auto-log + memoriza a dose desta receita
+buildFinishRating();    // item 4: matriz de avaliação fresca a cada extração
 const f=document.getElementById('finish');
 f.classList.add('show');f.setAttribute('aria-hidden','false');
 }
