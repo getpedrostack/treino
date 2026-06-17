@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0c0a08">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Diário">
+<link rel="manifest" href='data:application/manifest+json,{"name":"Di%C3%A1rio · H%C3%A9lios Belmont","short_name":"Di%C3%A1rio","display":"standalone","background_color":"%230c0a08","theme_color":"%230c0a08","start_url":"."}'>
 <title>Diário</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -466,10 +471,9 @@ section.collapsed .section-header { padding-bottom: var(--s-4); }
   letter-spacing: -0.005em;
 }
 .habit.done .habit-label {
-  color: var(--text-3);
-  text-decoration: line-through;
-  text-decoration-color: var(--text-4);
-  text-decoration-thickness: 1px;
+  color: var(--brand-bright);
+  font-weight: 500;
+  text-shadow: 0 0 10px rgba(200,155,60,0.22);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -2418,6 +2422,73 @@ section[data-layer="mind"] .habit {
   font-size: 13px; color: var(--text-2);
 }
 .vault-row .vault-val { font-family: var(--font-mono); font-weight: 700; color: var(--brand-bright); }
+
+/* ═══════════════════════════════════════════════════════════════
+   V3 — CONTRATO DA SEMANA, COLD-RETURN, MENTOR, RETENÇÃO
+═══════════════════════════════════════════════════════════════ */
+.week-focus {
+  margin-bottom: var(--s-4);
+  padding: var(--s-3) var(--s-4);
+  background: linear-gradient(135deg, var(--brand-tint) 0%, var(--surface-1) 60%);
+  border: 1px solid var(--brand-tint-strong);
+  border-left: 3px solid var(--brand);
+  border-radius: var(--r-md);
+  display: none;
+}
+.week-focus.show { display: block; animation: viewFadeIn var(--t-base); }
+.week-focus-eyebrow { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--brand); margin-bottom: 6px; }
+.week-focus-goal { display: flex; justify-content: space-between; align-items: center; gap: var(--s-3); font-size: 14px; color: var(--text-1); padding: 3px 0; }
+.week-focus-goal .wf-prog { font-family: var(--font-mono); font-size: 12px; color: var(--text-2); white-space: nowrap; }
+.week-focus-goal .wf-prog.done { color: var(--success); }
+.week-focus-note { font-size: 12px; color: var(--text-3); margin-top: 6px; font-style: italic; }
+
+.cold-return {
+  margin-bottom: var(--s-4);
+  padding: var(--s-3) var(--s-4);
+  background: var(--surface-1);
+  border-left: 3px solid var(--info);
+  border-radius: var(--r-sm);
+  display: none;
+  gap: var(--s-3);
+  align-items: center;
+  justify-content: space-between;
+}
+.cold-return.show { display: flex; animation: viewFadeIn var(--t-base); }
+.cold-return-text { font-size: 13px; color: var(--text-2); line-height: 1.45; }
+.cold-return-text strong { color: var(--text-1); }
+.cold-return-close { background: transparent; border: none; color: var(--text-4); font-size: 20px; cursor: pointer; padding: 0 var(--s-2); flex-shrink: 0; line-height: 1; }
+
+.verdict-apply-btn {
+  margin-top: var(--s-3); width: 100%;
+  background: var(--brand); color: var(--surface-0); border: none;
+  padding: var(--s-3); border-radius: var(--r-md);
+  font-family: inherit; font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: all var(--t-fast); min-height: 44px;
+}
+.verdict-apply-btn:hover { background: var(--brand-bright); box-shadow: 0 4px 16px rgba(212,165,116,0.35); }
+.verdict-apply-btn:active { transform: scale(0.98); }
+
+.discovery-progress { height: 6px; background: var(--surface-3); border-radius: 3px; overflow: hidden; margin-top: var(--s-3); }
+.discovery-progress > div { height: 100%; background: linear-gradient(90deg, var(--brand-dim), var(--brand-bright)); border-radius: 3px; transition: width var(--t-slow); }
+
+.view-switch button { position: relative; }
+.tab-badge { position: absolute; top: 6px; right: 8px; width: 7px; height: 7px; border-radius: 50%; background: var(--brand-bright); box-shadow: 0 0 8px rgba(240,198,116,0.8); display: none; }
+.tab-badge.show { display: block; }
+
+.pulse-focus { animation: pulseFocus 1.4s ease-in-out 2; }
+@keyframes pulseFocus {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(200,155,60,0); }
+  50% { box-shadow: 0 0 0 3px rgba(200,155,60,0.5); }
+}
+
+.reminder-btn {
+  width: 100%; background: var(--surface-2);
+  border: 1px dashed var(--border-strong); color: var(--text-3);
+  padding: var(--s-3); border-radius: var(--r-md);
+  font-family: inherit; font-size: 13px; cursor: pointer; transition: all var(--t-fast);
+}
+.reminder-btn:hover { border-color: var(--brand); color: var(--brand); background: var(--brand-tint); }
+.reminder-btn.on { border-style: solid; border-color: var(--success); color: var(--success); }
 </style>
 </head>
 <body>
@@ -2471,6 +2542,8 @@ section[data-layer="mind"] .habit {
   <!-- ══════════ TRACKER VIEW ══════════ -->
   <div id="trackerView" class="tracker-view">
 
+    <div id="coldReturn" class="cold-return"></div>
+    <div id="weekFocus" class="week-focus"></div>
     <div id="modeBanner"></div>
     <div id="microInsight" class="micro-insight"></div>
 
@@ -2705,6 +2778,8 @@ section[data-layer="mind"] .habit {
         </div>
       </section>
 
+      <button class="reminder-btn" id="reminderBtn" onclick="requestReminder()">🔔 Ativar lembrete diário</button>
+
     </div>
 
     <!-- HISTÓRICO -->
@@ -2728,15 +2803,15 @@ section[data-layer="mind"] .habit {
       <button data-range="year" onclick="setRange('year')">Ano</button>
     </div>
 
-    <div class="dash-actions">
+    <div id="dashboardContent"></div>
+
+    <div class="dash-actions" style="margin-top:var(--s-5);">
       <button class="btn primary" onclick="exportAll()">
-        <span style="display:inline-flex;align-items:center;gap:7px;">↓ Exportar tudo (JSON)</span>
+        <span style="display:inline-flex;align-items:center;gap:7px;">⚔ Selar a semana · levar ao Conselho (JSON)</span>
       </button>
       <button class="btn" onclick="document.getElementById('importInput').click()">Restaurar</button>
       <input type="file" id="importInput" accept=".json,application/json" style="display:none" onchange="importAll(event)">
     </div>
-
-    <div id="dashboardContent"></div>
   </div>
 
   <!-- ══════════ REVIEW VIEW ══════════ -->
@@ -3123,6 +3198,7 @@ function render() {
   renderHistory();
   updateTrackerHUD();
   renderMicroInsight();
+  renderWeekFocus();
 }
 
 function useSuggestion() {
@@ -3233,8 +3309,20 @@ document.querySelectorAll('.habit').forEach(el => {
     }
     updateScores(day);
     renderHistory();
+    // Micro-clímax: fechar 4/4 keystones (1x/dia)
+    if (turningOn && KEYSTONES.includes(id)) {
+      const d2 = loadDay(currentDate);
+      const ks = KEYSTONES.filter(k => d2.habits[k]).length;
+      if (ks === 4 && !d2._ks4) {
+        d2._ks4 = true;
+        localStorage.setItem(STORAGE_PREFIX + dateKey(currentDate), JSON.stringify(d2));
+        celebrate('⚔️', 'Dia forjado', '4/4 — a base está intacta.');
+      }
+    }
     syncDayXP(currentDate);
     updateTrackerHUD();
+    renderWeekFocus();
+    if (turningOn && Math.random() < 0.12) maybeDiscovery();
   });
 });
 
@@ -3369,8 +3457,8 @@ function renderDashboard() {
 
   checkAchievements();
   container.innerHTML = '';
+  container.appendChild(renderVerdictCard(agg, aggregateData(getPrevDateRange(currentRange)), 'O veredito · ' + rangeLabel));
   container.appendChild(renderGamificationPanel());
-  container.appendChild(renderVerdictCard(agg, aggregateData(getPrevDateRange(currentRange)), 'Veredito · ' + rangeLabel));
   container.appendChild(renderPillarFoundation(agg, rangeLabel));
   container.appendChild(renderPillarConstruction(agg, rangeLabel));
   container.appendChild(renderPillarVitality(agg, rangeLabel));
@@ -4197,7 +4285,14 @@ function renderVerdictCard(agg, prevAgg, title) {
   const card = document.createElement('div');
   card.className = 'verdict-card';
   if (all.length === 0) {
-    card.innerHTML = `<div class="verdict-title">${title}</div><div class="verdict-body verdict-empty">Sem padrões fortes ainda. Continue registrando — correlações aparecem a partir de ~5 dias com dados.</div>`;
+    const withData = agg.filter(({data}) => Object.keys(data.habits).length > 0 || data.metrics.sleep || data.reflection.avancei).length;
+    const goal = 5;
+    const pct = Math.min(100, Math.round(withData / goal * 100));
+    card.innerHTML = `<div class="verdict-title">${title}</div>
+      <div class="verdict-body verdict-empty">A forja ainda acumula calor. Faltam <strong style="color:var(--brand-bright)">${Math.max(0, goal - withData)} dia(s)</strong> para o sistema revelar seus primeiros padrões.<br>O que você vai ver: <em>"dormir abaixo de 6,5h derruba seu foco ~30% e trava uma frente de trabalho."</em>
+        <div class="discovery-progress"><div style="width:${pct}%"></div></div>
+        <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-3);margin-top:6px;">${withData}/${goal} dias registrados</div>
+      </div>`;
     return card;
   }
   const top = all.slice(0, 3);
@@ -4205,7 +4300,8 @@ function renderVerdictCard(agg, prevAgg, title) {
   card.innerHTML = `
     <div class="verdict-title">${title}</div>
     <div class="verdict-body">${top.map(l => '<p>' + l + '</p>').join('')}</div>
-    <div class="verdict-action">▶ ${action}</div>`;
+    <div class="verdict-action">⚔ Ordem da semana: ${action}</div>
+    <button class="verdict-apply-btn" onclick="applyVerdict()">Aplicar no dia ⟶</button>`;
   return card;
 }
 
@@ -4422,7 +4518,7 @@ function renderReview() {
   // Status automático no hero
   const statusEl = document.getElementById('reviewAutoStatus');
   if (reviewState.prevReview) {
-    statusEl.innerHTML = `<div class="auto-status-pill ok"><span class="auto-status-dot"></span>Análise da semana ${reviewState.prevReview.week_number} carregada automaticamente</div>`;
+    statusEl.innerHTML = `<div class="auto-status-pill ok"><span class="auto-status-dot"></span>Análise da semana ${reviewState.prevReview.week_number || 'anterior'} carregada automaticamente</div>`;
   } else {
     statusEl.innerHTML = `<div class="auto-status-pill"><span class="auto-status-dot"></span>Primeira semana — sem review anterior para comparar</div>`;
   }
@@ -4917,8 +5013,10 @@ function saveReviewNow() {
   if (d4 >= 7) { bonus = 90; selo = 'Semana Inabalável'; icone = '👑'; }
   else if (d4 >= 5) { bonus = 60; selo = 'Semana Sólida'; icone = '🛡️'; }
   awardXP(bonus, 'Review semanal · ' + selo);
+  saveWeekContract(review);
   celebrate(icone, selo, '+' + bonus + ' XP · ' + d4 + ' dias 4/4 nesta semana');
   renderReview();
+  updateReviewBadge();
 }
 
 // Carrega automaticamente o review da semana ANTERIOR (último review salvo antes da semana atual)
@@ -5064,9 +5162,10 @@ document.addEventListener('keydown', (e) => {
 const GAMIF_KEY = 'gamif_state';
 
 // Níveis: XP necessário cresce ~1.4x por nível
+// Léxico God of War / forja — patentes da saga
 const LEVEL_TITLES = [
-  'Iniciante', 'Aprendiz', 'Praticante', 'Constante', 'Disciplinado',
-  'Dedicado', 'Veterano', 'Mestre', 'Guardião', 'Lendário'
+  'Cinzas', 'Faísca', 'Brasa', 'Forja', 'Têmpera',
+  'Lâmina', 'Vigília', 'Sentinela', 'Algoz', 'Lenda'
 ];
 
 function xpForLevel(level) {
@@ -5144,9 +5243,9 @@ function syncDayXP(date) {
 
 /* ─── CONQUISTAS ─── */
 const ACHIEVEMENTS = [
-  { id: 'first_day', icon: '🌱', name: 'Primeiro passo', desc: 'Complete seu primeiro dia', color: 'var(--p-vitality)',
+  { id: 'first_day', icon: '🌱', name: 'O Juramento', desc: 'O primeiro dia registrado', color: 'var(--p-vitality)',
     check: (ctx) => ctx.totalDaysWithData >= 1 },
-  { id: 'first_4of4', icon: '💎', name: 'Dia perfeito', desc: '4/4 keystones em um dia', color: 'var(--brand)',
+  { id: 'first_4of4', icon: '💎', name: 'Dia sem brechas', desc: '4/4 keystones em um dia', color: 'var(--brand)',
     check: (ctx) => ctx.anyPerfectDay },
   { id: 'streak_3', icon: '🔥', name: 'Aquecendo', desc: '3 dias seguidos de keystones', color: '#fb923c',
     check: (ctx) => ctx.maxStreak >= 3 },
@@ -5162,11 +5261,11 @@ const ACHIEVEMENTS = [
     check: (ctx) => ctx.tonesRecent >= 12 },
   { id: 'gym_20', icon: '💪', name: 'Forjado', desc: '20 dias de academia', color: 'var(--p-vitality)',
     check: (ctx) => ctx.totalGym >= 20 },
-  { id: 'reflect_14', icon: '📖', name: 'Examinado', desc: '14 dias de reflexão escrita', color: 'var(--p-awareness)',
+  { id: 'reflect_14', icon: '📖', name: 'O Olhar Interior', desc: '14 dias de reflexão escrita', color: 'var(--p-awareness)',
     check: (ctx) => ctx.totalReflect >= 14 },
-  { id: 'level_5', icon: '⭐', name: 'Disciplinado', desc: 'Alcançar nível 5', color: 'var(--brand)',
+  { id: 'level_5', icon: '⭐', name: 'A Quinta Forja', desc: 'Alcançar nível 5', color: 'var(--brand)',
     check: (ctx) => ctx.level >= 5 },
-  { id: 'review_first', icon: '🧭', name: 'Estrategista', desc: 'Concluir primeiro review semanal', color: 'var(--p-construction)',
+  { id: 'review_first', icon: '🧭', name: 'O Conselho', desc: 'Concluir o primeiro ritual semanal', color: 'var(--p-construction)',
     check: (ctx) => ctx.reviewCount >= 1 }
 ];
 
@@ -5427,8 +5526,177 @@ function deltaSpan(cur, prev, unit, higherBetter, dec) {
   return `<span class="${good ? 'delta-up' : 'delta-down'}">${up ? '▲' : '▼'}${val}</span>`;
 }
 
+/* ═══════════════════════════════════════════════════════
+   V3 — CONTRATO DA SEMANA · COLD-RETURN · APLICAR · LEMBRETE
+═══════════════════════════════════════════════════════ */
+const WEEK_CONTRACT_KEY = 'week_contract';
+
+// Domingo escreve: persiste as metas-âncora + foco da semana
+function saveWeekContract(review) {
+  let anchors = (review.goals || [])
+    .filter(g => g.priority === 'high' && g.metric && g.metric !== 'manual')
+    .slice(0, 3)
+    .map(g => ({ text: g.text, metric: g.metric, target: g.target }));
+  if (anchors.length === 0) {
+    anchors = (review.goals || []).filter(g => g.metric && g.metric !== 'manual')
+      .slice(0, 2).map(g => ({ text: g.text, metric: g.metric, target: g.target }));
+  }
+  const contract = {
+    week_ending: review.week_ending,
+    focus: (review.reflection && review.reflection.focus_next) || '',
+    anchors
+  };
+  localStorage.setItem(WEEK_CONTRACT_KEY, JSON.stringify(contract));
+}
+
+function loadWeekContract() {
+  try { return JSON.parse(localStorage.getItem(WEEK_CONTRACT_KEY)); } catch(e) { return null; }
+}
+
+// Progresso de uma âncora na semana corrente
+function anchorProgress(metric, target) {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const dow = today.getDay();
+  const daysUntilSun = dow === 0 ? 0 : 7 - dow;
+  const weekEnd = new Date(today); weekEnd.setDate(today.getDate() + daysUntilSun);
+  const dates = [];
+  for (let i = 6; i >= 0; i--) { const d = new Date(weekEnd); d.setDate(weekEnd.getDate() - i); dates.push(d); }
+  const s = computeAllStats(aggregateData(dates));
+  if (KEYSTONES.includes(metric)) { const v = s.foundation.byHabit[metric] || 0; return { cur: v, unit: ' dias', done: v >= target }; }
+  if (WORK.includes(metric)) { const v = s.construction.byHabit[metric] || 0; return { cur: v, unit: ' dias', done: v >= target }; }
+  if (metric === 'b_academia') return { cur: s.vitality.academiaCount, unit: 'x', done: s.vitality.academiaCount >= target };
+  if (metric === 'sleep_mean') return { cur: s.vitality.meanSleep, unit: 'h', done: s.vitality.meanSleep >= target, dec: 1 };
+  if (metric === 'reflection_days') return { cur: s.awareness.reflDays, unit: ' dias', done: s.awareness.reflDays >= target };
+  return { cur: null, unit: '', done: false };
+}
+
+// HOJE lê: bloco passivo "Foco da semana" (zero toques; some se vazio/obsoleto)
+function renderWeekFocus() {
+  const el = document.getElementById('weekFocus');
+  if (!el) return;
+  const c = loadWeekContract();
+  const hide = () => { el.classList.remove('show'); el.innerHTML = ''; };
+  if (!c || ((!c.anchors || c.anchors.length === 0) && !c.focus)) return hide();
+  if (c.week_ending) {
+    const we = new Date(c.week_ending + 'T00:00:00');
+    const t = new Date(); t.setHours(0,0,0,0);
+    if (!isNaN(we) && (t - we) / 86400000 > 9) return hide();
+  }
+  let rows = '';
+  (c.anchors || []).forEach(a => {
+    const p = anchorProgress(a.metric, a.target);
+    const val = p.cur === null ? '' : (p.dec ? p.cur.toFixed(1) : p.cur) + '/' + a.target + p.unit;
+    rows += `<div class="week-focus-goal"><span>${escapeHtml(a.text)}</span><span class="wf-prog ${p.done ? 'done' : ''}">${p.done ? '✓ ' : ''}${val}</span></div>`;
+  });
+  const note = c.focus ? `<div class="week-focus-note">"${escapeHtml(c.focus)}"</div>` : '';
+  el.innerHTML = `<div class="week-focus-eyebrow">⚔ Foco da semana · você decidiu isto no domingo</div>${rows}${note}`;
+  el.classList.add('show');
+}
+
+// Veredito → gesto: leva o foco para HOJE
+function applyVerdict() {
+  switchView('tracker');
+  setTimeout(() => {
+    const sec = document.querySelector('.metrics-section') || document.querySelector('.keystone-section');
+    if (sec) {
+      sec.classList.add('pulse-focus');
+      sec.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => sec.classList.remove('pulse-focus'), 3200);
+    }
+  }, 140);
+  showToast('Foco trazido para Hoje');
+}
+
+// Cold-return: reacolhimento sem culpa após ausência
+function checkColdReturn() {
+  const el = document.getElementById('coldReturn');
+  if (!el) return;
+  const last = localStorage.getItem('lastVisitISO');
+  if (!last) return;
+  const lastD = new Date(last); lastD.setHours(0,0,0,0);
+  const today = new Date(); today.setHours(0,0,0,0);
+  const gap = Math.floor((today - lastD) / 86400000);
+  if (gap >= 2) {
+    const streak = computeStreak();
+    const msg = streak > 0 ? 'O escudo segurou — seu streak ainda está de pé.' : 'A forja esfriou, mas você voltou.';
+    el.innerHTML = `<div class="cold-return-text"><strong>Você voltou após ${gap} dias.</strong> ${msg} Comece leve: só a base hoje.</div><button class="cold-return-close" onclick="dismissColdReturn()" aria-label="Fechar">×</button>`;
+    el.classList.add('show');
+  }
+}
+function dismissColdReturn() { const el = document.getElementById('coldReturn'); if (el) el.classList.remove('show'); }
+function recordVisit() { try { localStorage.setItem('lastVisitISO', new Date().toISOString()); } catch(e) {} }
+
+// Badge contextual na aba Revisão (sáb→ter, se a review da semana não foi salva)
+function updateReviewBadge() {
+  const btn = document.querySelector('.view-switch button[data-view="review"]');
+  if (!btn) return;
+  let badge = btn.querySelector('.tab-badge');
+  if (!badge) { badge = document.createElement('span'); badge.className = 'tab-badge'; btn.appendChild(badge); }
+  const today = new Date(); today.setHours(0,0,0,0);
+  const dow = today.getDay();
+  const daysUntilSun = dow === 0 ? 0 : 7 - dow;
+  const weekEnd = new Date(today); weekEnd.setDate(today.getDate() + daysUntilSun);
+  const saved = !!localStorage.getItem('review_' + dateKey(weekEnd));
+  badge.classList.toggle('show', [6,0,1,2].includes(dow) && !saved);
+}
+
+// Lembrete honesto: a notificação só dispara com o app aberto/servido (sob file:// é limitada)
+function requestReminder() {
+  const btn = document.getElementById('reminderBtn');
+  if (!('Notification' in window)) { showToast('Notificações indisponíveis aqui', true); return; }
+  if (Notification.permission === 'granted') {
+    localStorage.setItem('reminderOn', '1');
+    if (btn) { btn.classList.add('on'); btn.textContent = '🔔 Lembrete ativado'; }
+    maybeNotify(true);
+    return;
+  }
+  Notification.requestPermission().then(p => {
+    if (p === 'granted') {
+      localStorage.setItem('reminderOn', '1');
+      if (btn) { btn.classList.add('on'); btn.textContent = '🔔 Lembrete ativado'; }
+      showToast('Lembrete ativado');
+      maybeNotify(true);
+    } else {
+      showToast('Permissão negada', true);
+    }
+  });
+}
+function maybeNotify(force) {
+  try {
+    if (localStorage.getItem('reminderOn') !== '1') return;
+    if (!('Notification' in window) || Notification.permission !== 'granted') return;
+    const today = loadDay(new Date());
+    const ks = KEYSTONES.filter(k => today.habits[k]).length;
+    if (force || ks < 4) {
+      const lever = (computeCorrelations(aggregateData(getDateRange('week')))[0] || '').replace(/<[^>]+>/g, '');
+      new Notification('Diário · feche o seu dia', { body: lever || 'A base te espera — 4 toques fecham o dia.' });
+    }
+  } catch(e) {}
+}
+
+// Variabilidade ética: revela um padrão novo como recompensa de descoberta (1x/dia)
+function maybeDiscovery() {
+  try {
+    const k = dateKey(new Date());
+    if (localStorage.getItem('discovery_last') === k) return;
+    const corr = computeCorrelations(aggregateData(getDateRange('month')));
+    if (corr.length < 2) return;
+    localStorage.setItem('discovery_last', k);
+    showToast('🔎 Novo padrão detectado — veja o Veredito');
+  } catch(e) {}
+}
+
+function syncReminderBtn() {
+  const btn = document.getElementById('reminderBtn');
+  if (btn && localStorage.getItem('reminderOn') === '1') { btn.classList.add('on'); btn.textContent = '🔔 Lembrete ativado'; }
+}
+
 /* INIT */
 render();
+checkColdReturn();
+updateReviewBadge();
+syncReminderBtn();
+recordVisit();
 
 document.addEventListener('keydown', (e) => {
   // Esc closes drawer (from anywhere)
