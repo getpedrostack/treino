@@ -46,6 +46,43 @@
     link.href = 'data:application/manifest+json;base64,' + out;
   } catch (e) { /* fallback: mantém o manifest estático */ }
 })();
+
+/* === AUTO-CURA: remove service workers INTRUSOS =======================
+   Apps antigos na mesma origem podem ter deixado um service worker de
+   escopo amplo (pasta-pai/raiz) que SEQUESTRA a navegação e serve o
+   conteúdo deles em cache (ex.: a intro do triang) — até para /PWR/.
+   Aqui, ao carregar, desregistramos qualquer SW cujo escopo seja MAIS
+   AMPLO que a pasta deste app (prefixo do diretório do PWR), sem tocar
+   nos SWs do brew/diário, que têm escopo próprio. Também limpamos os
+   caches desses SWs intrusos quando dá pra identificar.
+   IMPORTANTE: se o SW intruso já estiver servindo o app errado em cache,
+   a página do PWR pode nem carregar — aí é preciso "Limpar dados do site"
+   no navegador uma vez (ver instruções que o assistente passou). */
+(function () {
+  try {
+    if (!('serviceWorker' in navigator)) return;
+    if (location.protocol.indexOf('http') !== 0) return;   // só faz sentido hospedado
+    // Roda só UMA vez por origem: remedia o estado preso sem ficar matando
+    // service workers a cada load (pra não atrapalhar um eventual app de raiz legítimo).
+    try { if (localStorage.getItem('pwr.swHealed') === '1') return; } catch (e) {}
+    var here = location.href.split(/[?#]/)[0];
+    var myDir = here.replace(/[^/]*$/, '');                 // .../PWR/
+    navigator.serviceWorker.getRegistrations().then(function (regs) {
+      regs.forEach(function (r) {
+        var s = (r && r.scope) || '';
+        // Intruso = escopo termina em "/", é PREFIXO do diretório do PWR e
+        // estritamente mais curto (mais amplo). Poupa /brew/, /Diário/ e o
+        // próprio /PWR/. O check de "/" + comprimento evita falso-positivo
+        // do tipo ".../PW" casar com ".../PWR/".
+        if (s && s !== myDir && s.length < myDir.length &&
+            s.charAt(s.length - 1) === '/' && myDir.indexOf(s) === 0) {
+          r.unregister();
+        }
+      });
+      try { localStorage.setItem('pwr.swHealed', '1'); } catch (e) {}
+    }).catch(function () {});
+  } catch (e) {}
+})();
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
