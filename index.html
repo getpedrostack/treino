@@ -38,10 +38,14 @@
     for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
     var m = JSON.parse(new TextDecoder('utf-8').decode(bytes));
     var here = location.href.split(/[?#]/)[0];   // URL deste index.html
-    var dir = here.replace(/[^/]*$/, '');         // diretório = escopo do app
-    m.id = dir;            // identidade única (pasta do PWR)
-    m.start_url = here;    // abre exatamente este app
-    m.scope = dir;
+    var dir = here.replace(/[^/]*$/, '');         // pasta onde o app está
+    // IMPORTANTE: vários apps do Pedro vivem na MESMA pasta (raiz do repo no
+    // GitHub Pages: index.html, triang.html, brew.html, diario.html). Logo a
+    // identidade NÃO pode ser só a pasta — ia colidir com o triang. Usamos um
+    // TOKEN próprio do PWR pra garantir um app-id único de verdade.
+    m.id = dir + 'app.pwr-pedro';   // identidade ÚNICA do PWR (não colide)
+    m.start_url = here;             // abre exatamente este index.html (o PWR)
+    m.scope = here;                 // escopo só deste arquivo — não captura os vizinhos
     var out = btoa(unescape(encodeURIComponent(JSON.stringify(m))));
     link.href = 'data:application/manifest+json;base64,' + out;
   } catch (e) { /* fallback: mantém o manifest estático */ }
