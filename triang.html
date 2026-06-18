@@ -4,11 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="description" content="Teste triangular cego (ISO 4120) para comparar torras de café — Original Coffee Roaster.">
-<meta name="theme-color" content="#08090c">
+<meta name="theme-color" content="#0c0a08">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Triângulo OCR">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23101319'/%3E%3Cpath d='M32 16 L48 46 L16 46 Z' fill='none' stroke='%2334e9ad' stroke-width='4' stroke-linejoin='round'/%3E%3Ccircle cx='32' cy='38' r='3.5' fill='%2334e9ad'/%3E%3C/svg%3E">
+<meta name="application-name" content="Triângulo OCR">
+<link rel="manifest" id="manifestLink">
+<link rel="icon" id="favicon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231a1611'/%3E%3Cpath d='M32 16 L48 46 L16 46 Z' fill='none' stroke='%232a9d8f' stroke-width='4' stroke-linejoin='round'/%3E%3Ccircle cx='32' cy='38' r='3.5' fill='%232a9d8f'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" id="appleIcon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231a1611'/%3E%3Cpath d='M32 16 L48 46 L16 46 Z' fill='none' stroke='%232a9d8f' stroke-width='4' stroke-linejoin='round'/%3E%3Ccircle cx='32' cy='38' r='3.5' fill='%232a9d8f'/%3E%3C/svg%3E">
 <title>Triângulo OCR · Original Coffee Roaster</title>
 <style>
   /* ============================================================
@@ -17,35 +21,36 @@
      Escala neutra fria · elevação multicamada · verde de marca
      ============================================================ */
   :root{
-    /* superfícies — escala neutra fria (azulado escuro premium) */
-    --bg:#08090c;
-    --bg-2:#0b0d11;
-    --surface:#101319;
-    --surface-2:#161a22;
-    --surface-3:#1d222c;
-    --surface-hi:#222834;
-    --line:#242a35;
-    --line-soft:#1a1f28;
-    --line-strong:#2e3543;
+    /* superfícies — escala neutra QUENTE (espresso escuro premium) · paleta OCR */
+    --bg:#0c0a08;
+    --bg-2:#12100b;
+    --surface:#1a1611;
+    --surface-2:#221d17;
+    --surface-3:#2b251e;
+    --surface-hi:#332b23;
+    --line:#383029;
+    --line-soft:#26201b;
+    --line-strong:#473e34;
 
-    /* texto */
-    --ink:#f4f6f9;
-    --ink-2:#c4cad6;
-    --muted:#9097a6;
-    --muted-2:#6f7686;
+    /* texto — brancos quentes */
+    --ink:#f6f1ea;
+    --ink-2:#dad0c4;
+    --muted:#a99d8d;
+    --muted-2:#7d7265;
 
-    /* marca + semânticas */
-    --green:#10b981;
-    --green-bright:#3ee9ad;
-    --green-deep:#0c6249;
-    --green-soft:rgba(16,185,129,.12);
-    --green-soft-2:rgba(16,185,129,.06);
-    --amber:#f5bd54;
-    --amber-deep:#1c1610;
-    --amber-line:#3a2e18;
-    --red:#f47261;
-    --red-deep:#1f1210;
-    --red-line:#3a201a;
+    /* marca OCR — teal (primária) · terracota (quente) · creme (destaque) */
+    --green:#2a9d8f;                       /* teal da logo — primária / confirmado */
+    --green-bright:#43c8b6;
+    --green-deep:#15564f;
+    --green-soft:rgba(42,157,143,.14);
+    --green-soft-2:rgba(42,157,143,.07);
+    --amber:#e0975c;                       /* terracota/laranja da logo — alerta / amostra B */
+    --amber-deep:#291a10;
+    --amber-line:#573a20;
+    --red:#df6f54;                         /* coral-tijolo — erro / sem-diferença */
+    --red-deep:#2a1610;
+    --red-line:#4a2a1e;
+    --cream:#f0dcc0;                       /* creme da logo — marca */
 
     /* tipografia */
     --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,'Inter',sans-serif;
@@ -73,8 +78,8 @@
   body{
     margin:0;
     background:
-      radial-gradient(900px 500px at 50% -8%, #11161f 0%, transparent 55%),
-      radial-gradient(700px 400px at 100% 100%, #0d1117 0%, transparent 60%),
+      radial-gradient(900px 500px at 50% -8%, #1c150e 0%, transparent 55%),
+      radial-gradient(700px 400px at 100% 100%, #16110b 0%, transparent 60%),
       var(--bg);
     background-attachment:fixed;
     color:var(--ink);
@@ -420,7 +425,11 @@
   /* ---------- header: marca + botão de ajuda ---------- */
   .header-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
   .brand{display:inline-flex;align-items:center;gap:9px;font-size:13.5px;font-weight:620;color:var(--ink-2);letter-spacing:-0.01em}
-  .brand::before{content:"";width:9px;height:9px;border-radius:50%;border:2px solid var(--green);background:var(--green-soft);flex:0 0 auto}
+  .brand-mark{width:26px;height:26px;flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center}
+  .brand-mark svg{width:100%;height:100%;display:block}
+  .header-actions{display:inline-flex;align-items:center;gap:9px;flex:0 0 auto}
+  .install-btn{color:var(--green-bright);border-color:var(--green-deep);background:var(--green-soft-2)}
+  .install-btn:hover{border-color:var(--green);color:var(--green-bright);background:var(--green-soft)}
   .header-top .eyebrow{margin-bottom:0}
   header .eyebrow{margin-bottom:14px}
   .help-btn{font-family:var(--mono);font-size:12px;font-weight:560;color:var(--ink-2);background:var(--surface-2);border:1px solid var(--line);border-radius:30px;padding:10px 16px;min-height:44px;letter-spacing:.01em;display:inline-flex;align-items:center;gap:6px;transition:all .18s var(--ease);flex:0 0 auto}
@@ -515,8 +524,11 @@
 <body>
 <header>
   <div class="header-top">
-    <div class="brand" id="brand">Original Coffee Roaster</div>
-    <button class="help-btn" id="helpBtn" aria-label="Por que este teste?">? Por quê</button>
+    <div class="brand" id="brand"><span class="brand-mark" id="brandMark" aria-hidden="true"></span>Original Coffee Roaster</div>
+    <div class="header-actions">
+      <button class="help-btn install-btn hide" id="installBtn" aria-label="Instalar como app">⤓ Instalar</button>
+      <button class="help-btn" id="helpBtn" aria-label="Por que este teste?">? Por quê</button>
+    </div>
   </div>
   <div class="eyebrow">ISO 4120 · α 0,05</div>
   <h1>Teste Triangular Cego</h1>
@@ -857,6 +869,20 @@
       </div>
     </div>
     <button class="btn-primary" id="hmOk">Entendi</button>
+  </div>
+</div>
+
+<!-- ===== MODAL: INSTALAR (iOS / instruções) ===== -->
+<div class="modal-overlay hide" id="iosModal" role="dialog" aria-modal="true" aria-labelledby="iosTitle">
+  <div class="modal">
+    <h3 id="iosTitle">Instalar na tela de início</h3>
+    <p>Abre como app de verdade — <b>sem a barra de endereço</b>, com o ícone OCR.</p>
+    <div class="help-block" style="border:0;padding:0">
+      <p style="margin:0 0 8px"><b>1.</b> Toque em <b>Compartilhar</b> (o ícone de seta para cima na barra do navegador).</p>
+      <p style="margin:0 0 8px"><b>2.</b> Role e escolha <b>Adicionar à Tela de Início</b>.</p>
+      <p style="margin:0"><b>3.</b> Confirme em <b>Adicionar</b>.</p>
+    </div>
+    <div class="modal-actions"><button class="btn-primary" id="iosOk">Entendi</button></div>
   </div>
 </div>
 
@@ -1477,6 +1503,68 @@ function trapFocus(e){
   else if(!e.shiftKey && document.activeElement===last){e.preventDefault();first.focus();}
 }
 document.addEventListener('keydown',trapFocus);
+
+/* ====================== PWA: marca, manifest e instalação ====================== */
+(function PWA(){
+  const TEAL='#2a9d8f', BROWN='#8a4a2c', TERRA='#c47a41', CREAM='#f0dcc0', INK_T='#143b3a', BG='#0c0a08';
+  // logo OCR reconstruída em SVG (escudo + gota de café) — nítida em qualquer tamanho
+  function badge(tile){
+    const bgRect = tile ? '<rect width="512" height="512" rx="116" fill="'+BG+'"/>' : '';
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">'+bgRect+
+      '<path d="M150 176 Q150 153 173 153 L339 153 Q362 153 362 176 L362 250 Q362 338 256 398 Q150 338 150 250 Z" fill="'+CREAM+'" stroke="'+BROWN+'" stroke-width="16" stroke-linejoin="round"/>'+
+      '<path d="M256 198 C286 238, 308 260, 308 288 A52 52 0 1 1 204 288 C204 260, 226 238, 256 198 Z" fill="'+TERRA+'"/>'+
+      '<circle cx="256" cy="296" r="32" fill="'+TEAL+'"/>'+
+      '<circle cx="256" cy="296" r="12" fill="'+INK_T+'"/>'+
+      '<ellipse cx="239" cy="234" rx="8" ry="15" fill="'+CREAM+'" opacity="0.85" transform="rotate(-22 239 234)"/>'+
+      '</svg>';
+  }
+  const bm=$('brandMark'); if(bm) bm.innerHTML=badge(false);
+  function svgToPng(svg,size){
+    return new Promise(res=>{
+      const img=new Image();
+      img.onload=()=>{try{const cv=document.createElement('canvas');cv.width=cv.height=size;cv.getContext('2d').drawImage(img,0,0,size,size);res(cv.toDataURL('image/png'));}catch(e){res(null);}};
+      img.onerror=()=>res(null);
+      img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+    });
+  }
+  (async function(){
+    try{
+      const svg=badge(true);
+      const [p32,p180,p192,p512]=await Promise.all([svgToPng(svg,32),svgToPng(svg,180),svgToPng(svg,192),svgToPng(svg,512)]);
+      if(p32&&$('favicon')) $('favicon').href=p32;
+      if(p180&&$('appleIcon')) $('appleIcon').href=p180;
+      if(p192&&p512&&$('manifestLink')){
+        const manifest={
+          name:'Triângulo OCR · Original Coffee Roaster',
+          short_name:'Triângulo OCR',
+          description:'Teste triangular cego (ISO 4120) para comparar torras de café.',
+          start_url:'.', scope:'.', display:'standalone', orientation:'portrait',
+          background_color:BG, theme_color:BG, lang:'pt-BR',
+          icons:[
+            {src:p192,sizes:'192x192',type:'image/png',purpose:'any'},
+            {src:p512,sizes:'512x512',type:'image/png',purpose:'any'},
+            {src:p512,sizes:'512x512',type:'image/png',purpose:'maskable'}
+          ]
+        };
+        $('manifestLink').href=URL.createObjectURL(new Blob([JSON.stringify(manifest)],{type:'application/manifest+json'}));
+      }
+    }catch(e){}
+  })();
+  // instalação
+  const isiOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  const standalone=(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true;
+  const btn=$('installBtn');
+  let deferred=null;
+  window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;if(btn)btn.classList.remove('hide');});
+  window.addEventListener('appinstalled',()=>{if(btn)btn.classList.add('hide');deferred=null;});
+  if(!standalone && isiOS && btn) btn.classList.remove('hide');   // iOS Safari: caminho por instruções
+  if(btn) btn.onclick=()=>{
+    if(deferred){deferred.prompt();deferred.userChoice.finally(()=>{deferred=null;btn.classList.add('hide');});}
+    else { show('iosModal',true); const ok=$('iosOk'); if(ok)ok.focus(); }
+  };
+  if($('iosOk')) $('iosOk').onclick=()=>show('iosModal',false);
+  if($('iosModal')) $('iosModal').onclick=e=>{ if(e.target===$('iosModal')) show('iosModal',false); };
+})();
 
 /* ---------- v2: Caderno (histórico) ---------- */
 function renderHistEntry(){
