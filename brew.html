@@ -5,17 +5,25 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="WBrC Timer">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="description" content="Timer automático para receitas campeãs do World Brewers Cup 2015–2025, com despejos guiados, contagem regressiva e dose ajustável.">
-<meta name="theme-color" content="#0a0a0a">
+<meta name="theme-color" content="#0c0a08">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
 <title>WBrC Timer</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
---bg:#0a0a0a;--surface:#1a1a1a;--border:#2a2a2a;--text:#ffffff;--text-dim:#888888;
---text-muted:#555555;--green:#00c853;--green-bg:#001a0d;--yellow:#ffc107;
---yellow-bg:#1a1500;--red:#ff3d00;--red-bg:#1a0500;--blue:#2196f3;--blue-bg:#001a2a;
+/* Paleta Original Coffee Roaster — alinhada à suíte (triang/PWR): teal primária, terracota quente, creme; espresso escuro */
+--bg:#0c0a08;--surface:#1a1611;--border:#2b251e;--text:#f6f1ea;--text-dim:#a99d8d;
+--text-muted:#7d7265;--green:#2a9d8f;--green-bg:#0e211e;--yellow:#f0b429;
+--yellow-bg:#1f1606;--red:#df6f54;--red-bg:#2a1610;--blue:#e0975c;--blue-bg:#291a10;
 --gold:#ffd700;--silver:#c0c0c0;--bronze:#cd7f32;
+--cream:#f0dcc0;--teal-deep:#15564f;--terra:#a85b34;
 }
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
 height:100vh;overflow:hidden;-webkit-font-smoothing:antialiased}
@@ -60,9 +68,9 @@ cursor:pointer;font-family:inherit;border:2px solid transparent}
 /* ══ HEADER ══ */
 .s1-top{padding:max(24px,env(safe-area-inset-top)) 20px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
 .s1-brand{display:inline-flex;align-items:center;gap:8px;
-background:linear-gradient(135deg,#f09433,#dc2743);padding:6px 14px;
+background:linear-gradient(135deg,var(--terra),var(--green));padding:6px 14px;
 border-radius:20px;text-decoration:none;margin-bottom:16px;
-box-shadow:0 2px 12px rgba(220,39,67,.4)}
+box-shadow:0 2px 12px rgba(168,91,52,.45)}
 .s1-brand-icon{font-size:16px}
 .s1-brand-text{font-size:12px;font-weight:800;color:#fff;letter-spacing:.3px}
 .s1-title{font-size:24px;font-weight:900;color:var(--text);margin-bottom:4px;letter-spacing:-.5px}
@@ -162,8 +170,8 @@ font-weight:700;color:var(--text);text-align:right}
 .start-btn{position:fixed;bottom:max(24px,env(safe-area-inset-bottom));left:20px;right:20px;height:72px;
 background:var(--green);border:none;border-radius:16px;color:#000;
 font-size:20px;font-weight:900;letter-spacing:.5px;cursor:pointer;
-font-family:inherit;box-shadow:0 8px 32px rgba(0,200,83,.4)}
-.start-btn:active{transform:translateY(2px);box-shadow:0 4px 16px rgba(0,200,83,.4)}
+font-family:inherit;box-shadow:0 8px 32px rgba(42,157,143,.4)}
+.start-btn:active{transform:translateY(2px);box-shadow:0 4px 16px rgba(42,157,143,.4)}
 
 /* ══ BREW SCREEN ══ */
 .s3-top{display:flex;align-items:center;justify-content:space-between;
@@ -173,7 +181,7 @@ font-weight:700;color:var(--text);letter-spacing:2px}
 .progress-dots{display:flex;gap:5px;align-items:center}
 .pdot{width:6px;height:6px;border-radius:50%;background:var(--text-muted);transition:all .2s}
 .pdot.active{width:10px;height:10px;background:var(--green)}
-.pdot.done{background:#006630}
+.pdot.done{background:#15564f}
 .reset-btn{background:var(--surface);border:2px solid var(--border);
 border-radius:8px;padding:8px 16px;color:var(--text-dim);font-size:12px;
 font-weight:800;text-transform:uppercase;cursor:pointer;font-family:inherit}
@@ -284,8 +292,8 @@ letter-spacing:.3px;align-self:center;text-align:right;padding-right:6px;line-he
 .rate-cell{aspect-ratio:1;min-height:46px;background:var(--surface);border:2px solid var(--border);
 border-radius:10px;cursor:pointer;font-family:inherit;transition:transform .1s,border-color .15s,background .15s}
 .rate-cell:active{transform:scale(.93)}
-.rate-cell.ideal{border-color:#1f4d2e;background:#0d1f14}
-.rate-cell.sel{border-color:var(--green);background:var(--green);box-shadow:0 0 0 3px rgba(0,200,83,.25)}
+.rate-cell.ideal{border-color:var(--teal-deep);background:#0e211e}
+.rate-cell.sel{border-color:var(--green);background:var(--green);box-shadow:0 0 0 3px rgba(42,157,143,.25)}
 .finish-tip{font-size:14px;font-weight:700;color:var(--green);line-height:1.45;
 text-align:center;max-height:0;opacity:0;overflow:hidden;transition:max-height .25s,opacity .25s,margin .25s}
 .finish-tip.show{max-height:140px;opacity:1;margin-bottom:22px}
@@ -298,6 +306,14 @@ text-transform:uppercase;letter-spacing:1px}
 .setup-memory .sm-tip{font-size:13px;font-weight:600;color:var(--text);line-height:1.4}
 /* nota por despejo (variantes Kasuya) */
 .pour-note{display:block;font-size:10px;font-weight:600;color:var(--text-muted);margin-top:3px}
+/* ══ BOTÃO INSTALAR (PWA) ══ */
+.install-btn{display:inline-flex;align-items:center;gap:7px;margin-top:14px;
+background:var(--green-bg);color:var(--green);border:2px solid var(--green);
+border-radius:12px;padding:9px 16px;font-family:inherit;font-size:13px;font-weight:800;
+letter-spacing:.3px;cursor:pointer}
+.install-btn:active{background:var(--green);color:var(--bg)}
+.install-btn[hidden]{display:none}
+.install-btn .ib-ic{font-size:15px;line-height:1}
 .flash{position:fixed;inset:0;background:var(--green);opacity:0;pointer-events:none;
 z-index:99;transition:opacity .05s}
 .flash.show{opacity:.15}
@@ -336,6 +352,18 @@ z-index:99;transition:opacity .05s}
 </div>
 </div>
 
+<!-- MODAL INSTALAÇÃO iOS -->
+<div class="modal-overlay" id="ios-modal" role="dialog" aria-modal="true" aria-labelledby="ios-modal-title" aria-hidden="true">
+<div class="modal-card">
+<div class="modal-icon" aria-hidden="true">⤓</div>
+<div class="modal-title" id="ios-modal-title">Instalar no iPhone</div>
+<div class="modal-text">No Safari, toque em <strong>Compartilhar</strong> (ícone <span aria-hidden="true">⎙</span>) e escolha <strong>"Adicionar à Tela de Início"</strong>. O app abre em tela cheia, com a logo e sem barra de endereço.</div>
+<div class="modal-actions">
+<button class="modal-btn modal-btn-cancel" onclick="closeIosModal()">Entendi</button>
+</div>
+</div>
+</div>
+
 <!-- SCREEN 1: SELECT -->
 <main id="s-select" class="screen active" aria-label="Seleção de receita">
 <header class="s1-top">
@@ -345,6 +373,9 @@ z-index:99;transition:opacity .05s}
 </a>
 <h1 class="s1-title">WBrC Timer</h1>
 <p class="s1-sub">Timer automático · Top 3 Campeões 2015–2025</p>
+<button class="install-btn" id="install-btn" type="button" hidden onclick="onInstallClick()" aria-label="Instalar o app na tela inicial">
+<span class="ib-ic" aria-hidden="true">⤓</span> Instalar app
+</button>
 </header>
 <div class="s1-list" id="recipe-list" aria-label="Receitas por ano"></div>
 </main>
@@ -1227,15 +1258,41 @@ show('s-setup');
 /* ═══ INIT ═══ */
 buildList();
 
-/* Esc fecha o modal de reset; toque no fundo escuro também fecha */
+/* ═══════════════════════════════════════════
+   PWA — instalação (logo na tela inicial, tela cheia) + service worker offline
+   ═══════════════════════════════════════════ */
+let deferredPrompt=null;
+const isStandalone=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+const isIOS=()=>/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+function showInstallBtn(){const b=document.getElementById('install-btn');if(b&&!isStandalone())b.hidden=false;}
+function hideInstallBtn(){const b=document.getElementById('install-btn');if(b)b.hidden=true;}
+/* Android/desktop Chrome: captura o prompt nativo */
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;showInstallBtn();});
+window.addEventListener('appinstalled',()=>{hideInstallBtn();deferredPrompt=null;});
+function onInstallClick(){
+if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.finally(()=>{deferredPrompt=null;hideInstallBtn();});}
+else if(isIOS()){const m=document.getElementById('ios-modal');m.classList.add('show');m.setAttribute('aria-hidden','false');}
+}
+function closeIosModal(){const m=document.getElementById('ios-modal');m.classList.remove('show');m.setAttribute('aria-hidden','true');}
+/* iOS não dispara beforeinstallprompt → mostra o botão (abre instruções) se ainda não instalado */
+if(isIOS()&&!isStandalone())showInstallBtn();
+/* Service worker só quando servido por http(s); em file:// é ignorado silenciosamente */
+if('serviceWorker'in navigator&&location.protocol.startsWith('http')){
+window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+}
+
+/* Esc fecha modais abertos; toque no fundo escuro também fecha */
 document.addEventListener('keydown',e=>{
 if(e.key==='Escape'){
-const m=document.getElementById('reset-modal');
-if(m.classList.contains('show'))closeResetModal();
+const r=document.getElementById('reset-modal');if(r.classList.contains('show'))closeResetModal();
+const i=document.getElementById('ios-modal');if(i.classList.contains('show'))closeIosModal();
 }
 });
 document.getElementById('reset-modal').addEventListener('click',e=>{
 if(e.target.id==='reset-modal')closeResetModal();
+});
+document.getElementById('ios-modal').addEventListener('click',e=>{
+if(e.target.id==='ios-modal')closeIosModal();
 });
 </script>
 </body>
