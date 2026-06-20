@@ -5757,8 +5757,6 @@
   }
   /* O glifo grego (Φ, Ζ…) precisa de menos peso de runa e um respiro */
   body.mode-hyper .realm-rune, body.mode-hyper .boss-rune { letter-spacing: 0; }
-  /* Linha olímpica é fixa: esconde o ⇄ de reorganizar a semana */
-  body.mode-hyper .day-title-swap { display: none; }
 </style>
 </head>
 <body>
@@ -6754,6 +6752,13 @@ const HYPER_SCHEDULE = {
 function activeDefaultSchedule() { return STATE.mode === 'hyper' ? HYPER_SCHEDULE : DEFAULT_SCHEDULE; }
 // Sessão de "chefão" por modo (o lift mais brutal do dia)
 function bossSession() { return STATE.mode === 'hyper' ? 'hyper_lowerB' : 'deadlift'; }
+// Reorganização da semana é POR MODO — cada modo tem seus calendários custom
+function modeSchedules() { return STATE.mode === 'hyper' ? STATE.hyperSchedules : STATE.schedules; }
+function saveModeSchedules() { if (STATE.mode === 'hyper') saveHyperSchedules(); else saveSchedules(); }
+// Sessões oferecidas no painel "Gerenciar Semana" por modo
+const HYPER_SESSION_ORDER = ['hyper_push', 'hyper_pull', 'hyper_lowerA', 'hyper_upper', 'hyper_lowerB', 'cardio_mid', 'cardio_long', 'rest', 'skip'];
+function modeSessionOrder() { return STATE.mode === 'hyper' ? HYPER_SESSION_ORDER : SESSION_ORDER; }
+function modeCoreSessions() { return STATE.mode === 'hyper' ? ['hyper_push', 'hyper_pull', 'hyper_lowerA', 'hyper_upper', 'hyper_lowerB'] : ['squat', 'bench', 'deadlift', 'upper_hiper']; }
 
 // Dias em que TRT é aplicada (sempre seg/qua/sex, independe do treino do dia)
 const TRT_DAYS = ['seg', 'qua', 'sex'];
@@ -6952,7 +6957,8 @@ const STATE = {
   day: 'seg',
   checks: {},
   loads: {},
-  schedules: {}, // { '1': {...}, '2': {...}, '3': {...}, 'deload': {...} }
+  schedules: {}, // { '1': {...}, ... } — reorg da semana no modo Powerlifting
+  hyperSchedules: {}, // idem, mas pro modo Hipertrofia (calendários separados por modo)
   exerciseSwaps: {}, // { 'week::day::exId': { name, reason, swapIndex } }
   skipJustifications: {}, // { 'week::day': { reasonKey, reasonLabel, note, timestamp } }
   weeklyNotes: {}, // { 'week': { sleep, libido, energy, weight, waist, notes, timestamp } }
@@ -6979,6 +6985,8 @@ function loadState() {
     if (loads) STATE.loads = JSON.parse(loads);
     if (week) STATE.week = week;
     if (schedules) STATE.schedules = JSON.parse(schedules);
+    const hyperSched = localStorage.getItem('pwr.hyperSchedules');
+    if (hyperSched) STATE.hyperSchedules = JSON.parse(hyperSched);
     if (exSwaps) STATE.exerciseSwaps = JSON.parse(exSwaps);
     if (skipJust) STATE.skipJustifications = JSON.parse(skipJust);
     if (wNotes) STATE.weeklyNotes = JSON.parse(wNotes);
@@ -7005,6 +7013,7 @@ function saveChecks() { localStorage.setItem('pwr.checks', JSON.stringify(STATE.
 function saveLoads() { localStorage.setItem('pwr.loads', JSON.stringify(STATE.loads)); }
 function saveWeek() { localStorage.setItem('pwr.week', STATE.week); }
 function saveSchedules() { localStorage.setItem('pwr.schedules', JSON.stringify(STATE.schedules)); }
+function saveHyperSchedules() { localStorage.setItem('pwr.hyperSchedules', JSON.stringify(STATE.hyperSchedules)); }
 function saveExerciseSwaps() { localStorage.setItem('pwr.exerciseSwaps', JSON.stringify(STATE.exerciseSwaps)); }
 function saveSkipJustifications() { localStorage.setItem('pwr.skipJustifications', JSON.stringify(STATE.skipJustifications)); }
 function saveWeeklyNotes() { localStorage.setItem('pwr.weeklyNotes', JSON.stringify(STATE.weeklyNotes)); }
@@ -7147,8 +7156,7 @@ function clearExerciseSwap(week, day, exId) {
 
 // Schedule helpers
 function getCurrentSchedule() {
-  if (STATE.mode === 'hyper') return { ...HYPER_SCHEDULE };
-  return STATE.schedules[STATE.week] || { ...DEFAULT_SCHEDULE };
+  return modeSchedules()[STATE.week] || { ...activeDefaultSchedule() };
 }
 
 function getSessionForDay(dayKey, weekOverride) {
@@ -7156,32 +7164,29 @@ function getSessionForDay(dayKey, weekOverride) {
 }
 
 function getSessionKeyForDay(dayKey, weekOverride) {
-  // Linha olímpica (hipertrofia): calendário fixo, sem reorganização por semana
-  if (STATE.mode === 'hyper') return HYPER_SCHEDULE[dayKey];
   const week = weekOverride || STATE.week;
-  const schedule = STATE.schedules[week] || DEFAULT_SCHEDULE;
-  return schedule[dayKey] || DEFAULT_SCHEDULE[dayKey];
+  const dflt = activeDefaultSchedule();
+  const schedule = modeSchedules()[week] || dflt;
+  return schedule[dayKey] || dflt[dayKey];
 }
 
 function setSessionForDay(dayKey, sessionKey) {
-  if (STATE.mode === 'hyper') return;   // olímpica é fixa
-  if (!STATE.schedules[STATE.week]) {
-    STATE.schedules[STATE.week] = { ...DEFAULT_SCHEDULE };
-  }
-  STATE.schedules[STATE.week][dayKey] = sessionKey;
-  saveSchedules();
+  const store = modeSchedules();
+  if (!store[STATE.week]) store[STATE.week] = { ...activeDefaultSchedule() };
+  store[STATE.week][dayKey] = sessionKey;
+  saveModeSchedules();
 }
 
 function isCustomSchedule() {
-  if (STATE.mode === 'hyper') return false;
-  const sched = STATE.schedules[STATE.week];
+  const sched = modeSchedules()[STATE.week];
   if (!sched) return false;
-  return DAYS.some(d => sched[d] !== DEFAULT_SCHEDULE[d]);
+  const dflt = activeDefaultSchedule();
+  return DAYS.some(d => sched[d] !== dflt[d]);
 }
 
 function restoreDefaultSchedule() {
-  delete STATE.schedules[STATE.week];
-  saveSchedules();
+  delete modeSchedules()[STATE.week];
+  saveModeSchedules();
 }
 
 // Validação de espaçamento entre sessões
@@ -7193,7 +7198,13 @@ function validateSchedule(schedule) {
     squat: ['lower-heavy', 'cadeia posterior + quadríceps'],
     deadlift: ['lower-heavy', 'cadeia posterior + grip'],
     bench: ['upper-push', 'peitoral + tríceps + ombro anterior'],
-    upper_hiper: ['upper-push', 'peitoral + ombro + tríceps']
+    upper_hiper: ['upper-push', 'peitoral + ombro + tríceps'],
+    // Linha olímpica (hipertrofia)
+    hyper_lowerA: ['lower-heavy', 'quadríceps'],
+    hyper_lowerB: ['lower-heavy', 'posterior + glúteo'],
+    hyper_push: ['upper-push', 'peito + ombro + tríceps'],
+    hyper_upper: ['upper-push', 'peito + costas + braços'],
+    hyper_pull: ['upper-pull', 'costas + bíceps']
   };
   
   // Cria lista circular dos dias com suas sessões
@@ -7431,7 +7442,7 @@ function renderMain() {
   const isDeload = STATE.week === 'deload';
   const isCustom = isCustomSchedule();
   const isTrtDay = TRT_DAYS.includes(STATE.day);
-  const isModifiedDay = STATE.mode !== 'hyper' && (STATE.schedules[STATE.week] && STATE.schedules[STATE.week][STATE.day] !== DEFAULT_SCHEDULE[STATE.day]);
+  const isModifiedDay = (modeSchedules()[STATE.week] && modeSchedules()[STATE.week][STATE.day] !== activeDefaultSchedule()[STATE.day]);
   
   // === Modos visuais especiais ===
   const isBossFight = sessionKey === bossSession() && !isDeload;
@@ -9029,14 +9040,23 @@ function todayKeyForBanner() { return STATE.day; }
 
 const SESSION_DOT_COLORS = {
   squat: '#e8801e', bench: '#c89b3c', deadlift: '#d4502a', upper_hiper: '#b4a04a',
-  cardio_mid: '#5ab8b8', cardio_long: '#8499b0', rest: '#7da8c8', skip: '#6b5c47'
+  cardio_mid: '#5ab8b8', cardio_long: '#8499b0', rest: '#7da8c8', skip: '#6b5c47',
+  // Linha olímpica (hipertrofia)
+  hyper_push: '#e0a93e', hyper_pull: '#b4894a', hyper_lowerA: '#e8801e',
+  hyper_upper: '#c9a85a', hyper_lowerB: '#d4502a'
 };
 // Labels do painel — desambiguam os dois cardios e traduzem rest/skip
 const SESSION_PANEL_LABELS = {
   cardio_mid: 'Cardio Z2 · 40-50min',
   cardio_long: 'Cardio Z2 · Longo',
   rest: 'Descanso',
-  skip: 'Pular dia'
+  skip: 'Pular dia',
+  // Linha olímpica — nomes amigáveis no painel
+  hyper_push: 'Push · Peito/Ombro/Tríceps',
+  hyper_pull: 'Pull · Costas/Bíceps',
+  hyper_lowerA: 'Lower A · Quadríceps',
+  hyper_upper: 'Upper · Escultura',
+  hyper_lowerB: 'Lower B · Posterior'
 };
 function sessionPanelLabel(key) {
   return SESSION_PANEL_LABELS[key] || SESSIONS[key].title;
@@ -9053,7 +9073,6 @@ let weekDragState = null;    // estado do drag em andamento
 let swapModalListenersWired = false; // backdrop listener anexado uma vez só
 
 function openSessionSwapModal() {
-  if (STATE.mode === 'hyper') return;   // linha olímpica é fixa — sem reorganização
   weekDraft = { ...getCurrentSchedule() };
   renderWeekPanel();
   const modal = document.getElementById('swapModal');
@@ -9074,10 +9093,11 @@ function countPendingChanges() {
 function computeWeekWarnings(draft) {
   const w = [];
   const values = DAYS.map(d => draft[d]);
-  ['squat', 'bench', 'deadlift', 'upper_hiper'].forEach(core => {
+  modeCoreSessions().forEach(core => {
     const count = values.filter(v => v === core).length;
-    if (count === 0) w.push(`Sem <b>${SESSIONS[core].title}</b> nesta semana`);
-    if (count > 1) w.push(`${count}× <b>${SESSIONS[core].title}</b> na mesma semana`);
+    const label = sessionPanelLabel(core);
+    if (count === 0) w.push(`Sem <b>${label}</b> nesta semana`);
+    if (count > 1) w.push(`${count}× <b>${label}</b> na mesma semana`);
   });
   if (!values.includes('cardio_mid') && !values.includes('cardio_long')) {
     w.push('Nenhum cardio Zona 2 nesta semana');
@@ -9101,8 +9121,8 @@ function renderWeekPanel(expandedDay) {
     const expanded = d === expandedDay;
     const color = SESSION_DOT_COLORS[sk] || '#6b5c47';
     
-    const chips = SESSION_ORDER.map(key => {
-      const cc = SESSION_DOT_COLORS[key];
+    const chips = modeSessionOrder().map(key => {
+      const cc = SESSION_DOT_COLORS[key] || '#6b5c47';
       const isCur = key === sk;
       return `<button class="wk-chip ${isCur ? 'current' : ''}" data-day="${d}" data-session="${key}" type="button">
         <span class="wk-realm-dot" style="color:${cc};background:${cc}"></span>${sessionPanelLabel(key)}${isCur ? ' · atual' : ''}
@@ -9161,7 +9181,7 @@ function wireWeekPanel(expandedDay) {
   
   // Ações rápidas — agem no RASCUNHO (pendente até aplicar)
   document.getElementById('wkActionDefault').addEventListener('click', () => {
-    weekDraft = { ...DEFAULT_SCHEDULE };
+    weekDraft = { ...activeDefaultSchedule() };
     if (navigator.vibrate) navigator.vibrate(10);
     renderWeekPanel();
   });
@@ -9169,7 +9189,7 @@ function wireWeekPanel(expandedDay) {
   if (prevBtn && !prevBtn.disabled) {
     prevBtn.addEventListener('click', () => {
       const prevKey = getPreviousWeekKey(STATE.week);
-      weekDraft = { ...(STATE.schedules[prevKey] || DEFAULT_SCHEDULE) };
+      weekDraft = { ...(modeSchedules()[prevKey] || activeDefaultSchedule()) };
       if (navigator.vibrate) navigator.vibrate(10);
       renderWeekPanel();
     });
