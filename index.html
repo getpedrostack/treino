@@ -1301,6 +1301,51 @@
   }
   
   /* Export button on Sunday */
+  /* ---- Botão de ZERAR A SEMANA INTEIRA (no dia de descanso) -- */
+  .week-reset-section { margin-top: 44px; padding: 0 18px; }
+  .week-reset-divider {
+    font-family: 'Cinzel', Georgia, serif;
+    font-size: 11px; letter-spacing: 0.3em; color: var(--gold);
+    text-transform: uppercase; text-align: center; margin-bottom: 16px;
+    position: relative; font-weight: 700; text-shadow: 0 0 12px rgba(200,155,60,0.25);
+  }
+  .week-reset-divider::before, .week-reset-divider::after {
+    content: ''; position: absolute; top: 50%; width: calc(50% - 90px); height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-deep), transparent);
+  }
+  .week-reset-divider::before { left: 0; }
+  .week-reset-divider::after { right: 0; }
+  .week-reset-btn {
+    width: 100%; max-width: 340px; margin: 0 auto; display: block;
+    background: linear-gradient(180deg, var(--bg-elev) 0%, var(--bg-card-done) 100%);
+    border: 1px solid var(--gold-deep); color: var(--gold-pale);
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700;
+    letter-spacing: 0.14em; padding: 17px; cursor: pointer; text-transform: uppercase;
+    transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+    box-shadow: inset 0 1px 0 rgba(240,198,116,0.08), 0 2px 12px rgba(0,0,0,0.4), 0 0 16px rgba(200,155,60,0.1);
+  }
+  .week-reset-btn:hover, .week-reset-btn:active {
+    border-color: var(--gold-bright); color: var(--gold-bright);
+    background: linear-gradient(180deg, rgba(200,155,60,0.1) 0%, rgba(200,155,60,0.04) 100%);
+    box-shadow: inset 0 1px 0 rgba(240,198,116,0.15), 0 0 24px rgba(200,155,60,0.35);
+    text-shadow: 0 0 8px rgba(240,198,116,0.5);
+  }
+  .week-reset-btn.confirming {
+    border-color: var(--blood-glow); color: #ffd9d9;
+    background: linear-gradient(180deg, rgba(168,50,50,0.28) 0%, rgba(168,50,50,0.12) 100%);
+    animation: weekResetPulse 0.9s ease-in-out infinite;
+    font-size: 10.5px; letter-spacing: 0.08em;
+  }
+  @keyframes weekResetPulse {
+    0%,100% { box-shadow: 0 0 18px rgba(255,68,68,0.3), inset 0 1px 0 rgba(255,120,120,0.2); }
+    50% { box-shadow: 0 0 30px rgba(255,68,68,0.55), inset 0 1px 0 rgba(255,120,120,0.3); }
+  }
+  .week-reset-hint {
+    text-align: center; font-size: 11.5px; line-height: 1.55; color: var(--text-3);
+    margin: 13px auto 0; max-width: 360px;
+  }
+  .week-reset-hint strong { color: var(--text-2); }
+
   .export-section {
     margin-top: 56px;
     padding: 0 18px;
@@ -5055,6 +5100,26 @@
     align-items: center;
     gap: 9px;
     flex-shrink: 0;
+    background: none;
+    border: 0;
+    margin: 0;
+    padding: 4px 6px 4px 0;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: transform 0.12s ease, background 0.18s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .hud-rank:hover, .hud-rank:active { background: rgba(200,155,60,0.07); }
+  .hud-rank:active { transform: scale(0.97); }
+  .hud-rank:hover .hud-emblem { filter: brightness(1.12); }
+  .hud-rank-more {
+    margin-left: 5px;
+    color: var(--gold);
+    font-weight: 700;
+    opacity: 0.7;
   }
   .hud-rank-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
   .hud-rank-name {
@@ -5079,6 +5144,90 @@
     text-transform: uppercase;
   }
   .hud-level b { color: var(--gold-bright); font-size: 11px; }
+
+  /* ---- Modal de Patentes (a trilha do guerreiro) ------------- */
+  .rank-modal { max-width: 480px; }
+  .rank-modal-head { text-align: center; padding: 4px 0 14px; }
+  .rank-modal-kicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 8px;
+  }
+  .rank-modal-current {
+    font-family: 'Cinzel', Georgia, serif; font-weight: 900;
+    font-size: 22px; color: var(--gold-pale);
+    text-shadow: 0 0 16px rgba(200,155,60,0.4); line-height: 1.1;
+  }
+  .rank-modal-sub {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    letter-spacing: 0.06em; color: var(--text-3); margin-top: 7px;
+  }
+  .rank-list { display: flex; flex-direction: column; gap: 6px; padding-bottom: 8px; }
+  .rank-row {
+    display: flex; align-items: center; gap: 12px; width: 100%;
+    background: linear-gradient(180deg, rgba(26,22,18,0.6), rgba(16,13,9,0.6));
+    border: 1px solid var(--border);
+    padding: 11px 12px; cursor: pointer; text-align: left;
+    font: inherit; color: inherit; position: relative;
+    transition: background 0.18s ease, border-color 0.18s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .rank-row:hover { background: rgba(200,155,60,0.06); }
+  .rank-row.reached { opacity: 0.92; }
+  .rank-row.locked { opacity: 0.5; }
+  .rank-row.locked .rank-emblem-mini { filter: grayscale(0.7) brightness(0.7); }
+  .rank-row.current {
+    border-color: var(--gold);
+    background: linear-gradient(180deg, rgba(200,155,60,0.14), rgba(16,13,9,0.7));
+    box-shadow: 0 0 18px rgba(200,155,60,0.2), inset 0 1px 0 rgba(240,198,116,0.15);
+    opacity: 1;
+  }
+  .rank-row.current::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+    background: linear-gradient(180deg, var(--gold-bright), var(--gold));
+    box-shadow: 0 0 10px var(--gold);
+  }
+  .rank-emblem-mini {
+    flex-shrink: 0; width: 34px; height: 34px; display: grid; place-items: center; position: relative;
+  }
+  .rank-emblem-mini::after {
+    content: ''; position: absolute; inset: 2px; transform: rotate(45deg);
+    border: 1.5px solid var(--gold-deep);
+    background: radial-gradient(circle, rgba(200,155,60,0.16), transparent 70%);
+  }
+  .rank-row.current .rank-emblem-mini::after { border-color: var(--gold-bright); box-shadow: 0 0 12px rgba(240,198,116,0.4); }
+  .rank-emblem-mini .rune {
+    position: relative; z-index: 2; font-family: 'Cinzel', Georgia, serif;
+    font-weight: 900; font-size: 16px; color: var(--gold-bright);
+    text-shadow: 0 0 8px rgba(240,198,116,0.5);
+  }
+  .rank-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  .rank-line { display: flex; align-items: baseline; gap: 8px; }
+  .rank-name {
+    font-family: 'Cinzel', Georgia, serif; font-weight: 700; font-size: 14px;
+    color: var(--gold-pale); white-space: nowrap;
+  }
+  .rank-range {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    letter-spacing: 0.06em; color: var(--text-3); margin-left: auto; flex-shrink: 0;
+  }
+  .rank-pt { font-size: 11px; color: var(--text-2); }
+  .rank-pt b { color: var(--gold-bright); font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.1em; }
+  .rank-chev {
+    flex-shrink: 0; color: var(--text-3); font-size: 14px; align-self: center;
+    transition: transform 0.2s ease;
+  }
+  .rank-row.open .rank-chev { transform: rotate(90deg); color: var(--gold); }
+  .rank-desc {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.32s cubic-bezier(0.4,0,0.2,1);
+  }
+  .rank-desc.open { max-height: 280px; }
+  .rank-desc-in {
+    padding: 2px 12px 14px 58px;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 14.5px; line-height: 1.5; color: var(--text-2); font-style: italic;
+  }
 
   /* Barra de PODER (XP) */
   .hud-xp { flex: 1 1 70px; min-width: 60px; display: flex; flex-direction: column; gap: 4px; }
@@ -5740,6 +5889,11 @@
     </div>
     <button class="skip-save-btn" id="skipSaveBtn">SALVAR JUSTIFICATIVA</button>
   </div>
+</div>
+
+<!-- Modal de Patentes — a trilha do guerreiro (preenchido por JS) -->
+<div class="modal-backdrop" id="rankModal">
+  <div class="modal rank-modal" role="dialog" aria-modal="true" aria-label="Trilha de patentes"></div>
 </div>
 
 <!-- Ascensão de nível / nova patente (takeover, preenchido por JS) -->
@@ -6983,6 +7137,15 @@ function renderMain() {
         <div class="label">Recovery total</div>
         <div class="quote">Sono, hidratação, comida boa. O músculo cresce na recuperação, não no treino.</div>
       </div>
+      <div class="week-reset-section fade-in">
+        <div class="week-reset-divider">Virada de semana</div>
+        <button class="week-reset-btn" id="weekResetBtn">↺ ZERAR ${weekLabel(STATE.week)} INTEIRA</button>
+        <div class="week-reset-hint">
+          Limpa as séries e conclusões de <strong>todos os dias</strong> da semana
+          ${weekLabel(STATE.week)}, pra recomeçar a contagem na próxima.<br>
+          Cargas, recordes, XP/nível e a sequência 🔥 <strong>são mantidos</strong>.
+        </div>
+      </div>
       <div class="export-section fade-in">
         <div class="export-divider">Backup completo</div>
         <button class="export-btn" id="exportBtn">EXPORTAR BACKUP</button>
@@ -6996,6 +7159,7 @@ function renderMain() {
       </div>
     `;
     main.innerHTML = html;
+    attachWeekResetHandler();
     attachExportHandlers();
     return;
   }
@@ -8625,18 +8789,30 @@ const EX_META = (() => {
 
 // Escada de patentes nórdicas — da servidão à lenda imortal.
 const RANKS = [
-  { min: 1,  rune: 'ᚦ', name: 'Þræll',     pt: 'Servo' },
-  { min: 3,  rune: 'ᚱ', name: 'Bóndi',     pt: 'Lavrador Armado' },
-  { min: 5,  rune: 'ᛏ', name: 'Drengr',    pt: 'Jovem Guerreiro' },
-  { min: 8,  rune: 'ᚲ', name: 'Karl',      pt: 'Homem Livre' },
-  { min: 11, rune: 'ᛗ', name: 'Hirðmaðr',  pt: 'Guarda Real' },
-  { min: 15, rune: 'ᚹ', name: 'Víkingr',   pt: 'Viking' },
-  { min: 19, rune: 'ᚷ', name: 'Berserkr',  pt: 'O Furioso' },
-  { min: 24, rune: 'ᛟ', name: 'Úlfheðinn', pt: 'Pele-de-Lobo' },
-  { min: 30, rune: 'ᛜ', name: 'Jarl',      pt: 'Senhor da Guerra' },
-  { min: 37, rune: 'ᛉ', name: 'Einherji',  pt: 'Escolhido de Odin' },
-  { min: 46, rune: 'ᛞ', name: 'Drottinn',  pt: 'Soberano' },
-  { min: 56, rune: 'ᛋ', name: 'Ragnar',    pt: 'Lenda Imortal' }
+  { min: 1,  rune: 'ᚦ', name: 'Þræll',     pt: 'Servo',
+    desc: 'O escravo acorrentado — todo guerreiro começa aqui, sem nome e sem glória. É o primeiro contato com o ferro: humildade e presença. Quem aparece já deixou de ser ninguém.' },
+  { min: 3,  rune: 'ᚱ', name: 'Bóndi',     pt: 'Lavrador Armado',
+    desc: 'O camponês livre que pega em armas quando preciso. Aqui se constrói a base: consistência e técnica crua, o hábito que vira fundação. Ainda não é guerra — é o cultivo da força.' },
+  { min: 5,  rune: 'ᛏ', name: 'Drengr',    pt: 'Jovem Guerreiro',
+    desc: 'O jovem valente que prova seu valor na linha de frente. Coragem acima de experiência. É a fase de testar limites e descobrir que aguenta mais do que pensava.' },
+  { min: 8,  rune: 'ᚲ', name: 'Karl',      pt: 'Homem Livre',
+    desc: 'O homem livre, dono da própria terra e do próprio corpo. Disciplina estabelecida, treino que não falta. A força já é parte de quem você é.' },
+  { min: 11, rune: 'ᛗ', name: 'Hirðmaðr',  pt: 'Guarda Real',
+    desc: 'Membro da guarda do rei — confiança conquistada com lealdade e ferro. A constância vira referência: você é o padrão que os outros olham.' },
+  { min: 15, rune: 'ᚹ', name: 'Víkingr',   pt: 'Viking',
+    desc: 'O que cruza mares atrás de glória. Experiente, ousado, endurecido pela travessia. A força agora viaja com você — em qualquer barra, qualquer dia.' },
+  { min: 19, rune: 'ᚷ', name: 'Berserkr',  pt: 'O Furioso',
+    desc: 'O guerreiro que luta sem armadura, tomado pela fúria sagrada. Intensidade bruta canalizada. Quando a barra fica pesada, é aqui que a vontade supera o corpo.' },
+  { min: 24, rune: 'ᛟ', name: 'Úlfheðinn', pt: 'Pele-de-Lobo',
+    desc: 'O vestido em pele de lobo — elite entre os berserkers, primal e implacável. Poucos chegam. A força virou instinto; o treino, caçada.' },
+  { min: 30, rune: 'ᛜ', name: 'Jarl',      pt: 'Senhor da Guerra',
+    desc: 'O senhor que comanda guerreiros. Já não se prova mais — se impõe. Domínio total sobre o ferro e sobre si mesmo. Os outros seguem o seu exemplo.' },
+  { min: 37, rune: 'ᛉ', name: 'Einherji',  pt: 'Escolhido de Odin',
+    desc: 'O escolhido que tomba em batalha e banqueteia em Valhalla, treinando pro Ragnarök. Imortalidade ganha no esforço — a morte do conforto, a vida eterna da disciplina.' },
+  { min: 46, rune: 'ᛞ', name: 'Drottinn',  pt: 'Soberano',
+    desc: 'O soberano absoluto. Acima de patentes, abaixo só dos deuses. A força aqui é legado — você não busca mais, você É a referência.' },
+  { min: 56, rune: 'ᛋ', name: 'Ragnar',    pt: 'Lenda Imortal',
+    desc: 'A lenda cujo nome sobrevive ao corpo. O ápice: força, disciplina e tempo fundidos em mito. Você cravou o seu nome na pedra.' }
 ];
 function rankForLevel(L) { let r = RANKS[0]; for (const x of RANKS) { if (L >= x.min) r = x; } return r; }
 
@@ -8738,6 +8914,10 @@ function computeStreak() {
 let GAM_STORE = null;
 // Contador monotônico de recordes (1º PR ou superação) — alimenta o shake e os feitos
 let PR_RECORDS = 0;
+// Totais VITALÍCIOS (cumulativos): XP/nível/feitos são baseados neles, então
+// zerar a semana (ou um dia) NÃO derruba o progresso. TOTALS = acumulado de
+// sempre; SNAP = última leitura do estado derivado (pra somar só os aumentos).
+let TOTALS = null, SNAP = null;
 function loadGam() {
   try { const raw = localStorage.getItem('pwr.gam'); GAM_STORE = raw ? JSON.parse(raw) : null; } catch (e) { GAM_STORE = null; }
   try { const d = localStorage.getItem('pwr.activityDates'); ACTIVITY = d ? JSON.parse(d) : {}; } catch (e) { ACTIVITY = {}; }
@@ -8746,18 +8926,19 @@ function loadGam() {
   for (const k in ACTIVITY) { if (ACTIVITY[k] === true) { ACTIVITY[k] = 'fire'; migrated = true; } }
   if (migrated) saveActivity();
   try { PR_RECORDS = parseInt(localStorage.getItem('pwr.prBreaks'), 10) || 0; } catch (e) { PR_RECORDS = 0; }
+  try { const t = JSON.parse(localStorage.getItem('pwr.totals')); if (t && t.life && t.snap) { TOTALS = t.life; SNAP = t.snap; } else { TOTALS = null; SNAP = null; } } catch (e) { TOTALS = null; SNAP = null; }
 }
 function saveGam() { try { localStorage.setItem('pwr.gam', JSON.stringify(GAM_STORE)); } catch (e) {} }
 function saveActivity() { try { localStorage.setItem('pwr.activityDates', JSON.stringify(ACTIVITY)); } catch (e) {} }
+function saveTotals() { try { localStorage.setItem('pwr.totals', JSON.stringify({ life: TOTALS, snap: SNAP })); } catch (e) {} }
 
-// Estado de jogo computado a partir do estado real
-function computeGamState() {
+// Soma do estado ATUAL (derivado): séries, exercícios, cardio e tonelagem.
+function derivedTotals() {
   let sets = 0;
   for (const k in STATE.setProgress) sets += (STATE.setProgress[k] || 0);
   let exDone = 0;
   for (const k in STATE.checks) if (STATE.checks[k]) exDone++;
-  const prCount = Object.keys(STATE.prHistory || {}).length;
-  const cardioCount = Object.keys(STATE.cardioDone || {}).length;
+  const cardio = Object.keys(STATE.cardioDone || {}).length;
   let tonnage = 0;
   for (const k in STATE.loads) {
     const load = parseFloat(STATE.loads[k]);
@@ -8768,6 +8949,35 @@ function computeGamState() {
     const reps = (EX_META[exId] && EX_META[exId].reps) || 5;
     tonnage += load * done * reps;
   }
+  return { sets, exDone, cardio, tonnage };
+}
+
+// Acumula no vitalício SÓ os aumentos do estado derivado. Quando o estado cai
+// (reset de dia/semana), o vitalício NÃO diminui — só o snapshot acompanha.
+function syncTotals() {
+  const cur = derivedTotals();
+  if (!TOTALS || !SNAP) {   // 1ª vez: baseline = progresso atual (não zera ninguém)
+    TOTALS = { sets: cur.sets, exDone: cur.exDone, cardio: cur.cardio, tonnage: cur.tonnage };
+    SNAP = { sets: cur.sets, exDone: cur.exDone, cardio: cur.cardio, tonnage: cur.tonnage };
+    saveTotals();
+    return;
+  }
+  let dirty = false;
+  ['sets', 'exDone', 'cardio', 'tonnage'].forEach(function (k) {
+    if (cur[k] !== SNAP[k]) {
+      if (cur[k] > SNAP[k]) TOTALS[k] += (cur[k] - SNAP[k]);   // só os aumentos
+      SNAP[k] = cur[k];
+      dirty = true;
+    }
+  });
+  if (dirty) saveTotals();
+}
+
+// Estado de jogo — baseado nos totais VITALÍCIOS (não caem ao resetar).
+function computeGamState() {
+  syncTotals();   // acumula novos ganhos antes de ler
+  const sets = TOTALS.sets, exDone = TOTALS.exDone, cardioCount = TOTALS.cardio, tonnage = TOTALS.tonnage;
+  const prCount = Object.keys(STATE.prHistory || {}).length;
   const xp = sets * 14 + exDone * 30 + prCount * 80 + cardioCount * 45;
   const lv = levelFromXp(xp);
   return {
@@ -8832,13 +9042,13 @@ function renderHud() {
     : Math.round(g.tonnage) + 'kg';
   const streakCls = g.streak === 0 ? 'cold' : (g.streak >= 7 ? 'blaze' : '');
   hud.innerHTML = `
-    <div class="hud-rank">
+    <button class="hud-rank" type="button" id="hudRankBtn" aria-label="Ver a trilha de patentes e em qual nível você está">
       <div class="hud-emblem" id="hudEmblem" aria-hidden="true"><span class="he-rune">${g.rank.rune}</span></div>
       <div class="hud-rank-text">
         <span class="hud-rank-name" title="${g.rank.name} · ${g.rank.pt}">${g.rank.name}</span>
-        <span class="hud-level">Nível <b>${g.level}</b></span>
+        <span class="hud-level">Nível <b>${g.level}</b><span class="hud-rank-more" aria-hidden="true">›</span></span>
       </div>
-    </div>
+    </button>
     <div class="hud-xp">
       <div class="hud-xp-head"><span class="lbl"><span aria-hidden="true">⚡ </span>Poder</span><span class="val">${g.intoLevel} / ${g.forLevel}</span></div>
       <div class="hud-xp-bar"><div class="hud-xp-fill" style="--xp:${pct}%"></div></div>
@@ -9016,6 +9226,107 @@ function showLevelUp(g, rankUp) {
   _luTimer = setTimeout(() => ov.classList.remove('show'), 2850);
 }
 
+// ============================================================
+// === MODAL DE PATENTES — a trilha do guerreiro =============
+// ============================================================
+// Lista todas as patentes (a trilha), destaca em qual você está,
+// e ao tocar numa patente abre a explicação do que ela significa.
+function openRankModal() {
+  const g = computeGamState();
+  const curIdx = RANKS.findIndex(r => r.name === g.rank.name);
+  const rows = RANKS.map((r, i) => {
+    const max = (i < RANKS.length - 1) ? RANKS[i + 1].min - 1 : null;
+    const range = max ? `Nv ${r.min}–${max}` : `Nv ${r.min}+`;
+    let cls = 'rank-row';
+    if (i === curIdx) cls += ' current';
+    else if (g.level >= r.min) cls += ' reached';
+    else cls += ' locked';
+    const hereTag = i === curIdx ? ' · <b>VOCÊ ESTÁ AQUI</b>' : '';
+    return `
+      <button class="${cls}" type="button" data-rank-idx="${i}" aria-expanded="false">
+        <span class="rank-emblem-mini" aria-hidden="true"><span class="rune">${r.rune}</span></span>
+        <span class="rank-info">
+          <span class="rank-line"><span class="rank-name">${r.name}</span><span class="rank-range">${range}</span></span>
+          <span class="rank-pt">${r.pt}${hereTag}</span>
+        </span>
+        <span class="rank-chev" aria-hidden="true">▸</span>
+      </button>
+      <div class="rank-desc" data-desc-idx="${i}"><div class="rank-desc-in">${r.desc}</div></div>
+    `;
+  }).join('');
+  const inner = `
+    <div class="modal-handle"></div>
+    <button class="modal-close" id="rankModalClose" type="button" aria-label="Fechar">×</button>
+    <div class="rank-modal-head">
+      <div class="rank-modal-kicker">A Trilha do Guerreiro</div>
+      <div class="rank-modal-current">${g.rank.rune} ${g.rank.name}</div>
+      <div class="rank-modal-sub">Nível ${g.level} · ${g.intoLevel}/${g.forLevel} de PODER até o próximo</div>
+    </div>
+    <div class="rank-list">${rows}</div>
+  `;
+  const modal = document.getElementById('rankModal');
+  modal.querySelector('.modal').innerHTML = inner;
+  modal.querySelector('#rankModalClose').addEventListener('click', () => closeModalEl(modal));
+  modal.querySelectorAll('.rank-row').forEach(row => {
+    row.addEventListener('click', () => {
+      const open = row.classList.toggle('open');
+      row.setAttribute('aria-expanded', open ? 'true' : 'false');
+      const desc = modal.querySelector(`.rank-desc[data-desc-idx="${row.dataset.rankIdx}"]`);
+      if (desc) desc.classList.toggle('open', open);
+    });
+  });
+  openModalEl(modal);
+  if (navigator.vibrate) navigator.vibrate(10);
+  // Já abre a explicação da patente atual e rola até ela
+  const cur = modal.querySelector('.rank-row.current');
+  if (cur) {
+    cur.classList.add('open');
+    cur.setAttribute('aria-expanded', 'true');
+    const d = modal.querySelector(`.rank-desc[data-desc-idx="${curIdx}"]`);
+    if (d) d.classList.add('open');
+    setTimeout(() => { try { cur.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) {} }, 130);
+  }
+}
+
+// ============================================================
+// === ZERAR A SEMANA INTEIRA (botão no dia de descanso) ======
+// ============================================================
+// Limpa séries/checks/cardio de TODOS os dias da semana atual, pra
+// recomeçar a contagem. Cargas, recordes, XP/nível e a sequência 🔥
+// são preservados (XP é vitalício; streak é por data).
+function resetWeek(week) {
+  const prefix = `${week}::`;
+  Object.keys(STATE.checks).forEach(k => { if (k.startsWith(prefix)) delete STATE.checks[k]; });
+  Object.keys(STATE.setProgress).forEach(k => { if (k.startsWith(prefix)) delete STATE.setProgress[k]; });
+  Object.keys(STATE.cardioDone).forEach(k => { if (k.startsWith(prefix)) delete STATE.cardioDone[k]; });
+  saveChecks(); saveSetProgress(); saveCardioDone();
+}
+
+let weekResetTimer = null;
+function weekLabel(w) { return w === 'deload' ? 'DELOAD' : 'W' + w; }
+function attachWeekResetHandler() {
+  const btn = document.getElementById('weekResetBtn');
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    if (btn.classList.contains('confirming')) {
+      clearTimeout(weekResetTimer);
+      btn.classList.remove('confirming');
+      resetWeek(STATE.week);
+      if (navigator.vibrate) navigator.vibrate([12, 30, 12, 30, 40]);
+      renderDayTabs();
+      renderMain();        // re-render (HUD/streak/XP preservados; semana limpa)
+      return;
+    }
+    btn.classList.add('confirming');
+    btn.textContent = `TOQUE DE NOVO PRA ZERAR ${weekLabel(STATE.week)} INTEIRA`;
+    if (navigator.vibrate) navigator.vibrate(15);
+    weekResetTimer = setTimeout(() => {
+      btn.classList.remove('confirming');
+      btn.textContent = `↺ ZERAR ${weekLabel(STATE.week)} INTEIRA`;
+    }, 3000);
+  });
+}
+
 
 // ============================================================
 // INIT
@@ -9032,11 +9343,15 @@ renderDayTabs();
 renderHeatmap();
 renderMain();
 
-// Wire up session swap (delegated, since the button is inside main which re-renders)
+// Wire up session swap + menu de patentes (delegado, pois ficam em áreas que re-renderizam)
 document.body.addEventListener('click', (e) => {
-  const btn = e.target.closest('#dayTitleBtn');
-  if (btn) openSessionSwapModal();
+  if (e.target.closest('#dayTitleBtn')) { openSessionSwapModal(); return; }
+  if (e.target.closest('#hudRankBtn')) { openRankModal(); return; }
 });
+
+// Fecha o modal de patentes ao tocar no fundo
+const rankModalEl = document.getElementById('rankModal');
+if (rankModalEl) rankModalEl.addEventListener('click', (e) => { if (e.target === rankModalEl) closeModalEl(rankModalEl); });
 
 // Prevent accidental zoom on double-tap of inputs (iOS)
 document.addEventListener('dblclick', (e) => {
