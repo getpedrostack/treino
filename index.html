@@ -5229,6 +5229,86 @@
     font-size: 14.5px; line-height: 1.5; color: var(--text-2); font-style: italic;
   }
 
+  /* ---- Crista de dificuldade (no day-header) ----------------- */
+  .diff-crest {
+    display: inline-flex; align-items: center; gap: 10px;
+    margin: 14px auto 0; padding: 8px 13px;
+    background: linear-gradient(180deg, rgba(26,22,18,0.85), rgba(14,11,8,0.85));
+    border: 1px solid var(--border-bright); cursor: pointer;
+    font: inherit; color: inherit; position: relative;
+    box-shadow: inset 0 1px 0 rgba(240,198,116,0.08), 0 2px 12px rgba(0,0,0,0.35);
+    transition: transform 0.12s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .diff-crest:hover { border-color: var(--gold); box-shadow: 0 0 18px rgba(200,155,60,0.25); }
+  .diff-crest:active { transform: scale(0.98); }
+  .diff-crest-ico { color: var(--gold); font-size: 14px; }
+  .diff-crest-body { display: flex; flex-direction: column; gap: 2px; text-align: left; line-height: 1; }
+  .diff-crest-name {
+    font-family: 'Cinzel', Georgia, serif; font-weight: 900; font-size: 14px;
+    letter-spacing: 0.08em; color: var(--gold-pale); text-shadow: 0 0 10px rgba(200,155,60,0.35);
+  }
+  .diff-crest-sub {
+    font-family: 'JetBrains Mono', monospace; font-size: 8.5px;
+    letter-spacing: 0.12em; color: var(--text-3); text-transform: uppercase;
+  }
+  .diff-crest-pips, .diff-card-pips { display: inline-flex; gap: 3px; align-items: center; }
+  .diff-crest-pips .dp, .diff-card-pips .dp {
+    width: 6px; height: 12px; background: var(--bg-elev);
+    border: 1px solid var(--border-bright); transform: skewX(-12deg);
+  }
+  .diff-crest-pips .dp.on, .diff-card-pips .dp.on {
+    background: linear-gradient(180deg, var(--gold-bright), var(--gold)); border-color: var(--gold);
+    box-shadow: 0 0 6px rgba(240,198,116,0.5);
+  }
+  .diff-crest-more { color: var(--text-3); font-size: 11px; }
+  .diff-crest.diff-dld .diff-crest-name { color: #bfe0ef; text-shadow: 0 0 10px rgba(120,170,200,0.4); }
+  .diff-crest.diff-dld .diff-crest-ico { color: #8fb3c9; }
+  .diff-crest.diff-dld .diff-crest-pips .dp.on { background: linear-gradient(180deg,#cfe7f3,#8fb3c9); border-color:#8fb3c9; box-shadow:0 0 6px rgba(140,180,205,0.5); }
+
+  /* ---- Modal de dificuldade (menu estilo game) --------------- */
+  .diff-modal { max-width: 480px; }
+  .diff-modal-head { text-align: center; padding: 4px 0 16px; }
+  .diff-modal-kicker {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.28em;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 8px;
+  }
+  .diff-modal-title {
+    font-family: 'Cinzel', Georgia, serif; font-weight: 900; font-size: 23px;
+    color: var(--gold-pale); text-shadow: 0 0 16px rgba(200,155,60,0.4); line-height: 1.1;
+  }
+  .diff-modal-sub { font-size: 12px; color: var(--text-2); margin: 8px auto 0; line-height: 1.45; max-width: 90%; }
+  .diff-cards { display: flex; flex-direction: column; gap: 9px; padding-bottom: 8px; }
+  .diff-card {
+    display: flex; flex-direction: column; gap: 6px; width: 100%; text-align: left;
+    background: linear-gradient(180deg, rgba(26,22,18,0.6), rgba(16,13,9,0.6));
+    border: 1px solid var(--border-bright); padding: 14px 15px; cursor: pointer;
+    font: inherit; color: inherit; position: relative;
+    transition: background 0.18s ease, border-color 0.18s ease, transform 0.1s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .diff-card:hover { background: rgba(200,155,60,0.06); border-color: var(--gold-deep); }
+  .diff-card:active { transform: scale(0.99); }
+  .diff-card.current { border-color: var(--gold); background: linear-gradient(180deg, rgba(200,155,60,0.14), rgba(16,13,9,0.7)); box-shadow: 0 0 18px rgba(200,155,60,0.2); }
+  .diff-card.current::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:linear-gradient(180deg,var(--gold-bright),var(--gold)); box-shadow:0 0 10px var(--gold); }
+  .diff-card-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .diff-card-name {
+    font-family: 'Cinzel', Georgia, serif; font-weight: 900; font-size: 19px;
+    letter-spacing: 0.06em; color: var(--gold-pale); text-shadow: 0 0 12px rgba(200,155,60,0.3);
+  }
+  .diff-card-pips .dp { width: 8px; height: 16px; }
+  .diff-card-meta {
+    font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-3);
+  }
+  .diff-card-meta b { color: var(--gold-bright); }
+  .diff-card-blurb { font-size: 13px; line-height: 1.5; color: var(--text-2); font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; }
+  .diff-card.diff-w3 .diff-card-name { color: var(--gold-bright); }
+  .diff-card.diff-dld .diff-card-name { color: #bfe0ef; text-shadow: 0 0 12px rgba(120,170,200,0.35); }
+  .diff-card.diff-dld.current { border-color:#8fb3c9; box-shadow:0 0 18px rgba(120,170,200,0.2); }
+  .diff-card.diff-dld.current::before { background: linear-gradient(180deg,#cfe7f3,#8fb3c9); box-shadow:0 0 10px #8fb3c9; }
+  .diff-card.diff-dld .diff-card-pips .dp.on { background: linear-gradient(180deg,#cfe7f3,#8fb3c9); border-color:#8fb3c9; box-shadow:0 0 6px rgba(140,180,205,0.5); }
+
   /* Barra de PODER (XP) */
   .hud-xp { flex: 1 1 70px; min-width: 60px; display: flex; flex-direction: column; gap: 4px; }
   .hud-xp-head {
@@ -5616,6 +5696,69 @@
     body:not(.anims-on) .power-surge,
     body:not(.anims-on) .xp-pop { display: none !important; }
   }
+
+  /* ============================================================ */
+  /* === FOCO DO TREINO — seletor no menu GYM ================== */
+  /* ============================================================ */
+  .mode-section { padding-top: 4px; }
+  .mode-section-head { margin-bottom: 12px; }
+  .mode-section-title {
+    display: block; font-family: 'Cinzel', Georgia, serif; font-weight: 700;
+    font-size: 13px; letter-spacing: 0.1em; color: var(--gold-pale);
+  }
+  .mode-section-desc { display: block; font-size: 11px; color: var(--text-3); margin-top: 4px; line-height: 1.4; }
+  .mode-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .mode-opt {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    background: linear-gradient(180deg, var(--bg-elev), var(--bg-card-done));
+    border: 1px solid var(--border-bright); padding: 14px 8px; cursor: pointer;
+    font: inherit; color: var(--text-2); transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .mode-opt:hover { border-color: var(--gold-deep); }
+  .mode-opt.active {
+    border-color: var(--gold); color: var(--gold-pale);
+    background: linear-gradient(180deg, rgba(200,155,60,0.14), rgba(16,13,9,0.6));
+    box-shadow: 0 0 18px rgba(200,155,60,0.22), inset 0 1px 0 rgba(240,198,116,0.15);
+  }
+  .mode-opt-rune {
+    font-family: 'Cinzel', Georgia, serif; font-weight: 900; font-size: 22px;
+    color: var(--gold); text-shadow: 0 0 10px rgba(200,155,60,0.4); line-height: 1;
+  }
+  .mode-opt.active .mode-opt-rune { color: var(--gold-bright); }
+  .mode-opt-name { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 11px; letter-spacing: 0.07em; }
+  .mode-opt-sub { font-size: 9px; color: var(--text-3); letter-spacing: 0.05em; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; }
+
+  /* ============================================================ */
+  /* === LINHA OLÍMPICA — tema Greco-Romano (modo hipertrofia) = */
+  /* ============================================================ */
+  /* Desloca a paleta do "ouro queimado de forja" (nórdico) para um
+     "ouro do Olimpo" mais radiante + mármore-noite levemente mais frio.
+     Como tudo usa as vars --gold*, o app inteiro se retematiza. */
+  body.mode-hyper {
+    --gold: #d8b75a;
+    --gold-bright: #f7e09a;
+    --gold-pale: #f4ead0;
+    --gold-deep: #9c7d2a;
+    --bronze: #b98a4a;
+    --bronze-light: #d3a667;
+    --bg-elev: #16171d;
+    --bg-card: #1b1d24;
+    --bg-card-done: #101116;
+    --border: #2b2a30;
+    --border-bright: #423d3a;
+    --text: #f4ecd8;
+    --text-2: #c8b797;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(216,183,90,0.10) 0%, transparent 60%),
+      radial-gradient(ellipse 100% 40% at 50% 110%, rgba(18,20,28,0.6) 0%, transparent 50%),
+      linear-gradient(180deg, #0d0e12 0%, #0a0b0e 100%);
+    background-attachment: fixed;
+  }
+  /* O glifo grego (Φ, Ζ…) precisa de menos peso de runa e um respiro */
+  body.mode-hyper .realm-rune, body.mode-hyper .boss-rune { letter-spacing: 0; }
+  /* Linha olímpica é fixa: esconde o ⇄ de reorganizar a semana */
+  body.mode-hyper .day-title-swap { display: none; }
 </style>
 </head>
 <body>
@@ -5787,7 +5930,26 @@
       <button class="modal-close" id="gymModalClose" aria-label="Fechar">×</button>
     </div>
     <p class="modal-intro">Comparativo rápido. Atualizar manualmente se algum mudar.</p>
-    
+
+    <div class="settings-section mode-section">
+      <div class="mode-section-head">
+        <span class="mode-section-title">⚔ Foco do Treino</span>
+        <span class="mode-section-desc">Define os treinos da semana inteira e o tema do app.</span>
+      </div>
+      <div class="mode-switch" id="modeSwitch" role="group" aria-label="Foco do treino">
+        <button class="mode-opt" data-mode="pwr" type="button">
+          <span class="mode-opt-rune">ᚦ</span>
+          <span class="mode-opt-name">POWERLIFTING</span>
+          <span class="mode-opt-sub">Força · Nórdico</span>
+        </button>
+        <button class="mode-opt" data-mode="hyper" type="button">
+          <span class="mode-opt-rune">Φ</span>
+          <span class="mode-opt-name">HIPERTROFIA</span>
+          <span class="mode-opt-sub">Volume · Olímpico</span>
+        </button>
+      </div>
+    </div>
+
     <div class="settings-section">
       <div class="settings-row">
         <div class="settings-label">
@@ -5894,6 +6056,11 @@
 <!-- Modal de Patentes — a trilha do guerreiro (preenchido por JS) -->
 <div class="modal-backdrop" id="rankModal">
   <div class="modal rank-modal" role="dialog" aria-modal="true" aria-label="Trilha de patentes"></div>
+</div>
+
+<!-- Modal de Dificuldade da semana (menu estilo game, preenchido por JS) -->
+<div class="modal-backdrop" id="diffModal">
+  <div class="modal diff-modal" role="dialog" aria-modal="true" aria-label="Escolher dificuldade da semana"></div>
 </div>
 
 <!-- Ascensão de nível / nova patente (takeover, preenchido por JS) -->
@@ -6356,6 +6523,212 @@ const SKIP_REASONS = [
 const SESSION_ORDER = ['squat', 'bench', 'deadlift', 'upper_hiper', 'cardio_mid', 'cardio_long', 'rest', 'skip'];
 
 // Schedule padrão — o que existia antes, agora explícito
+// ============================================================
+// === LINHA OLÍMPICA — programa de HIPERTROFIA (5 dias) ======
+// ============================================================
+// Baseado no plano de hipertrofia/força com evidência (Schoenfeld,
+// Refalo, Helms): Push/Pull/Lower A/Upper/Lower B, ~10–16 séries/grupo.
+// Compostos pesados (5–8 reps, RPE alto por semana) + acessórios (8–15).
+// Sequência inteligente: composto pesado primeiro (fresco) → 2º composto/ângulo
+// → acessórios em máquina/cabo (estável, com ênfase em alongamento) → isolamento
+// → core no fim. Tudo escolhido pra academia CHEIA: máquinas, cabos e bancos
+// (um ponto só), nada de deslocamento (sem farmer's walk / avanço andando).
+SESSIONS.hyper_push = {
+  title: "PUSH DAY", eyebrow: "Olimpo — Empurrar", pills: ["~60min"], type: "upper-push", typeLabel: "Push (Peito/Ombro/Tríceps)",
+  exercises: [
+    { id: 'hpu1', name: 'Supino reto (barra)', primary: true, sets: 4, reps: '5–8', rpeByWeek: { 1: '8', 2: '9', 3: '9.5' },
+      deload: { sets: 3, reps: '8', intensity: '60% 1RM', rpe: '6' },
+      notes: 'O lift de força do dia, feito descansado. Escápulas retraídas e deprimidas, pés cravados, arco torácico leve. Barra desce no peito baixo e sobe em curva suave. Aquece progressivo até a série de trabalho.',
+      swaps: [{ name: 'Supino com halteres', reason: 'Mais amplitude e alongamento do peito; ombro mais livre.', notes: 'Desça até sentir o peito esticar; não bata os halteres no topo, mantém tensão.' },
+              { name: 'Supino na máquina (chest press)', reason: 'Estável e seguro — ótimo em dia cheio ou pra puxar perto da falha sozinho.', notes: 'Ajuste o banco pra alça na linha do mamilo; aperte o peito no fim.' },
+              { name: 'Supino no Smith', reason: 'Trajetória guiada quando não há rack livre.', notes: 'Pés um pouco à frente; controle a descida, sem quicar a barra no peito.' }] },
+    { id: 'hpu2', name: 'Supino inclinado (halteres)', sets: 3, reps: '8–12', rpe: '8–9',
+      notes: 'Peito superior em alongamento — o estímulo que mais falta na maioria. Banco a 30°, desça FUNDO até esticar, suba sem encostar os halteres.',
+      swaps: [{ name: 'Supino inclinado na máquina/Smith', reason: 'Mesmo alvo, estável e fácil de sobrecarregar.', notes: 'Banco a 30°; pausa de 1s embaixo pra tirar o impulso.' },
+              { name: 'Crucifixo inclinado no cabo', reason: 'Tensão constante e alongamento máximo do peito alto.', notes: 'Cotovelo levemente macio e fixo; abre bem embaixo, junta no alto.' },
+              { name: 'Supino inclinado (barra)', reason: 'Mais carga se o banco com halter estiver ocupado.', notes: 'Barra desce no peito alto/clavícula; cotovelos ~45°.' }] },
+    { id: 'hpu3', name: 'Desenvolvimento com halteres (sentado)', sets: 3, reps: '6–10', rpe: '8–9', deloadCut: true,
+      notes: 'Pressing vertical pros ombros — sentado e apoiado ocupa só o banco. Mais amplitude que a barra. Cotovelos levemente à frente, não trave em cima.',
+      swaps: [{ name: 'Desenvolvimento na máquina', reason: 'Estável, seguro perto da falha, ocupa um ponto.', notes: 'Alça na linha das orelhas; sobe sem encolher o trapézio.' },
+              { name: 'Desenvolvimento militar (barra)', reason: 'Mais carga e força global se houver rack.', notes: 'Core firme, sem hiperextender a lombar; barra rente ao rosto.' },
+              { name: 'Arnold press', reason: 'Pega o deltoide anterior com rotação e mais ROM.', notes: 'Gira da palma pra dentro até a palma pra frente; controle.' }] },
+    { id: 'hpu4', name: 'Elevação lateral (halteres)', sets: 3, reps: '12–15', rpe: '8',
+      notes: 'Deltoide medial — o que dá largura ao ombro. Leve e controlado, sem balançar o tronco. Conduz pelo cotovelo, não pela mão.',
+      swaps: [{ name: 'Elevação lateral no cabo', reason: 'Tensão constante inclusive embaixo (onde o halter "alivia").', notes: 'Cabo passando por trás do corpo; sobe até a linha do ombro.' },
+              { name: 'Elevação lateral na máquina', reason: 'Curva de força ideal e zero estabilização — ótimo perto da falha.', notes: 'Empurre pelo cotovelo contra a almofada; desça lento.' },
+              { name: 'Lateral deitado de lado (1 halter)', reason: 'Carrega o fundo do movimento, em qualquer cantinho.', notes: 'Deitado de lado no banco, eleva o halter da frente da coxa até cima.' }] },
+    { id: 'hpu5', name: 'Tríceps na polia (corda)', sets: 3, reps: '10–15', rpe: '8–9',
+      notes: 'Cabeças lateral e medial do tríceps. Cotovelos colados ao corpo e parados; abre a corda no fim pra contrair forte.',
+      swaps: [{ name: 'Tríceps polia (barra reta/V)', reason: 'Permite mais carga que a corda.', notes: 'Cotovelos fixos; desça até estender total, sem abrir os ombros.' },
+              { name: 'Tríceps na máquina', reason: 'Estável e seguro pra puxar perto da falha sozinho.', notes: 'Ajuste o assento; estende total e controla a volta.' },
+              { name: 'Tríceps coice no cabo (unilateral)', reason: 'Pico de contração no fim, ótimo finisher.', notes: 'Cotovelo alto e parado; estende e segura 1s no topo.' }] },
+    { id: 'hpu6', name: 'Tríceps testa (barra EZ)', sets: 2, reps: '10–15', rpe: '8', deloadCut: true,
+      notes: 'Cabeça longa em alongamento (posição diferente da polia). Desça a barra à testa/atrás da cabeça, cotovelos parados apontando pra cima.',
+      swaps: [{ name: 'Extensão de tríceps acima da cabeça (cabo)', reason: 'Alongamento máximo da cabeça longa, tensão constante.', notes: 'Corda atrás da nuca; estende pra cima, cotovelos fixos.' },
+              { name: 'Tríceps francês unilateral (halter)', reason: 'Corrige assimetria, alonga a cabeça longa.', notes: 'Halter atrás da cabeça com um braço; cotovelo apontado pro teto.' }] },
+    { id: 'hpu7', name: 'Abdominal na polia (crunch ajoelhado)', sets: 3, reps: '12–15', rpe: '8', deloadHalf: true,
+      notes: 'Reto abdominal com carga progressiva — ocupa só uma polia. Enrola a coluna (não puxa com o quadril); contrai o abdômen, não o pescoço.',
+      swaps: [{ name: 'Prancha c/ pés elevados', reason: 'Anti-extensão estática, sem equipamento.', notes: 'Glúteo e abdômen firmes, quadril sem cair.' },
+              { name: 'Elevação de pernas suspenso', reason: 'Pega o abdômen inferior com mais alongamento.', notes: 'Sobe as pernas sem balançar; retroversão pélvica no topo.' }] }
+  ]
+};
+SESSIONS.hyper_pull = {
+  title: "PULL DAY", eyebrow: "Olimpo — Puxar", pills: ["~60min"], type: "upper-pull", typeLabel: "Pull (Costas/Bíceps)",
+  exercises: [
+    { id: 'hpl1', name: 'Barra fixa (ou pulldown)', primary: true, sets: 4, reps: '5–8', rpeByWeek: { 1: '8', 2: '9', 3: '9.5' },
+      deload: { sets: 3, reps: '8', intensity: 'leve', rpe: '6' },
+      notes: 'Puxada vertical pesada pra largura das costas. Se não fizer 5 limpas, use pulldown ou assistida. Peito pra cima, puxa o cotovelo pro bolso, sem balançar.',
+      swaps: [{ name: 'Pulldown frontal (barra)', reason: 'Carga ajustável, mesma puxada — ideal pra controlar reps.', notes: 'Inclina levemente pra trás e puxa à clavícula; não jogue o tronco.' },
+              { name: 'Pulldown pegada neutra', reason: 'Mais dorsal e ombro confortável.', notes: 'Cotovelos descem rente ao corpo; alonga bem no topo.' },
+              { name: 'Barra fixa assistida (máquina/banda)', reason: 'Completa as reps com técnica quando a livre cansa.', notes: 'Desça controlado mesmo com assistência; ROM completo.' }] },
+    { id: 'hpl2', name: 'Remada apoiada no peito (máquina)', sets: 3, reps: '8–12', rpe: '8–9',
+      notes: 'Espessura de costas SEM fadiga lombar — o peito apoiado tira a coluna da jogada (ótima relação estímulo/fadiga). Puxa pro abdômen, aperta as escápulas no fim.',
+      swaps: [{ name: 'Remada curvada (barra)', reason: 'Mais carga e estímulo global, se a lombar permitir.', notes: 'Tronco ~45°, lombar neutra, puxa pro umbigo sem tranco.' },
+              { name: 'Remada cavalinho (T-bar) apoiada', reason: 'Pegada neutra, muita carga com peito apoiado.', notes: 'Retração total no topo; controla a volta.' },
+              { name: 'Remada unilateral (haltere)', reason: 'Mais amplitude e corrige assimetria; só um banco.', notes: 'Apoio no banco, puxa o cotovelo pra trás e cima.' }] },
+    { id: 'hpl3', name: 'Remada baixa no cabo (pegada neutra)', sets: 3, reps: '10–15', rpe: '8',
+      notes: 'Dorsais e meio das costas com tensão constante. Tronco firme, puxa o triângulo ao abdômen, alonga bem na frente sem curvar a lombar.',
+      swaps: [{ name: 'Puxada frontal pegada neutra', reason: 'Mais vertical, foco em dorsal.', notes: 'Retração escapular; não jogue o tronco pra trás.' },
+              { name: 'Pullover no cabo (em pé)', reason: 'Isola o dorsal em alongamento, sem bíceps.', notes: 'Braços quase retos; puxa a barra/corda da frente até a coxa.' },
+              { name: 'Remada na máquina (pegada neutra)', reason: 'Estável pra puxar perto da falha.', notes: 'Peito no apoio; aperte as escápulas no fim.' }] },
+    { id: 'hpl4', name: 'Face pull (cabo)', sets: 3, reps: '15–20', rpe: '8',
+      notes: 'Deltoide posterior + rotadores — saúde do ombro e postura. Cotovelos altos, puxa a corda à altura dos olhos e gira as mãos pra fora.',
+      swaps: [{ name: 'Crucifixo inverso na máquina (peck deck)', reason: 'Isola o deltoide posterior, estável.', notes: 'Cotovelos levemente macios; abre até a linha do ombro.' },
+              { name: 'Crucifixo inverso com halteres', reason: 'Versão livre, sentado e curvado.', notes: 'Tronco apoiado nas coxas; conduz pelos cotovelos.' }] },
+    { id: 'hpl5', name: 'Encolhimento (halteres/barra)', sets: 3, reps: '10–15', rpe: '8', deloadCut: true,
+      notes: 'Trapézio superior. Sobe reto (não rola o ombro), pausa de 1s no topo, desce alongando.',
+      swaps: [{ name: 'Encolhimento na máquina/Smith', reason: 'Carga estável, sem o grip limitar.', notes: 'Ombros sobem em direção às orelhas; pausa no topo.' },
+              { name: 'Encolhimento no cabo (baixo)', reason: 'Tensão constante e ângulo diferente.', notes: 'Em pé de frente pra polia baixa; eleva os ombros e segura.' }] },
+    { id: 'hpl6', name: 'Curl bíceps (barra EZ)', sets: 3, reps: '8–12', rpe: '8–9',
+      notes: 'Construtor de bíceps com mais carga. Cotovelos parados ao lado do corpo, sem balanço; desce controlado até estender.',
+      swaps: [{ name: 'Curl no cabo (barra/corda)', reason: 'Tensão constante do começo ao fim.', notes: 'Cotovelos fixos; aperta no topo, desce lento.' },
+              { name: 'Curl Scott (banco/máquina)', reason: 'Tira o impulso, isola o bíceps.', notes: 'Axila apoiada no banco; não estende 100% pra proteger o cotovelo.' }] },
+    { id: 'hpl7', name: 'Curl inclinado (halteres)', sets: 2, reps: '10–15', rpe: '8', deloadCut: true,
+      notes: 'Bíceps em ALONGAMENTO máximo (cabeça longa) — o ângulo que mais cresce. Banco a 45–60°, braços pendurados atrás do corpo, sobe sem mover o cotovelo.',
+      swaps: [{ name: 'Curl martelo (halteres)', reason: 'Braquial e braquiorradial (espessura do braço).', notes: 'Pegada neutra o tempo todo; sem balançar.' },
+              { name: 'Curl Bayesian no cabo', reason: 'Alongamento atrás do corpo com tensão constante.', notes: 'De costas pra polia baixa; cotovelo atrás do tronco.' }] },
+    { id: 'hpl8', name: 'Prancha lateral', sets: 2, reps: '30–45s/lado', rpe: '7–8', deloadHalf: true,
+      notes: 'Oblíquos e estabilidade lateral. Quadril alto, corpo numa linha só, sem deixar cair.',
+      swaps: [{ name: 'Pallof press (cabo)', reason: 'Anti-rotação com carga, ocupa uma polia.', notes: 'Perpendicular ao cabo; estende os braços sem deixar o tronco girar.' },
+              { name: 'Giro russo (com carga)', reason: 'Oblíquos dinâmicos.', notes: 'Sentado, tronco inclinado; gira controlado, sem usar impulso.' }] }
+  ]
+};
+SESSIONS.hyper_lowerA = {
+  title: "LOWER A · JOELHO", eyebrow: "Olimpo — Quadríceps", pills: ["~60min"], type: "lower-heavy", typeLabel: "Lower A (Quadríceps)",
+  exercises: [
+    { id: 'hla1', name: 'Agachamento livre (ou hack)', primary: true, sets: 4, reps: '5–8', rpeByWeek: { 1: '8', 2: '9', 3: '9.5' },
+      deload: { sets: 3, reps: '8', intensity: '60% 1RM', rpe: '6' },
+      notes: 'O grande lift do dia, feito fresco. Bracing diafragmático antes de descer, joelhos seguindo a ponta dos pés, profundidade até paralelo ou abaixo. Front squat se quiser tronco mais vertical e quadríceps.',
+      swaps: [{ name: 'Hack squat (máquina)', reason: 'Quadríceps brutal sem estresse na coluna — perfeito em dia cheio.', notes: 'Pés mais baixos na plataforma = mais quadríceps; ROM completo.' },
+              { name: 'Front squat', reason: 'Tronco vertical, mais quadríceps e core.', notes: 'Cotovelos altos, barra na frente dos ombros; desce reto.' },
+              { name: 'Leg press', reason: 'Carga alta e estável quando não há rack livre.', notes: 'Pés na largura dos ombros; não trave o joelho no topo.' }] },
+    { id: 'hla2', name: 'Leg press', sets: 3, reps: '8–12', rpe: '8–9',
+      notes: 'Volume de quadríceps com segurança — empilha estímulo sem pegar a coluna. Pés na base da plataforma pra mais quadríceps; desce até ~90°, sem deixar a bunda descolar.',
+      swaps: [{ name: 'Hack squat', reason: 'Ângulo guiado, ótimo pra quadríceps em alongamento.', notes: 'Desce fundo e controlado; pausa de 1s embaixo.' },
+              { name: 'Agachamento na máquina (pendular/V)', reason: 'Padrão de agachamento estável e fácil de carregar.', notes: 'Mantém o calcanhar plantado; ROM completo.' },
+              { name: 'Leg press unilateral', reason: 'Corrige assimetria de uma perna.', notes: 'Pé centralizado; mesma técnica, uma perna por vez.' }] },
+    { id: 'hla3', name: 'Búlgaro no Smith (ou halteres)', sets: 3, reps: '8–12/perna', rpe: '8–9',
+      notes: 'Unilateral parado (sem andar) — corrige assimetria, pega quadríceps e glúteo. Pé de trás no banco, joelho da frente alinhado ao pé, desce reto. No Smith fica estável e ocupa um ponto só.',
+      swaps: [{ name: 'Afundo parado no Smith', reason: 'Estável, sem deslocamento — ideal em academia cheia.', notes: 'Passo fixo; sobe e desce no mesmo lugar.' },
+              { name: 'Leg press unilateral', reason: 'Mesmo alvo sem exigir equilíbrio.', notes: 'Uma perna por vez; controla a descida.' },
+              { name: 'Step-up no banco (halteres)', reason: 'Glúteo e quadríceps, num cantinho.', notes: 'Empurra pelo calcanhar da perna de cima; controla a descida.' }] },
+    { id: 'hla4', name: 'Cadeira extensora', sets: 3, reps: '12–15', rpe: '8–9',
+      notes: 'Isolamento puro de quadríceps (ótimo finisher e pump). Pausa de 1s no topo, desce controlado. Inclinar o banco pra trás aumenta o alongamento do reto femoral.',
+      swaps: [{ name: 'Extensora unilateral', reason: 'Corrige assimetria, pico de contração.', notes: 'Uma perna por vez; segura 1s no topo.' },
+              { name: 'Sissy squat (apoiado)', reason: 'Alongamento extremo do quadríceps sem máquina.', notes: 'Joelhos pra frente, tronco pra trás; segure num apoio.' }] },
+    { id: 'hla5', name: 'Panturrilha sentado', sets: 3, reps: '10–15', rpe: '8–9',
+      notes: 'Sóleo (joelho dobrado) — a parte profunda da panturrilha, mais resistente à fadiga. ROM completo, pausa embaixo (alongado) e no topo, sem quicar.',
+      swaps: [{ name: 'Panturrilha no leg press', reason: 'Carga alta sem estresse de coluna.', notes: 'Ponta dos pés na base; empurra só com a panturrilha.' },
+              { name: 'Panturrilha em pé (máquina)', reason: 'Pega mais o gastrocnêmio (joelho estendido).', notes: 'Pausa no estiramento e na contração.' }] },
+    { id: 'hla6', name: 'Dorsiflexão tibial (banda/máquina)', sets: 2, reps: '15–20', rpe: '8', deloadCut: true,
+      notes: 'Tibial anterior — músculo esquecido, mas chave pra equilíbrio da perna e anti-canelite. Eleva a ponta do pé contra a resistência; sentado, ocupa quase nada.',
+      swaps: [{ name: 'Tibial com anilha sobre o pé', reason: 'Sem banda/máquina: anilha apoiada no peito do pé.', notes: 'Sentado, calcanhar no chão; eleva a ponta do pé.' },
+              { name: 'Tibial no cabo (baixo)', reason: 'Tensão constante.', notes: 'Pé preso na alça do cabo baixo; flexiona o pé pra cima.' }] },
+    { id: 'hla7', name: 'Abdominal na polia (crunch ajoelhado)', sets: 3, reps: '12–15', rpe: '8', deloadHalf: true,
+      notes: 'Reto abdominal com carga. Enrola a coluna trazendo as costelas pra bacia; contrai o abdômen, não puxa com o pescoço nem com o quadril.',
+      swaps: [{ name: 'Prancha abdominal', reason: 'Anti-extensão estática, sem fila de máquina.', notes: 'Quadril nem cai nem sobe; abdômen e glúteo firmes.' },
+              { name: 'Elevação de pernas suspenso', reason: 'Abdômen inferior com alongamento.', notes: 'Sobe as pernas sem balançar; retroversão no topo.' }] }
+  ]
+};
+SESSIONS.hyper_upper = {
+  title: "UPPER DAY", eyebrow: "Olimpo — Escultura", pills: ["~60min"], type: "upper-push", typeLabel: "Upper (Peito/Costas/Braços)",
+  exercises: [
+    { id: 'hup1', name: 'Supino inclinado (barra)', primary: true, sets: 4, reps: '6–10', rpeByWeek: { 1: '8', 2: '9', 3: '9.5' },
+      deload: { sets: 3, reps: '8', intensity: '60% 1RM', rpe: '6' },
+      notes: 'Foco no peito superior (o que dá a "armadura" do peito). Banco a 30°, escápulas retraídas, barra desce no peito alto/clavícula, cotovelos ~45°.',
+      swaps: [{ name: 'Supino inclinado halteres', reason: 'Mais amplitude e liberdade de ombro.', notes: 'Desça até alongar; junte no topo sem bater os halteres.' },
+              { name: 'Supino inclinado na máquina/Smith', reason: 'Estável pra puxar perto da falha em dia cheio.', notes: 'Alça na linha do peito alto; pausa de 1s embaixo.' },
+              { name: 'Crucifixo inclinado no cabo', reason: 'Isola o peito superior em alongamento.', notes: 'Abre bem embaixo; cotovelo fixo e macio.' }] },
+    { id: 'hup2', name: 'Remada apoiada no peito (máquina)', sets: 3, reps: '8–12', rpe: '8–9',
+      notes: 'Espessura de costas sem castigar a lombar (peito apoiado). Puxa pro abdômen, aperta as escápulas, controla a volta.',
+      swaps: [{ name: 'Remada unilateral (haltere)', reason: 'Mais ROM e corrige assimetria; só um banco.', notes: 'Apoio no banco, puxa o cotovelo pra trás e cima.' },
+              { name: 'Remada cavalinho (T-bar) apoiada', reason: 'Pegada neutra, muita carga estável.', notes: 'Retração total no topo; sem dar tranco.' },
+              { name: 'Remada baixa no cabo', reason: 'Tensão constante, ângulo horizontal.', notes: 'Tronco firme; puxa ao abdômen e alonga na frente.' }] },
+    { id: 'hup3', name: 'Desenvolvimento com halteres (sentado)', sets: 3, reps: '8–12', rpe: '8–9',
+      notes: 'Ombros com amplitude maior que a barra, sentado e apoiado (um ponto só). Não trave o cotovelo no topo; desce até a linha das orelhas.',
+      swaps: [{ name: 'Desenvolvimento na máquina', reason: 'Estável e seguro perto da falha.', notes: 'Alça na linha das orelhas; sobe sem encolher o trapézio.' },
+              { name: 'Arnold press', reason: 'Rotação pega bem o deltoide anterior.', notes: 'Gira da palma pra dentro até a palma pra frente.' }] },
+    { id: 'hup4', name: 'Puxada alta (pulldown)', sets: 3, reps: '10–15', rpe: '8',
+      notes: 'Segundo estímulo vertical de costas — largura e trapézio médio. Retração escapular consciente, puxa à clavícula sem jogar o tronco.',
+      swaps: [{ name: 'Pulldown pegada neutra', reason: 'Mais dorsal, ombro confortável.', notes: 'Cotovelos descem rente ao corpo.' },
+              { name: 'Pullover no cabo (em pé)', reason: 'Isola o dorsal sem bíceps.', notes: 'Braços quase retos; puxa da frente até a coxa.' }] },
+    { id: 'hup5', name: 'Crucifixo (peck deck/cabo)', sets: 3, reps: '10–15', rpe: '8', deloadCut: true,
+      notes: 'Peito em isolamento e alongamento. No peck deck é estável e ocupa um ponto; cotovelo levemente macio e fixo, aperta no centro.',
+      swaps: [{ name: 'Crossover no cabo', reason: 'Alongamento e tensão constante, vários ângulos.', notes: 'Dá um passo à frente; junta as mãos na linha do peito.' },
+              { name: 'Crucifixo inclinado (halteres)', reason: 'Peito superior em alongamento.', notes: 'Banco a 30°; abre até esticar, cotovelo macio.' }] },
+    { id: 'hup6', name: 'Curl Scott (banco/máquina)', sets: 3, reps: '10–15', rpe: '8–9',
+      notes: 'Bíceps em posição diferente do Pull, sem impulso (axila apoiada). Não estende 100% embaixo pra poupar o cotovelo; aperta no topo.',
+      swaps: [{ name: 'Curl no cabo (barra/corda)', reason: 'Tensão constante.', notes: 'Cotovelos fixos ao lado; desce lento.' },
+              { name: 'Curl concentrado (halter)', reason: 'Pico de contração, isola o bíceps.', notes: 'Cotovelo apoiado na coxa; sobe sem girar o ombro.' }] },
+    { id: 'hup7', name: 'Extensão tríceps acima da cabeça (cabo)', sets: 3, reps: '10–15', rpe: '8–9', deloadCut: true,
+      notes: 'Cabeça longa do tríceps em ALONGAMENTO (posição overhead) — complementa a polia do Push. Cotovelos apontados pra cima e parados; estende total.',
+      swaps: [{ name: 'Tríceps francês (barra EZ)', reason: 'Mesma cabeça longa, deitado no banco.', notes: 'Desce à testa/atrás da cabeça; cotovelos fixos.' },
+              { name: 'Extensão overhead unilateral (cabo)', reason: 'Corrige assimetria com alongamento.', notes: 'Um braço por vez; cotovelo alto e quieto.' }] },
+    { id: 'hup8', name: 'Rollout (ab wheel)', sets: 3, reps: '8–15', rpe: '8', deloadHalf: true,
+      notes: 'Core dinâmico + reto abdominal (anti-extensão sob carga). Avança só até onde mantém a lombar neutra — não deixa arquear; volta puxando o abdômen.',
+      swaps: [{ name: 'Abdominal na polia (crunch ajoelhado)', reason: 'Reto abdominal com carga progressiva.', notes: 'Enrola a coluna; contrai o abdômen, não o pescoço.' },
+              { name: 'Elevação de pernas suspenso', reason: 'Abdômen inferior com alongamento.', notes: 'Sobe sem balançar; retroversão no topo.' }] }
+  ]
+};
+SESSIONS.hyper_lowerB = {
+  title: "LOWER B · QUADRIL", eyebrow: "Olimpo — Cadeia posterior", pills: ["~60min"], type: "lower-heavy", typeLabel: "Lower B (Posterior/Glúteo)",
+  exercises: [
+    { id: 'hlb1', name: 'Levantamento terra romeno (RDL)', primary: true, sets: 4, reps: '6–10', rpeByWeek: { 1: '8', 2: '9', 3: '9.5' },
+      deload: { sets: 3, reps: '8', intensity: '60% 1RM', rpe: '6' },
+      notes: 'O hinge do dia, feito fresco — posteriores, glúteos e eretores em alongamento. Quadril BEM pra trás, joelho macio, barra rente à perna, lombar neutra. Para a descida onde o posterior estica, não a lombar.',
+      swaps: [{ name: 'Stiff', reason: 'Joelho mais estendido, alongamento ainda maior do posterior.', notes: 'Mesma dobradiça; carga um pouco menor que o RDL.' },
+              { name: 'RDL com halteres', reason: 'Se a barra olímpica estiver ocupada; mais ROM.', notes: 'Halteres deslizam rente à perna; peito aberto.' },
+              { name: 'Good morning (barra)', reason: 'Hinge com menos demanda de grip.', notes: 'Carga bem menor; pare onde a coluna ainda está neutra.' }] },
+    { id: 'hlb2', name: 'Hip thrust (barra ou máquina)', sets: 3, reps: '8–12', rpe: '8–9',
+      notes: 'Glúteo máximo na contração encurtada (complementa o RDL, que pega no alongamento). Queixo pra baixo, costelas pra baixo, pausa de 1s no topo SEM hiperextender a lombar.',
+      swaps: [{ name: 'Máquina de glúteos (hip thrust machine)', reason: 'Mesmo alvo sem montar a barra — rápido em dia cheio.', notes: 'Empurra pelo calcanhar; contrai forte no topo.' },
+              { name: 'Elevação pélvica no Smith', reason: 'Carga estável guiada.', notes: 'Barra na dobra do quadril (use almofada); ROM completo.' },
+              { name: 'Ponte de glúteo unilateral', reason: 'Sem equipamento, corrige assimetria.', notes: 'Uma perna; empurra pelo calcanhar, segura no topo.' }] },
+    { id: 'hlb3', name: 'Mesa flexora sentado', sets: 3, reps: '10–15', rpe: '8–9',
+      notes: 'Isquiotibiais isolados — a versão SENTADA alonga mais o posterior (a cabeça longa), crescendo mais que a deitada. Excêntrico de 2–3s, encosta o quadril no fundo.',
+      swaps: [{ name: 'Cadeira/mesa flexora deitada', reason: 'Mesmo músculo, ângulo de quadril diferente.', notes: 'Não levante o quadril; controle a volta 2–3s.' },
+              { name: 'Flexora unilateral (sentado/em pé)', reason: 'Corrige assimetria do posterior.', notes: 'Uma perna por vez; pico de contração.' },
+              { name: 'Nordic curl (assistido)', reason: 'Excêntrico extremo, padrão-ouro pro posterior.', notes: 'Desce o mais devagar que conseguir; use banda se preciso.' }] },
+    { id: 'hlb4', name: 'Hiperextensão 45° (foco glúteo)', sets: 3, reps: '12–15', rpe: '8', deloadCut: true,
+      notes: 'Cadeia posterior em volume seguro — glúteo, posterior e lombar no banco 45°. Arredonda levemente as costas e "enrola" pelo quadril pra puxar mais glúteo; sobe só até a linha do corpo.',
+      swaps: [{ name: 'Extensão lombar na máquina', reason: 'Mesma região, guiado e estável.', notes: 'Sem hiperextender; para na linha neutra.' },
+              { name: 'Good morning leve (barra)', reason: 'Hinge com carga pra posterior/lombar.', notes: 'Quadril pra trás, lombar neutra; carga leve e controlada.' },
+              { name: 'Glute-ham raise (GHD)', reason: 'Posterior e glúteo num movimento só, se houver o aparelho.', notes: 'Controla a descida; puxa com o posterior pra subir.' }] },
+    { id: 'hlb5', name: 'Panturrilha em pé (máquina)', sets: 3, reps: '8–12', rpe: '8–9',
+      notes: 'Gastrocnêmio (joelho estendido) — a parte que dá volume à panturrilha. Pausa de 1s no estiramento embaixo E na contração no topo; sem quicar.',
+      swaps: [{ name: 'Panturrilha no leg press', reason: 'Carga alta sem estresse de coluna.', notes: 'Ponta dos pés na base; ROM completo.' },
+              { name: 'Panturrilha no Smith', reason: 'Estável, com um step pra mais ROM.', notes: 'Calcanhar desce abaixo do step e sobe ao máximo.' }] },
+    { id: 'hlb6', name: 'Pallof press (cabo)', sets: 3, reps: '10–12/lado', rpe: '8', deloadHalf: true,
+      notes: 'Core anti-rotação com carga, sem precisar de espaço (só uma polia) — trabalha o tronco resistindo à rotação em vez de carregar peso andando. Fica perpendicular ao cabo e estende os braços SEM deixar o tronco girar.',
+      swaps: [{ name: 'Prancha com toque no ombro', reason: 'Anti-rotação no chão, sem máquina.', notes: 'O quadril NÃO pode girar ao tocar o ombro oposto.' },
+              { name: 'Giro russo (com carga)', reason: 'Oblíquos dinâmicos.', notes: 'Sentado, tronco inclinado; gira controlado, sem impulso.' }] },
+    { id: 'hlb7', name: 'Dead bug (com halter leve)', sets: 2, reps: '8–10/lado', rpe: '8', deloadCut: true,
+      notes: 'Estabilização profunda do core (transverso). Lombar COLADA no chão o tempo todo; estende braço e perna opostos devagar, sem deixar a barriga estufar.',
+      swaps: [{ name: 'Bird-dog', reason: 'Mesma estabilização, em 4 apoios.', notes: 'Estende braço e perna opostos; sem girar o quadril.' },
+              { name: 'Prancha abdominal', reason: 'Anti-extensão estática simples.', notes: 'Corpo em linha; glúteo e abdômen firmes.' }] }
+  ]
+};
+
 const DEFAULT_SCHEDULE = {
   seg: 'squat',
   ter: 'bench',
@@ -6366,8 +6739,43 @@ const DEFAULT_SCHEDULE = {
   dom: 'rest'
 };
 
+// Calendário da linha OLÍMPICA (hipertrofia): 5 dias de musculação + cardio + descanso
+const HYPER_SCHEDULE = {
+  seg: 'hyper_push',
+  ter: 'hyper_pull',
+  qua: 'hyper_lowerA',
+  qui: 'hyper_upper',
+  sex: 'hyper_lowerB',
+  sab: 'cardio_long',
+  dom: 'rest'
+};
+
+// Calendário ativo conforme o modo (Powerlifting nórdico vs Hipertrofia olímpica)
+function activeDefaultSchedule() { return STATE.mode === 'hyper' ? HYPER_SCHEDULE : DEFAULT_SCHEDULE; }
+// Sessão de "chefão" por modo (o lift mais brutal do dia)
+function bossSession() { return STATE.mode === 'hyper' ? 'hyper_lowerB' : 'deadlift'; }
+
 // Dias em que TRT é aplicada (sempre seg/qua/sex, independe do treino do dia)
 const TRT_DAYS = ['seg', 'qua', 'sex'];
+
+// ============================================================
+// === DIFICULDADE DA SEMANA — W1/W2/W3/DLD gamificados =======
+// ============================================================
+// Cada semana do mesociclo vira uma "dificuldade" escolhível, estilo menu
+// de início de game. A intensidade (RPE) sobe de INVESTIDA → FÚRIA; TRÉGUA
+// é o recuo (deload). 'pips' = intensidade visual de 1 a 4.
+const WEEK_MODES = {
+  '1':      { short: 'W1',  name: 'INVESTIDA', tier: 'Acúmulo',     rpe: 'RPE 7',   pips: 2,
+              blurb: 'A carga sobe e ainda sobra fôlego — ~3 reps no tanque. Acumula volume e técnica sem queimar. O começo do avanço.' },
+  '2':      { short: 'W2',  name: 'BATALHA',   tier: 'Trabalho',    rpe: 'RPE 8',   pips: 3,
+              blurb: 'O peso de trabalho honesto: sobram 2 reps, nem mais. É aqui que a força de verdade se constrói, semana após semana.' },
+  '3':      { short: 'W3',  name: 'FÚRIA',     tier: 'Pico',        rpe: 'RPE 8,5', pips: 4,
+              blurb: 'O pico do mesociclo. 1 a 2 reps de reserva, técnica sob pressão máxima. Aqui o guerreiro descobre do que é feito.' },
+  'deload': { short: 'DLD', name: 'TRÉGUA',    tier: 'Recuperação', rpe: 'RPE 6',   pips: 1,
+              blurb: 'Recuo estratégico: ~60% da carga, volume cortado. Não é fraqueza — é o corpo reconstruindo pra voltar mais forte.' }
+};
+const WEEK_ORDER = ['1', '2', '3', 'deload'];   // ordem do menu (progressão + recuo)
+function weekMode(w) { return WEEK_MODES[w] || WEEK_MODES['1']; }
 
 // ============================================================
 // === CONFIGURAÇÃO DOS REINOS — identidade de cada sessão ====
@@ -6448,10 +6856,82 @@ const REALM_CONFIG = {
 };
 
 // Cor da status bar / barra do navegador por reino (combina com a skin)
+// ============================================================
+// === LINHA OLÍMPICA — reinos dos Deuses Greco-Romanos =======
+// ============================================================
+// Mesma estrutura do REALM_CONFIG nórdico, mas com deuses gregos. Reusa o
+// campo `rune` (glifo grego) pra não mudar o render. getRealm() escolhe a
+// fonte pelo modo ativo.
+const HYPER_REALM_CONFIG = {
+  hyper_push: {
+    rune: 'Ζ', runeName: 'Zeus', runeTranslit: 'Ζ · Zeus · O Rei do Olimpo',
+    runeMeaning: 'Zeus governa o céu e empunha o raio. É o poder que vem de cima, a autoridade imposta com um gesto. Soberano entre os deuses, sua força não pede licença — ela decreta.',
+    runeConnection: 'O dia de empurrar é o teu raio. Cada supino e desenvolvimento lança a carga pra longe do corpo como Zeus arremessa o trovão. Domina o peso de cima pra baixo — o Olimpo respeita quem empurra com autoridade.',
+    effect: 'rays', ascendedTitle: 'O TROVÃO ECOA',
+    ascendedMessage: 'O raio foi lançado e o céu obedeceu.\nCada empurrão ressoou como trovão no Olimpo.\nZeus reconhece a força que vem de cima.'
+  },
+  hyper_pull: {
+    rune: 'Α', runeName: 'Atlas', runeTranslit: 'Α · Atlas · O Titã que Sustenta',
+    runeMeaning: 'Atlas carrega os céus sobre os ombros por toda a eternidade. É a força das costas, da resistência silenciosa que sustenta o mundo sem ceder. Puxar é trazer o peso para si — e aguentá-lo.',
+    runeConnection: 'O dia de puxar é o fardo de Atlas. Cada barra fixa e remada constrói as costas que sustentam tudo o mais. Tu trazes o mundo em tua direção e não verga. A coluna do Olimpo é feita de quem puxa.',
+    effect: 'sparks', ascendedTitle: 'OS CÉUS FORAM ERGUIDOS',
+    ascendedMessage: 'O fardo do mundo subiu sem que a coluna vergasse.\nCada puxada trouxe o peso pra perto e o dominou.\nAtlas saúda as costas que sustentam.'
+  },
+  hyper_lowerA: {
+    rune: 'Ξ', runeName: 'Ares', runeTranslit: 'Ξ · Ares · O Deus da Guerra',
+    runeMeaning: 'Ares é a fúria da batalha encarnada — agressão pura, avanço sem recuo. Não é a guerra estratégica: é o choque frontal, a força bruta das pernas que cravam no chão e avançam.',
+    runeConnection: 'O agachamento é a investida de Ares. Tu cravas os pés e empurras o chão pra longe, descendo e subindo como quem avança sob fogo. Aqui não há elegância — há quadríceps em chamas e vontade de guerra.',
+    effect: 'sparks', ascendedTitle: 'O CAMPO FOI TOMADO',
+    ascendedMessage: 'As pernas cravaram no chão e o chão cedeu.\nCada agachamento foi uma investida sem recuo.\nAres aprova a fúria que avança.'
+  },
+  hyper_upper: {
+    rune: 'Φ', runeName: 'Apolo', runeTranslit: 'Φ · Apolo · Deus da Forma Perfeita',
+    runeMeaning: 'Apolo é a beleza, a proporção e a luz. Deus das artes e da forma ideal — o corpo como escultura, a simetria como divindade. Φ é a proporção áurea: o belo que também é forte.',
+    runeConnection: 'O dia Upper é o cinzel de Apolo. Aqui se esculpe o detalhe: o ombro redondo, o braço cheio, o peito alto. Não é só força — é forma. Cada série lapida o mármore que tu és.',
+    effect: 'waves', ascendedTitle: 'O MÁRMORE GANHA FORMA',
+    ascendedMessage: 'Cada fibra foi cinzelada com precisão de escultor.\nO detalhe de hoje é a proporção de amanhã.\nApolo contempla a forma que se aproxima do ideal.'
+  },
+  hyper_lowerB: {
+    rune: 'Ψ', runeName: 'Poseidon', runeTranslit: 'Ψ · Poseidon · Senhor dos Mares',
+    runeMeaning: 'Poseidon empunha o tridente e abala a terra. Seu poder vem de baixo — terremotos, marés, a força que ergue do fundo. É a cadeia posterior: glúteos, posteriores, a potência que nasce do chão.',
+    runeConnection: 'O terra romeno é o tridente de Poseidon. A força nasce do chão e sobe pela cadeia posterior como onda que ergue navios. Esta é a tua luta de chefão olímpica — quando o quadril dispara, a terra treme.',
+    effect: 'fire', ascendedTitle: 'OS MARES SE ERGUERAM',
+    ascendedMessage: 'A força subiu do chão como maré em fúria.\nO quadril disparou e a terra tremeu sob a barra.\nPoseidon ergue o tridente em saudação.'
+  },
+  cardio_long: {
+    rune: 'Ε', runeName: 'Hermes', runeTranslit: 'Ε · Hermes · O Mensageiro Alado',
+    runeMeaning: 'Hermes cruza distâncias com sandálias aladas — velocidade, fluxo, a viagem entre mundos. Ritmo constante, fôlego que não cansa. O movimento como mensagem que nunca para.',
+    runeConnection: 'O cardio é a corrida de Hermes. Zona 2 é fluxo, não fúria: ritmo firme, respiração controlada, distância vencida sem pressa. O coração na cadência do mensageiro. Atravessa o mapa do Olimpo.',
+    effect: 'ripple', ascendedTitle: 'A MENSAGEM CHEGOU',
+    ascendedMessage: 'A distância foi vencida sem que o fôlego falhasse.\nPasso após passo, na cadência do mensageiro.\nHermes saúda quem se move sem parar.'
+  },
+  cardio_mid: {
+    rune: 'Ε', runeName: 'Hermes', runeTranslit: 'Ε · Hermes · O Mensageiro Alado',
+    runeMeaning: 'Hermes cruza distâncias com sandálias aladas — velocidade, fluxo, fôlego que não cansa. O movimento como mensagem que nunca para.',
+    runeConnection: 'Zona 2 é fluxo, não fúria. Ritmo firme, respiração controlada. O coração na cadência do mensageiro alado do Olimpo.',
+    effect: 'ripple', ascendedTitle: 'A MENSAGEM CHEGOU',
+    ascendedMessage: 'A distância foi vencida sem que o fôlego falhasse.\nNa cadência do mensageiro.\nHermes saúda quem se move sem parar.'
+  },
+  rest: {
+    rune: 'Υ', runeName: 'Hypnos', runeTranslit: 'Υ · Hypnos · O Deus do Sono',
+    runeMeaning: 'Hypnos é o sono gentil, filho da noite. Não há fraqueza em repousar — é nas mãos de Hypnos que o corpo se refaz. Até os deuses dormem.',
+    runeConnection: 'Descanso não é fraqueza — é estratégia divina. Hoje Hypnos governa: o músculo cresce no repouso, não no treino. Dorme, hidrata, come bem. Quem repousa retorna mais forte ao Olimpo.',
+    effect: 'none', ascendedTitle: 'O OLIMPO REPOUSA',
+    ascendedMessage: 'O guerreiro recolheu as armas sob o manto da noite.\nNo sono de Hypnos, o corpo reconstrói o que foi rompido.\nQuem sabe descansar, sabe vencer.'
+  }
+};
+// Reino ativo conforme o modo (nórdico vs olímpico), com fallback seguro
+function getRealm(sessionKey) {
+  const src = STATE.mode === 'hyper' ? HYPER_REALM_CONFIG : REALM_CONFIG;
+  return src[sessionKey] || REALM_CONFIG[sessionKey] || {};
+}
+
 const REALM_THEME_COLORS = {
   squat: '#120a06', bench: '#0c0a08', deadlift: '#0a0604',
   upper_hiper: '#0e0d08', cardio_mid: '#06100f', cardio_long: '#0a0d11',
-  rest: '#070b12', skip: '#0a0a0b'
+  rest: '#070b12', skip: '#0a0a0b',
+  hyper_push: '#100c06', hyper_pull: '#0c0a08', hyper_lowerA: '#100a06',
+  hyper_upper: '#0e0c08', hyper_lowerB: '#0a0604'
 };
 function updateThemeColor(sessionKey) {
   const meta = document.querySelector('meta[name="theme-color"]');
@@ -6467,6 +6947,7 @@ const JS_DAY_TO_KEY = ['dom','seg','ter','qua','qui','sex','sab']; // JS getDay(
 // STATE & STORAGE
 // ============================================================
 const STATE = {
+  mode: 'pwr',   // 'pwr' = Powerlifting (nórdico) | 'hyper' = Hipertrofia (olímpico)
   week: '1',
   day: 'seg',
   checks: {},
@@ -6492,6 +6973,8 @@ function loadState() {
     const sets = localStorage.getItem('pwr.setProgress');
     const pr = localStorage.getItem('pwr.prHistory');
     const cardioDone = localStorage.getItem('pwr.cardioDone');
+    const mode = localStorage.getItem('pwr.mode');
+    if (mode === 'hyper' || mode === 'pwr') STATE.mode = mode;
     if (checks) STATE.checks = JSON.parse(checks);
     if (loads) STATE.loads = JSON.parse(loads);
     if (week) STATE.week = week;
@@ -6528,6 +7011,21 @@ function saveWeeklyNotes() { localStorage.setItem('pwr.weeklyNotes', JSON.string
 function saveSetProgress() { localStorage.setItem('pwr.setProgress', JSON.stringify(STATE.setProgress)); }
 function savePrHistory() { localStorage.setItem('pwr.prHistory', JSON.stringify(STATE.prHistory)); }
 function saveCardioDone() { localStorage.setItem('pwr.cardioDone', JSON.stringify(STATE.cardioDone)); }
+function saveMode() { localStorage.setItem('pwr.mode', STATE.mode); }
+
+// Troca o foco do treino (Powerlifting nórdico ↔ Hipertrofia olímpica) e re-renderiza tudo
+function setTrainingMode(mode) {
+  if (mode !== 'pwr' && mode !== 'hyper') return;
+  if (STATE.mode === mode) return;
+  STATE.mode = mode;
+  saveMode();
+  if (navigator.vibrate) navigator.vibrate([15, 30, 15]);
+  updateThemeColor(getSessionKeyForDay(STATE.day));
+  renderWeekSelector();
+  renderDayTabs();
+  renderHeatmap();
+  renderMain();
+}
 
 // Cardio done helpers
 function cardioDoneKey(week, day) { return `${week}::${day}`; }
@@ -6649,23 +7147,24 @@ function clearExerciseSwap(week, day, exId) {
 
 // Schedule helpers
 function getCurrentSchedule() {
+  if (STATE.mode === 'hyper') return { ...HYPER_SCHEDULE };
   return STATE.schedules[STATE.week] || { ...DEFAULT_SCHEDULE };
 }
 
 function getSessionForDay(dayKey, weekOverride) {
-  const week = weekOverride || STATE.week;
-  const schedule = STATE.schedules[week] || { ...DEFAULT_SCHEDULE };
-  const sessionKey = schedule[dayKey] || DEFAULT_SCHEDULE[dayKey];
-  return SESSIONS[sessionKey];
+  return SESSIONS[getSessionKeyForDay(dayKey, weekOverride)];
 }
 
 function getSessionKeyForDay(dayKey, weekOverride) {
+  // Linha olímpica (hipertrofia): calendário fixo, sem reorganização por semana
+  if (STATE.mode === 'hyper') return HYPER_SCHEDULE[dayKey];
   const week = weekOverride || STATE.week;
-  const schedule = STATE.schedules[week] || { ...DEFAULT_SCHEDULE };
+  const schedule = STATE.schedules[week] || DEFAULT_SCHEDULE;
   return schedule[dayKey] || DEFAULT_SCHEDULE[dayKey];
 }
 
 function setSessionForDay(dayKey, sessionKey) {
+  if (STATE.mode === 'hyper') return;   // olímpica é fixa
   if (!STATE.schedules[STATE.week]) {
     STATE.schedules[STATE.week] = { ...DEFAULT_SCHEDULE };
   }
@@ -6674,6 +7173,7 @@ function setSessionForDay(dayKey, sessionKey) {
 }
 
 function isCustomSchedule() {
+  if (STATE.mode === 'hyper') return false;
   const sched = STATE.schedules[STATE.week];
   if (!sched) return false;
   return DAYS.some(d => sched[d] !== DEFAULT_SCHEDULE[d]);
@@ -6912,7 +7412,9 @@ function renderHeatmap() {
 
 function renderWeekSelector() {
   document.querySelectorAll('.week-btn').forEach(btn => {
+    const m = WEEK_MODES[btn.dataset.week];
     btn.classList.toggle('active', btn.dataset.week === STATE.week);
+    if (m) btn.title = `${m.name} · ${m.tier} · ${m.rpe}`;
     btn.onclick = () => {
       STATE.week = btn.dataset.week;
       saveWeek();
@@ -6929,17 +7431,18 @@ function renderMain() {
   const isDeload = STATE.week === 'deload';
   const isCustom = isCustomSchedule();
   const isTrtDay = TRT_DAYS.includes(STATE.day);
-  const isModifiedDay = (STATE.schedules[STATE.week] && STATE.schedules[STATE.week][STATE.day] !== DEFAULT_SCHEDULE[STATE.day]);
+  const isModifiedDay = STATE.mode !== 'hyper' && (STATE.schedules[STATE.week] && STATE.schedules[STATE.week][STATE.day] !== DEFAULT_SCHEDULE[STATE.day]);
   
   // === Modos visuais especiais ===
-  const isBossFight = sessionKey === 'deadlift' && !isDeload;
+  const isBossFight = sessionKey === bossSession() && !isDeload;
   const isAscended = isDayFullyComplete(STATE.week, STATE.day);
-  
+
   document.body.classList.toggle('boss-fight', isBossFight);
   document.body.classList.toggle('ascended', isAscended);
-  
+  document.body.classList.toggle('mode-hyper', STATE.mode === 'hyper');
+
   // === Skin atmosférica por sessão ===
-  // Cada sessão tem um "reino" visual. Boss-fight (deadlift) tem skin própria já.
+  // Cada sessão tem um "reino" visual. Boss-fight tem skin própria já.
   const SKIN_MAP = {
     squat: 'skin-forge',         // Forja de Brok — calor de metal
     bench: 'skin-warhall',       // Salão de Guerra — dourado clássico
@@ -6948,15 +7451,21 @@ function renderMain() {
     cardio_mid: 'skin-lake',     // Lago dos Nove — água parada
     cardio_long: 'skin-tundra',  // Tundra de Midgard — vento frio
     rest: 'skin-winter',         // Fimbulwinter — inverno, neve
-    skip: 'skin-skip'            // Sem treino — neutro apagado
+    skip: 'skin-skip',           // Sem treino — neutro apagado
+    // Linha olímpica (hipertrofia) — reusa skins, retematizadas por .mode-hyper
+    hyper_push: 'skin-warhall',  // Salão de Zeus — dourado
+    hyper_pull: 'skin-bronze',   // Bronze de Atlas
+    hyper_lowerA: 'skin-forge',  // Forja de Ares — guerra
+    hyper_upper: 'skin-bronze',  // Mármore de Apolo
+    hyper_lowerB: 'skin-boss'    // Boss — Poseidon
   };
   // Remove todas as skins antes de aplicar a atual
   ['skin-forge','skin-warhall','skin-boss','skin-bronze','skin-lake','skin-tundra','skin-winter','skin-skip'].forEach(s => {
     document.body.classList.remove(s);
   });
   const activeSkin = SKIN_MAP[sessionKey] || 'skin-warhall';
-  // No deload, deadlift não é boss — usa skin neutra de força
-  document.body.classList.add(isBossFight ? 'skin-boss' : (sessionKey === 'deadlift' ? 'skin-warhall' : activeSkin));
+  // No deload, o chefão não é boss — usa skin neutra de força
+  document.body.classList.add(isBossFight ? 'skin-boss' : (sessionKey === bossSession() ? 'skin-warhall' : activeSkin));
   
   // Atualiza a theme-color do navegador pra combinar com o reino do dia
   updateThemeColor(isBossFight ? 'deadlift' : sessionKey);
@@ -7003,13 +7512,27 @@ function renderMain() {
   
   // Runa do reino — todos os dias têm a sua (deadlift usa a boss-rune estilizada)
   // Clicável: abre o quadro explicativo do significado da runa.
-  const realmCfg = REALM_CONFIG[sessionKey] || {};
+  const realmCfg = getRealm(sessionKey);
   const runeChar = realmCfg.rune || '';
   const hasRuneInfo = realmCfg.runeName && !day.skip;
   const runeHtml = isBossFight
     ? `<button class="boss-rune rune-clickable" data-rune-sk="${sessionKey}" aria-label="Ver significado da runa ${realmCfg.runeName || ''}">${runeChar}</button>`
     : (runeChar && !day.skip ? `<button class="realm-rune rune-clickable" data-rune-sk="${sessionKey}" aria-label="Ver significado da runa ${realmCfg.runeName || ''}">${runeChar}</button>` : '');
-  
+
+  // Crista de dificuldade — mostra a "dificuldade" da semana e abre o menu
+  const wm = weekMode(STATE.week);
+  const diffPips = Array.from({ length: 4 }, (_, i) => `<span class="dp${i < wm.pips ? ' on' : ''}"></span>`).join('');
+  const diffCrestHtml = `
+    <button class="diff-crest diff-${wm.short.toLowerCase()}" id="diffCrest" type="button" aria-label="Dificuldade da semana: ${wm.name}, ${wm.tier}. Tocar para escolher.">
+      <span class="diff-crest-ico" aria-hidden="true">⚔</span>
+      <span class="diff-crest-body">
+        <span class="diff-crest-name">${wm.name}</span>
+        <span class="diff-crest-sub">${wm.tier} · ${wm.rpe}</span>
+      </span>
+      <span class="diff-crest-pips" aria-hidden="true">${diffPips}</span>
+      <span class="diff-crest-more" aria-hidden="true">▾</span>
+    </button>`;
+
   html += `
     <div class="day-header fade-in">
       ${isBossFight ? '<div class="boss-eyebrow"><span class="boss-eyebrow-line"></span><span class="boss-eyebrow-text">⚔ BOSS FIGHT ⚔</span><span class="boss-eyebrow-line"></span></div>' : ''}
@@ -7023,6 +7546,7 @@ function renderMain() {
         <span class="day-title-swap">⇄</span>
       </button>
       <div class="day-subtitle">${pillsHtml}</div>
+      ${diffCrestHtml}
       ${isBossFight ? `
         <div class="boss-particles">
           <span class="ember e1"></span><span class="ember e2"></span><span class="ember e3"></span>
@@ -7065,7 +7589,7 @@ function renderMain() {
   if (day.cardio) {
     const c = day.cardioContent;
     const cardioComplete = isCardioDone(STATE.week, STATE.day);
-    const realm = REALM_CONFIG[sessionKey] || {};
+    const realm = getRealm(sessionKey);
     // Texto do botão temático por reino
     const cardioBtnLabel = sessionKey === 'cardio_long' ? 'RESISTÊNCIA VENCIDA' : 'TRAVESSIA CONCLUÍDA';
     const cardioBtnIdle = sessionKey === 'cardio_long' ? 'Marcar resistência vencida' : 'Marcar travessia concluída';
@@ -7333,7 +7857,7 @@ function renderMain() {
 
 // Constrói a seção de ascensão temática por reino
 function buildAscendedSection(sessionKey, isBoss) {
-  const realm = REALM_CONFIG[sessionKey] || {
+  const realm = getRealm(sessionKey).ascendedTitle ? getRealm(sessionKey) : {
     ascendedTitle: 'ASCENDIDO',
     ascendedMessage: 'Cada série concluída. Cada repetição feita.\nHonra ao guerreiro.'
   };
@@ -7619,7 +8143,7 @@ function attachExerciseHandlers() {
       const newCount = getSetProgress(STATE.week, STATE.day, exId);
       const nowComplete = newCount >= maxSets;
       const sessionKey = getSessionKeyForDay(STATE.day);
-      const effect = (REALM_CONFIG[sessionKey] || {}).effect || 'sparks';
+      const effect = getRealm(sessionKey).effect || 'sparks';
       
       // Efeito de partículas temático no toque (burst progressivo).
       // Só dispara quando AVANÇA (não no reset do 5º toque).
@@ -7902,11 +8426,26 @@ function closeRpeModal() {
 // ============================================================
 const gymModal = document.getElementById('gymModal');
 document.getElementById('gymInfoBtn').addEventListener('click', () => {
+  renderModeSwitch();
   openModalEl(gymModal);
 });
 document.getElementById('gymModalClose').addEventListener('click', closeGymModal);
 gymModal.addEventListener('click', (e) => {
   if (e.target === gymModal) closeGymModal();
+});
+
+// Seletor de foco do treino (Powerlifting nórdico ↔ Hipertrofia olímpica)
+function renderModeSwitch() {
+  document.querySelectorAll('#modeSwitch .mode-opt').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.mode === STATE.mode);
+    btn.setAttribute('aria-pressed', btn.dataset.mode === STATE.mode ? 'true' : 'false');
+  });
+}
+document.querySelectorAll('#modeSwitch .mode-opt').forEach(btn => {
+  btn.addEventListener('click', () => {
+    setTrainingMode(btn.dataset.mode);
+    renderModeSwitch();
+  });
 });
 // ============================================================
 // === MOTOR DE EVENTOS AMBIENTAIS OCASIONAIS =================
@@ -8060,7 +8599,7 @@ const runeModal = document.getElementById('runeModal');
 const runeModalInner = document.getElementById('runeModalInner');
 
 function openRuneModal(sessionKey) {
-  const cfg = REALM_CONFIG[sessionKey];
+  const cfg = getRealm(sessionKey);
   if (!cfg || !cfg.runeName) return;
   document.getElementById('runeModalSymbol').textContent = cfg.rune;
   document.getElementById('runeModalName').textContent = cfg.runeName;
@@ -8514,6 +9053,7 @@ let weekDragState = null;    // estado do drag em andamento
 let swapModalListenersWired = false; // backdrop listener anexado uma vez só
 
 function openSessionSwapModal() {
+  if (STATE.mode === 'hyper') return;   // linha olímpica é fixa — sem reorganização
   weekDraft = { ...getCurrentSchedule() };
   renderWeekPanel();
   const modal = document.getElementById('swapModal');
@@ -8885,7 +9425,7 @@ function statusForDate(d) {
   // Ponte automática nos dias de descanso PRESCRITOS no calendário padrão
   // (ex.: domingo), mesmo que o app não tenha sido aberto naquele dia.
   const wd = JS_DAY_TO_KEY[d.getDay()];
-  if (DEFAULT_SCHEDULE[wd] === 'rest') return 'rest';
+  if (activeDefaultSchedule()[wd] === 'rest') return 'rest';
   return null;
 }
 
@@ -9289,6 +9829,54 @@ function openRankModal() {
 }
 
 // ============================================================
+// === MENU DE DIFICULDADE — escolher a semana (estilo game) ==
+// ============================================================
+function openDifficultyModal(opts) {
+  opts = opts || {};
+  const modal = document.getElementById('diffModal');
+  const cur = STATE.week;
+  const cards = WEEK_ORDER.map(w => {
+    const m = WEEK_MODES[w];
+    const isCur = w === cur;
+    const pips = Array.from({ length: 4 }, (_, i) => `<span class="dp${i < m.pips ? ' on' : ''}"></span>`).join('');
+    return `
+      <button class="diff-card diff-${m.short.toLowerCase()}${isCur ? ' current' : ''}" type="button" data-week="${w}">
+        <span class="diff-card-top">
+          <span class="diff-card-name">${m.name}</span>
+          <span class="diff-card-pips" aria-hidden="true">${pips}</span>
+        </span>
+        <span class="diff-card-meta">${m.short} · ${m.tier} · ${m.rpe}${isCur ? ' · <b>ATUAL</b>' : ''}</span>
+        <span class="diff-card-blurb">${m.blurb}</span>
+      </button>`;
+  }).join('');
+  modal.querySelector('.modal').innerHTML = `
+    <div class="modal-handle"></div>
+    <button class="modal-close" id="diffModalClose" type="button" aria-label="Fechar">×</button>
+    <div class="diff-modal-head">
+      <div class="diff-modal-kicker">${opts.kicker || 'Dificuldade da Semana'}</div>
+      <div class="diff-modal-title">${opts.title || 'Escolha Sua Provação'}</div>
+      <div class="diff-modal-sub">${opts.intro || 'A intensidade sobe de INVESTIDA até FÚRIA. TRÉGUA é o recuo (deload). Toque para definir a semana.'}</div>
+    </div>
+    <div class="diff-cards">${cards}</div>
+  `;
+  modal.querySelector('#diffModalClose').addEventListener('click', () => closeModalEl(modal));
+  modal.querySelectorAll('.diff-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const w = card.dataset.week;
+      STATE.week = w;
+      saveWeek();
+      if (navigator.vibrate) navigator.vibrate([12, 25, 12]);
+      closeModalEl(modal);
+      renderWeekSelector();
+      renderDayTabs();
+      renderMain();
+    });
+  });
+  openModalEl(modal);
+  if (navigator.vibrate) navigator.vibrate(10);
+}
+
+// ============================================================
 // === ZERAR A SEMANA INTEIRA (botão no dia de descanso) ======
 // ============================================================
 // Limpa séries/checks/cardio de TODOS os dias da semana atual, pra
@@ -9315,6 +9903,12 @@ function attachWeekResetHandler() {
       if (navigator.vibrate) navigator.vibrate([12, 30, 12, 30, 40]);
       renderDayTabs();
       renderMain();        // re-render (HUD/streak/XP preservados; semana limpa)
+      // Abre o menu de dificuldade pra escolher a intensidade da próxima semana
+      setTimeout(() => openDifficultyModal({
+        kicker: 'Semana zerada',
+        title: 'Escolha a Próxima Provação',
+        intro: 'A semana foi limpa. Defina a intensidade pra começar — INVESTIDA acumula, FÚRIA é o pico, TRÉGUA é o recuo.'
+      }), 420);
       return;
     }
     btn.classList.add('confirming');
@@ -9347,11 +9941,14 @@ renderMain();
 document.body.addEventListener('click', (e) => {
   if (e.target.closest('#dayTitleBtn')) { openSessionSwapModal(); return; }
   if (e.target.closest('#hudRankBtn')) { openRankModal(); return; }
+  if (e.target.closest('#diffCrest')) { openDifficultyModal(); return; }
 });
 
-// Fecha o modal de patentes ao tocar no fundo
+// Fecha os modais (patentes / dificuldade) ao tocar no fundo
 const rankModalEl = document.getElementById('rankModal');
 if (rankModalEl) rankModalEl.addEventListener('click', (e) => { if (e.target === rankModalEl) closeModalEl(rankModalEl); });
+const diffModalEl = document.getElementById('diffModal');
+if (diffModalEl) diffModalEl.addEventListener('click', (e) => { if (e.target === diffModalEl) closeModalEl(diffModalEl); });
 
 // Prevent accidental zoom on double-tap of inputs (iOS)
 document.addEventListener('dblclick', (e) => {
