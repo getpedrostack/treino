@@ -4811,7 +4811,24 @@
     background: linear-gradient(180deg, #fff3d4 0%, #e8c97d 100%);
     box-shadow: 0 2px 6px rgba(0,0,0,0.4), 0 0 8px rgba(255,220,120,0.6);
   }
-  
+
+  /* Zona de perigo — reset geral do app (apaga as duas plataformas) */
+  .danger-section { border-top: 1px solid rgba(200,90,70,0.26); border-bottom: none; padding-bottom: 4px; }
+  .danger-section .settings-label-title { color: #e88a7e; }
+  .reset-all-btn {
+    margin-top: 14px; width: 100%;
+    font-family: 'Cinzel', Georgia, serif; font-weight: 700;
+    font-size: 13px; letter-spacing: 0.10em;
+    color: #f0b4ab;
+    background: linear-gradient(180deg, rgba(120,38,30,0.30), rgba(80,24,18,0.30));
+    border: 1px solid rgba(200,90,70,0.50);
+    border-radius: 11px; padding: 13px 16px;
+    cursor: pointer; -webkit-tap-highlight-color: transparent;
+    transition: background 0.2s, border-color 0.2s, transform 0.1s;
+  }
+  .reset-all-btn:hover { background: linear-gradient(180deg, rgba(150,46,36,0.42), rgba(100,30,22,0.42)); border-color: rgba(220,110,90,0.72); }
+  .reset-all-btn:active { transform: scale(0.985); }
+
   /* ============================================================ */
   /* === ACESSIBILIDADE: prefers-reduced-motion ================= */
   /* ============================================================ */
@@ -5485,7 +5502,19 @@
   }
 
   /* ---- Ascensão de nível / nova patente (takeover) ----------- */
+  /* ===== ASCENSÃO — overlay de level-up (cinematográfico) =====
+     Identidade greco-romana: luz de templo descendo do alto, colunas
+     monumentais, medalhão/brasão de ouro ENVELHECIDO, coroa de louros,
+     poeira iluminada subindo e um brilho metálico que varre o selo.
+     O brilho-chave usa --lu-glow* (RGB), reescalado por modo: ouro do
+     Olimpo (hyper, mais claro/frio) vs âmbar de forja (pwr, mais quente).
+     Visibilidade é dirigida por TRANSITION (não keyframe) e o overlay é
+     SEMPRE montado (acessível): com movimento off, partículas/brilho são
+     cortados via CSS e o selo+texto permanecem legíveis. */
   .levelup-overlay {
+    --lu-glow: 240,200,120;        /* halo dourado dominante (default = forja) */
+    --lu-glow-soft: 255,242,206;   /* realce quente claro */
+    --lu-marble: 214,196,160;      /* mármore das colunas */
     position: fixed;
     inset: 0;
     z-index: 5000;
@@ -5493,91 +5522,230 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    background: radial-gradient(circle at 50% 42%, rgba(45,30,12,0.86) 0%, rgba(6,5,4,0.95) 70%);
-    backdrop-filter: blur(7px) saturate(130%);
-    -webkit-backdrop-filter: blur(7px) saturate(130%);
+    background:
+      radial-gradient(125% 85% at 50% 6%, rgba(var(--lu-glow),0.16) 0%, transparent 44%),
+      radial-gradient(circle at 50% 47%, rgba(42,29,13,0.90) 0%, rgba(6,5,4,0.975) 72%);
+    backdrop-filter: blur(7px) saturate(122%);
+    -webkit-backdrop-filter: blur(7px) saturate(122%);
     opacity: 0;
     pointer-events: none;
     overflow: hidden;
+    transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .levelup-overlay.show { animation: luFade 2.8s ease forwards; }
-  @keyframes luFade {
-    0% { opacity: 0; } 8% { opacity: 1; } 82% { opacity: 1; } 100% { opacity: 0; }
+  .levelup-overlay.show { opacity: 1; }
+  /* Ouro do Olimpo — hipertrofia: mais claro, levemente frio (mármore-noite) */
+  .levelup-overlay.mode-hyper {
+    --lu-glow: 247,224,154;
+    --lu-glow-soft: 255,248,224;
+    --lu-marble: 224,214,184;
+    background:
+      radial-gradient(125% 85% at 50% 6%, rgba(var(--lu-glow),0.17) 0%, transparent 45%),
+      radial-gradient(circle at 50% 47%, rgba(34,30,18,0.90) 0%, rgba(6,6,5,0.975) 72%);
   }
+  /* Âmbar de forja — powerlifting: mais quente */
+  .levelup-overlay.mode-pwr {
+    --lu-glow: 240,198,116;
+    --lu-glow-soft: 255,238,200;
+    --lu-marble: 210,190,150;
+  }
+
+  /* —— Raios de luz de templo: feixes suaves, levemente irregulares —— */
   .lu-rays {
-    position: absolute;
-    width: 200vmax; height: 200vmax;
-    top: 50%; left: 50%;
-    transform: translate(-50%,-50%);
-    background: repeating-conic-gradient(from 0deg at 50% 50%,
-      rgba(240,198,116,0.10) 0deg, transparent 6deg, transparent 12deg, rgba(240,198,116,0.10) 18deg);
-    animation: luSpin 14s linear infinite;
-    opacity: 0.5;
+    position: absolute; top: -34%; left: 50%;
+    width: 150vmax; height: 150vmax;
+    transform: translateX(-50%);
+    will-change: opacity, transform;
+    background:
+      conic-gradient(from 180deg at 50% 0%,
+        transparent 5deg, rgba(var(--lu-glow),0.11) 9deg, transparent 13deg,
+        transparent 22deg, rgba(var(--lu-glow),0.07) 25deg, transparent 29deg,
+        transparent 38deg, rgba(var(--lu-glow),0.05) 41deg, transparent 45deg,
+        transparent 135deg, rgba(var(--lu-glow),0.05) 139deg, transparent 143deg,
+        transparent 151deg, rgba(var(--lu-glow),0.08) 155deg, transparent 159deg,
+        transparent 168deg, rgba(var(--lu-glow),0.11) 173deg, transparent 178deg),
+      conic-gradient(from 180deg at 50% 0%,
+        transparent 12deg, rgba(var(--lu-glow),0.03) 30deg, transparent 52deg,
+        transparent 128deg, rgba(var(--lu-glow),0.03) 150deg, transparent 170deg);
+    filter: blur(1px);
+    -webkit-mask-image: radial-gradient(120% 100% at 50% 0%, #000 4%, transparent 66%);
+    mask-image: radial-gradient(120% 100% at 50% 0%, #000 4%, transparent 66%);
+    opacity: 0;
+    z-index: 0;
+    animation: luRays 2.6s ease forwards;
   }
-  @keyframes luSpin { to { transform: translate(-50%,-50%) rotate(360deg); } }
-  .lu-emblem {
-    position: relative;
-    width: 110px; height: 110px;
+  @keyframes luRays {
+    0% { opacity: 0; transform: translateX(-50%) scale(0.95); }
+    28% { opacity: 1; }
+    100% { opacity: 0.85; transform: translateX(-50%) scale(1.03); }
+  }
+
+  /* —— Colunas monumentais emoldurando a cena —— */
+  .lu-col {
+    position: absolute; bottom: -3%; width: 62px; height: 82%;
+    z-index: 1; opacity: 0;
+    background:
+      linear-gradient(90deg, rgba(0,0,0,0.46) 0%, rgba(0,0,0,0.10) 16%, transparent 34%,
+        rgba(var(--lu-marble),0.06) 50%, transparent 66%, rgba(0,0,0,0.10) 84%, rgba(0,0,0,0.46) 100%),
+      repeating-linear-gradient(90deg,
+        rgba(var(--lu-marble),0.16) 0px, rgba(var(--lu-marble),0.16) 3px,
+        rgba(96,84,62,0.18) 8px, rgba(96,84,62,0.18) 11px),
+      linear-gradient(180deg, rgba(var(--lu-marble),0.13) 0%, rgba(120,106,78,0.05) 100%);
+    filter: blur(0.3px);
+    animation: luCol 2.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .lu-col::before { /* capitel alargado */
+    content: ''; position: absolute; top: -13px; left: -12px; right: -12px; height: 15px;
+    background: linear-gradient(180deg, rgba(var(--lu-marble),0.32) 0%, rgba(var(--lu-marble),0.16) 55%, rgba(120,106,78,0.06) 100%);
+    border-radius: 2px 2px 0 0;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.45);
+  }
+  .lu-col-l { left: 2.5%; }
+  .lu-col-r { right: 2.5%; }
+  @keyframes luCol {
+    0% { opacity: 0; transform: translateY(32px); }
+    34% { opacity: 0.66; transform: translateY(0); }
+    100% { opacity: 0.66; transform: translateY(0); }
+  }
+
+  /* —— Poeira iluminada subindo (gerada via JS, 2 camadas de profundidade) —— */
+  .lu-dust { position: absolute; inset: 0; z-index: 2; pointer-events: none; overflow: hidden; }
+  .lu-mote {
+    position: absolute; bottom: -8px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(var(--lu-glow-soft),0.95), rgba(var(--lu-glow),0.25) 60%, transparent 72%);
+    box-shadow: 0 0 6px rgba(var(--lu-glow),0.5);
+    opacity: 0;
+    animation-name: luMote; animation-timing-function: cubic-bezier(0.4,0,0.5,1);
+    animation-fill-mode: forwards;
+  }
+  .lu-mote.far { filter: blur(0.6px); box-shadow: none; }   /* camada ao fundo */
+  @keyframes luMote {
+    0% { opacity: 0; transform: translate(0,0) scale(0.55); }
+    20% { opacity: var(--peak, 0.85); }
+    78% { opacity: calc(var(--peak, 0.85) * 0.5); }
+    100% { opacity: 0; transform: translate(var(--dx,0), calc(-1 * var(--rise, 72vh))) scale(1); }
+  }
+
+  /* —— Conteúdo central (selo + texto) —— */
+  .lu-stage { position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; }
+
+  /* Medalhão / brasão que se crava como um selo de cera */
+  .lu-medallion {
+    position: relative; width: 128px; height: 128px;
     display: grid; place-items: center;
-    margin-bottom: 6px;
-    animation: luEmblem 2.8s cubic-bezier(0.22,1,0.36,1) forwards;
+    margin-bottom: 22px;
+    opacity: 0;
+    will-change: opacity, transform;
+    animation: luSeal 2.0s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
-  @keyframes luEmblem {
-    0% { transform: scale(0.2) rotate(-30deg); opacity: 0; }
-    14% { transform: scale(1.25) rotate(6deg); opacity: 1; }
-    30% { transform: scale(1) rotate(0); }
-    82% { opacity: 1; transform: scale(1); }
-    100% { opacity: 0; transform: scale(1.1); }
+  @keyframes luSeal {
+    0% { opacity: 0; transform: scale(0.55); }
+    16% { opacity: 1; transform: scale(1.085); }
+    28% { transform: scale(0.985); }
+    40% { transform: scale(1); }
+    100% { opacity: 1; transform: scale(1); }
   }
-  .lu-emblem::after {
-    content: '';
-    position: absolute; inset: 0;
-    transform: rotate(45deg);
-    background: radial-gradient(circle, rgba(200,155,60,0.3) 0%, rgba(12,10,8,0.7) 70%);
+  /* Coroa de louros (só no modo hipertrofia) — tom de bronze, separada do aro */
+  .lu-laurel {
+    position: absolute; width: 128px; height: 128px;
+    color: var(--bronze, #b98a4a);
+    filter: drop-shadow(0 0 3px rgba(var(--lu-glow),0.32));
+    pointer-events: none;
+  }
+  .lu-seal {
+    position: relative; width: 92px; height: 92px; border-radius: 50%;
+    display: grid; place-items: center; overflow: hidden;
+    background:
+      radial-gradient(circle at 38% 28%, rgba(var(--lu-glow-soft),0.26), transparent 56%),
+      radial-gradient(circle, rgba(58,43,20,0.90) 0%, rgba(18,13,7,0.95) 74%);
     border: 2px solid var(--gold-bright);
-    box-shadow: 0 0 40px rgba(240,198,116,0.6), inset 0 0 24px rgba(240,198,116,0.3);
+    box-shadow:
+      0 0 0 5px rgba(0,0,0,0.48),
+      0 0 0 6px rgba(var(--lu-marble),0.32),
+      0 0 30px rgba(var(--lu-glow),0.30),
+      inset 0 0 20px rgba(var(--lu-glow),0.15),
+      inset 0 2px 5px rgba(var(--lu-glow-soft),0.20),
+      inset -3px -4px 11px rgba(12,8,3,0.55);   /* pátina/desgaste — ouro envelhecido */
   }
-  .lu-emblem .lu-rune {
+  .lu-seal::after { /* varredura de brilho metálico, uma vez */
+    content: ''; position: absolute; top: -25%; left: -75%;
+    width: 44%; height: 150%;
+    background: linear-gradient(90deg, transparent, rgba(var(--lu-glow-soft),0.55), transparent);
+    transform: rotate(18deg); pointer-events: none;
+    animation: luSheen 2.0s ease-in-out forwards;
+  }
+  @keyframes luSheen {
+    0%, 18% { left: -75%; opacity: 0; }
+    27% { opacity: 1; }
+    52% { left: 125%; opacity: 0; }
+    100% { left: 125%; opacity: 0; }
+  }
+  .lu-rune {
     position: relative; z-index: 2;
     font-family: 'Cinzel', Georgia, serif;
-    font-weight: 900; font-size: 52px;
-    color: #fff7e2;
-    text-shadow: 0 0 24px var(--gold-bright), 0 0 8px var(--gold);
+    font-weight: 900; font-size: 48px; line-height: 1;
+    color: #fbf3df;
+    text-shadow: 0 0 13px rgba(var(--lu-glow),0.85), 0 1px 2px rgba(0,0,0,0.65);
   }
+
   .lu-kicker {
     font-family: 'JetBrains Mono', monospace;
     font-weight: 700; font-size: 11px;
-    letter-spacing: 0.4em;
-    text-indent: 0.4em;
-    color: var(--gold);
-    text-transform: uppercase;
-    animation: luText 2.8s ease forwards;
+    letter-spacing: 0.38em; text-indent: 0.38em;
+    color: var(--gold); text-transform: uppercase; opacity: 0;
+    animation: luIn 2.0s ease 0.10s forwards;
   }
   .lu-title {
     font-family: 'Cinzel', Georgia, serif;
     font-weight: 900; font-size: 34px;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.09em;
     color: var(--gold-pale);
-    text-shadow: 0 0 24px rgba(240,198,116,0.6), 0 2px 2px rgba(0,0,0,0.6);
-    text-align: center;
-    line-height: 1.05;
-    animation: luText 2.8s ease forwards;
+    text-shadow: 0 0 18px rgba(var(--lu-glow),0.42), 0 2px 3px rgba(0,0,0,0.65);
+    text-align: center; line-height: 1.05; margin-top: 6px;
+    max-width: 90%;
+    opacity: 0; animation: luIn 2.0s cubic-bezier(0.16, 1, 0.3, 1) 0.30s forwards;
   }
+  .lu-rule {
+    display: flex; align-items: center; gap: 9px; margin: 16px 0 10px;
+    opacity: 0; transform: scaleX(0.4);
+    animation: luRule 2.0s cubic-bezier(0.16, 1, 0.3, 1) 0.55s forwards;
+  }
+  .lu-rule span { width: 46px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+  .lu-rule b { width: 7px; height: 7px; transform: rotate(45deg); background: var(--gold-bright); box-shadow: 0 0 8px rgba(var(--lu-glow),0.8); }
   .lu-sub {
     font-family: 'Cormorant Garamond', Georgia, serif;
-    font-style: italic; font-size: 15px;
+    font-style: italic; font-size: 15.5px;
     color: var(--text-2);
-    margin-top: 8px;
-    text-align: center;
-    max-width: 78%;
-    animation: luText 2.8s ease 0.1s forwards;
-    opacity: 0;
+    text-align: center; max-width: 80%; margin-top: 1px;
+    opacity: 0; animation: luIn 2.0s ease 0.75s forwards;
   }
-  @keyframes luText {
-    0% { opacity: 0; transform: translateY(10px); }
-    14% { opacity: 1; transform: translateY(0); }
-    82% { opacity: 1; } 100% { opacity: 0; }
+  @keyframes luIn {
+    0% { opacity: 0; transform: translateY(12px); }
+    28% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes luRule {
+    0% { opacity: 0; transform: scaleX(0.4); }
+    32% { opacity: 1; transform: scaleX(1); }
+    100% { opacity: 1; transform: scaleX(1); }
+  }
+  /* Telas estreitas: recolhe as colunas pra não apertar o texto */
+  @media (max-width: 380px) {
+    .lu-col { width: 40px; opacity: 0; }
+    @keyframes luCol {
+      0% { opacity: 0; transform: translateY(32px); }
+      34% { opacity: 0.5; transform: translateY(0); }
+      100% { opacity: 0.5; transform: translateY(0); }
+    }
+    .lu-title { max-width: 82%; font-size: 31px; }
+  }
+  /* Movimento desligado: corta partículas/brilho, mantém o selo e o texto visíveis */
+  body.anims-off .lu-dust,
+  body.anims-off .lu-rays,
+  body.anims-off .lu-seal::after { display: none !important; }
+  @media (prefers-reduced-motion: reduce) {
+    body:not(.anims-on) .lu-dust,
+    body:not(.anims-on) .lu-rays,
+    body:not(.anims-on) .lu-seal::after { display: none !important; }
   }
 
   /* ---- Toast de feito (achievement) -------------------------- */
@@ -5958,8 +6126,27 @@
           <span class="settings-toggle-track"><span class="settings-toggle-thumb"></span></span>
         </button>
       </div>
+      <div class="settings-row" style="margin-top:16px;">
+        <div class="settings-label">
+          <span class="settings-label-title">Som de Ascensão</span>
+          <span class="settings-label-desc">Acorde discreto ao subir de nível ou patente</span>
+        </div>
+        <button class="settings-toggle" id="sfxToggle" role="switch" aria-checked="false" aria-label="Som de ascensão">
+          <span class="settings-toggle-track"><span class="settings-toggle-thumb"></span></span>
+        </button>
+      </div>
     </div>
-    
+
+    <div class="settings-section danger-section">
+      <div class="settings-row">
+        <div class="settings-label">
+          <span class="settings-label-title">Reiniciar do Zero</span>
+          <span class="settings-label-desc">Apaga TUDO das duas plataformas (Powerlifting e Hipertrofia): nível, poder, sequência, recordes, feitos, treinos e ajustes.</span>
+        </div>
+      </div>
+      <button class="reset-all-btn" id="resetAllBtn" type="button">⚠ RESETAR APLICATIVO</button>
+    </div>
+
     <div class="gym-table">
       <div class="gym-row header">
         <span class="gym-col-name">Academia</span>
@@ -8591,6 +8778,28 @@ if (animToggleBtn) {
   });
 }
 
+// Wire do toggle de SOM de ascensão (off por padrão)
+const sfxToggleBtn = document.getElementById('sfxToggle');
+if (sfxToggleBtn) {
+  sfxToggleBtn.setAttribute('aria-checked', sfxEnabled() ? 'true' : 'false');
+  sfxToggleBtn.addEventListener('click', () => {
+    const on = !sfxEnabled();
+    try { localStorage.setItem('pwr.sfx', on ? 'on' : 'off'); } catch (e) {}
+    sfxToggleBtn.setAttribute('aria-checked', on ? 'true' : 'false');
+    if (navigator.vibrate) navigator.vibrate(12);
+    if (on) playAscendChime(false);   // prévia ao ligar (o gesto desbloqueia o áudio)
+  });
+}
+
+// Wire do botão de RESET GERAL (abre a confirmação destrutiva)
+const resetAllBtn = document.getElementById('resetAllBtn');
+if (resetAllBtn) {
+  resetAllBtn.addEventListener('click', () => {
+    if (navigator.vibrate) navigator.vibrate(15);
+    confirmFullReset();
+  });
+}
+
 // Aplica a preferência salva ao carregar (sem reload)
 applyAnimationsPreference(getAnimationsEnabled());
 
@@ -9374,10 +9583,43 @@ const RANKS = [
   { min: 56, rune: 'ᛋ', name: 'Ragnar',    pt: 'Lenda Imortal',
     desc: 'A lenda cujo nome sobrevive ao corpo. O ápice: força, disciplina e tempo fundidos em mito. Você cravou o seu nome na pedra.' }
 ];
-function rankForLevel(L) { let r = RANKS[0]; for (const x of RANKS) { if (L >= x.min) r = x; } return r; }
+// Trilha greco-romana (modo Hipertrofia) — do recruta ao semideus.
+// Mesmos limiares de nível que a trilha nórdica; glifos gregos pra casar com o HUD olímpico.
+const HYPER_RANKS = [
+  { min: 1,  rune: 'Α', name: 'Tíro',       pt: 'Recruta',
+    desc: 'O recruta que cruza pela primeira vez os portões do ginásio. Sem feitos, sem mármore com seu nome — só a vontade de começar. Toda lenda romana nasceu deste primeiro passo na areia.' },
+  { min: 3,  rune: 'Β', name: 'Legionário', pt: 'Soldado de Roma',
+    desc: 'O soldado da legião: marcha, forma e repete. Aqui se forja a base — a disciplina da repetição diária, o escudo erguido em fileira. Ainda não há glória, há ofício.' },
+  { min: 5,  rune: 'Λ', name: 'Hoplita',    pt: 'Lança de Esparta',
+    desc: 'O hoplita grego, escudo gravado com o lambda de Esparta. Provou que aguenta a linha de frente. Coragem testada no peso — descobre que suporta mais do que imaginava.' },
+  { min: 8,  rune: 'Γ', name: 'Centurião',  pt: 'Comandante de Cem',
+    desc: 'O centurião que comanda cem homens pelo exemplo, não pela voz. A constância virou patente: o treino não falha, e os outros começam a seguir o seu padrão.' },
+  { min: 11, rune: 'Π', name: 'Pretoriano', pt: 'Guarda do Imperador',
+    desc: 'A elite que guarda o próprio imperador. Confiança absoluta, ferro polido, presença que impõe respeito. A força agora é parte da sua identidade — você é referência.' },
+  { min: 15, rune: 'Δ', name: 'Gladiador',  pt: 'Campeão da Arena',
+    desc: 'O gladiador coroado pela multidão do Coliseu. Cada série pesada é um combate vencido sob os olhos de Roma. Intensidade bruta, domada e dirigida pela vontade.' },
+  { min: 19, rune: 'Θ', name: 'Tribuno',    pt: 'Voz da Legião',
+    desc: 'O tribuno que fala pela legião inteira. Não se prova mais na fileira — comanda. Experiência endurecida em mil treinos; a força viaja com você em qualquer barra.' },
+  { min: 24, rune: 'Σ', name: 'Cônsul',     pt: 'Senhor de Roma',
+    desc: 'O cônsul, ápice do poder mortal de Roma. Domínio total sobre o corpo e sobre a disciplina. Poucos chegam ao limiar onde o homem termina e a lenda começa.' },
+  { min: 30, rune: 'Φ', name: 'Olímpico',   pt: 'Coroado de Louros',
+    desc: 'O campeão dos Jogos Olímpicos, coroado com a coroa de louros sagrada. Você cruzou da história para o mito — seu nome é gravado na pedra dos vencedores eternos.' },
+  { min: 37, rune: 'Ψ', name: 'Herói',      pt: 'Sangue de Mito',
+    desc: 'O herói à altura de Aquiles e Teseu — sangue mortal, feitos imortais. A disciplina virou destino. Os poetas já cantam o que você ergueu do chão.' },
+  { min: 46, rune: 'Χ', name: 'Titã',       pt: 'Força Primordial',
+    desc: 'O Titã, força anterior aos próprios deuses, que sustenta o céu como Atlas. Poder primordial e implacável. Não há mais limite humano a vencer — só o tempo.' },
+  { min: 56, rune: 'Ω', name: 'Semideus',   pt: 'Filho dos Deuses',
+    desc: 'O ômega: o mortal que ascendeu ao Olimpo, como Héracles ao fim de seus trabalhos. Força, disciplina e tempo fundidos em divindade. Você cravou seu nome entre os deuses.' }
+];
+function activeRanks() { return STATE.mode === 'hyper' ? HYPER_RANKS : RANKS; }
+function rankForLevel(L) { const arr = activeRanks(); let r = arr[0]; for (const x of arr) { if (L >= x.min) r = x; } return r; }
 
-// Curva de XP: cada nível pede um pouco mais que o anterior.
-function reqForLevel(L) { return 80 + (L - 1) * 40; }
+// Curva de XP — reformulada (2026-06-20) para sensação de evolução real.
+// reqForLevel(L) = XP para sair do nível L → L+1.
+// Base 300 + 90·(L-1)^1.15: começa barato (engate rápido nos 1ºs níveis),
+// cresce de forma suave e desacelera natural (sem saltos absurdos nem estagnação).
+// Com 10 XP/série, ~100 séries/semana ⇒ ~1 nível/semana na faixa intermediária.
+function reqForLevel(L) { return Math.round(300 + 90 * Math.pow(L - 1, 1.15)); }
 function levelFromXp(xp) {
   let lvl = 1, acc = 0;
   while (acc + reqForLevel(lvl) <= xp) { acc += reqForLevel(lvl); lvl++; if (lvl > 999) break; }
@@ -9538,7 +9780,10 @@ function computeGamState() {
   syncTotals();   // acumula novos ganhos antes de ler
   const sets = TOTALS.sets, exDone = TOTALS.exDone, cardioCount = TOTALS.cardio, tonnage = TOTALS.tonnage;
   const prCount = Object.keys(STATE.prHistory || {}).length;
-  const xp = sets * 14 + exDone * 30 + prCount * 80 + cardioCount * 45;
+  // XP movido pela SÉRIE concluída (não pela conclusão do treino):
+  // 10/série é o motor (~93% do XP), recorde batido (+50) premia evolução real,
+  // travessia de cardio (+25) é um empurrão leve. Calibrado p/ ~1 nível/semana.
+  const xp = sets * 10 + PR_RECORDS * 50 + cardioCount * 25;
   const lv = levelFromXp(xp);
   return {
     xp, sets, exDone, prCount, prRecords: PR_RECORDS, cardioCount, tonnage,
@@ -9661,6 +9906,76 @@ function updateRage(g) {
 }
 
 // Detecta viradas (nível, patente, PR, feitos) e dispara as celebrações
+// Aviso único de recalibração da curva (mostrado 1x ao usuário existente).
+// Autocontido (estilos inline + vars do tema) — não depende de modal externo.
+function showCurveMigrationNotice(prev, now) {
+  if (document.getElementById('curveMigNotice')) return;
+  if (prev <= now) return;   // só avisa se houve reposicionamento pra baixo
+  const el = document.createElement('div');
+  el.id = 'curveMigNotice';
+  el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true');
+  el.style.cssText = 'position:fixed;inset:0;z-index:6000;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(6,5,4,0.86);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;transition:opacity .4s ease;';
+  el.innerHTML = '<div style="max-width:340px;width:100%;background:linear-gradient(180deg,var(--bg-card,#1b1d24),var(--bg-elev,#16171d));border:1px solid var(--gold-deep,#9c7d2a);border-radius:16px;padding:24px 22px;box-shadow:0 20px 60px rgba(0,0,0,.6),inset 0 0 0 1px rgba(240,200,120,.12);text-align:center;">'
+    + '<div style="font-family:\'Cinzel\',Georgia,serif;font-weight:900;font-size:18px;color:var(--gold-pale,#f4ead0);letter-spacing:.04em;">Curva de Poder Recalibrada</div>'
+    + '<div style="width:46px;height:2px;margin:12px auto;background:linear-gradient(90deg,transparent,var(--gold,#c89b3c),transparent);"></div>'
+    + '<p style="font-family:\'Inter\',sans-serif;font-size:13.5px;line-height:1.55;color:var(--text-2,#c8b797);margin:0 0 18px;">Teu esforço foi <b style="color:var(--gold-pale,#f4ead0)">100% preservado</b> — séries, tonelagem e recordes seguem intactos. Só a escala de níveis ficou mais desafiadora, pra cada nível voltar a ser uma conquista de verdade.<br><br>Teu nível foi reposicionado de <b style="color:var(--gold-pale,#f4ead0)">' + prev + '</b> para <b style="color:var(--gold-pale,#f4ead0)">' + now + '</b>. A partir daqui, a subida é mais honesta.</p>'
+    + '<button type="button" id="curveMigOk" style="font-family:\'Cinzel\',Georgia,serif;font-weight:700;font-size:14px;letter-spacing:.06em;color:#1a1206;background:linear-gradient(180deg,var(--gold-bright,#f0c674),var(--gold,#c89b3c));border:none;border-radius:10px;padding:11px 28px;cursor:pointer;box-shadow:0 4px 14px rgba(200,155,60,.35);">ENTENDI</button>'
+    + '</div>';
+  document.body.appendChild(el);
+  void el.offsetWidth; el.style.opacity = '1';
+  const close = () => { el.style.opacity = '0'; setTimeout(() => el.remove(), 420); };
+  const btn = el.querySelector('#curveMigOk');
+  if (btn) btn.addEventListener('click', close);
+  el.addEventListener('click', (e) => { if (e.target === el) close(); });
+}
+
+// ===== Reset geral — reinicializa o app do zero (as DUAS plataformas) =====
+// Apaga toda chave 'pwr.*' (powerlifting + hipertrofia: nível, poder, sequência,
+// recordes, feitos, treinos, calendários e ajustes) e recarrega do zero.
+function resetAppFull() {
+  try {
+    const toRemove = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.indexOf('pwr.') === 0) toRemove.push(k);
+    }
+    toRemove.forEach(k => localStorage.removeItem(k));
+  } catch (e) { /* segue pro reload mesmo assim */ }
+  try { location.reload(); } catch (e) { location.href = location.pathname; }
+}
+
+// Confirmação destrutiva (modal autocontido): Cancelar é o padrão; o botão
+// vermelho exige toque explícito. Esc / toque no fundo cancelam.
+function confirmFullReset() {
+  if (document.getElementById('resetConfirm')) return;
+  const el = document.createElement('div');
+  el.id = 'resetConfirm';
+  el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true');
+  el.setAttribute('aria-label', 'Reiniciar o aplicativo do zero');
+  el.style.cssText = 'position:fixed;inset:0;z-index:6200;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(6,5,4,0.88);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;transition:opacity .35s ease;';
+  el.innerHTML = '<div style="max-width:360px;width:100%;background:linear-gradient(180deg,var(--bg-card,#1b1d24),var(--bg-elev,#16171d));border:1px solid rgba(200,90,70,0.5);border-radius:16px;padding:24px 22px;box-shadow:0 20px 60px rgba(0,0,0,.6),inset 0 0 0 1px rgba(200,90,70,.14);text-align:center;">'
+    + '<div style="font-family:\'Cinzel\',Georgia,serif;font-weight:900;font-size:18px;color:#f0b4ab;letter-spacing:.04em;">⚠ Reiniciar do Zero?</div>'
+    + '<div style="width:46px;height:2px;margin:12px auto;background:linear-gradient(90deg,transparent,rgba(200,90,70,.8),transparent);"></div>'
+    + '<p style="font-family:\'Inter\',sans-serif;font-size:13.5px;line-height:1.55;color:var(--text-2,#c8b797);margin:0 0 20px;">Isto apaga <b style="color:#f0b4ab">permanentemente</b> todo o teu progresso nas <b style="color:var(--gold-pale,#f4ead0)">duas plataformas</b> — nível, poder, sequência de fogo, recordes, feitos, treinos marcados e todos os ajustes. <b style="color:#f0b4ab">Não há como desfazer.</b></p>'
+    + '<div style="display:flex;gap:10px;">'
+    + '<button type="button" id="resetCancel" style="flex:1;font-family:\'Inter\',sans-serif;font-weight:600;font-size:14px;color:var(--text-2,#c8b797);background:transparent;border:1px solid var(--border-bright,#423d3a);border-radius:10px;padding:12px;cursor:pointer;">Cancelar</button>'
+    + '<button type="button" id="resetConfirmBtn" style="flex:1;font-family:\'Cinzel\',Georgia,serif;font-weight:700;font-size:13px;letter-spacing:.06em;color:#fff;background:linear-gradient(180deg,#b5392c,#8a261b);border:none;border-radius:10px;padding:12px;cursor:pointer;box-shadow:0 4px 14px rgba(150,40,30,.4);">APAGAR TUDO</button>'
+    + '</div></div>';
+  document.body.appendChild(el);
+  void el.offsetWidth; el.style.opacity = '1';
+  const onKey = (e) => { if (e.key === 'Escape') close(); };
+  const close = () => { el.style.opacity = '0'; document.removeEventListener('keydown', onKey); setTimeout(() => el.remove(), 360); };
+  document.addEventListener('keydown', onKey);
+  el.addEventListener('click', (e) => { if (e.target === el) close(); });
+  const cancel = el.querySelector('#resetCancel');
+  const confirmBtn = el.querySelector('#resetConfirmBtn');
+  if (cancel) { cancel.addEventListener('click', close); setTimeout(() => cancel.focus(), 60); }
+  if (confirmBtn) confirmBtn.addEventListener('click', () => {
+    if (navigator.vibrate) navigator.vibrate([20, 40, 20, 40, 90]);
+    resetAppFull();
+  });
+}
+
 function checkProgression() {
   const g = computeGamState();
   if (GAM_STORE === null) {
@@ -9685,10 +10000,20 @@ function checkProgression() {
     const rankUp = g.rank.name !== prevRank.name;
     GAM_STORE.level = g.level;
     changed = true; leveledUp = true;
-    if (fxOn()) showLevelUp(g, rankUp);
+    // Sempre montar a ascensão (selo+texto+anúncio aria-live = acessível);
+    // as partículas/som internos só disparam quando o movimento está ligado.
+    showLevelUp(g, rankUp);
   } else if (g.level < GAM_STORE.level) {
-    GAM_STORE.level = g.level; changed = true; // reset/edição reduziu XP
+    // Aviso ÚNICO de migração: a curva de XP foi recalibrada (2026-06-20).
+    // O nível derivado caiu na nova escala, mas o esforço (TOTALS) está intacto.
+    try {
+      if (localStorage.getItem('pwr.curveV') !== '2') {
+        showCurveMigrationNotice(GAM_STORE.level, g.level);
+      }
+    } catch (e) {}
+    GAM_STORE.level = g.level; changed = true; // reset/edição/recalibração reduziu o nível
   }
+  try { localStorage.setItem('pwr.curveV', '2'); } catch (e) {}
 
   // Recorde batido (1º PR ou superação) → tremor de impacto
   if (g.prRecords > GAM_STORE.prRecords) {
@@ -9763,15 +10088,61 @@ function showFeatToast(feat, delay) {
 }
 
 let _luTimer = null;
+// Coroa de louros (SVG inline) — só no modo hipertrofia. Dois ramos espelhados.
+const LU_LAUREL = '<svg class="lu-laurel" viewBox="0 0 128 128" fill="none" aria-hidden="true">'
+  + '<g stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="currentColor">'
+  + '<g id="luBr"><path d="M64 121 C 40 113, 26 87, 27 47" stroke-width="2.2" fill="none"/>'
+  + '<g stroke="none">'
+  + '<ellipse cx="40" cy="101" rx="8" ry="3.3" transform="rotate(-42 40 101)"/>'
+  + '<ellipse cx="33" cy="85" rx="8.6" ry="3.5" transform="rotate(-52 33 85)"/>'
+  + '<ellipse cx="29" cy="68" rx="9" ry="3.7" transform="rotate(-63 29 68)"/>'
+  + '<ellipse cx="27" cy="50" rx="8.5" ry="3.5" transform="rotate(-75 27 50)"/>'
+  + '<ellipse cx="29" cy="34" rx="7.4" ry="3.1" transform="rotate(-88 29 34)"/>'
+  + '</g></g>'
+  + '<use href="#luBr" xlink:href="#luBr" transform="translate(128,0) scale(-1,1)"/>'
+  + '</g></svg>';
+
 function showLevelUp(g, rankUp) {
   const ov = document.getElementById('levelupOverlay');
   if (!ov) return;
+  const hyper = STATE.mode === 'hyper';
+  const motion = fxOn();   // partículas/movimento só quando animações ligadas
+  // Poeira iluminada — 2 camadas de profundidade (perto + ao fundo), discreta.
+  let motes = '';
+  if (motion) {
+    for (let i = 0; i < 18; i++) {
+      const far = i % 9 < 4;   // ~8 ao fundo, ~10 perto
+      const x = Math.round(Math.random() * 100);
+      const sz = far ? (1.4 + Math.random() * 1.3).toFixed(1) : (3 + Math.random() * 2).toFixed(1);
+      const dur = far ? (4.6 + Math.random() * 1.6).toFixed(2) : (3.0 + Math.random() * 1.4).toFixed(2);
+      const dl = (Math.random() * 1.1).toFixed(2);
+      const dx = Math.round(Math.random() * 44 - 22);
+      const peak = far ? (0.24 + Math.random() * 0.12).toFixed(2) : (0.7 + Math.random() * 0.22).toFixed(2);
+      const rise = far ? (48 + Math.round(Math.random() * 22)) : (66 + Math.round(Math.random() * 18));
+      const bottom = far ? Math.round(Math.random() * 32) : 0;   // fundo nasce em alturas variadas
+      motes += `<span class="lu-mote${far ? ' far' : ''}" style="left:${x}%;bottom:${bottom ? bottom + '%' : '-8px'};width:${sz}px;height:${sz}px;--dx:${dx}px;--peak:${peak};--rise:${rise}vh;animation-duration:${dur}s;animation-delay:${dl}s;"></span>`;
+    }
+  }
+  const kicker = rankUp ? 'Nova Patente' : 'Ascensão';
+  const title = rankUp ? g.rank.name.toUpperCase() : ('NÍVEL ' + g.level);
+  const sub = rankUp ? ('“' + g.rank.pt + '” · Nível ' + g.level) : pickLevelCry(g);
+  ov.classList.remove('mode-pwr', 'mode-hyper');
+  ov.classList.add(hyper ? 'mode-hyper' : 'mode-pwr');
   ov.innerHTML = `
     <div class="lu-rays" aria-hidden="true"></div>
-    <div class="lu-emblem" aria-hidden="true"><span class="lu-rune">${g.rank.rune}</span></div>
-    <div class="lu-kicker">${rankUp ? 'Nova Patente' : 'Ascensão'}</div>
-    <div class="lu-title">${rankUp ? g.rank.name.toUpperCase() : 'NÍVEL ' + g.level}</div>
-    <div class="lu-sub">${rankUp ? ('“' + g.rank.pt + '” · Nível ' + g.level) : pickLevelCry(g)}</div>
+    <div class="lu-col lu-col-l" aria-hidden="true"></div>
+    <div class="lu-col lu-col-r" aria-hidden="true"></div>
+    <div class="lu-dust" aria-hidden="true">${motes}</div>
+    <div class="lu-stage">
+      <div class="lu-medallion" aria-hidden="true">
+        ${hyper ? LU_LAUREL : ''}
+        <div class="lu-seal"><span class="lu-rune">${g.rank.rune}</span></div>
+      </div>
+      <div class="lu-kicker">${kicker}</div>
+      <div class="lu-title">${title}</div>
+      <div class="lu-rule" aria-hidden="true"><span></span><b></b><span></span></div>
+      <div class="lu-sub">${sub}</div>
+    </div>
   `;
   ov.classList.remove('show'); void ov.offsetWidth; ov.classList.add('show');
   // Anúncio acessível (leitor de tela) — o overlay em si é decorativo
@@ -9780,10 +10151,57 @@ function showLevelUp(g, rankUp) {
     ? `Nova patente: ${g.rank.name}, ${g.rank.pt}. Nível ${g.level}.`
     : `Ascensão. Nível ${g.level}.`;
   if (navigator.vibrate) navigator.vibrate(rankUp ? [40, 60, 40, 60, 120] : [30, 40, 80]);
+  playAscendChime(rankUp);   // som opcional (off por padrão; liga no menu GYM)
   const he = document.getElementById('hudEmblem');
   if (he) { he.classList.remove('tier-up'); void he.offsetWidth; he.classList.add('tier-up'); }
   if (_luTimer) clearTimeout(_luTimer);
-  _luTimer = setTimeout(() => ov.classList.remove('show'), 2850);
+  // Saída intencional: começa a esmaecer antes das animações expirarem; limpa o DOM depois.
+  _luTimer = setTimeout(() => {
+    ov.classList.remove('show');
+    setTimeout(() => { if (!ov.classList.contains('show')) ov.innerHTML = ''; }, 700);
+  }, 2900);
+}
+
+// ===== Som de ascensão (opcional, sintetizado, OFF por padrão) =====
+// Acorde maior ascendente + brilho metálico via Web Audio (sem arquivos).
+// Nobre, discreto — nada de "gamer". Só toca se o usuário ligar no GYM.
+let _audioCtx = null;
+function sfxEnabled() { try { return localStorage.getItem('pwr.sfx') === 'on'; } catch (e) { return false; } }
+function playAscendChime(strong) {
+  if (!sfxEnabled()) return;
+  try {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    _audioCtx = _audioCtx || new AC();
+    const ctx = _audioCtx;
+    if (ctx.state === 'suspended') { const p = ctx.resume(); if (p && p.catch) p.catch(() => {}); }
+    const now = ctx.currentTime;
+    const master = ctx.createGain();
+    master.gain.setValueAtTime(0.0001, now);
+    master.gain.exponentialRampToValueAtTime(strong ? 0.16 : 0.11, now + 0.05);
+    master.gain.exponentialRampToValueAtTime(0.0001, now + (strong ? 1.9 : 1.5));
+    master.connect(ctx.destination);
+    const base = strong ? 220 : 196; // A3 / G3
+    const notes = strong ? [base, base * 1.5, base * 2, base * 2.5] : [base, base * 1.5, base * 2];
+    notes.forEach((f, i) => {
+      const o = ctx.createOscillator(), gg = ctx.createGain();
+      o.type = i === 0 ? 'triangle' : 'sine';
+      o.frequency.value = f;
+      const t0 = now + i * 0.085;   // arpejo suave ascendente
+      gg.gain.setValueAtTime(0.0001, t0);
+      gg.gain.exponentialRampToValueAtTime(0.6, t0 + 0.03);
+      gg.gain.exponentialRampToValueAtTime(0.0001, t0 + 1.1);
+      o.connect(gg); gg.connect(master);
+      o.start(t0); o.stop(t0 + 1.25);
+    });
+    const sh = ctx.createOscillator(), sg = ctx.createGain();  // brilho agudo curto
+    sh.type = 'sine'; sh.frequency.value = base * 4;
+    sg.gain.setValueAtTime(0.0001, now + 0.05);
+    sg.gain.exponentialRampToValueAtTime(0.15, now + 0.10);
+    sg.gain.exponentialRampToValueAtTime(0.0001, now + 0.7);
+    sh.connect(sg); sg.connect(master);
+    sh.start(now + 0.05); sh.stop(now + 0.8);
+  } catch (e) { /* áudio indisponível — silencioso */ }
 }
 
 // ============================================================
@@ -9793,9 +10211,10 @@ function showLevelUp(g, rankUp) {
 // e ao tocar numa patente abre a explicação do que ela significa.
 function openRankModal() {
   const g = computeGamState();
-  const curIdx = RANKS.findIndex(r => r.name === g.rank.name);
-  const rows = RANKS.map((r, i) => {
-    const max = (i < RANKS.length - 1) ? RANKS[i + 1].min - 1 : null;
+  const arr = activeRanks();
+  const curIdx = arr.findIndex(r => r.name === g.rank.name);
+  const rows = arr.map((r, i) => {
+    const max = (i < arr.length - 1) ? arr[i + 1].min - 1 : null;
     const range = max ? `Nv ${r.min}–${max}` : `Nv ${r.min}+`;
     let cls = 'rank-row';
     if (i === curIdx) cls += ' current';
@@ -9818,7 +10237,7 @@ function openRankModal() {
     <div class="modal-handle"></div>
     <button class="modal-close" id="rankModalClose" type="button" aria-label="Fechar">×</button>
     <div class="rank-modal-head">
-      <div class="rank-modal-kicker">A Trilha do Guerreiro</div>
+      <div class="rank-modal-kicker">${STATE.mode === 'hyper' ? 'A Ascensão ao Olimpo' : 'A Trilha do Guerreiro'}</div>
       <div class="rank-modal-current">${g.rank.rune} ${g.rank.name}</div>
       <div class="rank-modal-sub">Nível ${g.level} · ${g.intoLevel}/${g.forLevel} de PODER até o próximo</div>
     </div>
