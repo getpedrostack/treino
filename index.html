@@ -9895,6 +9895,9 @@ function saveActivity() { try { localStorage.setItem('pwr.activityDates', JSON.s
 function saveTotals() { try { localStorage.setItem('pwr.totals', JSON.stringify({ life: TOTALS, snap: SNAP })); } catch (e) {} }
 
 // Soma do estado ATUAL (derivado): séries, exercícios, cardio e tonelagem.
+// TONELAGEM (regra 2026-06-23): conta a CARGA UMA VEZ por exercício trabalhado —
+// não multiplica por repetições nem por séries. Ex.: 3 séries × 4 reps × 100kg = 100kg.
+// Muito mais desafiador; vale também para as conquistas (que leem g.tonnage).
 function derivedTotals() {
   let sets = 0;
   for (const k in STATE.setProgress) sets += (STATE.setProgress[k] || 0);
@@ -9906,10 +9909,8 @@ function derivedTotals() {
     const load = parseFloat(STATE.loads[k]);
     if (!load || load <= 0) continue;
     const done = STATE.setProgress[k] || 0;
-    if (done <= 0) continue;
-    const exId = k.split('::')[2];
-    const reps = (EX_META[exId] && EX_META[exId].reps) || 5;
-    tonnage += load * done * reps;
+    if (done <= 0) continue;     // só conta o exercício que você realmente trabalhou
+    tonnage += load;             // a carga entra UMA vez (não × reps × séries)
   }
   return { sets, exDone, cardio, tonnage };
 }
@@ -9921,9 +9922,21 @@ function syncTotals() {
   if (!TOTALS || !SNAP) {   // 1ª vez: baseline = progresso atual (não zera ninguém)
     TOTALS = { sets: cur.sets, exDone: cur.exDone, cardio: cur.cardio, tonnage: cur.tonnage };
     SNAP = { sets: cur.sets, exDone: cur.exDone, cardio: cur.cardio, tonnage: cur.tonnage };
+    try { localStorage.setItem('pwr.tonV', '1'); } catch (e) {}
     saveTotals();
     return;
   }
+  // Migração ÚNICA (2026-06-23): a tonelagem mudou de regra (carga × reps × séries
+  // → carga UMA vez). Re-ancora o vitalício à nova regra pra o desafio valer de
+  // fato (séries/exercícios/cardio e conquistas já desbloqueadas seguem intactos).
+  try {
+    if (localStorage.getItem('pwr.tonV') !== '1') {
+      TOTALS.tonnage = cur.tonnage;
+      SNAP.tonnage = cur.tonnage;
+      localStorage.setItem('pwr.tonV', '1');
+      saveTotals();
+    }
+  } catch (e) {}
   let dirty = false;
   ['sets', 'exDone', 'cardio', 'tonnage'].forEach(function (k) {
     if (cur[k] !== SNAP[k]) {
