@@ -6356,6 +6356,14 @@
       <div class="gym-row gym-sub"><span class="gym-day">Sábado</span><span class="gym-hours">08h às 12h</span></div>
       <div class="gym-row gym-sub"><span class="gym-day">Domingo</span><span class="gym-hours">08h às 12h</span></div>
       <div class="gym-row gym-sub"><span class="gym-day">Feriado</span><span class="gym-hours">08h às 12h</span></div>
+
+      <div class="gym-row gym-group">
+        <span class="gym-col-name">Lyon</span>
+        <span class="gym-col-hours"></span>
+      </div>
+      <div class="gym-row gym-sub"><span class="gym-day">Seg–Sex</span><span class="gym-hours">05h às 23h</span></div>
+      <div class="gym-row gym-sub"><span class="gym-day">Sábado</span><span class="gym-hours">07h às 20h</span></div>
+      <div class="gym-row gym-sub"><span class="gym-day">Domingo</span><span class="gym-hours">08h às 20h</span></div>
     </div>
 
     <!-- Zona de perigo por ÚLTIMO — padrão de settings: destrutivo no fim -->
@@ -7129,8 +7137,8 @@ const HYPER_SESSION_ORDER = ['hyper_push', 'hyper_pull', 'hyper_lowerA', 'hyper_
 function modeSessionOrder() { return STATE.mode === 'hyper' ? HYPER_SESSION_ORDER : SESSION_ORDER; }
 function modeCoreSessions() { return STATE.mode === 'hyper' ? ['hyper_push', 'hyper_pull', 'hyper_lowerA', 'hyper_upper', 'hyper_lowerB'] : ['squat', 'bench', 'deadlift', 'upper_hiper']; }
 
-// Dias em que TRT é aplicada (sempre seg/qua/sex, independe do treino do dia)
-const TRT_DAYS = ['seg', 'qua', 'sex'];
+// Dias em que TRT é aplicada (seg/qui, independe do treino do dia)
+const TRT_DAYS = ['seg', 'qui'];
 
 // ============================================================
 // === DIFICULDADE DA SEMANA — W1/W2/W3/DLD gamificados =======
@@ -9116,7 +9124,7 @@ function buildFullBackup() {
         weight: 108,
         height: 180,
         program: isHyper ? "Hipertrofia Olímpica (5 sessões + cardio)" : "Powerlifting Híbrido (força + hipertrofia)",
-        trt: "Enantato 0,13ml SC, 3×/sem (seg/qua/sex)",
+        trt: "Enantato 0,13ml SC, 2×/sem (seg/qui)",
         cardiovascularRisk: "elevated (ApoB, histórico desde infância)"
       }
     },
