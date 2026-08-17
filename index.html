@@ -27,37 +27,59 @@
    Aqui, no carregamento, reconstruímos o manifest com id/scope/start_url
    ABSOLUTOS, derivados da URL deste próprio arquivo (a pasta /PWR/), e
    reescrevemos o <link>. Assim o PWR é um app distinto e instalável. */
+/* ESTRATÉGIA (revisada): o jeito ROBUSTO de instalar o PWR como app de
+   verdade (WebAPK no Android — o que sobrevive a reiniciar o celular e
+   abre offline) exige um manifest.webmanifest REAL, hospedado ao lado
+   do index.html, com ícones .png reais. Um manifest data: só rende um
+   ATALHO frágil, que some no reboot.
+
+   Então: se o arquivo real existir na pasta, apontamos o <link> pra ele.
+   Se NÃO existir (você esqueceu de subir), caímos no manifest data:
+   embutido — a versão antiga, sem regressão. */
 (function () {
   try {
     var link = document.querySelector('link[rel="manifest"]');
     if (!link) return;
-    var href = link.getAttribute('href') || '';
-    if (href.indexOf('data:') !== 0) return;
-    var bin = atob(href.split('base64,')[1]);
-    var bytes = new Uint8Array(bin.length);
-    for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-    var m = JSON.parse(new TextDecoder('utf-8').decode(bytes));
+    var origHref = link.getAttribute('href') || '';
     var here = location.href.split(/[?#]/)[0];   // URL deste index.html
     var dir = here.replace(/[^/]*$/, '');         // pasta onde o app está
-    // IMPORTANTE: vários apps do Pedro vivem na MESMA pasta (raiz do repo no
-    // GitHub Pages: index.html, triang.html, brew.html, diario.html). Logo a
-    // identidade NÃO pode ser só a pasta — ia colidir com o triang. Usamos um
-    // TOKEN próprio do PWR pra garantir um app-id único de verdade.
-    m.id = dir + 'app.pwr-pedro';   // identidade ÚNICA do PWR (não colide)
-    m.start_url = here;             // abre exatamente este index.html (o PWR)
-    m.scope = here;                 // escopo só deste arquivo — não captura os vizinhos
-    // Ícones montados AQUI a partir dos <link> da página (PNG 192 + SVG escalável),
-    // pra não duplicar ~440KB de base64 dentro do manifest estático.
-    try {
-      var icons = [];
-      var pngL = document.querySelector('link[rel="icon"][type="image/png"]');
-      var svgL = document.querySelector('link[rel="icon"][type="image/svg+xml"]');
-      if (pngL) icons.push({ src: pngL.getAttribute('href'), sizes: pngL.getAttribute('sizes') || '192x192', type: 'image/png', purpose: 'any maskable' });
-      if (svgL) icons.push({ src: svgL.getAttribute('href'), sizes: 'any', type: 'image/svg+xml', purpose: 'any maskable' });
-      if (icons.length) m.icons = icons;
-    } catch (e2) {}
-    var out = btoa(unescape(encodeURIComponent(JSON.stringify(m))));
-    link.href = 'data:application/manifest+json;base64,' + out;
+
+    // Reconstrói o manifest data: com identidade absoluta (fallback melhorado).
+    function rebuildDataManifest() {
+      try {
+        if (origHref.indexOf('data:') !== 0) return;
+        var bin = atob(origHref.split('base64,')[1]);
+        var bytes = new Uint8Array(bin.length);
+        for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        var m = JSON.parse(new TextDecoder('utf-8').decode(bytes));
+        m.id = dir + 'app.pwr-pedro';   // identidade ÚNICA do PWR (não colide)
+        m.start_url = here;
+        m.scope = here;
+        try {
+          var icons = [];
+          var pngL = document.querySelector('link[rel="icon"][type="image/png"]');
+          var svgL = document.querySelector('link[rel="icon"][type="image/svg+xml"]');
+          if (pngL) icons.push({ src: pngL.getAttribute('href'), sizes: pngL.getAttribute('sizes') || '192x192', type: 'image/png', purpose: 'any maskable' });
+          if (svgL) icons.push({ src: svgL.getAttribute('href'), sizes: 'any', type: 'image/svg+xml', purpose: 'any maskable' });
+          if (icons.length) m.icons = icons;
+        } catch (e2) {}
+        var out = btoa(unescape(encodeURIComponent(JSON.stringify(m))));
+        link.href = 'data:application/manifest+json;base64,' + out;
+      } catch (e) { /* mantém o manifest estático */ }
+    }
+
+    // Só faz sentido buscar o arquivo real quando hospedado (http/https).
+    if (location.protocol.indexOf('http') === 0) {
+      var real = dir + 'manifest.webmanifest';
+      fetch(real, { method: 'GET', cache: 'no-store' })
+        .then(function (r) {
+          if (r && r.ok) { link.href = real; }   // arquivo real existe → app de verdade
+          else { rebuildDataManifest(); }
+        })
+        .catch(function () { rebuildDataManifest(); });
+    } else {
+      rebuildDataManifest();
+    }
   } catch (e) { /* fallback: mantém o manifest estático */ }
 })();
 
@@ -106,10 +128,97 @@
   try {
     if (!('serviceWorker' in navigator)) return;
     if (location.protocol.indexOf('http') !== 0) return;
+    // Havia um SW no controle ANTES desta visita? Se não havia, esta é a
+    // primeira instalação — e aí recarregar seria só um piscar inútil na
+    // estreia. O recarregamento só vale quando um SW NOVO substitui o antigo.
+    var hadController = !!navigator.serviceWorker.controller;
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register('sw.js').catch(function () {});
+      navigator.serviceWorker.register('sw.js').then(function (reg) {
+        // Ao publicar um index.html novo, ativa o SW novo assim que baixar,
+        // sem depender de fechar todas as abas.
+        if (reg.waiting) { try { reg.waiting.postMessage('skipWaiting'); } catch (e) {} }
+        reg.addEventListener('updatefound', function () {
+          var nw = reg.installing;
+          if (!nw) return;
+          nw.addEventListener('statechange', function () {
+            if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+              try { nw.postMessage('skipWaiting'); } catch (e) {}
+            }
+          });
+        });
+      }).catch(function () {});
+      // Recarrega UMA vez quando o SW novo assume, pra pegar a versão nova.
+      var _reloaded = false;
+      navigator.serviceWorker.addEventListener('controllerchange', function () {
+        if (!hadController) return;      // primeira instalação: não recarrega
+        if (_reloaded) return;
+        _reloaded = true;
+        location.reload();
+      });
     });
   } catch (e) {}
+})();
+
+/* === ARMAZENAMENTO PERSISTENTE =======================================
+   Por padrão o navegador pode DESCARTAR os dados do site quando o
+   aparelho fica sem espaço — foi provavelmente parte do que apagou o
+   progresso quando o app "sumia". Pedimos persistência: em app
+   instalado o Chrome costuma conceder sem nem perguntar. É só uma
+   camada extra — o backup exportável continua sendo a rede de segurança. */
+(function () {
+  try {
+    if (!navigator.storage || !navigator.storage.persist) return;
+    navigator.storage.persisted().then(function (already) {
+      if (!already) navigator.storage.persist().catch(function () {});
+    }).catch(function () {});
+  } catch (e) {}
+})();
+
+/* === BOTÃO DE INSTALAÇÃO (Android/Chrome) =============================
+   Captura o evento beforeinstallprompt e mostra um chip discreto pra
+   instalar com um toque. Some sozinho depois de instalar. Em iOS (que
+   não dispara o evento) o app continua instalável por "Adicionar à Tela
+   de Início" no Safari — o chip só aparece onde o prompt existe. */
+(function () {
+  var deferred = null;
+  function makeChip() {
+    if (document.getElementById('pwrInstallChip')) return document.getElementById('pwrInstallChip');
+    var b = document.createElement('button');
+    b.id = 'pwrInstallChip';
+    b.type = 'button';
+    b.textContent = '⤓ Instalar app';
+    b.setAttribute('aria-label', 'Instalar o PWR como aplicativo');
+    b.style.cssText = [
+      'position:fixed', 'left:50%', 'transform:translateX(-50%)',
+      'bottom:calc(18px + env(safe-area-inset-bottom,0px))', 'z-index:99999',
+      'padding:11px 20px', 'border-radius:999px',
+      'background:linear-gradient(180deg,#1a130b,#0c0a08)',
+      'color:#f0c674', 'border:1px solid #a37b17',
+      'font:600 14px/1 Inter,system-ui,sans-serif', 'letter-spacing:.02em',
+      'box-shadow:0 6px 22px rgba(0,0,0,.55),0 0 0 1px rgba(200,155,60,.12) inset',
+      'cursor:pointer', 'opacity:0', 'transition:opacity .35s ease',
+      '-webkit-tap-highlight-color:transparent'
+    ].join(';');
+    document.body.appendChild(b);
+    requestAnimationFrame(function () { b.style.opacity = '1'; });
+    b.addEventListener('click', function () {
+      if (!deferred) { b.remove(); return; }
+      deferred.prompt();
+      deferred.userChoice.finally(function () { deferred = null; b.remove(); });
+    });
+    return b;
+  }
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault();
+    deferred = e;
+    if (document.body) makeChip();
+    else window.addEventListener('DOMContentLoaded', makeChip);
+  });
+  window.addEventListener('appinstalled', function () {
+    deferred = null;
+    var c = document.getElementById('pwrInstallChip');
+    if (c) c.remove();
+  });
 })();
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -132,7 +241,29 @@
     
     --text: #f0e6d2;                   /* mármore claro / pergaminho */
     --text-2: #b8a586;                 /* dourado fosco */
-    --text-3: #6b5c47;                 /* bronze escurecido */
+    /* Clareado (era #6b5c47): dava 2,78:1 sobre o card — abaixo do mínimo
+       legível (4,5:1). Mesma tonalidade de bronze, agora 4,6:1. Faz
+       diferença real lendo o app na academia, com suor e luz ruim. */
+    --text-3: #937e61;                 /* bronze escurecido */
+
+    /* === LINGUAGEM VISUAL — "pedra lavrada" =========================
+       Uma linguagem só, aplicada em todo componente:
+       · Raios: 0 = estrutura full-bleed (tabs de dia, banners de borda a
+         borda) · 5px = controles (botões, inputs, chips, abas) · 8px =
+         cards internos · 12px = cards flutuantes (toasts, opções de modal).
+       · Rótulos/micro-labels: JetBrains Mono 10px 700, caps, ls .12em.
+       · Botões: receita do EXPORTAR (mono caps, borda --gold-deep,
+         gradiente elev->done), altura mínima 44px.
+       · Ícones: tipográficos (▸ ⇄ ▲ ×). Emoji só na gamificação.
+       · Cores: SOMENTE os tokens abaixo — nada de paleta paralela.    */
+    --r-ctl: 5px;                      /* controles */
+    --r-card: 8px;                     /* cards internos */
+    --r-float: 12px;                   /* cards flutuantes */
+    --surface-1: rgba(255,255,255,0.03);      /* relevo neutro sutil */
+    --surface-gold: rgba(200,155,60,0.09);    /* relevo dourado */
+    --edge-gold: rgba(200,155,60,0.28);       /* borda dourada suave */
+    --ok: #7ee0a0;                     /* sucesso (verde único do app) */
+    --danger-soft: #e08573;            /* erro/aviso em texto corrido */
 
     /* === Motion design — tokens de easing/duração (reuso global) === */
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);       /* desaceleração natural (expo) */
@@ -145,7 +276,9 @@
     /* Dourado queimado — o herói da paleta */
     --gold: #c89b3c;                   /* dourado queimado principal */
     --gold-bright: #f0c674;            /* dourado vibrante (hover/glow) */
-    --gold-deep: #8b6914;              /* dourado escuro/sombra */
+    /* Clareado (era #8b6914): 3,54:1 sobre o card. Como é usado em texto
+       pequeno (Notas, Substituir, Aquecer, 10px), precisava de 4,5:1. */
+    --gold-deep: #a37b17;              /* dourado escuro/sombra */
     --gold-pale: #e8c97d;              /* dourado claro (texto) */
     
     /* Bronze para detalhes secundários */
@@ -224,6 +357,33 @@
     justify-content: space-between;
     align-items: center;
     padding: 16px 18px 12px;
+    flex-wrap: wrap;
+    row-gap: 10px;
+  }
+  /* Em telas de celular o conjunto logo + W1..DLD + botões não cabia numa
+     linha só (a página ganhava rolagem lateral e o botão GYM ficava fora da
+     tela). Aqui o logo fica na 1ª linha e os controles na 2ª, ocupando a
+     largura toda — nada de scroll horizontal. */
+  @media (max-width: 520px) {
+    .header-row { padding: 14px 14px 10px; }
+    .header-row .logo { flex: 1 1 100%; }
+    .header-row .right-cluster {
+      flex: 1 1 100%;
+      justify-content: space-between;
+      margin-left: 0;
+      /* Rede de segurança: com os botões maiores (alvo de toque de 44px),
+         em telas muito estreitas a linha quebra em vez de estourar a
+         largura e criar rolagem lateral. */
+      flex-wrap: wrap;
+      row-gap: 8px;
+    }
+    .header-row .right-cluster .info-btn:first-of-type { margin-left: 0; }
+  }
+  /* Telas bem estreitas (≤360px): encolhe a LARGURA dos botões, mantendo
+     os 44px de ALTURA — o alvo continua confortável e tudo cabe numa linha. */
+  @media (max-width: 360px) {
+    .week-btn { min-width: 36px; padding: 13px 7px; }
+    .info-btn { min-width: 38px; padding: 14px 7px; margin-left: 5px; }
   }
   
   .logo {
@@ -257,20 +417,24 @@
     padding: 3px;
     border-radius: 0;
     box-shadow: inset 0 1px 0 rgba(0,0,0,0.4), 0 1px 0 rgba(200,155,60,0.08);
+    border-radius: calc(var(--r-ctl) + 2px);
   }
   
   .week-btn {
     background: transparent;
     color: var(--text-3);
     border: 1px solid transparent;
+    border-radius: var(--r-ctl);
     font-family: 'JetBrains Mono', monospace;
     font-weight: 700;
     font-size: 10px;
     letter-spacing: 0.1em;
-    padding: 7px 10px;
+    /* Era 36×27 — pequeno demais pra trocar de semana com a mão suada. */
+    padding: 13px 12px;
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    min-width: 36px;
+    min-width: 44px;
+    min-height: 44px;
     position: relative;
   }
   
@@ -314,7 +478,8 @@
     font-weight: 700;
     font-size: 12px;
     letter-spacing: 0.12em;
-    padding: 16px 0 12px;
+    padding: 16px 0 13px;
+    min-height: 44px;
     cursor: pointer;
     position: relative;
     transition: all 0.25s ease;
@@ -883,8 +1048,8 @@
   
   .ex-stat-label {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.15em;
+    font-size: 10px;
+    letter-spacing: 0.12em;
     color: var(--gold-deep);
     text-transform: uppercase;
     font-weight: 700;
@@ -916,6 +1081,10 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    /* Em telas muito estreitas o selo de equipamento desce de linha em
+       vez de estourar a largura (320px vazava 9px com MÁQUINA). */
+    flex-wrap: wrap;
+    row-gap: 9px;
     margin-top: 14px;
     padding-top: 12px;
     border-top: 1px dashed var(--border-bright);
@@ -923,8 +1092,8 @@
   
   .ex-load-label {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.15em;
+    font-size: 10px;
+    letter-spacing: 0.12em;
     color: var(--gold-deep);
     text-transform: uppercase;
     font-weight: 700;
@@ -935,12 +1104,15 @@
     border: 1px solid var(--border-bright);
     color: var(--gold-pale);
     font-family: 'JetBrains Mono', monospace;
-    font-size: 14px;
+    /* 16px evita o zoom automático do iOS ao focar o campo; e o alvo passou
+       de 80×32 para 92×44 — é o controle mais tocado do app, com a mão suada. */
+    font-size: 16px;
     font-weight: 700;
-    padding: 7px 8px;
-    width: 80px;
+    padding: 10px 8px;
+    width: 92px;
+    min-height: 44px;
     text-align: center;
-    border-radius: 0;
+    border-radius: var(--r-ctl);
     appearance: none;
     -webkit-appearance: none;
   }
@@ -955,6 +1127,79 @@
     font-size: 12px;
     color: var(--text-3);
   }
+
+  /* === Etiqueta de equipamento + tradução da carga ============ */
+  .ex-equip {
+    margin-left: auto;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    padding: 4px 8px;
+    border-radius: var(--r-ctl);
+    cursor: pointer;
+    background: var(--surface-1);
+    border: 1px solid var(--border-bright);
+    color: var(--text-3);
+    transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+    white-space: nowrap;
+  }
+  .ex-equip:hover, .ex-equip:active { border-color: var(--gold); color: var(--gold-bright); }
+  /* Identidade por um PONTO de cor discreto; o selo em si fica na paleta
+     do app (texto pergaminho, borda bronze) — cromática equilibrada. */
+  .ex-equip::before {
+    content: '';
+    display: inline-block;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: 1px;
+    background: var(--gold);
+  }
+  .ex-equip.eq-barra::before   { background: #c89b3c; }
+  .ex-equip.eq-halter::before  { background: #7fa3c4; }
+  .ex-equip.eq-maquina::before { background: #86a882; }
+  .ex-equip.eq-corpo::before   { background: #bd8fa9; }
+  .ex-equip { color: var(--text-2); border-color: var(--border-bright); }
+
+  .ex-load-hint {
+    margin-top: 7px;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: var(--text-3);
+  }
+  .ex-load-hint:empty { display: none; }
+  .ex-load-hint strong { color: var(--text-2); font-weight: 700; }
+  .lh-main { display: block; }
+  .lh-side { opacity: 0.65; font-size: 10px; letter-spacing: 0.04em; }
+  .lh-plates {
+    background: none; border: none; padding: 0; cursor: pointer; text-align: left;
+    font: inherit; color: var(--text-2);
+    border-bottom: 1px dotted rgba(200,155,60,0.45);
+  }
+  .lh-plates:hover, .lh-plates:active { color: var(--gold-bright); }
+  .lh-warn { color: #e8c97d; }
+  .lh-nudge {
+    display: block; margin-top: 5px; padding: 6px 9px; border-radius: var(--r-card);
+    background: rgba(200,155,60,0.07); border-left: 2px solid rgba(200,155,60,0.5);
+    color: #e8c97d; font-size: 11px; line-height: 1.45;
+  }
+  .lh-nudge em { color: var(--gold-bright); font-style: normal; font-weight: 700; }
+
+  /* Folha de escolha do equipamento */
+  .equip-opt {
+    display: block; width: 100%; text-align: left; cursor: pointer;
+    padding: 13px 14px; margin-bottom: 9px; border-radius: var(--r-float);
+    background: var(--surface-1); border: 1px solid var(--border-bright);
+    transition: all 0.18s ease;
+  }
+  .equip-opt:hover, .equip-opt:active { border-color: var(--gold); }
+  .equip-opt.sel { border-color: var(--gold); background: rgba(200,155,60,0.10); }
+  .equip-opt-name { display: block; color: var(--gold-bright); font: 700 11px/1 'JetBrains Mono', monospace; letter-spacing: 0.12em; text-transform: uppercase; }
+  .equip-opt-desc { display: block; color: var(--text-3); font: 500 11.5px/1.45 'Inter', sans-serif; margin-top: 5px; }
+  .equip-auto { color: var(--text-3); font-family:'Cormorant Garamond',Georgia,serif; font-style:italic; font-size:13px; line-height:1.5; text-align:center; margin-top:6px; }
   
   .ex-load-prev {
     margin-left: auto;
@@ -981,6 +1226,55 @@
     transition: color 0.2s;
     font-weight: 700;
   }
+  /* Atalho do aquecimento — mesma linguagem dos outros atalhos do card */
+  .ex-warm-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: none;
+    color: var(--gold-deep);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 8px 0 0;
+    cursor: pointer;
+    transition: color 0.2s;
+    font-weight: 700;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .ex-warm-toggle:hover, .ex-warm-toggle:active { color: var(--gold-bright); }
+  .ex-warm-toggle .warm-icon { font-size: 11px; }
+
+  /* === ALVOS DE TOQUE (auditoria) =============================
+     Os atalhos do card mediam ~19–22px de altura. Aqui eles ganham
+     44px de área tocável SEM ficarem visualmente maiores — o texto
+     continua do mesmo tamanho, só a região que aceita o dedo cresce. */
+  .ex-notes-toggle, .ex-swaps-toggle, .ex-warm-toggle {
+    min-height: 44px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+  /* Chips isolados: área ampliada por pseudo-elemento, preservando o desenho.
+     Altura 40px (não 44): o selo fica na mesma linha do campo de carga e uma
+     área maior começaria a roubar toques do controle mais importante do app. */
+  .ex-equip, .hud-stat { position: relative; }
+  .ex-equip::after, .hud-stat::after {
+    content: '';
+    position: absolute;
+    left: -6px; right: -6px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 40px;
+    z-index: 0;
+  }
+  .ex-equip > *, .hud-stat > * { position: relative; z-index: 1; }
+
+  /* O atalho das anilhas fica ENTRE o campo de carga e a linha de ações.
+     Aqui a área cresce por padding (empurra o layout) em vez de sobrepor —
+     esticar por cima roubaria o toque do campo de carga logo acima. */
+  .lh-plates { padding: 7px 0; }
   
   .ex-notes-toggle:hover, .ex-notes-toggle:active { 
     color: var(--gold-bright);
@@ -1412,6 +1706,28 @@
   .export-divider::before { left: 0; }
   .export-divider::after { right: 0; }
   
+  /* Confirmação inline da restauração (sem depender de confirm()) */
+  .import-confirm-card {
+    margin-top: 12px; padding: 14px; border-radius: var(--r-float); text-align: left;
+    background: rgba(168,50,50,0.06); border: 1px solid rgba(200,90,80,0.35);
+  }
+  .import-confirm-title { color:#e08573; font:700 14px/1.2 Inter,sans-serif; margin-bottom:6px; }
+  .import-confirm-text { color:#b8a586; font:500 12px/1.55 Inter,sans-serif; margin-bottom:12px; }
+  .import-confirm-text strong { color:#e08573; }
+  .import-confirm-row { display:flex; gap:9px; }
+  .import-confirm-no, .import-confirm-yes {
+    flex:1; min-height:44px; padding:11px 8px; border-radius:var(--r-ctl); cursor:pointer;
+    font:700 12px/1 Inter,sans-serif; letter-spacing:.03em;
+  }
+  .import-confirm-no { background:var(--surface-1); border:1px solid rgba(200,155,60,.2); color:#b8a586; }
+  .import-confirm-yes { background:linear-gradient(180deg,#a83232,#8d2626); border:1px solid #c04040; color:#ffe8e4; }
+  .import-warn, .import-ok {
+    margin-top:12px; padding:10px 12px; border-radius:var(--r-card);
+    font:500 12px/1.5 Inter,sans-serif; text-align:left;
+  }
+  .import-warn { color:#e08573; background:rgba(168,50,50,.07); border-left:2px solid #a83232; }
+  .import-ok { color:#7ee0a0; background:rgba(60,160,100,.07); border-left:2px solid #3c9a64; }
+
   .export-btn {
     width: 100%;
     max-width: 320px;
@@ -1492,9 +1808,15 @@
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.12em;
-    padding: 6px 9px;
+    /* Era 49×25 — abaixo do alvo de toque confortável. */
+    padding: 14px 12px;
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    border-radius: 0;
+    border-radius: var(--r-ctl);
     margin-left: 8px;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
@@ -2372,7 +2694,8 @@
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.2em;
-    padding: 14px;
+    padding: 15px 14px;
+    min-height: 44px;
     cursor: pointer;
     text-transform: uppercase;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -4751,6 +5074,11 @@
 
   /* ============ DESKTOP BREAKPOINT ============ */
   @media (min-width: 720px) {
+    /* Largura de leitura: em monitor largo o conteúdo não estica de
+       borda a borda — coluna central de 720px, fundo segue full-bleed. */
+    .header-row, .pwr-hud, .day-tabs, .heatmap, .hud-cry,
+    #main, .backup-banner { max-width: 720px; margin-left: auto; margin-right: auto; }
+    .backup-banner { border-left: 1px solid var(--edge-gold); border-right: 1px solid var(--edge-gold); }
     .header-row { padding: 18px 24px 14px; }
     .day-header { padding: 32px 24px 22px; }
     .day-title { font-size: 56px; }
@@ -4857,7 +5185,7 @@
 
   /* Zona de perigo — reset geral do app (apaga as duas plataformas) */
   .danger-section { border-top: 1px solid rgba(200,90,70,0.26); border-bottom: none; padding-bottom: 4px; }
-  .danger-section .settings-label-title { color: #e88a7e; }
+  .danger-section .settings-label-title { color: #e08573; }
   .reset-all-btn {
     margin-top: 14px; width: 100%;
     font-family: 'Cinzel', Georgia, serif; font-weight: 700;
@@ -4865,12 +5193,86 @@
     color: #f0b4ab;
     background: linear-gradient(180deg, rgba(120,38,30,0.30), rgba(80,24,18,0.30));
     border: 1px solid rgba(200,90,70,0.50);
-    border-radius: 11px; padding: 13px 16px;
+    border-radius: var(--r-ctl); padding: 13px 16px;
     cursor: pointer; -webkit-tap-highlight-color: transparent;
     transition: background 0.2s, border-color 0.2s, transform 0.1s;
   }
   .reset-all-btn:hover { background: linear-gradient(180deg, rgba(150,46,36,0.42), rgba(100,30,22,0.42)); border-color: rgba(220,110,90,0.72); }
   .reset-all-btn:active { transform: scale(0.985); }
+
+  /* ============================================================ */
+  /* === LEMBRETE DE BACKUP ==================================== */
+  /* ============================================================ */
+  .backup-banner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    padding: 13px 16px;
+    background: linear-gradient(180deg, rgba(200,155,60,0.10) 0%, rgba(200,155,60,0.03) 100%);
+    border-bottom: 1px solid var(--edge-gold);
+    border-top: 1px solid rgba(200,155,60,0.16);
+    box-shadow: inset 3px 0 0 var(--gold-deep);   /* filete lateral no lugar do ícone */
+  }
+  .backup-banner[hidden] { display: none; }
+  .backup-banner-text {
+    flex: 1 1 auto;
+    color: var(--text-2);
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 12px;
+    line-height: 1.45;
+  }
+  .backup-banner-text strong { color: var(--gold-bright); font-weight: 700; }
+  .backup-banner-actions { display: flex; gap: 7px; flex: 0 0 auto; }
+  .backup-banner-btn {
+    min-height: 44px;
+    padding: 8px 14px;
+    border-radius: var(--r-ctl);
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    -webkit-tap-highlight-color: transparent;
+    background: linear-gradient(180deg, var(--bg-elev) 0%, var(--bg-card-done) 100%);
+    border: 1px solid var(--gold-deep);
+    color: var(--gold);
+    box-shadow: inset 0 1px 0 rgba(240,198,116,0.08), 0 2px 12px rgba(0,0,0,0.4);
+    transition: border-color var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out);
+  }
+  .backup-banner-btn.ghost { border-color: var(--border-bright); color: var(--text-3); box-shadow: none; }
+  .backup-banner-btn:hover, .backup-banner-btn:active { border-color: var(--gold); color: var(--gold-bright); }
+  @media (max-width: 400px) {
+    .backup-banner { flex-wrap: wrap; row-gap: 9px; }
+    .backup-banner-text { flex: 1 1 calc(100% - 30px); }
+    .backup-banner-actions { flex: 1 1 100%; }
+    .backup-banner-btn { flex: 1 1 auto; }
+  }
+  .export-last {
+    text-align: center;
+    color: var(--text-3);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    margin-top: 10px;
+  }
+
+  /* ============================================================ */
+  /* === ACESSIBILIDADE: foco visível ========================== */
+  /* ============================================================ */
+  /* Vários controles ficavam sem nenhuma marca ao receber foco por
+     teclado (outline: 0). :focus-visible só aparece na navegação por
+     teclado — o toque no celular continua limpo, sem contorno. */
+  :focus-visible {
+    outline: 2px solid var(--gold-bright);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+  .modal :focus-visible,
+  .ex-load-input:focus-visible {
+    outline: 2px solid var(--gold-bright);
+    outline-offset: 1px;
+  }
 
   /* ============================================================ */
   /* === ACESSIBILIDADE: prefers-reduced-motion ================= */
@@ -5353,7 +5755,7 @@
   /* ---- Crista de dificuldade (no day-header) ----------------- */
   .diff-crest {
     display: inline-flex; align-items: center; gap: 10px;
-    margin: 14px auto 0; padding: 8px 13px;
+    margin: 14px auto 0; padding: 9px 13px; min-height: 44px;
     background: linear-gradient(180deg, rgba(26,22,18,0.85), rgba(14,11,8,0.85));
     border: 1px solid var(--border-bright); cursor: pointer;
     font: inherit; color: inherit; position: relative;
@@ -6167,6 +6569,7 @@
         <button class="week-btn deload" data-week="deload">DLD</button>
       </div>
       <button class="info-btn" id="rpeInfoBtn" title="Escala RPE">RPE?</button>
+      <button class="info-btn" id="toolsInfoBtn" title="Ferramentas: descanso, 1RM, evolução, barra e aquecimento" aria-label="Ferramentas">KIT</button>
       <button class="info-btn" id="gymInfoBtn" title="Horários das academias">GYM</button>
     </div>
   </div>
@@ -6176,6 +6579,11 @@
   <nav class="day-tabs" id="dayTabs" aria-label="Dias da semana"></nav>
   <div class="heatmap" id="heatmap" aria-label="Progresso da semana"></div>
 </header>
+
+<!-- Lembrete de backup: fica FORA do #main de propósito — o renderMain()
+     reescreve o main inteiro a cada troca de dia/semana, e aqui o aviso
+     sobrevive sem precisar ser recriado em todos os caminhos de render. -->
+<div class="backup-banner" id="backupBanner" role="status" hidden></div>
 
 <main id="main"></main>
 
@@ -6375,6 +6783,331 @@
         </div>
       </div>
       <button class="reset-all-btn" id="resetAllBtn" type="button">⚠ RESETAR APLICATIVO</button>
+    </div>
+  </div>
+</div>
+
+<!-- Escolha de equipamento do exercício -->
+<div class="modal-backdrop" id="equipModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="equipModalTitle">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="equipModalTitle">Equipamento</div>
+      <button class="modal-close" id="equipModalClose" aria-label="Fechar">×</button>
+    </div>
+    <div id="equipModalBody"></div>
+  </div>
+</div>
+
+<!-- Ferramentas Modal: cronômetro de descanso + calculadora de 1RM -->
+<style>
+  #toolsModal .modal { max-width: 460px; }
+  /* 5 abas em grade deliberada: 3 na primeira linha, 2 na segunda.
+     Rótulos na família tipográfica do app (mono caps) — sem emoji. */
+  .pwrtool-tabs { display:grid; grid-template-columns:repeat(6,1fr); gap:7px; margin:4px 0 18px; }
+  .pwrtool-tab {
+    grid-column: span 2; min-height:44px; padding:10px 4px; border-radius:var(--r-ctl); cursor:pointer;
+    background:var(--surface-1); border:1px solid var(--border-bright);
+    color:var(--text-3); font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700;
+    letter-spacing:.1em; text-transform:uppercase;
+    text-align:center; transition:border-color var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out), background var(--dur-2) var(--ease-out);
+  }
+  .pwrtool-tab:nth-child(4), .pwrtool-tab:nth-child(5) { grid-column: span 3; }
+  .pwrtool-tab:hover { border-color: var(--gold-deep); color: var(--text-2); }
+  .pwrtool-tab[aria-selected="true"] {
+    background:linear-gradient(180deg,rgba(200,155,60,.16),rgba(200,155,60,.04));
+    border-color:var(--gold-deep); color:var(--gold-bright);
+  }
+  .pwrtool-panel { display:none; }
+  .pwrtool-panel.active { display:block; }
+
+  /* ---- Timer ---- */
+  .pwrtimer-display {
+    font:700 62px/1 'JetBrains Mono',ui-monospace,monospace;
+    color:#f0c674; text-align:center; letter-spacing:.04em;
+    margin:6px 0 4px; font-variant-numeric:tabular-nums;
+    text-shadow:0 0 24px rgba(200,155,60,.22);
+  }
+  .pwrtimer-display.done { color:#7ee0a0; text-shadow:0 0 26px rgba(126,224,160,.4); }
+  .pwrtimer-sub { text-align:center; color:var(--text-3); font-family:'Cormorant Garamond',Georgia,serif; font-style:italic; font-size:14px; line-height:1.4; margin-bottom:16px; min-height:18px; }
+  .pwrtimer-presets { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-bottom:16px; }
+  .pwrtimer-preset {
+    min-height:44px; padding:9px 14px; border-radius:var(--r-ctl); cursor:pointer;
+    background:var(--surface-1); border:1px solid var(--border-bright);
+    color:var(--text-2); font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700;
+    transition:border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
+  }
+  .pwrtimer-preset:hover { border-color: var(--gold-deep); }
+  .pwrtimer-preset.sel { background:var(--surface-gold); border-color:var(--gold-deep); color:var(--gold-bright); }
+  .pwrtimer-preset:active { transform:scale(.94); }
+  .pwrtimer-controls { display:flex; gap:10px; }
+  .pwrtool-btn {
+    flex:1; min-height:44px; padding:14px 10px; border-radius:var(--r-ctl); cursor:pointer;
+    border:1px solid var(--gold-deep); color:var(--gold);
+    background:linear-gradient(180deg, var(--bg-elev) 0%, var(--bg-card-done) 100%);
+    font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700;
+    letter-spacing:.14em; text-transform:uppercase;
+    box-shadow: inset 0 1px 0 rgba(240,198,116,0.08), 0 2px 12px rgba(0,0,0,0.4);
+    transition: border-color var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out), transform var(--dur-1) var(--ease-out);
+    -webkit-tap-highlight-color:transparent;
+  }
+  .pwrtool-btn:hover { border-color: var(--gold); color: var(--gold-bright); }
+  .pwrtool-btn.primary { background:linear-gradient(180deg, rgba(200,155,60,0.18) 0%, rgba(200,155,60,0.05) 100%); color:var(--gold-bright); }
+  .pwrtool-btn:active { transform:scale(.97); }
+  .pwrtool-btn.ghost { color:var(--text-2); border-color:var(--border-bright); background:var(--surface-1); box-shadow:none; }
+
+  /* ---- 1RM ---- */
+  .pwr1rm-inputs { display:flex; gap:12px; margin-bottom:16px; }
+  .pwr1rm-field { flex:1; }
+  .pwr1rm-field label { display:block; color:var(--gold-deep); font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.12em; text-transform:uppercase; margin-bottom:8px; }
+  .pwr1rm-field input {
+    width:100%; box-sizing:border-box; padding:13px 12px; border-radius:var(--r-ctl);
+    background:rgba(0,0,0,.35); border:1px solid rgba(200,155,60,.25); color:#f0e6d2;
+    font:700 20px/1 'JetBrains Mono',monospace; text-align:center;
+  }
+  .pwr1rm-field input:focus { outline:none; border-color:#a37b17; }
+  .pwr1rm-result { text-align:center; margin:6px 0 14px; }
+  .pwr1rm-big { font:700 46px/1 'JetBrains Mono',monospace; color:#f0c674; font-variant-numeric:tabular-nums; }
+  .pwr1rm-big span { font-size:20px; color:#937e61; }
+  .pwr1rm-methods { color:var(--text-3); font:500 11px/1.5 'JetBrains Mono',monospace; margin-top:7px; }
+  .pwr1rm-table { width:100%; border-collapse:collapse; margin-top:8px; }
+  .pwr1rm-table th { color:var(--gold-deep); font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.1em; text-transform:uppercase; padding:7px 4px; text-align:center; border-bottom:1px solid var(--edge-gold); }
+  .pwr1rm-table td { color:#b8a586; font:600 14px/1 'JetBrains Mono',monospace; padding:8px 4px; text-align:center; border-bottom:1px solid rgba(255,255,255,.04); }
+  .pwr1rm-table td.pct { color:#b7935a; }
+  .pwr1rm-hint { color:var(--text-3); font-family:'Cormorant Garamond',Georgia,serif; font-style:italic; font-size:13px; line-height:1.55; text-align:center; margin-top:12px; }
+
+  /* ---- Evolução (progressão de carga) ---- */
+  .pwrprog-label { display:block; color:var(--gold-deep); font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.12em; text-transform:uppercase; margin-bottom:8px; }
+  .pwrprog-select {
+    width:100%; box-sizing:border-box; padding:12px; border-radius:var(--r-ctl); margin-bottom:14px;
+    background:rgba(0,0,0,.35); border:1px solid rgba(200,155,60,.25); color:#f0e6d2;
+    font:600 14px/1.2 Inter,sans-serif; -webkit-appearance:none; appearance:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8'><path d='M1 1l5 5 5-5' stroke='%238f8672' stroke-width='1.6' fill='none' stroke-linecap='round'/></svg>");
+    background-repeat:no-repeat; background-position:right 12px center;
+  }
+  .pwrprog-select:focus { outline:none; border-color:#a37b17; }
+  .pwrprog-select optgroup { background:#15110d; color:#937e61; }
+  .pwrprog-select option { background:#15110d; color:#f0e6d2; }
+
+  .pwrprog-modes { display:flex; gap:8px; margin-bottom:12px; }
+  .pwrprog-mode {
+    flex:1; min-height:44px; padding:9px 6px; border-radius:var(--r-ctl); cursor:pointer;
+    background:var(--surface-1); border:1px solid var(--border-bright);
+    color:var(--text-3); font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700;
+    letter-spacing:.1em; text-transform:uppercase;
+    transition:border-color var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out), background var(--dur-2) var(--ease-out);
+  }
+  .pwrprog-mode:hover:not([disabled]) { border-color: var(--gold-deep); color: var(--text-2); }
+  .pwrprog-mode.sel { background:var(--surface-gold); border-color:var(--gold-deep); color:var(--gold-bright); }
+  .pwrprog-mode[disabled] { opacity:.38; cursor:default; }
+
+  .pwrprog-chartwrap { width:100%; }
+  .pwrprog-chartwrap svg { display:block; width:100%; height:auto; overflow:visible; }
+  .pwrprog-empty { text-align:center; color:var(--text-3); font-family:'Cormorant Garamond',Georgia,serif; font-style:italic; font-size:14px; line-height:1.6; padding:30px 12px; }
+  .pwrprog-empty strong { color:#b8a586; display:block; margin-bottom:6px; font-size:14px; }
+
+  /* marcadores: alvo de toque generoso (>=8px visual, 20px de hit) */
+  .pwrprog-hit { fill:transparent; cursor:pointer; }
+  .pwrprog-dot { fill:#f0c674; stroke:#0c0a08; stroke-width:2; }
+  .pwrprog-dot.active { fill:#f0c674; r:7; }
+  .pwrprog-tip { min-height:18px; text-align:center; color:#b8a586; font:600 12px/1.5 'JetBrains Mono',monospace; margin-top:6px; }
+
+  .pwrprog-stats { display:flex; gap:8px; margin-top:12px; }
+  .pwrprog-stat { flex:1; text-align:center; padding:10px 4px; border-radius:var(--r-card); background:var(--surface-1); border:1px solid rgba(200,155,60,.12); }
+  .pwrprog-stat-v { color:#f0c674; font:700 17px/1 'JetBrains Mono',monospace; font-variant-numeric:tabular-nums; }
+  .pwrprog-stat-v.up { color:#7ee0a0; }
+  .pwrprog-stat-v.down { color:#e08573; }
+  .pwrprog-stat-l { color:var(--text-3); font:700 10px/1.3 'JetBrains Mono',monospace; letter-spacing:.08em; text-transform:uppercase; margin-top:5px; }
+
+  .pwrprog-tabletoggle {
+    width:100%; margin-top:12px; min-height:44px; padding:9px; border-radius:var(--r-ctl); cursor:pointer;
+    background:transparent; border:1px dashed rgba(200,155,60,.2); color:#937e61;
+    font:600 11px/1 Inter,sans-serif; letter-spacing:.04em;
+  }
+  .pwrprog-tablewrap table { width:100%; border-collapse:collapse; margin-top:10px; }
+  .pwrprog-tablewrap th { color:var(--gold-deep); font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.1em; text-transform:uppercase; padding:7px 4px; text-align:center; border-bottom:1px solid var(--edge-gold); }
+  .pwrprog-tablewrap td { color:#b8a586; font:600 13px/1 'JetBrains Mono',monospace; padding:8px 4px; text-align:center; border-bottom:1px solid rgba(255,255,255,.04); }
+
+  /* ---- Montagem da barra ---- */
+  .pwrbar-viz { margin-top:14px; }
+  /* max-height evita que poucas anilhas virem um desenho gigante:
+     o viewBox preserva a proporção e centraliza dentro da caixa menor. */
+  .pwrbar-viz svg { display:block; width:100%; height:auto; max-height:132px; }
+  .pwrbar-summary {
+    margin-top:12px; text-align:center; color:#f0c674;
+    font:700 15px/1.5 'JetBrains Mono',monospace;
+  }
+  .pwrbar-summary .side { color:var(--gold-deep); font-size:10px; font-family:'JetBrains Mono',monospace; font-weight:700; letter-spacing:.12em; text-transform:uppercase; display:block; margin-bottom:5px; }
+  .pwrbar-note { margin-top:10px; text-align:center; font:600 12px/1.5 Inter,sans-serif; min-height:18px; }
+  .pwrbar-note.ok { color:#7ee0a0; }
+  .pwrbar-note.warn { color:#e8c97d; }
+  .pwrbar-note.err { color:#e08573; }
+
+  /* ---- Aquecimento ---- */
+  .pwrwarm-list { margin-top:6px; }
+  .pwrwarm-row {
+    display:flex; align-items:center; gap:11px;
+    padding:11px 12px; margin-bottom:7px; border-radius:var(--r-card);
+    background:var(--surface-1); border:1px solid var(--border-bright);
+  }
+  .pwrwarm-row.work {
+    background:linear-gradient(180deg,rgba(200,155,60,.15),rgba(200,155,60,.04));
+    border-color:#a37b17;
+  }
+  .pwrwarm-pct {
+    flex:0 0 48px; text-align:center; color:var(--gold-deep);
+    font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.08em; text-transform:uppercase;
+  }
+  .pwrwarm-row.work .pwrwarm-pct { color:#f0c674; }
+  .pwrwarm-kg {
+    flex:0 0 auto; min-width:74px; color:#f0e6d2;
+    font:700 17px/1 'JetBrains Mono',monospace; font-variant-numeric:tabular-nums;
+  }
+  .pwrwarm-row.work .pwrwarm-kg { color:#f0c674; }
+  .pwrwarm-kg small { font-size:11px; color:#937e61; font-weight:500; }
+  .pwrwarm-reps {
+    flex:0 0 auto; color:var(--text-2); font:700 12px/1 'JetBrains Mono',monospace;
+    padding:5px 9px; border-radius:var(--r-ctl); background:rgba(0,0,0,.28);
+  }
+  .pwrwarm-plates {
+    flex:1 1 auto; text-align:right; color:#937e61;
+    font:600 10.5px/1.35 'JetBrains Mono',monospace;
+  }
+</style>
+<div class="modal-backdrop" id="toolsModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="toolsModalTitle">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="toolsModalTitle">Ferramentas</div>
+      <button class="modal-close" id="toolsModalClose" aria-label="Fechar">×</button>
+    </div>
+
+    <div class="pwrtool-tabs" role="tablist">
+      <button class="pwrtool-tab" id="toolTabTimer" role="tab" aria-selected="true" aria-controls="toolPanelTimer">Descanso</button>
+      <button class="pwrtool-tab" id="toolTab1rm" role="tab" aria-selected="false" aria-controls="toolPanel1rm">1RM</button>
+      <button class="pwrtool-tab" id="toolTabProg" role="tab" aria-selected="false" aria-controls="toolPanelProg">Evolução</button>
+      <button class="pwrtool-tab" id="toolTabBar" role="tab" aria-selected="false" aria-controls="toolPanelBar">Barra</button>
+      <button class="pwrtool-tab" id="toolTabWarm" role="tab" aria-selected="false" aria-controls="toolPanelWarm">Aquecer</button>
+    </div>
+
+    <!-- TIMER -->
+    <div class="pwrtool-panel active" id="toolPanelTimer" role="tabpanel" aria-labelledby="toolTabTimer">
+      <div class="pwrtimer-display" id="timerDisplay">01:30</div>
+      <div class="pwrtimer-sub" id="timerSub">Descanso entre séries</div>
+      <div class="pwrtimer-presets" id="timerPresets">
+        <button class="pwrtimer-preset" data-sec="60">1:00</button>
+        <button class="pwrtimer-preset sel" data-sec="90">1:30</button>
+        <button class="pwrtimer-preset" data-sec="120">2:00</button>
+        <button class="pwrtimer-preset" data-sec="180">3:00</button>
+        <button class="pwrtimer-preset" data-sec="300">5:00</button>
+      </div>
+      <div class="pwrtimer-controls">
+        <button class="pwrtool-btn ghost" id="timerAdd15" type="button">+15s</button>
+        <button class="pwrtool-btn primary" id="timerToggle" type="button">INICIAR</button>
+        <button class="pwrtool-btn ghost" id="timerReset" type="button">ZERAR</button>
+      </div>
+    </div>
+
+    <!-- 1RM -->
+    <div class="pwrtool-panel" id="toolPanel1rm" role="tabpanel" aria-labelledby="toolTab1rm">
+      <div class="pwr1rm-inputs">
+        <div class="pwr1rm-field">
+          <label for="rmWeight">Peso (kg)</label>
+          <input id="rmWeight" type="number" inputmode="decimal" min="0" step="0.5" placeholder="100" value="100">
+        </div>
+        <div class="pwr1rm-field">
+          <label for="rmReps">Reps</label>
+          <input id="rmReps" type="number" inputmode="numeric" min="1" max="15" step="1" placeholder="5" value="5">
+        </div>
+      </div>
+      <div class="pwr1rm-result">
+        <div class="pwr1rm-big" id="rmResult">—<span> kg</span></div>
+        <div class="pwr1rm-methods" id="rmMethods">1RM estimado</div>
+      </div>
+      <table class="pwr1rm-table">
+        <thead><tr><th>%1RM</th><th>Carga</th><th>Reps ~</th></tr></thead>
+        <tbody id="rmTableBody"></tbody>
+      </table>
+      <div class="pwr1rm-hint">Estimativa (Epley + Brzycki). Confiável até ~8 reps; acima disso, margem cresce.</div>
+    </div>
+
+    <!-- EVOLUÇÃO (progressão de carga) -->
+    <div class="pwrtool-panel" id="toolPanelProg" role="tabpanel" aria-labelledby="toolTabProg">
+      <label class="pwrprog-label" for="progExercise">Exercício</label>
+      <select id="progExercise" class="pwrprog-select"></select>
+
+      <div class="pwrprog-modes" id="progModes" role="group" aria-label="Período">
+        <button class="pwrprog-mode sel" data-mode="block" type="button">Bloco atual</button>
+        <button class="pwrprog-mode" data-mode="history" type="button">Histórico</button>
+      </div>
+
+      <div class="pwrprog-chartwrap" id="progChart"></div>
+      <div class="pwrprog-tip" id="progTip" role="status" aria-live="polite"></div>
+
+      <div class="pwrprog-stats" id="progStats"></div>
+
+      <button class="pwrprog-tabletoggle" id="progTableToggle" type="button" aria-expanded="false">▸ Ver valores em tabela</button>
+      <div class="pwrprog-tablewrap" id="progTableWrap" hidden></div>
+    </div>
+
+    <!-- MONTAGEM DA BARRA -->
+    <div class="pwrtool-panel" id="toolPanelBar" role="tabpanel" aria-labelledby="toolTabBar">
+      <div class="pwr1rm-inputs">
+        <div class="pwr1rm-field" style="flex:1.15;">
+          <label for="barTarget">Peso alvo (kg)</label>
+          <input id="barTarget" type="number" inputmode="decimal" min="0" step="2.5" placeholder="100" value="100">
+        </div>
+        <div class="pwr1rm-field">
+          <label for="barWeight">Barra</label>
+          <select id="barWeight" class="pwrprog-select" style="margin-bottom:0; padding:13px 10px; font-size:15px; text-align:center;">
+            <option value="20" selected>20 kg</option>
+            <option value="15">15 kg</option>
+            <option value="10">10 kg</option>
+            <option value="0">Sem barra</option>
+          </select>
+        </div>
+      </div>
+
+      <label class="pwrprog-label" for="barCollars">Presilhas</label>
+      <select id="barCollars" class="pwrprog-select">
+        <option value="0" selected>Sem presilha (0 kg)</option>
+        <option value="1">Molas simples (~1 kg o par)</option>
+        <option value="5">Presilha de competição (5 kg o par)</option>
+      </select>
+
+      <div class="pwrbar-viz" id="barViz"></div>
+      <div class="pwrbar-summary" id="barSummary"></div>
+      <div class="pwrbar-note" id="barNote"></div>
+      <div class="pwr1rm-hint">Anilhas consideradas: 25 · 20 · 15 · 10 · 5 · 2,5 · 1,25 kg (por lado).</div>
+    </div>
+
+    <!-- AQUECIMENTO -->
+    <div class="pwrtool-panel" id="toolPanelWarm" role="tabpanel" aria-labelledby="toolTabWarm">
+      <div class="pwr1rm-inputs">
+        <div class="pwr1rm-field" style="flex:1.15;">
+          <label for="warmWork">Peso de trabalho</label>
+          <input id="warmWork" type="number" inputmode="decimal" min="0" step="2.5" placeholder="100" value="100">
+        </div>
+        <div class="pwr1rm-field">
+          <label for="warmEquip">Equipamento</label>
+          <select id="warmEquip" class="pwrprog-select" style="margin-bottom:0; padding:13px 8px; font-size:14px; text-align:center;">
+            <option value="barra" selected>Barra</option>
+            <option value="halter">Halter</option>
+            <option value="maquina">Máquina</option>
+            <option value="corpo">Corpo</option>
+          </select>
+        </div>
+      </div>
+
+      <label class="pwrprog-label">Rampa</label>
+      <div class="pwrprog-modes" id="warmSteps" role="group" aria-label="Número de degraus">
+        <button class="pwrprog-mode" data-steps="3" type="button">Curta</button>
+        <button class="pwrprog-mode sel" data-steps="4" type="button">Padrão</button>
+        <button class="pwrprog-mode" data-steps="5" type="button">Completa</button>
+      </div>
+
+      <div class="pwrwarm-list" id="warmList"></div>
+      <div class="pwr1rm-hint" id="warmHint"></div>
     </div>
   </div>
 </div>
@@ -7464,6 +8197,9 @@ function incrementSetProgress(week, day, exId, maxSets) {
       const currentLoad = parseFloat(getLoad(week, day, exId));
       if (!isNaN(currentLoad) && currentLoad > 0) {
         updatePrHistory(exId, currentLoad);
+        // Registra a carga com DATA — é isto que constrói o histórico
+        // longitudinal (gráfico de Evolução › Histórico) ao longo dos meses.
+        recordLoadHistory(exId, currentLoad);
       }
     }
   }
@@ -7692,6 +8428,188 @@ function updatePrHistory(exId, loadValue) {
 
 function getPr(exId) {
   return STATE.prHistory[exId] || 0;
+}
+
+// === EQUIPAMENTO POR EXERCÍCIO ==============================
+// O campo de carga era um número solto: "60" não dizia se era barra,
+// halteres ou máquina. Aqui cada exercício ganha um TIPO de equipamento,
+// detectado pelo nome e corrigível pelo Pedro (a correção fica salva).
+//
+// CONVENÇÃO (confirmada com ele): o valor digitado é sempre o PESO TOTAL
+// movido em kg — halteres = soma dos dois, máquina = kg do pino, peso
+// corporal = só a carga adicional. Ou seja, a tonelagem/PODER continuam
+// exatamente como estão: nada aqui recalcula histórico.
+let EQUIP = {};
+function loadEquip() { EQUIP = readJson('pwr.equip', {}) || {}; }
+function saveEquip() { safeSet('pwr.equip', JSON.stringify(EQUIP)); }
+
+const EQUIP_META = {
+  barra:   { label: 'BARRA',   unit: 'kg', step: 2.5,  hint: 'Peso TOTAL na barra (com a barra).' },
+  halter:  { label: 'HALTER',  unit: 'kg', step: 4,    hint: 'Soma dos DOIS halteres.' },
+  maquina: { label: 'MÁQUINA', unit: 'kg', step: 5,    hint: 'Quilos marcados no pino/placa.' },
+  corpo:   { label: 'CORPO',   unit: '+kg', step: 1.25, hint: 'Só o peso ADICIONAL (fora o seu corpo).' }
+};
+
+// Primeira regra que casar vence — a ordem resolve os nomes ambíguos
+// do programa ("Barra fixa (ou pulldown)", "Búlgaro no Smith (ou halteres)").
+const EQUIP_RULES = [
+  [/barra fixa|pull-?up|paralelas|prancha|ab wheel|rollout|hiperextens/i, 'corpo'],
+  [/agachamento livre|supino reto|levantamento terra|terra com|stiff|rdl|pendlay|remada curvada|desenvolvimento militar|ohp|barra ez|\(barra\)|hip thrust|smith|encolhimento \(shrug\)/i, 'barra'],
+  [/halter|dumbbell/i, 'halter'],
+  [/eleva[çc][ãa]o lateral/i, 'halter'],
+  [/polia|cabo|m[áa]quina|pulldown|puxada|leg press|extensora|flexora|peck|cavalinho|t-bar|graviton|face pull|panturrilha|corda|banda|hack/i, 'maquina'],
+  [/barra|barbell|\bez\b|rosca direta|tr[íi]ceps testa|supino|remada|desenvolvimento|encolhimento|agachamento/i, 'barra']
+];
+
+function detectEquip(name) {
+  const n = String(name || '');
+  for (const [re, type] of EQUIP_RULES) if (re.test(n)) return type;
+  return 'barra';
+}
+// Exercício de UM halter só (suitcase, unilateral) — a tradução muda.
+function isUnilateral(name) { return /unilateral|suitcase/i.test(String(name || '')); }
+
+function getEquip(exId, name) {
+  if (EQUIP[exId] && EQUIP_META[EQUIP[exId]]) return EQUIP[exId];
+  return detectEquip(name);
+}
+function setEquip(exId, type) {
+  if (!EQUIP_META[type]) return;
+  EQUIP[exId] = type;
+  saveEquip();
+}
+
+// Valor "típico" desse exercício (mediana do que já foi usado), pra
+// detectar quando a carga digitada destoa muito do padrão.
+function typicalLoad(exId) {
+  const vals = [];
+  try {
+    for (const k in STATE.loads) {
+      const p = k.split('::');
+      if (p.length >= 3 && p[2] === exId) {
+        const v = parseFloat(STATE.loads[k]);
+        if (v > 0) vals.push(v);
+      }
+    }
+    ((LOAD_HISTORY && LOAD_HISTORY[exId]) || []).forEach(e => { if (e && e.v > 0) vals.push(e.v); });
+  } catch (e) {}
+  if (!vals.length) return 0;
+  vals.sort((a, b) => a - b);
+  return vals[Math.floor(vals.length / 2)];
+}
+
+// Escapa texto pra caber com segurança dentro de um atributo HTML
+function escAttr(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// Formata kg sem arredondar 1,25 → 1,5 (o fmt do 1RM arredonda p/ 0,5)
+function fmtKgExact(v) {
+  return (Math.round(v * 100) / 100).toLocaleString('pt-BR', { maximumFractionDigits: 2 });
+}
+
+// Anilhas por lado — mesma lógica da aba Barra, disponível no card.
+const CARD_PLATES = [25, 20, 15, 10, 5, 2.5, 1.25];
+function platesPerSide(total, barKg) {
+  let left = (total - barKg) / 2;
+  if (left < 0) return null;
+  const out = [];
+  CARD_PLATES.forEach(w => {
+    const n = Math.floor((left + 1e-6) / w);
+    if (n > 0) { out.push(n + '×' + fmtKgExact(w)); left -= n * w; }
+  });
+  return { txt: out.join(' + '), rest: Math.round(left * 1000) / 1000 };
+}
+
+// A "tradução" do número digitado + a checagem de sanidade.
+// É só leitura: não altera carga, tonelagem nem recorde.
+function loadHintHtml(exId, name, rawLoad) {
+  const v = parseFloat(String(rawLoad || '').replace(',', '.'));
+  const eq = getEquip(exId, name);
+  if (!v || isNaN(v) || v <= 0) return '';
+
+  let main = '';
+  if (eq === 'barra') {
+    const p = platesPerSide(v, 20);
+    if (p === null) main = '<span class="lh-warn">Menos que a barra (20 kg).</span>';
+    else if (!p.txt) main = 'Só a barra.';
+    else main = '<button type="button" class="lh-plates" data-bar-kg="' + v + '">' + p.txt +
+      ' <span class="lh-side">por lado</span>' + (p.rest > 0.001 ? ' <span class="lh-warn">(+' + fmtKgExact(p.rest * 2) + ' kg não fecha)</span>' : '') + '</button>';
+  } else if (eq === 'halter') {
+    if (isUnilateral(name)) {
+      main = '1 halter de <strong>' + fmtKgExact(v) + ' kg</strong>';
+    } else {
+      const each = v / 2;
+      main = '2 halteres de <strong>' + fmtKgExact(each) + ' kg</strong>';
+      // Halteres costumam existir de 2 em 2 kg — avisa o meio-termo estranho
+      if (Math.abs(each * 2 - Math.round(each * 2)) > 1e-6) main += ' <span class="lh-warn">(par incomum)</span>';
+    }
+  } else if (eq === 'corpo') {
+    main = 'Seu peso + <strong>' + fmtKgExact(v) + ' kg</strong>';
+  } else {
+    main = '<strong>' + fmtKgExact(v) + ' kg</strong> no pino';
+  }
+
+  // Checagem inteligente: destoou muito do padrão desse exercício?
+  let nudge = '';
+  const typ = typicalLoad(exId);
+  if (typ > 0) {
+    const ratio = v / typ;
+    if (eq === 'halter' && ratio > 0.4 && ratio < 0.62) {
+      nudge = '<span class="lh-nudge">Você costuma usar ' + fmtKgExact(typ) + ' aqui — digitou o peso de <em>um</em> halter só?</span>';
+    } else if (ratio < 0.6) {
+      nudge = '<span class="lh-nudge">Bem abaixo do teu padrão (' + fmtKgExact(typ) + ' kg). Confere?</span>';
+    } else if (ratio > 1.8) {
+      nudge = '<span class="lh-nudge">Bem acima do teu padrão (' + fmtKgExact(typ) + ' kg). Confere?</span>';
+    }
+  }
+  return '<span class="lh-main">' + main + '</span>' + nudge;
+}
+
+// Atualiza a dica ao vivo enquanto ele digita
+function refreshLoadHint(exId) {
+  const box = document.querySelector('[data-hint-for="' + exId + '"]');
+  const inp = document.querySelector('.ex-load-input[data-ex-id="' + exId + '"]');
+  if (!box || !inp) return;
+  // O nome vem do próprio input (data-ex-name). NÃO dá pra usar closest()
+  // pra achar o card: o input também tem data-ex-id, então closest devolvia
+  // o próprio input e o nome vinha vazio — tudo caía em "barra".
+  const name = inp.dataset.exName || '';
+  box.innerHTML = loadHintHtml(exId, name, inp.value);
+  // Reata o atalho das anilhas (o HTML foi recriado agora)
+  const pb = box.querySelector('.lh-plates');
+  if (pb) pb.addEventListener('click', () => {
+    const kg = parseFloat(pb.dataset.barKg);
+    if (kg > 0 && typeof window.pwrOpenBarWith === 'function') window.pwrOpenBarWith(kg);
+  });
+}
+
+// === HISTÓRICO LONGITUDINAL DE CARGA ========================
+// O app só guarda W1/W2/W3/deload do bloco atual — ou seja, a carga
+// antiga é sobrescrita a cada mesociclo. Este log preserva a série
+// temporal de verdade: uma entrada por exercício POR DIA (a última
+// do dia vence), pra alimentar o gráfico de Evolução › Histórico.
+let LOAD_HISTORY = {};
+function loadLoadHistory() {
+  LOAD_HISTORY = readJson('pwr.loadHistory', {}) || {};
+}
+function saveLoadHistory() { safeSet('pwr.loadHistory', JSON.stringify(LOAD_HISTORY)); }
+function recordLoadHistory(exId, value) {
+  try {
+    const v = parseFloat(value);
+    if (!exId || isNaN(v) || v <= 0) return;
+    const today = localDateKey(new Date());
+    if (!Array.isArray(LOAD_HISTORY[exId])) LOAD_HISTORY[exId] = [];
+    const arr = LOAD_HISTORY[exId];
+    const last = arr[arr.length - 1];
+    if (last && last.d === today) last.v = v;   // mesma data → atualiza
+    else arr.push({ d: today, v: v });
+    // Teto de segurança por exercício (evita crescer sem fim no storage)
+    if (arr.length > 120) arr.splice(0, arr.length - 120);
+    saveLoadHistory();
+  } catch (e) {}
 }
 
 // Recalcula PR de um exercício varrendo todas as cargas (usado quando carga é apagada/diminuída)
@@ -8092,13 +9010,33 @@ function renderMain() {
       </div>
       <div class="export-section fade-in">
         <div class="export-divider">Backup completo</div>
+        <button class="export-btn" id="shareBtn" style="display:none;">ENVIAR BACKUP</button>
         <button class="export-btn" id="exportBtn">EXPORTAR BACKUP</button>
+        <div class="export-last" id="exportLast">${(() => {
+          const lb = getLastBackup();
+          if (!lb) return 'Nenhum backup exportado ainda';
+          const d = daysBetweenKeys(lb, localDateKey(new Date()));
+          if (d <= 0) return 'Último backup: hoje';
+          if (d === 1) return 'Último backup: ontem';
+          return 'Último backup: ' + fmtDateKeyBR(lb) + ' (' + d + ' dias)';
+        })()}</div>
         <div class="export-hint">
           Gera arquivo único com TODO o histórico:<br>
           cargas, checks, substituições, skips com<br>
           justificativa, notas semanais, métricas de<br>
           aderência. Formato .md humano + JSON<br>
           estruturado pra análise programática.
+        </div>
+        <div class="export-divider" style="margin-top:22px;">Restaurar</div>
+        <button class="export-btn" id="importBtn">IMPORTAR BACKUP</button>
+        <input type="file" id="importFile" accept=".md,.json,.txt,application/json,text/markdown,text/plain" style="display:none;" aria-hidden="true">
+        <div id="importConfirm" role="status" aria-live="polite"></div>
+        <div class="export-hint">
+          Reinstalou o app e perdeu o progresso?<br>
+          Escolha um backup exportado aqui pra<br>
+          <strong>restaurar tudo</strong>: cargas, recordes,<br>
+          Poder/nível, sequência 🔥 e feitos.<br>
+          Substitui o estado atual — exporte antes.
         </div>
       </div>
     `;
@@ -8213,8 +9151,12 @@ function renderMain() {
           <div class="ex-prescription">${stats.join('')}</div>
           <div class="ex-load">
             <span class="ex-load-label">Carga</span>
-            <input type="number" inputmode="decimal" step="0.5" class="ex-load-input" data-ex-id="${ex.id}" value="${load}" placeholder="—">
-            <span class="ex-load-unit">kg</span>
+            <input type="number" inputmode="decimal" step="${EQUIP_META[getEquip(ex.id, displayName)].step}" class="ex-load-input" data-ex-id="${ex.id}" data-ex-name="${escAttr(displayName)}" value="${load}" placeholder="—"
+              aria-label="Carga em kg — ${escAttr(displayName)} (${EQUIP_META[getEquip(ex.id, displayName)].label})">
+            <span class="ex-load-unit">${EQUIP_META[getEquip(ex.id, displayName)].unit}</span>
+            <button type="button" class="ex-equip eq-${getEquip(ex.id, displayName)}" data-equip-for="${ex.id}"
+              aria-label="Equipamento: ${EQUIP_META[getEquip(ex.id, displayName)].label}. Tocar para mudar."
+              title="${EQUIP_META[getEquip(ex.id, displayName)].hint} Tocar para mudar.">${EQUIP_META[getEquip(ex.id, displayName)].label}</button>
             ${load && isPrLoad(ex.id, parseFloat(load)) ? '<span class="ex-load-pr" title="Recorde pessoal">⚜</span>' : ''}
             ${prevLoad ? `<span class="ex-load-prev">${prevLoad}</span>` : ''}
             ${(() => {
@@ -8226,10 +9168,16 @@ function renderMain() {
               return '';
             })()}
           </div>
+          <div class="ex-load-hint" data-hint-for="${ex.id}">${loadHintHtml(ex.id, displayName, load)}</div>
           <div class="ex-actions-row">
             <button class="ex-notes-toggle" data-ex-id="${ex.id}">
               <span class="arrow">▸</span> Notas
             </button>
+            ${parseFloat(load) > 0 ? `
+              <button class="ex-warm-toggle" data-warm-for="${ex.id}" data-warm-kg="${parseFloat(load)}" data-warm-eq="${getEquip(ex.id, displayName)}">
+                <span class="warm-icon">▲</span> Aquecer
+              </button>
+            ` : ''}
             ${ex.swaps && ex.swaps.length ? `
               <button class="ex-swaps-toggle" data-ex-id="${ex.id}">
                 <span class="swap-icon">⇄</span> ${activeSwap ? 'Trocar de novo' : 'Substituir'}
@@ -8556,6 +9504,55 @@ function updateSetTrackerInPlace(btn, exId, newCount, maxSets) {
   }
 }
 
+// === FOLHA DE ESCOLHA DO EQUIPAMENTO ========================
+// Corrige a detecção automática quando ela erra (ou quando você trocou
+// o exercício por outra variação). Fica salvo por exercício.
+function openEquipModal(exId) {
+  if (!exId) return;
+  const modal = document.getElementById('equipModal');
+  const body = document.getElementById('equipModalBody');
+  if (!modal || !body) return;
+
+  const inp = document.querySelector('.ex-load-input[data-ex-id="' + exId + '"]');
+  const name = (inp && inp.dataset.exName) || '';
+  const current = getEquip(exId, name);
+  const auto = detectEquip(name);
+
+  const DESCS = {
+    barra:   'Peso TOTAL na barra, contando a barra. Mostra as anilhas por lado.',
+    halter:  'Soma dos DOIS halteres. Mostra quanto pegar em cada mão.',
+    maquina: 'Quilos marcados no pino da máquina ou da polia.',
+    corpo:   'Só o peso ADICIONAL (cinto/colete). Seu corpo não entra na conta.'
+  };
+  body.innerHTML =
+    '<div style="color:var(--text-2);font:600 13px/1.5 Inter,sans-serif;margin-bottom:14px;">' + name + '</div>' +
+    Object.keys(EQUIP_META).map(k =>
+      '<button type="button" class="equip-opt' + (k === current ? ' sel' : '') + '" data-equip-set="' + k + '">' +
+        '<span class="equip-opt-name">' + EQUIP_META[k].label + (k === auto ? ' · automático' : '') + '</span>' +
+        '<span class="equip-opt-desc">' + DESCS[k] + '</span>' +
+      '</button>'
+    ).join('') +
+    '<div class="equip-auto">A escolha vale para este exercício em todas as semanas.</div>';
+
+  // Fechar (× e toque fora) — só liga uma vez
+  if (!modal.dataset.wired) {
+    modal.dataset.wired = '1';
+    const x = document.getElementById('equipModalClose');
+    if (x) x.addEventListener('click', () => closeModalEl(modal));
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeModalEl(modal); });
+  }
+
+  body.querySelectorAll('[data-equip-set]').forEach(b => {
+    b.addEventListener('click', () => {
+      setEquip(exId, b.dataset.equipSet);
+      if (navigator.vibrate) navigator.vibrate(12);
+      closeModalEl(modal);
+      renderMain();
+    });
+  });
+  openModalEl(modal);
+}
+
 function attachExerciseHandlers() {
   // Set trackers — incrementa contagem de séries a cada toque
   document.querySelectorAll('.set-tracker').forEach(btn => {
@@ -8625,6 +9622,34 @@ function attachExerciseHandlers() {
     });
   });
   
+  // Etiqueta de equipamento: abre a folha de escolha
+  document.querySelectorAll('.ex-equip').forEach(btn => {
+    btn.addEventListener('click', () => openEquipModal(btn.dataset.equipFor));
+  });
+
+  // Tradução da carga ao vivo (anilhas por lado / par de halteres / etc.)
+  document.querySelectorAll('.ex-load-input').forEach(input => {
+    input.addEventListener('input', () => refreshLoadHint(input.dataset.exId));
+  });
+
+  // Atalho: aquecimento do exercício (usa a carga e o equipamento do card)
+  document.querySelectorAll('.ex-warm-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const kg = parseFloat(btn.dataset.warmKg);
+      if (kg > 0 && typeof window.pwrOpenWarmWith === 'function') {
+        window.pwrOpenWarmWith(kg, btn.dataset.warmEq);
+      }
+    });
+  });
+
+  // Atalho: tocar nas anilhas abre a aba Barra já preenchida
+  document.querySelectorAll('.lh-plates').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const kg = parseFloat(btn.dataset.barKg);
+      if (kg > 0 && typeof window.pwrOpenBarWith === 'function') window.pwrOpenBarWith(kg);
+    });
+  });
+
   // Load inputs — com forge effect ao bater carga maior
   document.querySelectorAll('.ex-load-input').forEach(input => {
     const handleLoadChange = (e) => {
@@ -8882,6 +9907,715 @@ document.querySelectorAll('#modeSwitch .mode-opt').forEach(btn => {
     renderModeSwitch();
   });
 });
+
+// ============================================================
+// === FERRAMENTAS: cronômetro de descanso + calculadora 1RM ==
+// ============================================================
+// Módulo autocontido. Não toca no estado do treino; só usa o
+// sistema de modais existente (foco/escape/a11y).
+(function () {
+  const modal = document.getElementById('toolsModal');
+  if (!modal) return;
+  const openBtn = document.getElementById('toolsInfoBtn');
+  const closeBtn = document.getElementById('toolsModalClose');
+
+  openBtn && openBtn.addEventListener('click', () => openModalEl(modal));
+  closeBtn && closeBtn.addEventListener('click', () => closeModalEl(modal));
+  modal.addEventListener('click', (e) => { if (e.target === modal) closeModalEl(modal); });
+
+  // ---- Abas ----
+  const TABS = {
+    timer: { tab: document.getElementById('toolTabTimer'), panel: document.getElementById('toolPanelTimer') },
+    rm:    { tab: document.getElementById('toolTab1rm'),   panel: document.getElementById('toolPanel1rm') },
+    prog:  { tab: document.getElementById('toolTabProg'),  panel: document.getElementById('toolPanelProg') },
+    bar:   { tab: document.getElementById('toolTabBar'),   panel: document.getElementById('toolPanelBar') },
+    warm:  { tab: document.getElementById('toolTabWarm'),  panel: document.getElementById('toolPanelWarm') }
+  };
+  function selectTab(which) {
+    Object.keys(TABS).forEach(k => {
+      const on = (k === which);
+      TABS[k].tab.setAttribute('aria-selected', on ? 'true' : 'false');
+      TABS[k].panel.classList.toggle('active', on);
+    });
+  }
+  TABS.timer.tab.addEventListener('click', () => selectTab('timer'));
+  TABS.rm.tab.addEventListener('click', () => { selectTab('rm'); calc1rm(); });
+  TABS.prog.tab.addEventListener('click', () => { selectTab('prog'); refreshProgression(); });
+  TABS.bar.tab.addEventListener('click', () => { selectTab('bar'); calcBar(); });
+  TABS.warm.tab.addEventListener('click', () => { selectTab('warm'); renderWarm(); });
+
+  // ---- Cronômetro de descanso ----
+  const disp = document.getElementById('timerDisplay');
+  const sub = document.getElementById('timerSub');
+  const toggleBtn = document.getElementById('timerToggle');
+  const resetBtn = document.getElementById('timerReset');
+  const add15Btn = document.getElementById('timerAdd15');
+  const presetsWrap = document.getElementById('timerPresets');
+
+  let total = 90;          // segundos escolhidos
+  let remaining = 90;      // segundos restantes
+  let running = false;
+  let endAt = 0;           // timestamp alvo (robusto a throttling de aba)
+  let raf = null;
+
+  function fmt(s) {
+    s = Math.max(0, Math.ceil(s));
+    const m = Math.floor(s / 60);
+    const ss = String(s % 60).padStart(2, '0');
+    return String(m).padStart(2, '0') + ':' + ss;
+  }
+  function paint() {
+    disp.textContent = fmt(remaining);
+  }
+  function setTotal(sec) {
+    total = sec; remaining = sec; stop(false);
+    disp.classList.remove('done');
+    sub.textContent = 'Descanso entre séries';
+    paint();
+    presetsWrap.querySelectorAll('.pwrtimer-preset').forEach(p => {
+      p.classList.toggle('sel', parseInt(p.dataset.sec, 10) === sec);
+    });
+  }
+  function tick() {
+    remaining = (endAt - Date.now()) / 1000;
+    if (remaining <= 0) {
+      remaining = 0; paint(); finish(); return;
+    }
+    paint();
+    raf = requestAnimationFrame(tick);
+  }
+  function start() {
+    if (remaining <= 0) remaining = total;
+    running = true;
+    endAt = Date.now() + remaining * 1000;
+    disp.classList.remove('done');
+    sub.textContent = 'Contando…';
+    toggleBtn.textContent = 'PAUSAR';
+    if (raf) cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(tick);
+  }
+  function stop(keepLabel) {
+    running = false;
+    if (raf) { cancelAnimationFrame(raf); raf = null; }
+    toggleBtn.textContent = 'INICIAR';
+    if (!keepLabel) sub.textContent = 'Descanso entre séries';
+  }
+  function pause() {
+    remaining = Math.max(0, (endAt - Date.now()) / 1000);
+    stop(true);
+    sub.textContent = 'Pausado';
+    paint();
+  }
+  function finish() {
+    stop(true);
+    remaining = 0; paint();
+    disp.classList.add('done');
+    sub.textContent = 'Descanso concluído — vai!';
+    toggleBtn.textContent = 'INICIAR';
+    buzz();
+  }
+  function buzz() {
+    try { if (navigator.vibrate) navigator.vibrate([120, 60, 120, 60, 200]); } catch (e) {}
+    // Beep discreto (respeita o toggle de som do app, se existir)
+    let soundOn = true;
+    try { if (typeof sfxEnabled === 'function') soundOn = sfxEnabled(); } catch (e) {}
+    if (!soundOn) return;
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      const ctx = new AC();
+      [0, 0.18, 0.36].forEach((t, i) => {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = 'sine';
+        o.frequency.value = 660 + i * 220;
+        g.gain.setValueAtTime(0.0001, ctx.currentTime + t);
+        g.gain.exponentialRampToValueAtTime(0.25, ctx.currentTime + t + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + t + 0.16);
+        o.connect(g); g.connect(ctx.destination);
+        o.start(ctx.currentTime + t); o.stop(ctx.currentTime + t + 0.18);
+      });
+      setTimeout(() => { try { ctx.close(); } catch (e) {} }, 900);
+    } catch (e) {}
+  }
+
+  toggleBtn.addEventListener('click', () => { running ? pause() : start(); });
+  resetBtn.addEventListener('click', () => { setTotal(total); });
+  add15Btn.addEventListener('click', () => {
+    remaining = Math.max(0, remaining) + 15;
+    if (running) endAt = Date.now() + remaining * 1000;
+    disp.classList.remove('done');
+    paint();
+  });
+  presetsWrap.querySelectorAll('.pwrtimer-preset').forEach(p => {
+    p.addEventListener('click', () => setTotal(parseInt(p.dataset.sec, 10)));
+  });
+  // Reancorar ao voltar pra aba (a aba em background pode congelar o rAF)
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && running) { if (raf) cancelAnimationFrame(raf); raf = requestAnimationFrame(tick); }
+  });
+  setTotal(90);
+
+  // ---- Calculadora de 1RM ----
+  const wIn = document.getElementById('rmWeight');
+  const rIn = document.getElementById('rmReps');
+  const out = document.getElementById('rmResult');
+  const methods = document.getElementById('rmMethods');
+  const tbody = document.getElementById('rmTableBody');
+  const PCTS = [
+    { p: 100, r: '1' }, { p: 95, r: '2' }, { p: 90, r: '4' }, { p: 85, r: '6' },
+    { p: 80, r: '8' }, { p: 75, r: '10' }, { p: 70, r: '12' }, { p: 65, r: '15' }, { p: 60, r: '18' }
+  ];
+  function round(v) { return Math.round(v * 2) / 2; }   // 0,5 kg
+  function calc1rm() {
+    const w = parseFloat(String(wIn.value).replace(',', '.'));
+    const reps = parseInt(rIn.value, 10);
+    if (!w || !reps || reps < 1) {
+      out.innerHTML = '—<span> kg</span>';
+      methods.textContent = 'Preencha peso e reps';
+      tbody.innerHTML = '';
+      return;
+    }
+    // Epley e Brzycki; média das duas (mais estável)
+    const epley = w * (1 + reps / 30);
+    const brzycki = reps < 37 ? w * 36 / (37 - reps) : epley;
+    const est = (epley + brzycki) / 2;
+    out.innerHTML = round(est).toLocaleString('pt-BR') + '<span> kg</span>';
+    methods.textContent = reps === 1
+      ? '1RM real (1 rep)'
+      : 'Epley ' + round(epley).toLocaleString('pt-BR') + ' · Brzycki ' + round(brzycki).toLocaleString('pt-BR') + ' kg';
+    tbody.innerHTML = PCTS.map(row =>
+      '<tr><td class="pct">' + row.p + '%</td><td>' + round(est * row.p / 100).toLocaleString('pt-BR') + ' kg</td><td>' + row.r + '</td></tr>'
+    ).join('');
+  }
+  wIn.addEventListener('input', calc1rm);
+  rIn.addEventListener('input', calc1rm);
+  calc1rm();
+
+  // ---- Evolução: progressão de carga -------------------------------
+  // Forma escolhida: série ÚNICA (carga) ao longo do tempo → linha+área.
+  // O recorde (PR) entra como LINHA DE REFERÊNCIA tracejada com rótulo
+  // direto — de propósito NÃO é uma segunda cor: ouro vs. verde falha na
+  // separação para daltonismo (ΔE 7.9), então a identidade vem do rótulo.
+  const progSel = document.getElementById('progExercise');
+  const progModesWrap = document.getElementById('progModes');
+  const progChart = document.getElementById('progChart');
+  const progTip = document.getElementById('progTip');
+  const progStats = document.getElementById('progStats');
+  const progTableToggle = document.getElementById('progTableToggle');
+  const progTableWrap = document.getElementById('progTableWrap');
+  let progMode = 'block';
+  let progPoints = [];
+  let progTablePoints = [];
+
+  const WEEK_ORDER = [['1', 'W1'], ['2', 'W2'], ['3', 'W3'], ['deload', 'DLD']];
+
+  function exerciseIndex() {
+    const idx = {};
+    try {
+      Object.keys(SESSIONS).forEach(sk => {
+        const s = SESSIONS[sk];
+        if (!s || !Array.isArray(s.exercises)) return;
+        s.exercises.forEach(ex => {
+          if (ex && ex.id && !idx[ex.id]) {
+            idx[ex.id] = { name: ex.name || ex.id, session: s.title || sk, primary: !!ex.primary };
+          }
+        });
+      });
+    } catch (e) {}
+    return idx;
+  }
+
+  function blockSeries(exId) {
+    const byWeek = {};
+    const loads = (typeof STATE !== 'undefined' && STATE.loads) ? STATE.loads : {};
+    Object.keys(loads).forEach(k => {
+      const p = k.split('::');
+      if (p.length >= 3 && p[2] === exId) {
+        const v = parseFloat(loads[k]);
+        if (!isNaN(v) && v > 0) byWeek[p[0]] = Math.max(byWeek[p[0]] || 0, v);
+      }
+    });
+    return WEEK_ORDER.filter(w => byWeek[w[0]]).map(w => ({ label: w[1], v: byWeek[w[0]], sub: 'Semana ' + w[1] }));
+  }
+
+  function shortDate(iso) {
+    const p = String(iso).split('-');
+    return p.length === 3 ? p[2] + '/' + p[1] : String(iso);
+  }
+  function historySeries(exId) {
+    const arr = (typeof LOAD_HISTORY !== 'undefined' && LOAD_HISTORY[exId]) || [];
+    return arr.filter(e => e && e.v > 0).map(e => ({ label: shortDate(e.d), v: e.v, sub: shortDate(e.d) }));
+  }
+
+  function exercisesWithData() {
+    const idx = exerciseIndex();
+    const ids = new Set();
+    const loads = (typeof STATE !== 'undefined' && STATE.loads) ? STATE.loads : {};
+    Object.keys(loads).forEach(k => { const p = k.split('::'); if (p.length >= 3 && parseFloat(loads[k]) > 0) ids.add(p[2]); });
+    try { Object.keys(LOAD_HISTORY || {}).forEach(id => { if ((LOAD_HISTORY[id] || []).length) ids.add(id); }); } catch (e) {}
+    try { Object.keys((STATE && STATE.prHistory) || {}).forEach(id => { if (STATE.prHistory[id] > 0) ids.add(id); }); } catch (e) {}
+    return Array.from(ids)
+      .filter(id => idx[id])
+      .map(id => ({ id: id, name: idx[id].name, session: idx[id].session, primary: idx[id].primary }))
+      .sort((a, b) => (b.primary - a.primary) || a.session.localeCompare(b.session) || a.name.localeCompare(b.name));
+  }
+
+  function fmtKg(v) {
+    return (Math.round(v * 2) / 2).toLocaleString('pt-BR');
+  }
+
+  // Desenha o gráfico. Marcas finas (linha 2px), grade recessiva,
+  // rótulo direto só no último ponto, tooltip no toque/hover.
+  function drawChart(points, prVal) {
+    const W = 320, H = 178, padL = 38, padR = 18, padT = 20, padB = 30;
+    const iw = W - padL - padR, ih = H - padT - padB;
+    const vals = points.map(p => p.v).concat(prVal > 0 ? [prVal] : []);
+    let min = Math.min.apply(null, vals), max = Math.max.apply(null, vals);
+    if (min === max) { min = Math.max(0, min - 5); max = max + 5; }
+    else { const sp = (max - min) * 0.2; min = Math.max(0, min - sp); max = max + sp; }
+    const X = i => points.length === 1 ? padL + iw / 2 : padL + (i / (points.length - 1)) * iw;
+    const Y = v => padT + ih - ((v - min) / (max - min)) * ih;
+
+    // Grade + eixo Y (3 níveis, recessivos)
+    let grid = '';
+    for (let g = 0; g <= 2; g++) {
+      const gv = min + (max - min) * (g / 2);
+      const gy = Y(gv);
+      grid += '<line x1="' + padL + '" y1="' + gy.toFixed(1) + '" x2="' + (W - padR) + '" y2="' + gy.toFixed(1) + '" stroke="rgba(200,155,60,0.10)" stroke-width="1"/>';
+      grid += '<text x="' + (padL - 8) + '" y="' + (gy + 3.5).toFixed(1) + '" text-anchor="end" fill="#937e61" font-family="JetBrains Mono,monospace" font-size="9">' + fmtKg(gv) + '</text>';
+    }
+
+    // Linha de referência do PR (tracejada + rótulo direto).
+    // Rótulo à ESQUERDA de propósito: o valor atual é rotulado à direita,
+    // no último ponto — ancorar os dois no mesmo lado fazia os textos colidirem.
+    let prLayer = '', prY = null;
+    if (prVal > 0 && prVal >= min && prVal <= max) {
+      prY = Y(prVal);
+      prLayer =
+        '<line x1="' + padL + '" y1="' + prY.toFixed(1) + '" x2="' + (W - padR) + '" y2="' + prY.toFixed(1) + '" stroke="#937e61" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.85"/>' +
+        '<text x="' + (padL + 2) + '" y="' + (prY - 6).toFixed(1) + '" text-anchor="start" fill="#937e61" font-family="Inter,sans-serif" font-size="9" font-weight="700">PR ' + fmtKg(prVal) + 'kg</text>';
+    }
+
+    // Área + linha
+    let line = '', area = '';
+    points.forEach((p, i) => {
+      const cx = X(i), cy = Y(p.v);
+      line += (i === 0 ? 'M' : 'L') + cx.toFixed(1) + ' ' + cy.toFixed(1);
+    });
+    if (points.length > 1) {
+      area = line + 'L' + X(points.length - 1).toFixed(1) + ' ' + (padT + ih) + 'L' + X(0).toFixed(1) + ' ' + (padT + ih) + 'Z';
+    }
+
+    // Pontos + alvos de toque + rótulos do eixo X
+    let dots = '', hits = '', xlabels = '';
+    points.forEach((p, i) => {
+      const cx = X(i), cy = Y(p.v);
+      dots += '<circle class="pwrprog-dot" data-i="' + i + '" cx="' + cx.toFixed(1) + '" cy="' + cy.toFixed(1) + '" r="4.5"/>';
+      hits += '<circle class="pwrprog-hit" data-i="' + i + '" cx="' + cx.toFixed(1) + '" cy="' + cy.toFixed(1) + '" r="16"/>';
+      // Em séries longas, rotula no máximo ~6 marcas do eixo
+      const step = Math.ceil(points.length / 6);
+      if (points.length <= 6 || i % step === 0 || i === points.length - 1) {
+        xlabels += '<text x="' + cx.toFixed(1) + '" y="' + (H - 9) + '" text-anchor="middle" fill="#937e61" font-family="Inter,sans-serif" font-size="9" font-weight="600">' + p.label + '</text>';
+      }
+    });
+
+    // Rótulo direto SÓ do último valor (nunca um número em cada ponto)
+    const lastI = points.length - 1;
+    const lx = X(lastI), ly = Y(points[lastI].v);
+    const anchor = points.length === 1 ? 'middle' : 'end';
+    // Se o último ponto encostar na linha do PR, joga o rótulo pra BAIXO
+    // do ponto — senão o texto fica em cima do tracejado.
+    const nearPr = prY !== null && Math.abs(ly - prY) < 17;
+    const labelY = nearPr ? (ly + 17) : (ly - 11);
+    const label = '<text x="' + (points.length === 1 ? lx : lx - 2).toFixed(1) + '" y="' + labelY.toFixed(1) + '" text-anchor="' + anchor + '" fill="#f0c674" font-family="JetBrains Mono,monospace" font-size="12" font-weight="700">' + fmtKg(points[lastI].v) + ' kg</text>';
+
+    return '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Progressão de carga">' +
+      '<defs><linearGradient id="pwrProgFill" x1="0" y1="0" x2="0" y2="1">' +
+      '<stop offset="0%" stop-color="#f0c674" stop-opacity="0.30"/>' +
+      '<stop offset="100%" stop-color="#f0c674" stop-opacity="0.02"/>' +
+      '</linearGradient></defs>' +
+      grid + prLayer +
+      (area ? '<path d="' + area + '" fill="url(#pwrProgFill)"/>' : '') +
+      (points.length > 1 ? '<path d="' + line + '" fill="none" stroke="#f0c674" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' : '') +
+      dots + label + xlabels + hits +
+      '</svg>';
+  }
+
+  function buildTable(points) {
+    if (!points.length) return '';
+    const head = progMode === 'block' ? 'Semana' : 'Data';
+    let rows = '';
+    points.forEach((p, i) => {
+      const prev = i > 0 ? points[i - 1].v : null;
+      const d = prev == null ? '—' : (p.v - prev >= 0 ? '+' : '') + fmtKg(p.v - prev);
+      rows += '<tr><td>' + p.label + '</td><td>' + fmtKg(p.v) + ' kg</td><td>' + d + '</td></tr>';
+    });
+    return '<table><thead><tr><th>' + head + '</th><th>Carga</th><th>Δ</th></tr></thead><tbody>' + rows + '</tbody></table>';
+  }
+
+  function renderStats(points, prVal) {
+    if (!points.length) { progStats.innerHTML = ''; return; }
+    const cur = points[points.length - 1].v;
+    const first = points[0].v;
+    const diff = cur - first;
+    const pct = first > 0 ? Math.round((diff / first) * 100) : 0;
+    const cls = diff > 0 ? ' up' : (diff < 0 ? ' down' : '');
+    const sign = diff > 0 ? '+' : '';
+    progStats.innerHTML =
+      '<div class="pwrprog-stat"><div class="pwrprog-stat-v">' + fmtKg(cur) + '</div><div class="pwrprog-stat-l">Atual (kg)</div></div>' +
+      '<div class="pwrprog-stat"><div class="pwrprog-stat-v">' + (prVal > 0 ? fmtKg(prVal) : '—') + '</div><div class="pwrprog-stat-l">Recorde</div></div>' +
+      '<div class="pwrprog-stat"><div class="pwrprog-stat-v' + cls + '">' + (points.length > 1 ? sign + pct + '%' : '—') + '</div><div class="pwrprog-stat-l">' + (progMode === 'block' ? 'W1→W3' : 'Variação') + '</div></div>';
+  }
+
+  function highlight(i) {
+    const p = progPoints[i];
+    if (!p) return;
+    progChart.querySelectorAll('.pwrprog-dot').forEach(d => {
+      const on = d.getAttribute('data-i') === String(i);
+      d.setAttribute('r', on ? '7' : '4.5');
+      d.setAttribute('fill', on ? '#f0c674' : '#f0c674');
+    });
+    progTip.textContent = p.sub + ' · ' + fmtKg(p.v) + ' kg';
+  }
+
+  function refreshProgression() {
+    // (Re)popula o seletor preservando a escolha atual
+    const prev = progSel.value;
+    const list = exercisesWithData();
+    if (!list.length) {
+      progSel.innerHTML = '';
+      progSel.style.display = 'none';
+      progModesWrap.style.display = 'none';
+      progTableToggle.style.display = 'none';
+      progTableWrap.hidden = true;
+      progStats.innerHTML = '';
+      progTip.textContent = '';
+      progChart.innerHTML = '<div class="pwrprog-empty"><strong>Sem dados ainda</strong>Registre a carga de um exercício e conclua as séries — o gráfico aparece aqui.</div>';
+      return;
+    }
+    progSel.style.display = '';
+    progModesWrap.style.display = '';
+    progTableToggle.style.display = '';
+
+    const groups = {};
+    list.forEach(e => { (groups[e.session] = groups[e.session] || []).push(e); });
+    progSel.innerHTML = Object.keys(groups).map(g =>
+      '<optgroup label="' + g + '">' +
+      groups[g].map(e => '<option value="' + e.id + '">' + (e.primary ? '★ ' : '') + e.name + '</option>').join('') +
+      '</optgroup>'
+    ).join('');
+    // Preferência de seleção: (1) o que já estava escolhido, (2) um
+    // exercício da sessão de HOJE (é o que o Pedro quer ver ao abrir), (3) o 1º.
+    if (prev && list.some(e => e.id === prev)) {
+      progSel.value = prev;
+    } else {
+      let picked = '';
+      try {
+        const s = getSessionForDay(STATE.day);
+        if (s && Array.isArray(s.exercises)) {
+          const todayIds = s.exercises.map(x => x.id);
+          const match = list.find(e => todayIds.indexOf(e.id) !== -1);
+          if (match) picked = match.id;
+        }
+      } catch (e) {}
+      if (picked) progSel.value = picked;
+    }
+
+    drawCurrent();
+  }
+
+  function drawCurrent() {
+    const exId = progSel.value;
+    if (!exId) return;
+    const hist = historySeries(exId);
+    // "Histórico" só faz sentido com 2+ registros datados
+    const histBtn = progModesWrap.querySelector('[data-mode="history"]');
+    if (hist.length < 2) {
+      histBtn.setAttribute('disabled', 'disabled');
+      histBtn.title = 'Precisa de pelo menos 2 treinos concluídos em datas diferentes';
+      if (progMode === 'history') progMode = 'block';
+    } else {
+      histBtn.removeAttribute('disabled');
+      histBtn.title = '';
+    }
+    progModesWrap.querySelectorAll('.pwrprog-mode').forEach(b => b.classList.toggle('sel', b.dataset.mode === progMode));
+
+    const allPoints = progMode === 'history' ? hist : blockSeries(exId);
+    // No BLOCO, o deload é carga leve PRESCRITA — incluí-lo na linha faria a
+    // progressão "despencar" e a variação virar negativa por design. Então o
+    // gráfico/estatísticas usam as semanas de trabalho (W1–W3); o deload
+    // continua visível na tabela, pra não esconder dado nenhum.
+    const working = progMode === 'block' ? allPoints.filter(p => p.label !== 'DLD') : allPoints;
+    progPoints = working.length ? working : allPoints;
+    progTablePoints = allPoints;
+    const prVal = (typeof STATE !== 'undefined' && STATE.prHistory) ? (STATE.prHistory[exId] || 0) : 0;
+
+    if (!progPoints.length) {
+      progChart.innerHTML = '<div class="pwrprog-empty"><strong>Sem carga registrada</strong>Este exercício ainda não tem carga no bloco atual.</div>';
+      progStats.innerHTML = '';
+      progTip.textContent = '';
+      progTableWrap.innerHTML = '';
+      return;
+    }
+
+    progChart.innerHTML = drawChart(progPoints, prVal);
+    renderStats(progPoints, prVal);
+    progTableWrap.innerHTML = buildTable(progTablePoints);
+    progTip.textContent = progPoints.length > 1 ? 'Toque nos pontos para ver cada valor' : '';
+
+    // Interação: toque/hover nos alvos generosos
+    progChart.querySelectorAll('.pwrprog-hit').forEach(h => {
+      const i = parseInt(h.getAttribute('data-i'), 10);
+      h.addEventListener('mouseenter', () => highlight(i));
+      h.addEventListener('click', () => highlight(i));
+    });
+  }
+
+  progSel.addEventListener('change', drawCurrent);
+  progModesWrap.querySelectorAll('.pwrprog-mode').forEach(b => {
+    b.addEventListener('click', () => {
+      if (b.hasAttribute('disabled')) return;
+      progMode = b.dataset.mode;
+      drawCurrent();
+    });
+  });
+  progTableToggle.addEventListener('click', () => {
+    const open = progTableWrap.hidden;
+    progTableWrap.hidden = !open;
+    progTableToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    progTableToggle.textContent = (open ? '▾' : '▸') + ' Ver valores em tabela';
+  });
+
+  // ---- Montagem da barra (quais anilhas por lado) -------------------
+  const barTargetIn = document.getElementById('barTarget');
+  const barWeightIn = document.getElementById('barWeight');
+  const barCollarsIn = document.getElementById('barCollars');
+  const barViz = document.getElementById('barViz');
+  const barSummary = document.getElementById('barSummary');
+  const barNote = document.getElementById('barNote');
+
+  // Formatador EXATO (2 casas). Não dá pra usar o fmtKg do 1RM aqui: ele
+  // arredonda pra 0,5 e transformaria a anilha de 1,25 kg em "1,5".
+  function fmtP(v) {
+    return (Math.round(v * 100) / 100).toLocaleString('pt-BR', { maximumFractionDigits: 2 });
+  }
+
+  // Anilhas: peso, cor real (padrão IPF) e altura relativa (diâmetro).
+  // A cor é decorativa — cada anilha leva o NÚMERO escrito, então a
+  // leitura nunca depende só de cor.
+  const PLATES = [
+    { w: 25,   fill: '#c8382f', h: 1.00 },
+    { w: 20,   fill: '#2f62b5', h: 1.00 },
+    { w: 15,   fill: '#d9b02c', h: 1.00 },
+    { w: 10,   fill: '#3f9257', h: 0.92 },
+    { w: 5,    fill: '#e6e2d8', h: 0.70 },
+    { w: 2.5,  fill: '#c8382f', h: 0.56 },
+    { w: 1.25, fill: '#b9b3a6', h: 0.44 }
+  ];
+
+  function solvePlates(perSide) {
+    const used = [];
+    let left = perSide;
+    PLATES.forEach(pl => {
+      let n = Math.floor((left + 1e-6) / pl.w);
+      if (n > 0) { used.push({ plate: pl, n: n }); left -= n * pl.w; }
+    });
+    return { used: used, left: Math.round(left * 1000) / 1000 };
+  }
+
+  function drawBar(used) {
+    // Vista lateral: manga da barra + anilhas empilhadas da maior à menor.
+    const flat = [];
+    used.forEach(u => { for (let i = 0; i < u.n; i++) flat.push(u.plate); });
+    const H = 92, cy = H / 2;
+    const pw = 15, gap = 3;
+    const sleeveW = 26;
+    const W = Math.max(190, sleeveW + 14 + flat.length * (pw + gap) + 26);
+    let x = sleeveW + 12;
+    let discs = '';
+    flat.forEach(pl => {
+      const ph = Math.round(72 * pl.h);
+      const y = cy - ph / 2;
+      const dark = pl.w === 5 ? '#2a2620' : 'rgba(0,0,0,.45)';
+      discs +=
+        '<rect x="' + x + '" y="' + y + '" width="' + pw + '" height="' + ph + '" rx="3" ' +
+        'fill="' + pl.fill + '" stroke="rgba(0,0,0,.55)" stroke-width="1.5"/>' +
+        '<text x="' + (x + pw / 2) + '" y="' + (cy + 3.5) + '" text-anchor="middle" ' +
+        'font-family="JetBrains Mono,monospace" font-size="8.5" font-weight="700" fill="' + dark + '" ' +
+        'transform="rotate(-90 ' + (x + pw / 2) + ' ' + cy + ')">' + fmtP(pl.w) + '</text>';
+      x += pw + gap;
+    });
+    // Manga + colar da barra
+    const bar =
+      '<rect x="0" y="' + (cy - 7) + '" width="' + sleeveW + '" height="14" rx="3" fill="#6b6459" stroke="#8a8175" stroke-width="1"/>' +
+      '<rect x="' + sleeveW + '" y="' + (cy - 5) + '" width="' + (W - sleeveW) + '" height="10" rx="2" fill="#4a453d"/>' +
+      '<rect x="' + (sleeveW + 6) + '" y="' + (cy - 11) + '" width="5" height="22" rx="2" fill="#8a8175"/>';
+    return '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Anilhas por lado da barra">' + bar + discs + '</svg>';
+  }
+
+  function calcBar() {
+    const target = parseFloat(String(barTargetIn.value).replace(',', '.'));
+    const bar = parseFloat(barWeightIn.value) || 0;
+    const collars = parseFloat(barCollarsIn.value) || 0;
+    barNote.className = 'pwrbar-note';
+
+    if (!target || isNaN(target) || target <= 0) {
+      barViz.innerHTML = ''; barSummary.textContent = '';
+      barNote.textContent = 'Informe o peso alvo.';
+      return;
+    }
+    const loadable = target - bar - collars;
+    if (loadable < -1e-6) {
+      barViz.innerHTML = ''; barSummary.textContent = '';
+      barNote.classList.add('err');
+      barNote.textContent = 'Alvo menor que a barra + presilhas (' + fmtP(bar + collars) + ' kg).';
+      return;
+    }
+    if (loadable === 0) {
+      barViz.innerHTML = drawBar([]);
+      barSummary.innerHTML = '<span class="side">Por lado</span>Só a barra';
+      barNote.classList.add('ok');
+      barNote.textContent = 'Barra' + (collars ? ' + presilhas' : '') + ' já dão ' + fmtP(target) + ' kg.';
+      return;
+    }
+    const perSide = loadable / 2;
+    const sol = solvePlates(perSide);
+    barViz.innerHTML = drawBar(sol.used);
+
+    if (!sol.used.length) {
+      barSummary.innerHTML = '<span class="side">Por lado</span>—';
+    } else {
+      barSummary.innerHTML = '<span class="side">Por lado</span>' +
+        sol.used.map(u => u.n + '×' + fmtP(u.plate.w)).join('  +  ');
+    }
+    const realTotal = bar + collars + (perSide - sol.left) * 2;
+    if (sol.left > 0.001) {
+      barNote.classList.add('warn');
+      barNote.textContent = 'Não fecha exato: dá ' + fmtP(realTotal) + ' kg (faltam ' + fmtP(sol.left * 2) + ' kg no total).';
+    } else {
+      barNote.classList.add('ok');
+      barNote.textContent = 'Total exato: ' + fmtP(realTotal) + ' kg  ·  ' + fmtP(perSide) + ' kg por lado.';
+    }
+  }
+
+  // ---- Aquecimento: rampa até o peso de trabalho --------------------
+  const warmWorkIn = document.getElementById('warmWork');
+  const warmEquipIn = document.getElementById('warmEquip');
+  const warmStepsWrap = document.getElementById('warmSteps');
+  const warmList = document.getElementById('warmList');
+  const warmHint = document.getElementById('warmHint');
+  let warmSteps = 4;
+
+  // Incremento real de cada equipamento (o menor salto possível):
+  // barra 2,5 (1,25 por lado) · halter 4 (2 por halter) · máquina 5 · corpo 1,25
+  const WARM_INC = { barra: 2.5, halter: 4, maquina: 5, corpo: 2.5 };
+  const WARM_SCHEMES = { 3: [50, 70, 85], 4: [40, 60, 75, 88], 5: [40, 55, 70, 82, 92] };
+  function warmReps(p) { return p <= 50 ? 5 : p <= 65 ? 4 : p <= 75 ? 3 : p <= 85 ? 2 : 1; }
+  function roundInc(v, inc) { return Math.round(v / inc) * inc; }
+
+  function computeWarmup(work, equip, n) {
+    const inc = WARM_INC[equip] || 2.5;
+    const out = [];
+    if (equip === 'barra') out.push({ label: 'Barra', kg: 20, reps: 8 });
+    if (equip === 'corpo') out.push({ label: 'Só o corpo', kg: 0, reps: 6 });
+    (WARM_SCHEMES[n] || WARM_SCHEMES[4]).forEach(p => {
+      let kg = roundInc(work * p / 100, inc);
+      if (kg <= 0) return;
+      if (kg >= work) return;                                  // não passa do trabalho
+      if (equip === 'barra' && kg <= 20) return;                // já coberto pela barra vazia
+      if (out.some(s => Math.abs(s.kg - kg) < 1e-6)) return;    // sem degrau repetido
+      out.push({ pct: p, kg: kg, reps: warmReps(p) });
+    });
+    return out;
+  }
+
+  function renderWarm() {
+    const work = parseFloat(String(warmWorkIn.value).replace(',', '.'));
+    const equip = warmEquipIn.value;
+    if (!work || isNaN(work) || work <= 0) {
+      warmList.innerHTML = '';
+      warmHint.textContent = 'Informe o peso de trabalho.';
+      return;
+    }
+    const steps = computeWarmup(work, equip, warmSteps);
+    const rows = steps.map(s => {
+      const pct = s.label ? s.label : s.pct + '%';
+      let kgTxt, plates = '';
+      if (equip === 'halter') {
+        kgTxt = fmtP(s.kg) + ' <small>kg · 2×' + fmtP(s.kg / 2) + '</small>';
+      } else if (equip === 'corpo') {
+        kgTxt = s.kg > 0 ? '+' + fmtP(s.kg) + ' <small>kg</small>' : '<small>sem peso</small>';
+      } else {
+        kgTxt = fmtP(s.kg) + ' <small>kg</small>';
+        if (equip === 'barra') {
+          const pl = platesPerSide(s.kg, 20);
+          plates = (pl && pl.txt) ? pl.txt : (s.kg === 20 ? 'só a barra' : '');
+        }
+      }
+      return '<div class="pwrwarm-row"><span class="pwrwarm-pct">' + pct + '</span>' +
+        '<span class="pwrwarm-kg">' + kgTxt + '</span>' +
+        '<span class="pwrwarm-reps">' + s.reps + (s.reps === 1 ? ' rep' : ' reps') + '</span>' +
+        '<span class="pwrwarm-plates">' + plates + '</span></div>';
+    }).join('');
+
+    // Série de trabalho fecha a lista
+    let workKg, workPlates = '';
+    if (equip === 'halter') workKg = fmtP(work) + ' <small>kg · 2×' + fmtP(work / 2) + '</small>';
+    else if (equip === 'corpo') workKg = '+' + fmtP(work) + ' <small>kg</small>';
+    else {
+      workKg = fmtP(work) + ' <small>kg</small>';
+      if (equip === 'barra') { const pl = platesPerSide(work, 20); workPlates = (pl && pl.txt) ? pl.txt : ''; }
+    }
+    warmList.innerHTML = rows +
+      '<div class="pwrwarm-row work"><span class="pwrwarm-pct">TRABALHO</span>' +
+      '<span class="pwrwarm-kg">' + workKg + '</span>' +
+      '<span class="pwrwarm-reps">série</span>' +
+      '<span class="pwrwarm-plates">' + workPlates + '</span></div>';
+
+    warmHint.textContent = steps.length
+      ? 'Descanso curto nos degraus leves; 2–3 min antes da série de trabalho.'
+      : 'Carga leve demais para escalonar — vá direto à série de trabalho.';
+  }
+
+  warmWorkIn.addEventListener('input', renderWarm);
+  warmEquipIn.addEventListener('change', renderWarm);
+  warmStepsWrap.querySelectorAll('.pwrprog-mode').forEach(b => {
+    b.addEventListener('click', () => {
+      warmSteps = parseInt(b.dataset.steps, 10) || 4;
+      warmStepsWrap.querySelectorAll('.pwrprog-mode').forEach(x => x.classList.toggle('sel', x === b));
+      renderWarm();
+    });
+  });
+  renderWarm();
+
+  // Ponte usada pelo card: abre o aquecimento já preenchido
+  window.pwrOpenWarmWith = function (kg, equip) {
+    try {
+      warmWorkIn.value = String(kg);
+      if (equip && WARM_INC[equip]) warmEquipIn.value = equip;
+      selectTab('warm');
+      renderWarm();
+      openModalEl(modal);
+    } catch (e) {}
+  };
+
+  // Ponte usada pelo card do exercício: abre a aba Barra já preenchida
+  window.pwrOpenBarWith = function (kg) {
+    try {
+      barTargetIn.value = String(kg);
+      selectTab('bar');
+      calcBar();
+      openModalEl(modal);
+    } catch (e) {}
+  };
+
+  barTargetIn.addEventListener('input', calcBar);
+  barWeightIn.addEventListener('change', calcBar);
+  barCollarsIn.addEventListener('change', calcBar);
+  calcBar();
+})();
+
 // ============================================================
 // === MOTOR DE EVENTOS AMBIENTAIS OCASIONAIS =================
 // ============================================================
@@ -9091,9 +10825,214 @@ document.addEventListener('click', (e) => {
 // ============================================================
 // EXPORT WEEKLY REPORT
 // ============================================================
+// ============================================================
+// === LEMBRETE DE BACKUP =====================================
+// ============================================================
+// O backup só existe se você lembrar de exportar — e foi justamente
+// perder progresso que originou tudo isto. Aqui o app passa a cobrar
+// sozinho, sem virar chateação: avisa a cada 14 dias, dá pra adiar
+// por 7, e some assim que você exporta.
+const BACKUP_INTERVAL_DIAS = 14;
+const BACKUP_SNOOZE_DIAS = 7;
+
+function getLastBackup() { try { return localStorage.getItem('pwr.lastBackup') || ''; } catch (e) { return ''; } }
+function setLastBackup(key) { safeSet('pwr.lastBackup', key); }
+function getBackupSnooze() { try { return localStorage.getItem('pwr.backupSnooze') || ''; } catch (e) { return ''; } }
+function setBackupSnooze(key) { safeSet('pwr.backupSnooze', key); }
+
+// Diferença em dias entre duas chaves 'AAAA-MM-DD' (meio-dia evita
+// que horário de verão faça a conta pular ou perder um dia).
+function daysBetweenKeys(a, b) {
+  try {
+    const pa = String(a).split('-').map(Number), pb = String(b).split('-').map(Number);
+    const da = new Date(pa[0], pa[1] - 1, pa[2], 12, 0, 0);
+    const db = new Date(pb[0], pb[1] - 1, pb[2], 12, 0, 0);
+    return Math.round((db - da) / 86400000);
+  } catch (e) { return 0; }
+}
+function fmtDateKeyBR(key) {
+  const p = String(key).split('-');
+  return p.length === 3 ? p[2] + '/' + p[1] + '/' + p[0] : key;
+}
+
+// Só cobra quem tem o que perder.
+function hasMeaningfulData() {
+  try {
+    if (Object.keys(STATE.loads || {}).length) return true;
+    if (Object.keys(STATE.prHistory || {}).length) return true;
+    if (ACTIVITY && Object.keys(ACTIVITY).length) return true;
+  } catch (e) {}
+  return false;
+}
+
+// Primeira execução com dados: marca hoje como referência em vez de
+// já abrir cobrando — o aviso aparece 14 dias depois.
+function seedBackupReminder() {
+  if (!getLastBackup() && hasMeaningfulData()) setLastBackup(localDateKey(new Date()));
+}
+
+function backupDaysOverdue() {
+  const last = getLastBackup();
+  if (!last) return 0;
+  const today = localDateKey(new Date());
+  const snooze = getBackupSnooze();
+  if (snooze && daysBetweenKeys(today, snooze) > 0) return 0;   // adiado p/ frente
+  const d = daysBetweenKeys(last, today);
+  return d >= BACKUP_INTERVAL_DIAS ? d : 0;
+}
+
+function updateBackupBanner() {
+  const el = document.getElementById('backupBanner');
+  if (!el) return;
+  const dias = backupDaysOverdue();
+  if (!dias) { el.hidden = true; el.innerHTML = ''; return; }
+  el.innerHTML =
+    '<span class="backup-banner-text">Faz <strong>' + dias + ' dias</strong> desde o último backup. ' +
+      'Se o app sumir do celular, o que não estiver exportado se perde.</span>' +
+    '<span class="backup-banner-actions">' +
+      '<button type="button" class="backup-banner-btn" id="backupNowBtn">EXPORTAR</button>' +
+      '<button type="button" class="backup-banner-btn ghost" id="backupLaterBtn">DEPOIS</button>' +
+    '</span>';
+  el.hidden = false;
+  const now = document.getElementById('backupNowBtn');
+  const later = document.getElementById('backupLaterBtn');
+  // Prefere ENVIAR (bandeja do celular → Drive/WhatsApp) e cai no
+  // download sozinho onde compartilhar não existe.
+  if (now) now.addEventListener('click', () => {
+    try { shareBackup(); } catch (e) { try { generateAndDownloadReport(); } catch (e2) {} }
+  });
+  if (later) later.addEventListener('click', () => {
+    const d = new Date(); d.setDate(d.getDate() + BACKUP_SNOOZE_DIAS);
+    setBackupSnooze(localDateKey(d));
+    if (navigator.vibrate) navigator.vibrate(10);
+    updateBackupBanner();
+  });
+}
+
 function attachExportHandlers() {
   const btn = document.getElementById('exportBtn');
   if (btn) btn.addEventListener('click', generateAndDownloadReport);
+
+  // "Enviar" só aparece onde o celular sabe compartilhar arquivo —
+  // não adianta oferecer um botão que não faz nada no desktop.
+  const sBtn = document.getElementById('shareBtn');
+  if (sBtn) {
+    let canShareFiles = false;
+    try {
+      canShareFiles = !!(navigator.canShare && typeof File === 'function' &&
+        navigator.canShare({ files: [new File(['t'], 't.md', { type: 'text/markdown' })] }));
+    } catch (e) { canShareFiles = false; }
+    if (canShareFiles) {
+      sBtn.style.display = '';
+      sBtn.addEventListener('click', shareBackup);
+    }
+  }
+
+  // IMPORTAR / RESTAURAR — lê um backup gerado aqui e devolve TODO o
+  // progresso (cargas, checks, PRs, XP/nível, sequência, feitos, ajustes).
+  const impBtn = document.getElementById('importBtn');
+  const impInput = document.getElementById('importFile');
+  if (impBtn && impInput) {
+    impBtn.addEventListener('click', () => impInput.click());
+    impInput.addEventListener('change', (ev) => {
+      const file = ev.target.files && ev.target.files[0];
+      if (file) restoreFromFile(file);
+      impInput.value = '';   // permite reescolher o mesmo arquivo depois
+    });
+  }
+}
+
+// Extrai o objeto de chaves cruas (pwr.*) de um backup, seja ele um .json
+// puro ou o .md com o bloco ```json embutido. Aceita os dois formatos.
+function extractRestoreKeys(text) {
+  // 1) Tenta como JSON direto
+  let obj = null;
+  try { obj = JSON.parse(text); } catch (e) { obj = null; }
+  // 2) Se não for JSON puro, procura o bloco ```json ... ``` do backup .md
+  if (!obj) {
+    const m = text.match(/```json\s*([\s\S]*?)```/);
+    if (m) { try { obj = JSON.parse(m[1]); } catch (e) { obj = null; } }
+  }
+  if (!obj || typeof obj !== 'object') return null;
+  // Caminhos possíveis pras chaves cruas
+  if (obj.restore && obj.restore.keys && typeof obj.restore.keys === 'object') return obj.restore.keys;
+  if (obj.keys && typeof obj.keys === 'object') return obj.keys;
+  // Fallback: talvez o próprio objeto já seja o mapa de chaves pwr.*
+  const direct = {};
+  let hit = 0;
+  Object.keys(obj).forEach(k => { if (k.indexOf('pwr.') === 0) { direct[k] = obj[k]; hit++; } });
+  return hit ? direct : null;
+}
+
+function restoreFromFile(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    let keys = null;
+    try { keys = extractRestoreKeys(String(reader.result || '')); } catch (e) { keys = null; }
+    const box = document.getElementById('importConfirm');
+    if (!keys || !Object.keys(keys).length) {
+      showImportFeedback('✗ Arquivo inválido', false);
+      if (box) box.innerHTML = '<div class="import-warn">Não reconheci esse arquivo como backup do PWR. Use um arquivo gerado pelo próprio app (.md ou .json).</div>';
+      return;
+    }
+    // Confirmação INLINE (não usa confirm()/alert(), que podem falhar
+    // no app instalado em modo standalone).
+    askRestoreConfirm(keys);
+  };
+  reader.onerror = () => showImportFeedback('✗ Erro ao ler', false);
+  reader.readAsText(file);
+}
+
+function askRestoreConfirm(keys) {
+  const box = document.getElementById('importConfirm');
+  if (!box) { applyRestore(keys); return; }
+  const count = Object.keys(keys).length;
+  box.innerHTML =
+    '<div class="import-confirm-card">' +
+      '<div class="import-confirm-title">Restaurar ' + count + ' itens?</div>' +
+      '<div class="import-confirm-text">Isto <strong>substitui</strong> o progresso atual das duas plataformas. Se o estado de agora importa, exporte um backup antes.</div>' +
+      '<div class="import-confirm-row">' +
+        '<button type="button" class="import-confirm-no" id="restoreNo">Cancelar</button>' +
+        '<button type="button" class="import-confirm-yes" id="restoreYes">SIM, RESTAURAR</button>' +
+      '</div>' +
+    '</div>';
+  const no = document.getElementById('restoreNo');
+  const yes = document.getElementById('restoreYes');
+  if (no) no.addEventListener('click', () => { box.innerHTML = ''; });
+  if (yes) yes.addEventListener('click', () => applyRestore(keys));
+}
+
+function applyRestore(keys) {
+  const box = document.getElementById('importConfirm');
+  try {
+    // Remove as chaves pwr.* atuais e grava as do backup.
+    const toRemove = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.indexOf('pwr.') === 0) toRemove.push(k);
+    }
+    toRemove.forEach(k => localStorage.removeItem(k));
+    Object.keys(keys).forEach(k => {
+      if (k.indexOf('pwr.') === 0) localStorage.setItem(k, keys[k]);
+    });
+    if (box) box.innerHTML = '<div class="import-ok">✓ Progresso restaurado — recarregando…</div>';
+    showImportFeedback('✓ Restaurado', true);
+    if (navigator.vibrate) navigator.vibrate([10, 30, 10, 30, 10]);
+    setTimeout(() => location.reload(), 900);
+  } catch (e) {
+    showImportFeedback('✗ Falha ao restaurar', false);
+    if (box) box.innerHTML = '<div class="import-warn">Não consegui gravar — armazenamento cheio ou bloqueado pelo navegador.</div>';
+  }
+}
+
+function showImportFeedback(msg, good) {
+  const btn = document.getElementById('importBtn');
+  if (!btn) return;
+  const original = btn.textContent;
+  btn.textContent = msg;
+  btn.style.borderColor = good ? 'var(--accent)' : '#e08573';
+  btn.style.color = good ? 'var(--accent)' : '#e08573';
+  if (!good) setTimeout(() => { btn.textContent = original; btn.style.borderColor = ''; btn.style.color = ''; }, 2400);
 }
 
 function formatDateBR(d) {
@@ -9338,6 +11277,20 @@ function buildFullBackup() {
     };
   } catch (e) { backup.gamification = null; }
 
+  // === SNAPSHOT RESTAURÁVEL (raw) =========================================
+  // Cópia CRUA de todas as chaves pwr.* do armazenamento. É isto que permite
+  // RESTAURAR o app 100% igual depois de reinstalar (o resto do backup é
+  // derivado/para leitura). Não depende do modo ativo — leva as duas
+  // plataformas (Powerlifting e Hipertrofia) inteiras.
+  try {
+    var raw = {};
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i);
+      if (k && k.indexOf('pwr.') === 0) raw[k] = localStorage.getItem(k);
+    }
+    backup.restore = { format: 'pwr-localstorage-v1', keys: raw };
+  } catch (e) { backup.restore = null; }
+
   return backup;
 }
 
@@ -9460,17 +11413,65 @@ function buildHumanReadableSummary(backup) {
   return md;
 }
 
-function generateAndDownloadReport() {
+// Monta o conteúdo do backup (texto legível + JSON) e o nome do arquivo.
+// Compartilhado pelo download e pelo envio via app — uma fonte só.
+function buildBackupFile() {
   const now = new Date();
   const backup = buildFullBackup();
   const md = buildHumanReadableSummary(backup);
-  
-  // Combina os dois num único arquivo .md — o JSON vai num bloco no fim
-  const combined = md + 
+  const combined = md +
     `\n\n---\n\n## Backup JSON (para análise programática)\n\n` +
     `\`\`\`json\n${JSON.stringify(backup, null, 2)}\n\`\`\`\n`;
-  
-  const fileName = `pwr_backup_${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}.md`;
+  const fileName = `pwr_backup_${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}.md`;
+  return { text: combined, fileName: fileName, now: now };
+}
+
+// Marca o backup como feito: some com o lembrete e atualiza a data.
+function markBackupDone(now) {
+  try {
+    setLastBackup(localDateKey(now || new Date()));
+    setBackupSnooze('');
+    updateBackupBanner();
+    const lastEl = document.getElementById('exportLast');
+    if (lastEl) lastEl.textContent = 'Último backup: hoje';
+  } catch (e) {}
+}
+
+// ENVIAR: abre a bandeja de compartilhamento do celular (Drive, WhatsApp,
+// e-mail...). É o backup "na nuvem" sem depender de senha nem integração:
+// quem escolhe o destino é você, na hora. Onde não existir (desktop, iOS
+// antigo), cai no download normal — sem ficar sem backup.
+async function shareBackup() {
+  const { text, fileName, now } = buildBackupFile();
+  try {
+    if (navigator.canShare && typeof File === 'function') {
+      const file = new File([text], fileName, { type: 'text/markdown' });
+      if (navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: 'Backup do PWR',
+          text: 'Backup do treino — guarde no Drive ou mande pra você mesmo.'
+        });
+        markBackupDone(now);
+        if (navigator.vibrate) navigator.vibrate([10, 30, 10]);
+        const sb = document.getElementById('shareBtn');
+        if (sb) {
+          const t = sb.textContent;
+          sb.textContent = '✓ ENVIADO';
+          setTimeout(() => { sb.textContent = t; }, 2200);
+        }
+        return;
+      }
+    }
+  } catch (e) {
+    // Cancelar o envio cai aqui — não é erro, e não vira download forçado.
+    if (e && e.name === 'AbortError') return;
+  }
+  generateAndDownloadReport();   // sem suporte: baixa o arquivo
+}
+
+function generateAndDownloadReport() {
+  const { text: combined, fileName, now } = buildBackupFile();
   const blob = new Blob([combined], { type: 'text/markdown;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -9481,6 +11482,9 @@ function generateAndDownloadReport() {
   document.body.removeChild(a);
   setTimeout(() => URL.revokeObjectURL(url), 100);
   
+  // Backup feito: zera o contador do lembrete e some com o aviso
+  markBackupDone(now);
+
   // Feedback
   if (navigator.vibrate) navigator.vibrate([10, 30, 10]);
   const btn = document.getElementById('exportBtn');
@@ -10944,6 +12948,8 @@ function attachWeekResetHandler() {
 try {
   loadState();
   loadGam();
+  loadLoadHistory();
+  loadEquip();
 
   // Default to today
   const todayKey = JS_DAY_TO_KEY[new Date().getDay()];
@@ -10953,6 +12959,9 @@ try {
   renderDayTabs();
   renderHeatmap();
   renderMain();
+
+  // Lembrete de backup por último: nunca pode derrubar o boot do app
+  try { seedBackupReminder(); updateBackupBanner(); } catch (e) { console.warn('Lembrete de backup falhou', e); }
 } catch (bootErr) {
   console.error('Falha no boot', bootErr);
   const mainEl = document.getElementById('main');
