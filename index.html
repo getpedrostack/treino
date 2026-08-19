@@ -307,6 +307,13 @@
     /* Sangue para warnings (Kratos red) */
     --blood: #a83232;
     --blood-glow: #ff4444;
+
+    /* Gelo para RECUO (deload). Separado do sangue de propósito:
+       vermelho passou a significar "isto destrói dado". Semana leve
+       não é perigo — é trégua. Fogo x gelo, cada um com um sentido só. */
+    --frost: #5f93bd;
+    --frost-glow: #a8d4f5;
+    --frost-deep: #2c4f6e;
     
     /* Compatibilidade com nomes antigos (mapeados para nova paleta) */
     --accent: var(--gold);
@@ -4964,7 +4971,7 @@
   
   .rune-modal .modal-close {
     position: absolute;
-    top: 14px; right: 14px;
+    top: 14px; right: 22px;
     z-index: 2;
   }
   
@@ -5394,6 +5401,468 @@
     font-size: 11px;
     margin-top: 10px;
   }
+
+
+  /* ============================================================ */
+  /* === MOTOR DE CAOS — "A TEMPESTADE" ========================= */
+  /* ============================================================
+     O caos tem HIERARQUIA. Quatro níveis, e só o topo é violento:
+       0 AMBIENTE  — grão, vinheta, atmosfera do reino (constante)
+       1 TENSÃO    — energia latente em quem importa (estado)
+       2 REAÇÃO    — resposta física ao toque (onda, faísca, tremor)
+       3 EVENTO    — raio, rachadura, colapso (raro: PR, nível, dia 100%)
+     Tudo aqui é decorativo: pointer-events none, sem captura de toque,
+     e morre sozinho (remoção no animationend). Respeita o interruptor
+     de animações do menu e prefers-reduced-motion.                */
+  #stormFx {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9000;
+    overflow: hidden;
+    contain: strict;
+  }
+
+  /* ---------- NÍVEL 3: relâmpago ---------- */
+  .storm-flash {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 70% 40% at var(--fx, 50%) 0%, rgba(255,246,224,0.55) 0%, rgba(240,198,116,0.18) 35%, transparent 70%),
+      linear-gradient(180deg, rgba(255,255,255,0.12) 0%, transparent 45%);
+    opacity: 0;
+    animation: stormFlash 0.5s var(--ease-out) forwards;
+  }
+  /* Duas batidas: o clarão e o eco — é o que faz parecer relâmpago
+     de verdade em vez de um fade branco. */
+  @keyframes stormFlash {
+    0%   { opacity: 0; }
+    6%   { opacity: 1; }
+    16%  { opacity: 0.15; }
+    26%  { opacity: 0.8; }
+    46%  { opacity: 0.08; }
+    100% { opacity: 0; }
+  }
+  .storm-bolt {
+    position: absolute; top: -2%; left: 0; width: 100%; height: 104%;
+    opacity: 0;
+    animation: boltLife 0.5s var(--ease-out) forwards;
+  }
+  .storm-bolt path {
+    fill: none;
+    stroke: #fff8e6;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    /* UM drop-shadow, não três: medi as variantes num processador 4x mais
+       lento e três sombras custavam ~10% a mais por quadro sem ganho de
+       leitura. O halo continua lá; o preço, não. */
+    filter: drop-shadow(0 0 10px rgba(255,233,176,0.95));
+  }
+  .storm-bolt path.branch { stroke-width: 1.2; opacity: 0.75; }
+  @keyframes boltLife {
+    0%   { opacity: 0; }
+    5%   { opacity: 1; }
+    14%  { opacity: 0.2; }
+    24%  { opacity: 1; }
+    40%  { opacity: 0.25; }
+    100% { opacity: 0; }
+  }
+
+  /* ---------- NÍVEL 2/3: onda de choque ---------- */
+  .storm-shock {
+    position: absolute;
+    width: 10px; height: 10px;
+    margin: -5px 0 0 -5px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,240,200,0.9);
+    box-shadow: 0 0 18px rgba(240,198,116,0.8), inset 0 0 12px rgba(240,198,116,0.5);
+    opacity: 0.9;
+    animation: shockOut var(--sdur, 0.62s) cubic-bezier(0.12, 0.8, 0.2, 1) forwards;
+  }
+  @keyframes shockOut {
+    0%   { transform: scale(0.2); opacity: 0.95; border-width: 3px; }
+    70%  { opacity: 0.35; }
+    100% { transform: scale(var(--sscale, 26)); opacity: 0; border-width: 0.5px; }
+  }
+
+  /* ---------- NÍVEL 3: rachadura na superfície ---------- */
+  .storm-crack {
+    position: absolute;
+    opacity: 0;
+    animation: crackLife var(--cdur, 1.5s) var(--ease-out) forwards;
+  }
+  .storm-crack path {
+    fill: none;
+    stroke: rgba(255,248,230,0.95);
+    stroke-width: 1.4;
+    stroke-linecap: round;
+    filter: drop-shadow(0 0 4px rgba(255,220,150,0.9)) drop-shadow(0 0 12px rgba(200,155,60,0.55));
+  }
+  /* A rachadura ABRE (stroke-dashoffset) — parece a superfície cedendo,
+     não um desenho aparecendo. */
+  @keyframes crackLife {
+    0%   { opacity: 0; }
+    8%   { opacity: 1; }
+    62%  { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  .storm-crack path {
+    stroke-dasharray: var(--clen, 400);
+    stroke-dashoffset: var(--clen, 400);
+    animation: crackOpen 0.24s cubic-bezier(0.2, 0.9, 0.1, 1) forwards;
+  }
+  @keyframes crackOpen { to { stroke-dashoffset: 0; } }
+
+  /* ---------- NÍVEL 2/3: tremor da tela ---------- */
+  body.storm-quake { animation: stormQuake 0.42s cubic-bezier(0.36,0.07,0.19,0.97); }
+  @keyframes stormQuake {
+    0%,100% { transform: translate3d(0,0,0); }
+    12% { transform: translate3d(-4px, 2px, 0) rotate(-0.14deg); }
+    26% { transform: translate3d(5px, -2px, 0) rotate(0.16deg); }
+    41% { transform: translate3d(-3px, -1px, 0) rotate(-0.1deg); }
+    58% { transform: translate3d(3px, 2px, 0) rotate(0.08deg); }
+    76% { transform: translate3d(-2px, 0, 0); }
+  }
+  body.storm-quake-hard { animation: stormQuakeHard 0.6s cubic-bezier(0.36,0.07,0.19,0.97); }
+  @keyframes stormQuakeHard {
+    0%,100% { transform: translate3d(0,0,0); }
+    8%  { transform: translate3d(-9px, 4px, 0) rotate(-0.3deg); }
+    19% { transform: translate3d(10px, -5px, 0) rotate(0.34deg); }
+    31% { transform: translate3d(-8px, -3px, 0) rotate(-0.24deg); }
+    45% { transform: translate3d(7px, 4px, 0) rotate(0.2deg); }
+    60% { transform: translate3d(-5px, -2px, 0) rotate(-0.12deg); }
+    78% { transform: translate3d(3px, 1px, 0); }
+  }
+
+  /* ---------- NÍVEL 2: varredura de energia (troca de contexto) ---------- */
+  .storm-sweep {
+    position: absolute; inset: 0;
+    background: linear-gradient(100deg,
+      transparent 38%,
+      rgba(240,198,116,0.10) 47%,
+      rgba(255,248,230,0.30) 50%,
+      rgba(240,198,116,0.10) 53%,
+      transparent 62%);
+    background-size: 260% 100%;
+    animation: sweepAcross 0.6s var(--ease-out) forwards;
+  }
+  @keyframes sweepAcross {
+    0%   { background-position: 130% 0; opacity: 0; }
+    18%  { opacity: 1; }
+    100% { background-position: -40% 0; opacity: 0; }
+  }
+
+  /* ---------- NÍVEL 1: energia acumulada (estado) ---------- */
+  /* Barra de PODER quase cheia: eletricidade correndo por dentro. */
+  .hud-xp-track.charged { box-shadow: 0 0 16px rgba(240,198,116,0.45), inset 0 1px 3px rgba(0,0,0,0.8); }
+  .hud-xp-track.charged .hud-xp-fill::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.75) 45%, transparent 70%);
+    background-size: 220% 100%;
+    animation: chargeRun 1.5s linear infinite;
+  }
+  @keyframes chargeRun { 0% { background-position: 130% 0; } 100% { background-position: -60% 0; } }
+
+  /* ---------- NÍVEL 1: bordas elementais por reino ---------- */
+  /* Fogo lambendo a borda inferior na FORJA; geada cristalizando no
+     INVERNO. São estados do ambiente, não decoração aleatória. */
+  .realm-edge {
+    position: fixed; left: 0; right: 0; pointer-events: none; z-index: 997;
+    opacity: 0; transition: opacity 1.2s var(--ease-out);
+  }
+  .realm-edge.on { opacity: 1; }
+  /* FOGO — lambe a borda inferior. Concentrado nos últimos ~70px: forte
+     onde não há leitura, morto no miolo da tela. Duas camadas em ritmos
+     diferentes fazem a chama tremular em vez de pulsar como um LED. */
+  .realm-edge-fire {
+    bottom: 0; height: 170px;
+    background:
+      radial-gradient(ellipse 55% 92% at 16% 128%, rgba(255,126,22,0.46) 0%, rgba(255,90,10,0.16) 38%, transparent 72%),
+      radial-gradient(ellipse 46% 88% at 46% 132%, rgba(255,168,44,0.40) 0%, rgba(255,110,16,0.14) 40%, transparent 72%),
+      radial-gradient(ellipse 58% 95% at 78% 126%, rgba(255,96,12,0.42) 0%, rgba(255,140,30,0.14) 38%, transparent 72%),
+      linear-gradient(0deg, rgba(255,110,20,0.20) 0%, transparent 62%);
+    animation: fireBreath 3.1s ease-in-out infinite alternate;
+  }
+  /* segunda língua de fogo, defasada: quebra a simetria */
+  .realm-edge-fire::after {
+    content: '';
+    position: absolute; left: 0; right: 0; bottom: 0; height: 100%;
+    background:
+      radial-gradient(ellipse 40% 80% at 30% 130%, rgba(255,200,80,0.30) 0%, transparent 66%),
+      radial-gradient(ellipse 44% 84% at 66% 134%, rgba(255,150,40,0.26) 0%, transparent 66%);
+    animation: fireLick 2.3s ease-in-out infinite alternate;
+  }
+  @keyframes fireBreath {
+    0%   { transform: translateY(10px) scaleY(0.9);  opacity: 0.7; }
+    100% { transform: translateY(0)    scaleY(1.08); opacity: 1; }
+  }
+  @keyframes fireLick {
+    0%   { transform: translateY(14px) scaleX(0.94); opacity: 0.45; }
+    100% { transform: translateY(-4px) scaleX(1.06); opacity: 0.95; }
+  }
+  /* GELO — cristaliza pelas LATERAIS e pela base, não por cima: o topo
+     é onde mora o cabeçalho, e geada sobre texto é ilegível. */
+  .realm-edge-frost {
+    top: 0; bottom: 0; height: auto;
+    background:
+      linear-gradient(90deg, rgba(150,205,255,0.30) 0%, rgba(150,205,255,0.07) 7%, transparent 16%),
+      linear-gradient(270deg, rgba(150,205,255,0.30) 0%, rgba(150,205,255,0.07) 7%, transparent 16%),
+      radial-gradient(ellipse 70% 22% at 50% 104%, rgba(190,230,255,0.26) 0%, transparent 68%),
+      radial-gradient(ellipse 60% 14% at 50% -4%, rgba(200,235,255,0.16) 0%, transparent 70%);
+    animation: frostBreath 6.5s ease-in-out infinite alternate;
+  }
+  /* Cristais de gelo nas quinas — agulhas finas, não flocos de desenho */
+  .realm-edge-frost::after {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      repeating-linear-gradient(74deg, rgba(210,240,255,0.16) 0 1px, transparent 1px 16px),
+      repeating-linear-gradient(-74deg, rgba(210,240,255,0.13) 0 1px, transparent 1px 22px);
+    /* Máscara agressiva: cristal SÓ na moldura externa. No miolo, onde
+       se lê, a malha morre por completo — geada sobre texto é ilegível. */
+    -webkit-mask-image: radial-gradient(ellipse 78% 66% at 50% 50%, transparent 62%, rgba(0,0,0,0.55) 84%, #000 100%);
+    mask-image: radial-gradient(ellipse 78% 66% at 50% 50%, transparent 62%, rgba(0,0,0,0.55) 84%, #000 100%);
+    opacity: 0.6;
+    animation: frostCreep 9s ease-in-out infinite alternate;
+  }
+  @keyframes frostBreath {
+    0%   { opacity: 0.55; }
+    100% { opacity: 1; }
+  }
+  @keyframes frostCreep {
+    0%   { opacity: 0.35; transform: scale(1.02); }
+    100% { opacity: 0.9;  transform: scale(1); }
+  }
+
+  /* ---------- NÍVEL 1: os componentes assumem o elemento do reino ----------
+     Fogo contra gelo, na mesma peça: no dia da forja o campo de carga
+     tem brasa na borda; no inverno, ele congela. Mesma geometria, físicas
+     opostas — é o conflito que o app inteiro conta. */
+  body.skin-forge .ex-load-input,
+  body.boss-fight .ex-load-input {
+    border-color: #8a4a16;
+    box-shadow: var(--well), 0 0 16px rgba(255,120,25,0.30), inset 0 -1px 0 rgba(255,150,50,0.22);
+  }
+  body.skin-forge .set-tracker,
+  body.boss-fight .set-tracker {
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.8), 0 0 18px rgba(255,110,20,0.32), var(--el-1);
+  }
+  body.skin-winter .ex-load-input,
+  body.skin-tundra .ex-load-input {
+    border-color: #4a6f8c;
+    box-shadow: var(--well), 0 0 16px rgba(150,205,255,0.28), inset 0 1px 0 rgba(200,235,255,0.20);
+  }
+  /* geada tomando a borda do campo no inverno */
+  body.skin-winter .ex-load,
+  body.skin-tundra .ex-load { position: relative; }
+  body.skin-winter .ex-load::after,
+  body.skin-tundra .ex-load::after {
+    content: '';
+    position: absolute; left: 0; right: 0; top: 0; height: 1px;
+    background: repeating-linear-gradient(90deg, rgba(190,230,255,0.55) 0 3px, transparent 3px 9px);
+    pointer-events: none;
+  }
+  body.skin-winter .set-tracker,
+  body.skin-tundra .set-tracker {
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.8), 0 0 18px rgba(150,205,255,0.30), var(--el-1);
+  }
+
+  /* ---------- NÍVEL 2: ignição do campo de carga ---------- */
+  .ex-load-input.storm-ignite {
+    animation: loadIgnite 0.7s var(--ease-out);
+  }
+  @keyframes loadIgnite {
+    0%   { box-shadow: var(--well); border-color: var(--border-bright); }
+    18%  { box-shadow: var(--well), 0 0 0 3px rgba(255,190,90,0.35), 0 0 34px rgba(255,150,40,0.85); border-color: #ffb347; }
+    100% { box-shadow: var(--well); border-color: var(--border-bright); }
+  }
+
+  /* ---------- Contenção ----------
+     #stormFx e .realm-edge são filhos de <html>, então não dá pra
+     escondê-los com seletor descendente de body. Quem barra é o portão
+     stormAllowed() no JS: com efeitos desligados nada chega a existir.
+     Aqui fica só a trava do tremor, que roda no próprio body. */
+  @media (prefers-reduced-motion: reduce) {
+    body:not(.anims-on).storm-quake,
+    body:not(.anims-on).storm-quake-hard { animation: none !important; }
+  }
+
+
+  /* ============================================================ */
+  /* === CAOS: VARREDURA DE CONSISTÊNCIA ======================== */
+  /* ============================================================ */
+
+  /* ---- Painéis entram como IMPACTO, não como deslize ----
+     A superfície chega, bate e assenta (leve ultrapassagem), com um
+     fio de luz percorrendo a aresta superior no momento da chegada. */
+  @keyframes slamIn {
+    0%   { transform: translateY(100%); opacity: 0.2; }
+    62%  { transform: translateY(-9px); opacity: 1; }
+    80%  { transform: translateY(3px); }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+  .modal { animation: slamIn var(--dur-3) cubic-bezier(0.16, 1.1, 0.3, 1) !important; }
+  .modal::before {
+    content: '';
+    position: absolute; left: 0; right: 0; top: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold-bright), transparent);
+    box-shadow: 0 0 16px rgba(240,198,116,0.9);
+    transform: scaleX(0);
+    animation: edgeArc 0.55s var(--ease-out) 0.06s forwards;
+    pointer-events: none;
+  }
+  @keyframes edgeArc {
+    0%   { transform: scaleX(0); opacity: 0; }
+    30%  { opacity: 1; }
+    100% { transform: scaleX(1); opacity: 0.5; }
+  }
+
+  /* ---- CRONÔMETRO: tensão acumulando nos últimos segundos ----
+     Estado de perigo iminente. O mostrador esquenta e pulsa mais
+     rápido conforme o descanso acaba — o app avisa antes de cobrar. */
+  .pwrtimer-display.tense {
+    border-color: #b5561f;
+    animation: timerTense 1s ease-in-out infinite;
+  }
+  @keyframes timerTense {
+    0%, 100% { box-shadow: var(--well), 0 0 14px rgba(255,120,30,0.30); color: var(--gold-bright); }
+    50%      { box-shadow: var(--well), 0 0 34px rgba(255,120,30,0.75); color: #ffd9a0; }
+  }
+  .pwrtimer-display.critical {
+    border-color: #d4551a;
+    animation: timerCritical 0.42s ease-in-out infinite;
+  }
+  @keyframes timerCritical {
+    0%, 100% { box-shadow: var(--well), 0 0 18px rgba(255,90,20,0.5);  transform: scale(1); }
+    50%      { box-shadow: var(--well), 0 0 46px rgba(255,90,20,0.95); transform: scale(1.022); }
+  }
+  /* descarga ao zerar: o mostrador libera a energia acumulada */
+  .pwrtimer-display.discharge { animation: timerDischarge 0.7s var(--ease-out); }
+  @keyframes timerDischarge {
+    0%   { box-shadow: var(--well), 0 0 60px rgba(126,224,160,0.95); transform: scale(1.05); }
+    100% { box-shadow: var(--well); transform: scale(1); }
+  }
+
+  /* ---- ESTADO CRÍTICO: o que destrói dado carrega energia vermelha ----
+     Rachadura latente sob a superfície do botão, visível o suficiente
+     para pesar a mão antes do toque. */
+  .reset-all-btn, .import-confirm-yes {
+    position: relative;
+    overflow: hidden;
+  }
+  .reset-all-btn::before, .import-confirm-yes::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      repeating-linear-gradient(58deg, rgba(255,90,70,0.12) 0 1px, transparent 1px 13px),
+      repeating-linear-gradient(-64deg, rgba(255,70,50,0.09) 0 1px, transparent 1px 19px);
+    opacity: 0.7;
+    pointer-events: none;
+  }
+  .reset-all-btn::after, .import-confirm-yes::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 100% at 50% 130%, rgba(255,60,40,0.35) 0%, transparent 70%);
+    animation: dangerPulse 2.4s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes dangerPulse {
+    0%, 100% { opacity: 0.35; }
+    50%      { opacity: 0.9; }
+  }
+
+  /* ---- CONQUISTA: o card chega explodindo energia ---- */
+  .feat-toast.show { animation: featSlam 0.6s cubic-bezier(0.16, 1.15, 0.3, 1); }
+  @keyframes featSlam {
+    0%   { transform: translateY(-150%) scale(0.92); }
+    58%  { transform: translateY(7px) scale(1.03); }
+    78%  { transform: translateY(-3px) scale(0.995); }
+    100% { transform: translateY(0) scale(1); }
+  }
+  .feat-toast::after {
+    content: '';
+    position: absolute; inset: -2px;
+    border-radius: inherit;
+    background: linear-gradient(105deg, transparent 40%, rgba(255,240,200,0.22) 50%, transparent 60%);
+    background-size: 250% 100%;
+    animation: featSweep 0.9s var(--ease-out) 0.15s;
+    pointer-events: none;
+  }
+  @keyframes featSweep {
+    0%   { background-position: 130% 0; opacity: 0; }
+    25%  { opacity: 1; }
+    100% { background-position: -40% 0; opacity: 0; }
+  }
+
+  /* ---- DELOAD: a semana de recuo esfria o distintivo ----
+     Fogo contra gelo amarrado a DADO real: semana pesada queima,
+     semana de deload congela. */
+  .week-btn.deload.active {
+    background: linear-gradient(180deg, #cfe8ff 0%, #8fc0e8 42%, #5f93bd 100%);
+    color: #06131c;
+    box-shadow:
+      0 0 22px rgba(150,205,255,0.6),
+      0 0 52px rgba(150,205,255,0.25),
+      inset 0 1px 0 rgba(255,255,255,0.6),
+      inset 0 -2px 4px rgba(20,60,90,0.35);
+  }
+
+  /* ---- O FECHAR MORA SEMPRE NO MESMO CANTO ----
+     Nos modais com cabeçalho (.modal-header) o flex já empurra o × pra
+     direita. Nos que montam o conteúdo por JS (patentes, conquistas,
+     dificuldade) o botão é filho direto de .modal e caía na ESQUERDA —
+     o polegar procurava num canto e achava no outro. Aqui todo × que
+     não estiver num cabeçalho passa a ancorar no mesmo lugar do resto,
+     como o da runa já fazia. */
+  .modal > .modal-close {
+    position: absolute;
+    top: 14px;
+    right: 22px;          /* mesma distância da borda que o × dos modais com cabeçalho */
+    z-index: 3;
+  }
+
+  /* ---- DELOAD É GELO, NÃO SANGUE ----
+     O distintivo da semana já congela; o selo do dia e o aviso do topo
+     ainda vinham em vermelho, a mesma cor que agora marca ação que
+     APAGA DADO. Duas coisas opostas na mesma cor confundem a leitura.
+     Aqui a semana de recuo passa a falar inteira na língua do gelo. */
+  .day-subtitle .pill.deload {
+    border-color: var(--frost);
+    color: var(--frost-glow);
+    background: linear-gradient(180deg, rgba(95,147,189,0.14) 0%, rgba(95,147,189,0.05) 100%);
+    box-shadow: 0 0 12px rgba(150,205,255,0.22), inset 0 1px 0 rgba(200,235,255,0.16);
+  }
+  .deload-banner {
+    background:
+      radial-gradient(ellipse 40% 100% at 0% 50%, rgba(95,147,189,0.10) 0%, transparent 70%),
+      linear-gradient(180deg, rgba(95,147,189,0.05) 0%, rgba(95,147,189,0.02) 100%);
+    border-color: var(--frost);
+    box-shadow:
+      inset 0 1px 0 rgba(168,212,245,0.12),
+      0 0 18px rgba(150,205,255,0.16);
+  }
+  .deload-banner-title {
+    color: var(--frost-glow);
+    text-shadow: 0 0 8px rgba(150,205,255,0.35);
+  }
+  /* Cristal de gelo na borda fria, no lugar da rachadura quente */
+  .deload-banner::after {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0; width: 3px;
+    background: linear-gradient(180deg, var(--frost-glow) 0%, var(--frost) 50%, var(--frost-deep) 100%);
+    box-shadow: 0 0 14px rgba(150,205,255,0.5);
+  }
+  .deload-banner { position: relative; }
+
+  /* ---- CONTENÇÃO: com efeitos desligados, nada pulsa ---- */
+  body.anims-off .reset-all-btn::after,
+  body.anims-off .import-confirm-yes::after,
+  body.anims-off .pwrtimer-display.tense,
+  body.anims-off .pwrtimer-display.critical { animation: none !important; }
+  body.anims-off .modal { animation: none !important; }
+  body.anims-off .modal::before { display: none !important; }
 
   /* ============================================================ */
   /* === ACESSIBILIDADE: foco visível ========================== */
@@ -8876,6 +9345,9 @@ function renderDayTabs() {
       renderMain();
       renderHeatmap();
       window.scrollTo(0, 0);
+      // NÍVEL 2 — atravessar para outro reino é transição de contexto:
+      // uma descarga varre a tela. Curta, uma só, nunca acumula.
+      try { stormSweep(); } catch (e) {}
     });
   });
 }
@@ -8966,8 +9438,15 @@ function renderMain() {
   const isBossFight = sessionKey === bossSession() && !isDeload;
   const isAscended = isDayFullyComplete(STATE.week, STATE.day);
 
+  // NÍVEL 3 — a virada para "dia completo" acontece UMA vez: quando o
+  // estado muda, não a cada render. Sem isso o raio cairia toda vez que
+  // a tela redesenhasse no dia já concluído.
+  const eraAscendido = document.body.classList.contains('ascended');
   document.body.classList.toggle('boss-fight', isBossFight);
   document.body.classList.toggle('ascended', isAscended);
+  if (isAscended && !eraAscendido) {
+    try { setTimeout(() => stormStrike({ hard: true, branches: 3, crackYPct: 22 }), 120); } catch (e) {}
+  }
   document.body.classList.toggle('mode-hyper', STATE.mode === 'hyper');
 
   // === Skin atmosférica por sessão ===
@@ -9002,9 +9481,14 @@ function renderMain() {
   // Atualiza heatmap (estado dos dias da semana)
   renderHeatmap();
 
+  // NÍVEL 1 — ambiente elemental do reino: fogo lambendo a borda na
+  // forja/boss, geada descendo no inverno/tundra. Estado, não evento.
+  try { stormRealmEdge(sessionKey); } catch (e) {}
+
   // Atualiza o HUD do guerreiro + detecta viradas (nível/patente/feitos)
   renderHud();
   checkProgression();
+  try { stormChargeHud(); } catch (e) {}
 
   let html = '';
   
@@ -9765,6 +10249,12 @@ function attachExerciseHandlers() {
       if (newCount > prevCount && effect !== 'fire') {
         // intensidade 1..maxSets — escala o burst
         spawnTapBurst(btn, effect, newCount, maxSets, nowComplete);
+        // NÍVEL 2 — o toque tem consequência física. Exercício inteiro
+        // concluído manda uma onda maior e um tremor curto.
+        try {
+          stormShock(btn, { scale: nowComplete ? 30 : 16, dur: nowComplete ? 0.7 : 0.5 });
+          if (nowComplete) stormQuake(false);
+        } catch (e) {}
       }
 
       // === SURTO DE FORÇA + XP (gamificação) ===
@@ -9864,6 +10354,12 @@ function attachExerciseHandlers() {
         e.target.classList.remove('forge-bump'); // reset se já tava
         void e.target.offsetWidth; // forçar reflow pra re-trigger animação
         e.target.classList.add('forge-bump');
+        // NÍVEL 2 — carga acima da sessão anterior: o campo entra em ignição
+        try {
+          e.target.classList.remove('storm-ignite'); void e.target.offsetWidth;
+          e.target.classList.add('storm-ignite');
+          setTimeout(() => e.target.classList.remove('storm-ignite'), 760);
+        } catch (e2) {}
         if (navigator.vibrate) navigator.vibrate(15);
         setTimeout(() => e.target.classList.remove('forge-bump'), 1100);
       }
@@ -10156,6 +10652,13 @@ document.querySelectorAll('#modeSwitch .mode-opt').forEach(btn => {
   }
   function paint() {
     disp.textContent = fmt(remaining);
+    // NÍVEL 1/2 — tensão acumulando: o mostrador esquenta nos últimos
+    // 10s e entra em estado crítico nos últimos 3. Puro visual.
+    try {
+      const r = remaining;
+      disp.classList.toggle('tense', running && r > 3 && r <= 10);
+      disp.classList.toggle('critical', running && r > 0 && r <= 3);
+    } catch (e) {}
   }
   function setTotal(sec) {
     total = sec; remaining = sec; stop(false);
@@ -10186,6 +10689,7 @@ document.querySelectorAll('#modeSwitch .mode-opt').forEach(btn => {
   }
   function stop(keepLabel) {
     running = false;
+    try { disp.classList.remove('tense', 'critical'); } catch (e) {}
     if (raf) { cancelAnimationFrame(raf); raf = null; }
     toggleBtn.textContent = 'INICIAR';
     if (!keepLabel) sub.textContent = 'Descanso entre séries';
@@ -10199,6 +10703,14 @@ document.querySelectorAll('#modeSwitch .mode-opt').forEach(btn => {
   function finish() {
     stop(true);
     remaining = 0; paint();
+    disp.classList.remove('tense', 'critical');
+    // NÍVEL 2 — a energia acumulada é liberada de uma vez
+    try {
+      disp.classList.remove('discharge'); void disp.offsetWidth;
+      disp.classList.add('discharge');
+      setTimeout(() => disp.classList.remove('discharge'), 760);
+      stormShock(disp, { scale: 18, dur: 0.7, color: 'rgba(126,224,160,0.9)' });
+    } catch (e) {}
     disp.classList.add('done');
     sub.textContent = 'Descanso concluído — vai!';
     toggleBtn.textContent = 'INICIAR';
@@ -12631,6 +13143,9 @@ function triggerPrShake() {
   document.body.classList.add('pr-shake');
   if (navigator.vibrate) navigator.vibrate([20, 40, 80]);
   setTimeout(() => document.body.classList.remove('pr-shake'), 550);
+  // NÍVEL 3 — recorde pessoal é o evento mais alto do app: o raio cai,
+  // a tela clareia, a superfície racha. É raro por definição.
+  try { stormStrike({ hard: true, branches: 3 }); } catch (e) {}
 }
 
 // ===== Notificações de conquista — PERSISTENTES (não somem sozinhas) =====
@@ -12733,6 +13248,12 @@ const LU_LAUREL = '<svg class="lu-laurel" viewBox="0 0 128 128" fill="none" aria
 function showLevelUp(g, rankUp) {
   const ov = document.getElementById('levelupOverlay');
   if (!ov) return;
+  // NÍVEL 3 — ascensão é o ápice: dois raios em sequência, tremor forte
+  // e a superfície cedendo. Patente nova bate mais forte que nível.
+  try {
+    stormStrike({ hard: true, branches: 3, xPct: 30 + Math.random() * 20 });
+    if (rankUp) setTimeout(() => stormStrike({ hard: true, branches: 2, xPct: 55 + Math.random() * 20 }), 260);
+  } catch (e) {}
   const hyper = STATE.mode === 'hyper';
   const motion = fxOn();   // partículas/movimento só quando animações ligadas
   // Poeira iluminada — 2 camadas de profundidade (perto + ao fundo), discreta.
@@ -13136,6 +13657,254 @@ function attachWeekResetHandler() {
 }
 
 
+
+// ============================================================
+// === MOTOR DE CAOS — "A TEMPESTADE" =========================
+// ============================================================
+// API decorativa pura. Não toca em estado, dados nem navegação:
+// só desenha a reação física da interface aos eventos que JÁ
+// existem (série concluída, recorde, nível, dia completo).
+//
+// HIERARQUIA (o que faz o caos não virar poluição):
+//   nível 1  tensão  — estado latente, contínuo e discreto
+//   nível 2  reação  — resposta ao toque: onda, tremor leve, ignição
+//   nível 3  evento  — raio + rachadura + tremor forte. RARO.
+// Tudo obedece fxOn() (interruptor do menu) e some sozinho.
+
+// A camada mora em <html>, NÃO no <body> — de propósito: o tremor põe
+// transform no body, e um ancestral transformado faz o position:fixed
+// passar a se resolver contra ele. A camada media a altura do documento
+// (1353px em vez de 844) e o raio caía fora da tela.
+function stormLayer() {
+  let l = document.getElementById('stormFx');
+  if (!l) {
+    l = document.createElement('div');
+    l.id = 'stormFx';
+    l.setAttribute('aria-hidden', 'true');
+    document.documentElement.appendChild(l);
+  }
+  return l;
+}
+
+// Um portão só para todo o caos: interruptor do menu + respeito a quem
+// pediu menos movimento no sistema (com escape se ligou manualmente).
+function stormAllowed() {
+  try {
+    if (typeof fxOn === 'function' && !fxOn()) return false;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        && !document.body.classList.contains('anims-on')) return false;
+  } catch (e) {}
+  return true;
+}
+
+// Remove o nó quando a animação termina — nada acumula no DOM.
+function stormAdd(el, life) {
+  const layer = stormLayer();
+  layer.appendChild(el);
+  const kill = () => { if (el.parentNode) el.remove(); };
+  el.addEventListener('animationend', kill, { once: true });
+  setTimeout(kill, life || 2200);
+  return el;
+}
+
+// Traça um raio irregular: caminhada descendente com desvios laterais
+// e ramificações. Geometria sorteada a cada disparo — nunca sai igual.
+function boltPath(x0, w, h, segs, spread) {
+  let d = 'M' + x0.toFixed(1) + ' 0';
+  let x = x0, y = 0;
+  const step = h / segs;
+  const pts = [{ x, y }];
+  for (let i = 1; i <= segs; i++) {
+    y = step * i;
+    x += (Math.random() - 0.5) * spread;
+    x = Math.max(w * 0.04, Math.min(w * 0.96, x));
+    d += ' L' + x.toFixed(1) + ' ' + y.toFixed(1);
+    pts.push({ x, y });
+  }
+  return { d, pts };
+}
+
+// ---------- NÍVEL 3: O RAIO ----------
+// Usado só em momentos que merecem: recorde pessoal, subida de nível,
+// treino 100% concluído. É o efeito mais caro do app — por isso é raro.
+function stormStrike(opts) {
+  if (!stormAllowed()) return;
+  opts = opts || {};
+  const layer = stormLayer();
+  const w = layer.clientWidth || window.innerWidth;
+  const h = layer.clientHeight || window.innerHeight;
+  const originPct = opts.xPct != null ? opts.xPct : 25 + Math.random() * 50;
+  const x0 = w * (originPct / 100);
+
+  // 1. clarão que ilumina o ambiente (a luz vem de onde o raio cai)
+  const flash = document.createElement('div');
+  flash.className = 'storm-flash';
+  flash.style.setProperty('--fx', originPct.toFixed(0) + '%');
+  stormAdd(flash, 900);
+
+  // 2. o raio + ramos
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(svgNS, 'svg');
+  svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+  svg.setAttribute('preserveAspectRatio', 'none');
+  svg.style.width = '100%'; svg.style.height = '100%';
+  const main = boltPath(x0, w, h * (opts.reach || 0.62), 9, w * 0.16);
+  const p = document.createElementNS(svgNS, 'path');
+  p.setAttribute('d', main.d);
+  svg.appendChild(p);
+  // ramificações saindo de pontos intermediários
+  const branches = opts.branches == null ? 2 : opts.branches;
+  for (let b = 0; b < branches; b++) {
+    const from = main.pts[3 + Math.floor(Math.random() * Math.max(1, main.pts.length - 5))];
+    if (!from) continue;
+    const br = boltPath(from.x, w, h * 0.22, 4, w * 0.14);
+    const bp = document.createElementNS(svgNS, 'path');
+    bp.setAttribute('d', br.d.replace(/^M[\d.]+ 0/, 'M' + from.x.toFixed(1) + ' ' + from.y.toFixed(1))
+                            .replace(/L([\d.]+) ([\d.]+)/g, (m2, bx, by) => 'L' + bx + ' ' + (parseFloat(by) + from.y).toFixed(1)));
+    bp.setAttribute('class', 'branch');
+    svg.appendChild(bp);
+  }
+  const bolt = document.createElement('div');
+  bolt.className = 'storm-bolt';
+  bolt.appendChild(svg);
+  stormAdd(bolt, 900);
+
+  // 3. a interface encaixa o golpe
+  stormQuake(opts.hard !== false);
+
+  // 4. onde bateu, a superfície racha
+  if (opts.crack !== false) {
+    setTimeout(() => stormCrack({ xPct: originPct, yPct: opts.crackYPct || 30 + Math.random() * 30 }), 60);
+  }
+  if (navigator.vibrate) { try { navigator.vibrate(opts.hard !== false ? [30, 50, 120] : [18, 40, 60]); } catch (e) {} }
+}
+
+// ---------- NÍVEL 2/3: RACHADURA ----------
+function stormCrack(opts) {
+  if (!stormAllowed()) return;
+  opts = opts || {};
+  const layer = stormLayer();
+  const W = layer.clientWidth || window.innerWidth;
+  const H = layer.clientHeight || window.innerHeight;
+  const cx = W * ((opts.xPct != null ? opts.xPct : 50) / 100);
+  const cy = H * ((opts.yPct != null ? opts.yPct : 45) / 100);
+  const size = opts.size || Math.min(W, H) * (0.16 + Math.random() * 0.16);
+
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(svgNS, 'svg');
+  const box = size * 2.2;
+  svg.setAttribute('viewBox', '0 0 ' + box + ' ' + box);
+  svg.style.width = box + 'px'; svg.style.height = box + 'px';
+
+  // fraturas radiais a partir do ponto de impacto
+  const arms = 3 + Math.floor(Math.random() * 3);
+  let total = 0;
+  for (let a = 0; a < arms; a++) {
+    const ang = (Math.PI * 2 * a) / arms + Math.random() * 0.9;
+    let x = box / 2, y = box / 2, d = 'M' + x.toFixed(1) + ' ' + y.toFixed(1);
+    const segs = 3 + Math.floor(Math.random() * 3);
+    let len = size / segs;
+    for (let i = 0; i < segs; i++) {
+      const jitter = (Math.random() - 0.5) * 0.8;
+      x += Math.cos(ang + jitter) * len;
+      y += Math.sin(ang + jitter) * len;
+      d += ' L' + x.toFixed(1) + ' ' + y.toFixed(1);
+      len *= 0.78;
+    }
+    const p = document.createElementNS(svgNS, 'path');
+    p.setAttribute('d', d);
+    total += size;
+    svg.appendChild(p);
+  }
+  const wrap = document.createElement('div');
+  wrap.className = 'storm-crack';
+  wrap.style.left = (cx - box / 2) + 'px';
+  wrap.style.top = (cy - box / 2) + 'px';
+  wrap.style.setProperty('--clen', Math.round(total) + '');
+  wrap.style.setProperty('--cdur', (opts.dur || 1.4) + 's');
+  wrap.appendChild(svg);
+  stormAdd(wrap, 2200);
+}
+
+// ---------- NÍVEL 2: ONDA DE CHOQUE ----------
+// Nasce no ponto tocado: o toque tem consequência física.
+function stormShock(el, opts) {
+  if (!stormAllowed()) return;
+  opts = opts || {};
+  let cx, cy;
+  if (el && el.getBoundingClientRect) {
+    const r = el.getBoundingClientRect();
+    cx = r.left + r.width / 2; cy = r.top + r.height / 2;
+  } else { cx = (opts.x || window.innerWidth / 2); cy = (opts.y || window.innerHeight / 2); }
+  const s = document.createElement('div');
+  s.className = 'storm-shock';
+  s.style.left = cx + 'px';
+  s.style.top = cy + 'px';
+  s.style.setProperty('--sscale', (opts.scale || 22) + '');
+  s.style.setProperty('--sdur', (opts.dur || 0.62) + 's');
+  if (opts.color) s.style.borderColor = opts.color;
+  stormAdd(s, 1400);
+}
+
+// ---------- NÍVEL 2: TREMOR ----------
+function stormQuake(hard) {
+  if (!stormAllowed()) return;
+  const cls = hard ? 'storm-quake-hard' : 'storm-quake';
+  document.body.classList.remove('storm-quake', 'storm-quake-hard');
+  void document.body.offsetWidth;
+  document.body.classList.add(cls);
+  setTimeout(() => document.body.classList.remove(cls), hard ? 650 : 460);
+}
+
+// ---------- NÍVEL 2: VARREDURA (troca de contexto) ----------
+function stormSweep() {
+  if (!stormAllowed()) return;
+  const d = document.createElement('div');
+  d.className = 'storm-sweep';
+  stormAdd(d, 900);
+}
+
+// ---------- NÍVEL 1: BORDAS ELEMENTAIS DO REINO ----------
+// Fogo subindo na forja, geada descendo no inverno. Estado do
+// ambiente — liga e desliga conforme o dia, sem piscar.
+function stormRealmEdge(sessionKey) {
+  let fire = document.getElementById('realmEdgeFire');
+  let frost = document.getElementById('realmEdgeFrost');
+  if (!fire) {
+    fire = document.createElement('div');
+    fire.id = 'realmEdgeFire';
+    fire.className = 'realm-edge realm-edge-fire';
+    fire.setAttribute('aria-hidden', 'true');
+    document.documentElement.appendChild(fire);
+  }
+  if (!frost) {
+    frost = document.createElement('div');
+    frost.id = 'realmEdgeFrost';
+    frost.className = 'realm-edge realm-edge-frost';
+    frost.setAttribute('aria-hidden', 'true');
+    document.documentElement.appendChild(frost);
+  }
+  const b = document.body.classList;
+  const allow = stormAllowed();
+  const hot = allow && (b.contains('skin-forge') || b.contains('boss-fight'));
+  const cold = allow && (b.contains('skin-winter') || b.contains('skin-tundra'));
+  fire.classList.toggle('on', !!hot);
+  frost.classList.toggle('on', !!cold);
+}
+
+// ---------- NÍVEL 1: PODER CARREGADO ----------
+// Perto de subir de nível, a barra fica eletrificada.
+function stormChargeHud() {
+  try {
+    const track = document.querySelector('.hud-xp-track');
+    if (!track) return;
+    const fill = track.querySelector('.hud-xp-fill');
+    if (!fill) return;
+    const pct = parseFloat((fill.style.getPropertyValue('--xp') || '0').replace('%', '')) || 0;
+    track.classList.toggle('charged', pct >= 80);
+  } catch (e) {}
+}
+
 // ============================================================
 // INIT
 // ============================================================
@@ -13155,6 +13924,9 @@ try {
   renderDayTabs();
   renderHeatmap();
   renderMain();
+
+  // Ambiente elemental do reino inicial (fogo na forja, geada no inverno)
+  try { stormRealmEdge(); stormChargeHud(); } catch (e) {}
 
   // Lembrete de backup por último: nunca pode derrubar o boot do app
   try { seedBackupReminder(); updateBackupBanner(); } catch (e) { console.warn('Lembrete de backup falhou', e); }
