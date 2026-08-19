@@ -5582,6 +5582,11 @@
       radial-gradient(ellipse 46% 88% at 46% 132%, rgba(255,168,44,0.40) 0%, rgba(255,110,16,0.14) 40%, transparent 72%),
       radial-gradient(ellipse 58% 95% at 78% 126%, rgba(255,96,12,0.42) 0%, rgba(255,140,30,0.14) 38%, transparent 72%),
       linear-gradient(0deg, rgba(255,110,20,0.20) 0%, transparent 62%);
+    /* SEM animação aqui de propósito: fireBreath anima OPACITY, e animação
+       ganha da declaração normal. Se ela rodar sempre, o opacity:0 de
+       .realm-edge nunca vale e a borda fica acesa em TODA tela. */
+  }
+  .realm-edge-fire.on {
     animation: fireBreath 3.1s ease-in-out infinite alternate;
   }
   /* segunda língua de fogo, defasada: quebra a simetria */
@@ -5606,10 +5611,16 @@
   .realm-edge-frost {
     top: 0; bottom: 0; height: auto;
     background:
-      linear-gradient(90deg, rgba(150,205,255,0.30) 0%, rgba(150,205,255,0.07) 7%, transparent 16%),
-      linear-gradient(270deg, rgba(150,205,255,0.30) 0%, rgba(150,205,255,0.07) 7%, transparent 16%),
-      radial-gradient(ellipse 70% 22% at 50% 104%, rgba(190,230,255,0.26) 0%, transparent 68%),
-      radial-gradient(ellipse 60% 14% at 50% -4%, rgba(200,235,255,0.16) 0%, transparent 70%);
+      /* Faixas laterais ENCURTADAS (16% → 8%) e mais fracas (0.30 → 0.17).
+         Antes a geada entrava na coluna de leitura e lavava o contraste
+         de tudo — o inverno tem que ser sentido na moldura, não lido. */
+      linear-gradient(90deg, rgba(150,205,255,0.17) 0%, rgba(150,205,255,0.04) 4%, transparent 8%),
+      linear-gradient(270deg, rgba(150,205,255,0.17) 0%, rgba(150,205,255,0.04) 4%, transparent 8%),
+      radial-gradient(ellipse 70% 16% at 50% 106%, rgba(190,230,255,0.16) 0%, transparent 68%),
+      radial-gradient(ellipse 60% 10% at 50% -5%, rgba(200,235,255,0.09) 0%, transparent 70%);
+    /* idem fogo: só respira quando o reino está ligado */
+  }
+  .realm-edge-frost.on {
     animation: frostBreath 6.5s ease-in-out infinite alternate;
   }
   /* Cristais de gelo nas quinas — agulhas finas, não flocos de desenho */
@@ -5621,9 +5632,9 @@
       repeating-linear-gradient(-74deg, rgba(210,240,255,0.13) 0 1px, transparent 1px 22px);
     /* Máscara agressiva: cristal SÓ na moldura externa. No miolo, onde
        se lê, a malha morre por completo — geada sobre texto é ilegível. */
-    -webkit-mask-image: radial-gradient(ellipse 78% 66% at 50% 50%, transparent 62%, rgba(0,0,0,0.55) 84%, #000 100%);
-    mask-image: radial-gradient(ellipse 78% 66% at 50% 50%, transparent 62%, rgba(0,0,0,0.55) 84%, #000 100%);
-    opacity: 0.6;
+    -webkit-mask-image: radial-gradient(ellipse 86% 76% at 50% 50%, transparent 74%, rgba(0,0,0,0.45) 90%, #000 100%);
+    mask-image: radial-gradient(ellipse 86% 76% at 50% 50%, transparent 74%, rgba(0,0,0,0.45) 90%, #000 100%);
+    opacity: 0.34;
     animation: frostCreep 9s ease-in-out infinite alternate;
   }
   @keyframes frostBreath {
