@@ -5819,6 +5819,34 @@
       inset 0 -2px 4px rgba(20,60,90,0.35);
   }
 
+  /* ---- DICA DO DESLIZE: aparece uma vez, some no primeiro uso ---- */
+  .dica-deslize {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 7px 12px 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--text-3);
+    background: linear-gradient(180deg, rgba(200,155,60,0.05), transparent);
+    border-bottom: 1px solid var(--border);
+    animation: dicaEntra 0.5s var(--ease-out) both;
+  }
+  .dica-deslize span {
+    color: var(--gold); font-size: 13px; line-height: 1;
+    animation: dicaSeta 2.1s ease-in-out infinite;
+  }
+  .dica-deslize span:last-child { animation-delay: 1.05s; }
+  .dica-deslize.sai { animation: dicaSai 0.4s var(--ease-out) both; }
+  @keyframes dicaEntra { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+  @keyframes dicaSai   { to { opacity: 0; transform: translateY(-6px); max-height: 0; padding: 0; } }
+  @keyframes dicaSeta  { 0%, 70%, 100% { opacity: 0.35; } 20% { opacity: 1; } }
+  body.anims-off .dica-deslize,
+  body.anims-off .dica-deslize span { animation: none !important; }
+
+  /* Bloqueia só o arrasto LATERAL do navegador (que competiria com o
+     gesto de trocar de dia). pinch-zoom fica explícito: quem precisa
+     ampliar a tela continua podendo — pan-y sozinho tirava isso. */
+  #main { touch-action: pan-y pinch-zoom; }
+
   /* ---- O FECHAR MORA SEMPRE NO MESMO CANTO ----
      Nos modais com cabeçalho (.modal-header) o flex já empurra o × pra
      direita. Nos que montam o conteúdo por JS (patentes, conquistas,
@@ -7725,7 +7753,7 @@
       <div class="pwr1rm-inputs">
         <div class="pwr1rm-field" style="flex:1.15;">
           <label for="barTarget">Peso alvo (kg)</label>
-          <input id="barTarget" type="number" inputmode="decimal" min="0" step="2.5" placeholder="100" value="100">
+          <input id="barTarget" type="number" inputmode="decimal" min="0" step="10" placeholder="100" value="100">
         </div>
         <div class="pwr1rm-field">
           <label for="barWeight">Barra</label>
@@ -7748,7 +7776,7 @@
       <div class="pwrbar-viz" id="barViz"></div>
       <div class="pwrbar-summary" id="barSummary"></div>
       <div class="pwrbar-note" id="barNote"></div>
-      <div class="pwr1rm-hint">Anilhas consideradas: 25 · 20 · 15 · 10 · 5 · 2,5 · 1,25 kg (por lado).</div>
+      <div class="pwr1rm-hint">Anilhas da sua academia: 20 · 15 · 10 · 5 kg (por lado). Menor salto real na barra: <strong>10 kg</strong>.</div>
     </div>
 
     <!-- AQUECIMENTO -->
@@ -9114,7 +9142,7 @@ function loadEquip() { EQUIP = readJson('pwr.equip', {}) || {}; }
 function saveEquip() { safeSet('pwr.equip', JSON.stringify(EQUIP)); }
 
 const EQUIP_META = {
-  barra:   { label: 'BARRA',   unit: 'kg', step: 2.5,  hint: 'Peso TOTAL na barra (com a barra).' },
+  barra:   { label: 'BARRA',   unit: 'kg', step: 10,   hint: 'Peso TOTAL na barra (com a barra). Sobe de 10 em 10.' },
   halter:  { label: 'HALTER',  unit: 'kg', step: 4,    hint: 'Soma dos DOIS halteres.' },
   maquina: { label: 'MÁQUINA', unit: 'kg', step: 5,    hint: 'Quilos marcados no pino/placa.' },
   corpo:   { label: 'CORPO',   unit: '+kg', step: 1.25, hint: 'Só o peso ADICIONAL (fora o seu corpo).' }
@@ -9181,7 +9209,21 @@ function fmtKgExact(v) {
 }
 
 // Anilhas por lado — mesma lógica da aba Barra, disponível no card.
-const CARD_PLATES = [25, 20, 15, 10, 5, 2.5, 1.25];
+// ANILHAS DA ACADEMIA DO PEDRO — só 20, 15, 10 e 5 kg.
+// Sem 25 e sem as pequenas (2,5 / 1,25): o menor salto real é
+// 5 kg POR LADO, ou seja 10 kg no total da barra.
+const CARD_PLATES = [20, 15, 10, 5];
+// Com anilha mínima de 5 por lado, a barra só aceita saltos de 10 kg.
+// "Não fecha" sozinho não ajuda — o app precisa dizer QUAL peso fecha.
+function cargaFechavel(total, barKg) {
+  const b = (barKg == null ? 20 : barKg);
+  if (total <= b) return { abaixo: b, acima: b + PASSO_BARRA };
+  const n = (total - b) / PASSO_BARRA;
+  return { abaixo: b + Math.floor(n + 1e-6) * PASSO_BARRA,
+           acima:  b + Math.ceil(n - 1e-6) * PASSO_BARRA };
+}
+const MENOR_ANILHA = 5;              // por lado
+const PASSO_BARRA  = MENOR_ANILHA * 2;  // 10 kg no total
 function platesPerSide(total, barKg) {
   let left = (total - barKg) / 2;
   if (left < 0) return null;
@@ -9206,7 +9248,12 @@ function loadHintHtml(exId, name, rawLoad) {
     if (p === null) main = '<span class="lh-warn">Menos que a barra (20 kg).</span>';
     else if (!p.txt) main = 'Só a barra.';
     else main = '<button type="button" class="lh-plates" data-bar-kg="' + v + '">' + p.txt +
-      ' <span class="lh-side">por lado</span>' + (p.rest > 0.001 ? ' <span class="lh-warn">(+' + fmtKgExact(p.rest * 2) + ' kg não fecha)</span>' : '') + '</button>';
+      ' <span class="lh-side">por lado</span>' + '</button>';
+    if (p && p.rest > 0.001) {
+      const vz = cargaFechavel(v, 20);
+      main += ' <span class="lh-warn">não fecha — monte ' + fmtKgExact(vz.abaixo) +
+              ' ou ' + fmtKgExact(vz.acima) + ' kg</span>';
+    }
   } else if (eq === 'halter') {
     if (isUnilateral(name)) {
       main = '1 halter de <strong>' + fmtKgExact(v) + ' kg</strong>';
@@ -9350,17 +9397,23 @@ function renderDayTabs() {
   }).join('');
   
   container.querySelectorAll('.day-tab').forEach(btn => {
-    btn.addEventListener('click', () => {
-      STATE.day = btn.dataset.day;
-      renderDayTabs();
-      renderMain();
-      renderHeatmap();
-      window.scrollTo(0, 0);
-      // NÍVEL 2 — atravessar para outro reino é transição de contexto:
-      // uma descarga varre a tela. Curta, uma só, nunca acumula.
-      try { stormSweep(); } catch (e) {}
-    });
+    btn.addEventListener('click', () => irParaDia(btn.dataset.day));
   });
+}
+
+// Troca de dia em UM lugar só: as abas e o deslize passam por aqui, então
+// os dois caminhos nunca podem divergir no que renderizam.
+function irParaDia(dia) {
+  if (!dia || !DAYS.includes(dia) || dia === STATE.day) return false;
+  STATE.day = dia;
+  renderDayTabs();
+  renderMain();
+  renderHeatmap();
+  window.scrollTo(0, 0);
+  // NÍVEL 2 — atravessar para outro reino é transição de contexto:
+  // uma descarga varre a tela. Curta, uma só, nunca acumula.
+  try { stormSweep(); } catch (e) {}
+  return true;
 }
 
 // === HEATMAP semanal — status visual de cada dia da semana atual ===
@@ -11124,13 +11177,10 @@ document.querySelectorAll('#modeSwitch .mode-opt').forEach(btn => {
   // A cor é decorativa — cada anilha leva o NÚMERO escrito, então a
   // leitura nunca depende só de cor.
   const PLATES = [
-    { w: 25,   fill: '#c8382f', h: 1.00 },
     { w: 20,   fill: '#2f62b5', h: 1.00 },
-    { w: 15,   fill: '#d9b02c', h: 1.00 },
-    { w: 10,   fill: '#3f9257', h: 0.92 },
-    { w: 5,    fill: '#e6e2d8', h: 0.70 },
-    { w: 2.5,  fill: '#c8382f', h: 0.56 },
-    { w: 1.25, fill: '#b9b3a6', h: 0.44 }
+    { w: 15,   fill: '#d9b02c', h: 0.94 },
+    { w: 10,   fill: '#3f9257', h: 0.84 },
+    { w: 5,    fill: '#e6e2d8', h: 0.66 }
   ];
 
   function solvePlates(perSide) {
@@ -11211,7 +11261,11 @@ document.querySelectorAll('#modeSwitch .mode-opt').forEach(btn => {
     const realTotal = bar + collars + (perSide - sol.left) * 2;
     if (sol.left > 0.001) {
       barNote.classList.add('warn');
-      barNote.textContent = 'Não fecha exato: dá ' + fmtP(realTotal) + ' kg (faltam ' + fmtP(sol.left * 2) + ' kg no total).';
+      // Com anilha mínima de 5 por lado, "não fecha" é comum — então
+      // o aviso já entrega os dois pesos montáveis em volta do alvo.
+      const vz = cargaFechavel(target, bar + collars);
+      barNote.textContent = 'Não fecha: com suas anilhas dá ' + fmtP(vz.abaixo) +
+        ' ou ' + fmtP(vz.acima) + ' kg.';
     } else {
       barNote.classList.add('ok');
       barNote.textContent = 'Total exato: ' + fmtP(realTotal) + ' kg  ·  ' + fmtP(perSide) + ' kg por lado.';
@@ -11227,8 +11281,9 @@ document.querySelectorAll('#modeSwitch .mode-opt').forEach(btn => {
   let warmSteps = 4;
 
   // Incremento real de cada equipamento (o menor salto possível):
-  // barra 2,5 (1,25 por lado) · halter 4 (2 por halter) · máquina 5 · corpo 1,25
-  const WARM_INC = { barra: 2.5, halter: 4, maquina: 5, corpo: 2.5 };
+  // barra 10 (menor anilha da academia é 5, e vai uma de cada lado)
+  // halter 4 (2 por halter) · máquina 5 · corpo 2,5
+  const WARM_INC = { barra: 10, halter: 4, maquina: 5, corpo: 2.5 };
   const WARM_SCHEMES = { 3: [50, 70, 85], 4: [40, 60, 75, 88], 5: [40, 55, 70, 82, 92] };
   function warmReps(p) { return p <= 50 ? 5 : p <= 65 ? 4 : p <= 75 ? 3 : p <= 85 ? 2 : 1; }
   function roundInc(v, inc) { return Math.round(v / inc) * inc; }
@@ -13917,6 +13972,167 @@ function stormChargeHud() {
 }
 
 // ============================================================
+// DESLIZE HORIZONTAL — passar de um dia para o outro
+// ============================================================
+// Regras que fazem o gesto não atrapalhar o resto:
+//  - TRAVA DE EIXO: só vira "deslize" depois de 12px, e só se o dedo
+//    andou mais na horizontal que na vertical. Antes disso a rolagem
+//    da página manda. Assim ninguém troca de dia tentando rolar.
+//  - ZONAS MORTAS: campo de carga, seletor, gráfico e cartão de conquista
+//    ficam de fora — lá o dedo tem outra função.
+//  - PONTA ELÁSTICA: em SEG (pra trás) e DOM (pra frente) o conteúdo
+//    cede um pouco e volta. Você SENTE que acabou, sem trocar de semana
+//    sem querer.
+//  - Se houver modal aberto, o gesto nem começa.
+function montarDeslizeDeDias() {
+  const main = document.getElementById('main');
+  if (!main || !('ontouchstart' in window)) return;
+
+  const TRAVA = 12;        // px até decidir o eixo
+  const LIMIAR = 58;       // px para confirmar a troca
+  const RAPIDO = 0.45;     // px/ms: flick curto e rápido também troca
+  const ELASTICO = 3.8;    // divisor da resistência na ponta
+
+  let x0 = null, y0 = 0, t0 = 0, dx = 0, eixo = null, preso = false;
+
+  const posicao = () => DAYS.indexOf(STATE.day);
+  // dedo para a ESQUERDA (dx<0) = avança no calendário
+  const temDestino = (d) => {
+    const i = posicao();
+    if (i < 0) return false;
+    return d < 0 ? i < DAYS.length - 1 : i > 0;
+  };
+  const destino = (d) => DAYS[posicao() + (d < 0 ? 1 : -1)];
+
+  function bloqueado(alvo) {
+    if (document.querySelector('.modal-backdrop.open')) return true;
+    const lu = document.getElementById('levelupOverlay');
+    if (lu && lu.classList.contains('show')) return true;
+    if (document.querySelector('.feat-toast')) return true;
+    // ZONAS MORTAS de verdade: só onde arrastar o dedo JÁ significa
+    // outra coisa. Botão comum fica de fora da lista de propósito — o
+    // app é cheio deles e o dedo quase sempre começa em cima de um;
+    // o clique só nasce de toque parado, então arrastar por cima é seguro.
+    return !!(alvo && alvo.closest &&
+      alvo.closest('input, select, textarea, .pwrprog-chartwrap, svg, .feat-toast, [data-sem-deslize]'));
+  }
+
+  function anima() {
+    if (document.body.classList.contains('anims-off')) return false;
+    try {
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+          && !document.body.classList.contains('anims-on')) return false;
+    } catch (e) {}
+    return true;
+  }
+
+  let limpeza = 0;
+  function solta(x) {
+    const suave = anima();
+    main.style.transition = suave ? 'transform 0.26s cubic-bezier(0.22,1,0.32,1), opacity 0.26s ease' : '';
+    main.style.transform = x ? 'translate3d(' + x + 'px,0,0)' : '';
+    main.style.opacity = '';
+    // não deixa transition pendurada no #main: se ficar, qualquer mudança
+    // futura de transform/opacity passa a animar sem ninguém ter pedido.
+    clearTimeout(limpeza);
+    limpeza = setTimeout(() => {
+      if (!main.style.transform) { main.style.transition = ''; main.style.removeProperty('opacity'); }
+    }, suave ? 320 : 20);
+  }
+
+  main.addEventListener('touchstart', (e) => {
+    if (e.touches.length !== 1 || bloqueado(e.target)) { x0 = null; return; }
+    x0 = e.touches[0].clientX; y0 = e.touches[0].clientY;
+    t0 = (window.performance ? performance.now() : Date.now());
+    dx = 0; eixo = null; preso = false;
+    main.style.transition = 'none';
+  }, { passive: true });
+
+  main.addEventListener('touchmove', (e) => {
+    if (x0 === null || e.touches.length !== 1) return;
+    dx = e.touches[0].clientX - x0;
+    const dy = e.touches[0].clientY - y0;
+
+    if (eixo === null) {
+      if (Math.abs(dx) < TRAVA && Math.abs(dy) < TRAVA) return;
+      eixo = Math.abs(dx) > Math.abs(dy) * 1.2 ? 'x' : 'y';
+      if (eixo === 'x') preso = true;
+    }
+    if (eixo !== 'x') return;
+
+    // segura a rolagem lateral do navegador enquanto o gesto é nosso
+    if (e.cancelable) e.preventDefault();
+
+    const livre = temDestino(dx);
+    const desloc = livre ? dx : dx / ELASTICO;
+    main.style.transform = 'translate3d(' + desloc + 'px,0,0)';
+    main.style.opacity = livre ? String(Math.max(0.45, 1 - Math.abs(dx) / 420)) : '';
+  }, { passive: false });
+
+  function encerra() {
+    if (x0 === null) { return; }
+    const foi = preso;
+    x0 = null; preso = false;
+    if (!foi || eixo !== 'x') { solta(0); return; }
+
+    const ms = Math.max(1, (window.performance ? performance.now() : Date.now()) - t0);
+    const veloz = Math.abs(dx) / ms >= RAPIDO && Math.abs(dx) > 26;
+    const passou = Math.abs(dx) >= LIMIAR || veloz;
+
+    if (passou && temDestino(dx)) {
+      const alvo = destino(dx);
+      if (anima()) {
+        // sai empurrado para o lado do dedo, entra do lado oposto
+        const fora = dx < 0 ? -Math.round(main.offsetWidth * 0.34) : Math.round(main.offsetWidth * 0.34);
+        main.style.transition = 'transform 0.16s ease-out, opacity 0.16s ease-out';
+        main.style.transform = 'translate3d(' + fora + 'px,0,0)';
+        main.style.opacity = '0';
+        setTimeout(() => {
+          irParaDia(alvo);
+          main.style.transition = 'none';
+          main.style.transform = 'translate3d(' + (-fora) + 'px,0,0)';
+          main.style.opacity = '0';
+          requestAnimationFrame(() => { requestAnimationFrame(() => solta(0)); });
+        }, 150);
+      } else {
+        irParaDia(alvo);
+        main.style.transition = ''; main.style.transform = ''; main.style.opacity = '';
+      }
+      dispensarDicaDeslize();
+    } else {
+      solta(0);   // não passou do limiar, ou é ponta: volta pro lugar
+    }
+    dx = 0; eixo = null;
+  }
+
+  main.addEventListener('touchend', encerra, { passive: true });
+  main.addEventListener('touchcancel', () => { x0 = null; preso = false; eixo = null; solta(0); }, { passive: true });
+}
+
+// Gesto é invisível: avisa UMA vez que ele existe, e some no primeiro uso.
+function dispensarDicaDeslize() {
+  try { safeSet('pwr.swipeVisto', '1'); } catch (e) {}
+  const d = document.getElementById('dicaDeslize');
+  if (d) { d.classList.add('sai'); setTimeout(() => d.remove(), 420); }
+}
+function mostrarDicaDeslize() {
+  try {
+    if (!('ontouchstart' in window)) return;
+    if (localStorage.getItem('pwr.swipeVisto') === '1') return;
+    if (document.getElementById('dicaDeslize')) return;
+    const tabs = document.getElementById('dayTabs');
+    if (!tabs || !tabs.parentElement) return;
+    const d = document.createElement('div');
+    d.id = 'dicaDeslize';
+    d.className = 'dica-deslize';
+    d.setAttribute('role', 'status');
+    d.innerHTML = '<span aria-hidden="true">‹</span> deslize para trocar de dia <span aria-hidden="true">›</span>';
+    tabs.parentElement.insertBefore(d, tabs.nextSibling);
+    setTimeout(dispensarDicaDeslize, 9000);
+  } catch (e) {}
+}
+
+// ============================================================
 // INIT
 // ============================================================
 // Boot protegido: se estado corrompido derrubar o primeiro render, oferece
@@ -13938,6 +14154,10 @@ try {
 
   // Ambiente elemental do reino inicial (fogo na forja, geada no inverno)
   try { stormRealmEdge(); stormChargeHud(); } catch (e) {}
+
+  // Deslize horizontal para trocar de dia (+ dica única de descoberta).
+  // Em try próprio: gesto é conforto, nunca pode derrubar o boot.
+  try { montarDeslizeDeDias(); mostrarDicaDeslize(); } catch (e) { console.warn('Deslize falhou', e); }
 
   // Lembrete de backup por último: nunca pode derrubar o boot do app
   try { seedBackupReminder(); updateBackupBanner(); } catch (e) { console.warn('Lembrete de backup falhou', e); }
