@@ -695,20 +695,29 @@
     letter-spacing: 0.015em;
     margin-bottom: 12px;
     color: var(--text);
-    /* Sombra em camadas: contato -> volume -> halo dourado.
-       Com preenchimento em gradiente, ela aparece ao redor do glifo,
-       dando o efeito de letra fundida sobre a pedra. */
-    text-shadow:
-      0 1px 0 rgba(0,0,0,0.9),
-      0 3px 10px rgba(0,0,0,0.75),
-      0 8px 28px rgba(0,0,0,0.5),
-      0 0 34px rgba(200,155,60,0.26);
-    /* Rampa metálica: luz no topo, sombra no meio, reflexo na base */
+    /* ATENÇÃO — o título é pintado por GRADIENTE com background-clip:text,
+       o que deixa o glifo TRANSPARENTE. Uma text-shadow dura e quase sem
+       deslocamento (era 0 1px 0 rgba(0,0,0,0.9)) fica visível ATRAVÉS da
+       letra e preenche o miolo de preto: sobrava só um fio de luz na
+       borda de cima. Era esse o "BENCH DAY escuro".
+       drop-shadow trabalha sobre o ALFA já renderizado, então a sombra
+       cai FORA do glifo e o ouro aparece inteiro. */
+    text-shadow: none;
+    filter:
+      drop-shadow(0 2px 2px rgba(0,0,0,0.85))
+      drop-shadow(0 6px 16px rgba(0,0,0,0.6))
+      drop-shadow(0 0 22px rgba(200,155,60,0.30));
+    /* Rampa metálica: luz no topo, sombra no meio, reflexo na base.
+       PISO DE LEGIBILIDADE: a parada mais escura de todo título fica em
+       7,2:1 contra o fundo do cabeçalho. A rampa antiga terminava em
+       #8d7657 = 4,19:1 — a metade de baixo da letra sumia, e era isso
+       que fazia BENCH DAY parecer apagado. A descida continua existindo
+       (16,8 → 12,7 → 9,6 → 7,2), só não mergulha mais no escuro. */
     background: linear-gradient(177deg,
       #fff6e2 0%,
-      var(--text) 22%,
-      var(--text-2) 58%,
-      #8d7657 100%);
+      #eddfc2 26%,
+      #d6c8ac 62%,
+      #c3b598 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -2986,12 +2995,13 @@
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 
-      0 4px 16px rgba(0,0,0,0.8),
-      0 0 32px rgba(200,155,60,0.4),
-      0 0 12px rgba(255,68,68,0.3);
+    text-shadow: none;   /* ver nota em .day-title: sombra vaza por dentro do glifo */
     letter-spacing: 0.06em;
-    filter: drop-shadow(0 0 8px rgba(200,155,60,0.3));
+    filter:
+      drop-shadow(0 3px 4px rgba(0,0,0,0.85))
+      drop-shadow(0 6px 16px rgba(0,0,0,0.6))
+      drop-shadow(0 0 26px rgba(200,155,60,0.42))
+      drop-shadow(0 0 10px rgba(255,68,68,0.3));
     animation: bossTitleEnter 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   }
   
@@ -4186,7 +4196,8 @@
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 0 2px 12px rgba(0,0,0,0.5), 0 0 24px rgba(125,168,200,0.2);
+    text-shadow: none;
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.8)) drop-shadow(0 6px 14px rgba(0,0,0,0.5)) drop-shadow(0 0 20px rgba(125,168,200,0.26));
   }
   
   body.skin-winter .rest-day .glyph {
@@ -4284,12 +4295,30 @@
     box-shadow: 0 0 12px rgba(255,140,40,0.4);
   }
   
-  body.skin-forge .day-title {
-    background: linear-gradient(180deg, #ffce9a 0%, #e8801e 50%, #a85410 100%);
+  /* SALÃO DE GUERRA (BENCH DAY) — a skin promete dourado clássico desde
+     sempre, mas não tinha regra de título: herdava a rampa neutra, cuja
+     base terminava em 4,19:1. Era o título mais apagado do app. Agora
+     ele é ouro de fato, e o ponto mais escuro fica em 10,1:1. */
+  body.skin-warhall .day-title {
+    background: linear-gradient(178deg, #fff4dc 0%, #f6d68e 52%, #e8bb63 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 0 2px 12px rgba(0,0,0,0.6), 0 0 24px rgba(255,140,40,0.25);
+    text-shadow: none;
+    filter:
+      drop-shadow(0 2px 2px rgba(0,0,0,0.85))
+      drop-shadow(0 6px 16px rgba(0,0,0,0.55))
+      drop-shadow(0 0 24px rgba(240,198,116,0.34));
+  }
+
+  body.skin-forge .day-title {
+    /* laranja de forja preservado, mas o piso sobe de 3,39:1 para 7,68:1 */
+    background: linear-gradient(180deg, #ffd9ae 0%, #f7a94e 50%, #f0932f 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: none;
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.85)) drop-shadow(0 6px 14px rgba(0,0,0,0.55)) drop-shadow(0 0 22px rgba(255,140,40,0.32));
   }
   
   body.skin-forge .exercise.primary::before {
@@ -4365,11 +4394,13 @@
   }
   
   body.skin-lake .day-title {
-    background: linear-gradient(180deg, #c8f0f0 0%, #4a9898 100%);
+    /* piso de 5,37:1 para 7,24:1 */
+    background: linear-gradient(180deg, #c8f0f0 0%, #5eb1b1 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 0 2px 12px rgba(0,0,0,0.5), 0 0 24px rgba(90,184,184,0.2);
+    text-shadow: none;
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.8)) drop-shadow(0 6px 14px rgba(0,0,0,0.5)) drop-shadow(0 0 20px rgba(90,184,184,0.28));
   }
   
   body.skin-lake .cardio-card .cardio-card-title {
@@ -4442,11 +4473,13 @@
   }
   
   body.skin-tundra .day-title {
-    background: linear-gradient(180deg, #e0e8f0 0%, #8499b0 100%);
+    /* piso de 6,17:1 para 7,24:1 */
+    background: linear-gradient(180deg, #e0e8f0 0%, #93a6ba 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 0 2px 12px rgba(0,0,0,0.5), 0 0 24px rgba(168,188,212,0.18);
+    text-shadow: none;
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.8)) drop-shadow(0 6px 14px rgba(0,0,0,0.5)) drop-shadow(0 0 20px rgba(168,188,212,0.24));
   }
   
   body.skin-tundra .cardio-card .cardio-card-title {
@@ -4520,11 +4553,13 @@
   }
   
   body.skin-bronze .day-title {
-    background: linear-gradient(180deg, #e8d89a 0%, #b4a04a 50%, #8a7a3a 100%);
+    /* piso de 4,24:1 para 7,22:1 — pátina de bronze mantida */
+    background: linear-gradient(180deg, #e8d89a 0%, #cbbd80 50%, #b7a353 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 0 2px 12px rgba(0,0,0,0.5), 0 0 24px rgba(212,188,106,0.2);
+    text-shadow: none;
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.8)) drop-shadow(0 6px 14px rgba(0,0,0,0.5)) drop-shadow(0 0 20px rgba(212,188,106,0.28));
   }
   
   body.skin-bronze .exercise.primary::before {
@@ -13972,6 +14007,136 @@ function stormChargeHud() {
 }
 
 // ============================================================
+// DESLIZE NO CARD ABERTO — arrastar para baixo fecha
+// ============================================================
+// Os modais são folhas que sobem de baixo, e a alcinha dourada no topo
+// já promete que dá pra arrastar. Faltava cumprir a promessa.
+// Vale mais do que parece: nos cards altos (Ajustes, Patentes,
+// Conquistas) sobram só ~100px de fundo pra tocar fora, e boa parte
+// disso fica sob a barra de status do celular. Arrastar pra baixo é o
+// caminho que sempre existe.
+// Regra pra não brigar com a ROLAGEM interna do card: o arrasto só
+// começa se o card já estiver no topo, ou se o dedo pousar na alcinha
+// ou no cabeçalho.
+function montarDeslizeDeCards() {
+  if (!('ontouchstart' in window)) return;
+  const LIMIAR = 96;     // px pra confirmar o fechamento
+  const RAPIDO = 0.5;    // px/ms — arremesso pra baixo também fecha
+  const TRAVA = 10;      // px pra decidir o eixo
+  const ELASTICO = 4.2;  // resistência ao puxar pra cima
+
+  let card = null, fundo = null, y0 = 0, x0 = 0, dy = 0, t0 = 0, eixo = null;
+
+  function anima() {
+    if (document.body.classList.contains('anims-off')) return false;
+    try {
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+          && !document.body.classList.contains('anims-on')) return false;
+    } catch (e) {}
+    return true;
+  }
+  function repor(c, suave) {
+    c.style.transition = suave ? 'transform 0.24s cubic-bezier(0.22,1,0.32,1)' : '';
+    c.style.transform = '';
+    setTimeout(() => { if (c && !c.style.transform) c.style.transition = ''; }, suave ? 300 : 20);
+  }
+
+  document.addEventListener('touchstart', (e) => {
+    card = null;
+    if (e.touches.length !== 1) return;
+    const bd = document.querySelector('.modal-backdrop.open');
+    if (!bd) return;
+    const c = bd.querySelector('.modal');
+    if (!c || !c.contains(e.target)) return;
+    // zonas onde arrastar já significa outra coisa
+    if (e.target.closest && e.target.closest('input, select, textarea, .pwrprog-chartwrap, svg, [data-sem-deslize]')) return;
+    const naAlca = !!(e.target.closest && e.target.closest('.modal-handle, .modal-header'));
+    if (!naAlca && c.scrollTop > 2) return;   // está rolando o conteúdo: não é gesto de fechar
+    card = c; fundo = bd;
+    y0 = e.touches[0].clientY; x0 = e.touches[0].clientX; dy = 0; eixo = null;
+    t0 = (window.performance ? performance.now() : Date.now());
+    card.style.animation = 'none';     // a entrada já acabou; libera o transform
+    card.style.transition = 'none';
+  }, { passive: true });
+
+  document.addEventListener('touchmove', (e) => {
+    if (!card || e.touches.length !== 1) return;
+    dy = e.touches[0].clientY - y0;
+    const dx = e.touches[0].clientX - x0;
+    if (eixo === null) {
+      if (Math.abs(dy) < TRAVA && Math.abs(dx) < TRAVA) return;
+      eixo = Math.abs(dy) > Math.abs(dx) * 1.2 ? 'y' : 'x';
+      if (eixo !== 'y') { card = null; return; }
+    }
+    // puxar pra cima não abre nada: resiste e volta
+    const desloc = dy > 0 ? dy : dy / ELASTICO;
+    if (dy > 0 && e.cancelable) e.preventDefault();
+    card.style.transform = 'translate3d(0,' + desloc + 'px,0)';
+    if (fundo) fundo.style.opacity = String(Math.max(0.35, 1 - Math.max(0, dy) / 620));
+  }, { passive: false });
+
+  function encerra() {
+    if (!card) return;
+    const c = card, bd = fundo;
+    card = null; fundo = null;
+    if (eixo !== 'y') { repor(c, anima()); if (bd) bd.style.opacity = ''; return; }
+    const ms = Math.max(1, (window.performance ? performance.now() : Date.now()) - t0);
+    const arremesso = dy > 30 && (dy / ms) >= RAPIDO;
+    if (dy >= LIMIAR || arremesso) {
+      if (anima()) {
+        c.style.transition = 'transform 0.2s ease-in';
+        c.style.transform = 'translate3d(0,110%,0)';
+        if (bd) { bd.style.transition = 'opacity 0.2s ease'; bd.style.opacity = '0'; }
+        setTimeout(() => { fecharCardAberto(bd); c.style.transition = ''; c.style.transform = '';
+          c.style.animation = ''; if (bd) { bd.style.transition = ''; bd.style.opacity = ''; } }, 190);
+      } else {
+        fecharCardAberto(bd);
+        c.style.transform = ''; c.style.animation = ''; if (bd) bd.style.opacity = '';
+      }
+    } else {
+      repor(c, anima());
+      if (bd) { bd.style.transition = anima() ? 'opacity 0.24s ease' : ''; bd.style.opacity = '';
+        setTimeout(() => { bd.style.transition = ''; }, 300); }
+      c.style.animation = '';
+    }
+    dy = 0; eixo = null;
+  }
+  document.addEventListener('touchend', encerra, { passive: true });
+  document.addEventListener('touchcancel', () => {
+    if (card) { repor(card, false); if (fundo) fundo.style.opacity = ''; card.style.animation = ''; }
+    card = null; fundo = null; eixo = null;
+  }, { passive: true });
+}
+
+// Fecha o card usando o caminho específico dele quando existir (alguns
+// descartam rascunho, devolvem foco etc.), com closeModalEl de reserva.
+function fecharCardAberto(bd) {
+  if (!bd) return;
+  const especifico = {
+    rpeModal: 'rpeModalClose', gymModal: 'gymModalClose', equipModal: 'equipModalClose',
+    toolsModal: 'toolsModalClose', runeModal: 'runeModalClose', skipModal: 'skipModalClose',
+    swapModal: 'swapModalClose', rankModal: 'rankModalClose', achModal: 'achClose',
+    diffModal: 'diffModalClose'
+  }[bd.id];
+  if (especifico) {
+    const b = document.getElementById(especifico);
+    if (b) { b.click(); if (!bd.classList.contains('open')) return; }
+  }
+  try { closeModalEl(bd); } catch (e) { bd.classList.remove('open'); document.body.style.overflow = ''; }
+}
+
+// Rede de segurança para "tocar fora fecha": cada modal já tem o seu
+// próprio handler, mas eles foram sendo adicionados um a um. Este aqui
+// é delegado, então vale para qualquer card — inclusive os que forem
+// criados depois. Se o handler específico já fechou, este não faz nada.
+document.addEventListener('click', (e) => {
+  const bd = e.target && e.target.classList && e.target.classList.contains('modal-backdrop')
+    ? e.target : null;
+  if (!bd || !bd.classList.contains('open')) return;
+  fecharCardAberto(bd);
+});
+
+// ============================================================
 // DESLIZE HORIZONTAL — passar de um dia para o outro
 // ============================================================
 // Regras que fazem o gesto não atrapalhar o resto:
@@ -14157,7 +14322,7 @@ try {
 
   // Deslize horizontal para trocar de dia (+ dica única de descoberta).
   // Em try próprio: gesto é conforto, nunca pode derrubar o boot.
-  try { montarDeslizeDeDias(); mostrarDicaDeslize(); } catch (e) { console.warn('Deslize falhou', e); }
+  try { montarDeslizeDeDias(); montarDeslizeDeCards(); mostrarDicaDeslize(); } catch (e) { console.warn('Deslize falhou', e); }
 
   // Lembrete de backup por último: nunca pode derrubar o boot do app
   try { seedBackupReminder(); updateBackupBanner(); } catch (e) { console.warn('Lembrete de backup falhou', e); }
