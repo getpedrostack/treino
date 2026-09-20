@@ -5856,6 +5856,249 @@
       inset 0 -2px 4px rgba(20,60,90,0.35);
   }
 
+
+  /* ============================================================
+     HYROX — IDENTIDADE VISUAL
+     ------------------------------------------------------------
+     Força, resistência e competição, sem virar interface de jogo.
+     A textura é uma malha industrial feita em repeating-linear-
+     gradient: custo zero de pintura (nada anima, nada faz blur) e
+     alfa muito baixo, para que NENHUM texto perca contraste.
+     O cobre conversa com o laranja da forja já usado pelo
+     equipamento HYROX, mas puxa mais para o metal.
+     ============================================================ */
+  :root {
+    --hx-cobre:      #e8873a;
+    --hx-cobre-alto: #ffc389;
+    --hx-cobre-fundo:#3a2113;
+  }
+
+  /* Malha industrial reaproveitável. Duas hachuras cruzadas finas —
+     lê como piso de borracha/metal escovado a 30cm do olho, e some
+     por trás do texto. */
+  .hx-malha {
+    background-image:
+      repeating-linear-gradient(45deg,  rgba(255,190,130,0.030) 0 1px, transparent 1px 7px),
+      repeating-linear-gradient(-45deg, rgba(255,190,130,0.022) 0 1px, transparent 1px 11px);
+  }
+
+  body.skin-hyrox {
+    background:
+      radial-gradient(ellipse 85% 45% at 50% -5%, rgba(232,135,58,0.10) 0%, transparent 60%),
+      radial-gradient(ellipse 100% 40% at 50% 105%, rgba(90,45,15,0.18) 0%, transparent 55%),
+      linear-gradient(180deg, #0f0a06 0%, #0a0705 100%);
+    transition: background 1.2s ease;
+  }
+  body.skin-hyrox::before {
+    background: linear-gradient(90deg, transparent 0%, #b06e2e 30%, var(--hx-cobre-alto) 50%, #b06e2e 70%, transparent 100%);
+    opacity: 0.5;
+    box-shadow: 0 0 16px rgba(232,135,58,0.55);
+  }
+  /* Título do dia em cobre. Piso de contraste alto e drop-shadow em
+     vez de text-shadow — letra pintada por gradiente fica OCA quando
+     a sombra é dura (mesmo problema já corrigido no BENCH DAY). */
+  body.skin-hyrox .day-title {
+    background: linear-gradient(178deg, #ffe0bd 0%, #f8b170 52%, #ef9450 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: none;
+    filter:
+      drop-shadow(0 2px 2px rgba(0,0,0,0.85))
+      drop-shadow(0 6px 16px rgba(0,0,0,0.55))
+      drop-shadow(0 0 24px rgba(232,135,58,0.32));
+    letter-spacing: 0.04em;
+  }
+
+  /* ---- Bloco principal do dia ---- */
+  .hyrox-day { padding: 4px 0 8px; }
+  .hyrox-hero {
+    position: relative;
+    margin: 16px 18px 14px;
+    padding: 20px 18px 18px;
+    border: 1px solid var(--hx-cobre-fundo);
+    border-left-width: 3px;
+    border-radius: var(--r-card);
+    background-color: var(--bg-card);
+    background-image:
+      repeating-linear-gradient(45deg,  rgba(255,190,130,0.030) 0 1px, transparent 1px 7px),
+      repeating-linear-gradient(-45deg, rgba(255,190,130,0.022) 0 1px, transparent 1px 11px),
+      linear-gradient(180deg, rgba(232,135,58,0.07) 0%, transparent 60%);
+    box-shadow: var(--el-2), inset 0 1px 0 rgba(255,195,137,0.10);
+  }
+  .hyrox-hero.feito { border-color: var(--hx-cobre); }
+  .hyrox-hero-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--hx-cobre-alto);
+  }
+  .hyrox-hero-sub {
+    margin-top: 6px;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 14.5px; line-height: 1.45; font-style: italic;
+    color: var(--text-2);
+  }
+
+  /* ---- Botão de conclusão: o elemento mais importante da tela ---- */
+  .hyrox-done-btn {
+    margin-top: 16px;
+    width: 100%;
+    min-height: 56px;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 15px 16px;
+    font-family: 'Cinzel', Georgia, serif;
+    font-weight: 900; font-size: 14px; letter-spacing: 0.13em;
+    color: var(--hx-cobre-alto);
+    background: linear-gradient(180deg, rgba(232,135,58,0.15) 0%, rgba(232,135,58,0.05) 100%);
+    border: 1px solid var(--hx-cobre);
+    border-radius: var(--r-ctl);
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.12s ease, color 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .hyrox-done-btn:hover { background: linear-gradient(180deg, rgba(232,135,58,0.24) 0%, rgba(232,135,58,0.09) 100%); }
+  .hyrox-done-btn:active { transform: scale(0.985); }
+  .hyrox-done-btn.done {
+    color: #1a0e05;
+    background: linear-gradient(180deg, var(--hx-cobre-alto) 0%, var(--hx-cobre) 100%);
+    border-color: var(--hx-cobre-alto);
+    box-shadow: 0 0 22px rgba(232,135,58,0.34), inset 0 1px 0 rgba(255,255,255,0.35);
+  }
+  .hyrox-db-glyph { font-size: 17px; line-height: 1; }
+  .hyrox-db-check { font-size: 15px; font-weight: 700; }
+
+  /* ---- Registro opcional ---- */
+  .hyrox-det { margin: 0 18px 10px; }
+  .hyrox-det-toggle {
+    width: 100%;
+    display: flex; align-items: center; gap: 9px;
+    min-height: 46px; padding: 12px 14px;
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--r-ctl);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-2);
+    cursor: pointer;
+    transition: border-color 0.18s ease, color 0.18s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .hyrox-det-toggle:hover { border-color: var(--border-bright); color: var(--text); }
+  .hyrox-det-arrow { color: var(--hx-cobre); font-size: 12px; }
+  .hyrox-det-txt { flex: 1; text-align: left; }
+  .hyrox-det-meta {
+    font-size: 10px; letter-spacing: 0.08em;
+    color: var(--text-3); text-transform: none;
+  }
+  .hyrox-det-corpo { padding-top: 12px; }
+  .hyrox-det-nota {
+    margin: 0 2px 14px;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 13.5px; line-height: 1.5; font-style: italic;
+    color: var(--text-3);
+  }
+  .hyrox-est {
+    margin-bottom: 14px; padding: 13px 14px 12px;
+    background-color: var(--bg-card);
+    background-image: repeating-linear-gradient(45deg, rgba(255,190,130,0.022) 0 1px, transparent 1px 8px);
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--hx-cobre-fundo);
+    border-radius: var(--r-card);
+  }
+  .hyrox-est-cab {
+    display: flex; align-items: baseline; gap: 9px; flex-wrap: wrap;
+    margin-bottom: 9px;
+  }
+  .hyrox-est-nome {
+    font-family: 'Cinzel', Georgia, serif;
+    font-weight: 700; font-size: 15px; color: var(--text);
+  }
+  .hyrox-est-curto {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 0.14em;
+    color: var(--hx-cobre); border: 1px solid var(--hx-cobre-fundo);
+    padding: 2px 6px; border-radius: 3px;
+  }
+  .hyrox-est-nota {
+    margin-top: 9px;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 13px; line-height: 1.5; font-style: italic;
+    color: var(--text-3);
+  }
+
+  /* ---- Estado no heatmap ---- */
+  /* Referência do regulamento — informa sem parecer campo preenchido */
+  .hx-ref {
+    margin-top: 7px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px; letter-spacing: 0.08em;
+    color: var(--text-3);
+  }
+  .hx-ref small { opacity: 0.8; }
+
+
+  /* ---- Hyrox: como foi a sessão (dois toques) ---- */
+  .hx-comofoi { margin-top: 14px; display: flex; flex-direction: column; gap: 9px; }
+  .hx-comofoi-linha { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+  .hx-comofoi-rot {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--text-3); flex: 0 0 62px;
+  }
+  .hx-comofoi-opts { display: flex; gap: 6px; flex: 1 1 auto; flex-wrap: wrap; }
+  .hx-opt {
+    flex: 1 1 auto; min-width: 70px; min-height: 38px; padding: 9px 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.1em;
+    color: var(--text-2);
+    background: var(--bg-elev);
+    border: 1px solid var(--border); border-radius: var(--r-ctl);
+    cursor: pointer; transition: all 0.16s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .hx-opt:active { transform: scale(0.95); }
+  .hx-opt.sel {
+    color: var(--hx-cobre-alto);
+    border-color: var(--hx-cobre);
+    background: linear-gradient(180deg, rgba(232,135,58,0.18), rgba(232,135,58,0.06));
+  }
+
+  /* ---- Aviso de recuperação antes de dia pesado de perna ---- */
+  .rec-aviso {
+    margin: 0 18px 14px;
+    padding: 13px 15px;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 14.5px; line-height: 1.5; font-style: italic;
+    color: var(--text-2);
+    border-left: 3px solid var(--border-bright);
+    background: linear-gradient(90deg, rgba(200,155,60,0.05), transparent 70%);
+    border-radius: 0 var(--r-card) var(--r-card) 0;
+  }
+  .rec-aviso strong { font-style: normal; font-weight: 700; color: var(--text); }
+  .rec-aviso.alerta {
+    border-left-color: var(--hx-cobre);
+    background: linear-gradient(90deg, rgba(232,135,58,0.10), transparent 70%);
+  }
+  .rec-aviso.alerta strong { color: var(--hx-cobre-alto); }
+  @media (max-width: 380px) {
+    .rec-aviso { margin: 0 12px 12px; }
+    .hx-comofoi-rot { flex-basis: 100%; }
+    .hx-opt { min-width: 62px; font-size: 9.5px; }
+  }
+
+  .heat-cell.heat-hyrox {
+    background: linear-gradient(90deg, transparent 0%, var(--hx-cobre) 50%, transparent 100%);
+    border-color: var(--hx-cobre-fundo);
+    opacity: 0.62;
+  }
+
+  @media (max-width: 380px) {
+    .hyrox-hero { margin: 14px 12px 12px; padding: 17px 14px 15px; }
+    .hyrox-det { margin: 0 12px 10px; }
+    .hyrox-done-btn { font-size: 12.5px; letter-spacing: 0.1em; }
+    .hyrox-est-nome { font-size: 14px; }
+  }
+
   /* ---- DICA DO DESLIZE: aparece uma vez, some no primeiro uso ---- */
   .dica-deslize {
     display: flex; align-items: center; justify-content: center; gap: 8px;
@@ -8492,10 +8735,146 @@ let HX_LOG = {};    // sessão corrente: week::day::exId -> realizado
 let HX_HIST = {};   // longitudinal: exId -> [registros]
 function hxLoad() {
   HX_LOG = readJson('pwr.hyroxLog', {}) || {};
+  hxDetLoad();
+  hxSessaoLoad();
   HX_HIST = readJson('pwr.hyroxHist', {}) || {};
   try { const c = localStorage.getItem('pwr.hyroxCat'); if (c && HYROX_CATEGORIAS[c]) HX_CATEGORIA = c; } catch (e) {}
 }
 function hxSaveLog() { safeSet('pwr.hyroxLog', JSON.stringify(HX_LOG)); }
+
+// ---------- Como foi a sessão de Hyrox ----------
+const HX_PRED = {
+  corrida: { rot: 'CORRIDA',  desc: 'Predominou corrida / ergômetro', lower: 0.35 },
+  misto:   { rot: 'MISTO',    desc: 'Corrida e estações equilibradas', lower: 0.65 },
+  pesado:  { rot: 'PESADO',   desc: 'Predominaram trenó, sandbag, carry, wall ball', lower: 1.0 }
+};
+const HX_ESF = {
+  leve:  { rot: 'LEVE',   desc: 'RPE ~5–6', peso: 0.5 },
+  forte: { rot: 'FORTE',  desc: 'RPE ~7–8', peso: 0.8 },
+  max:   { rot: 'MÁXIMO', desc: 'RPE ~9–10', peso: 1.0 }
+};
+let HX_SESSAO = {};
+function hxSessaoLoad() { HX_SESSAO = readJson('pwr.hyroxSessao', {}) || {}; }
+function hxSessaoSave() { safeSet('pwr.hyroxSessao', JSON.stringify(HX_SESSAO)); }
+function hxSessaoGet(week, day) { return HX_SESSAO[week + '::' + day] || {}; }
+function hxSessaoSet(week, day, campo, valor) {
+  const k = week + '::' + day;
+  if (!HX_SESSAO[k]) HX_SESSAO[k] = {};
+  if (HX_SESSAO[k][campo] === valor) delete HX_SESSAO[k][campo];   // segundo toque desmarca
+  else HX_SESSAO[k][campo] = valor;
+  if (!Object.keys(HX_SESSAO[k]).length) delete HX_SESSAO[k];
+  hxSessaoSave();
+}
+
+// Carga estimada de membro inferior daquela sessão de Hyrox: 0 a 1.
+// Só existe quando o Pedro informou — nunca chutamos.
+function hxCargaLower(week, day) {
+  const s = hxSessaoGet(week, day);
+  if (!s.pred) return null;
+  const p = HX_PRED[s.pred]; if (!p) return null;
+  const e = s.esf ? (HX_ESF[s.esf] || null) : null;
+  return p.lower * (e ? e.peso : 0.8);   // sem esforço informado, assume "forte"
+}
+
+// Dois toques, nenhum obrigatório. Aparece sempre, mas não trava nada:
+// o dia se conclui com ou sem isso preenchido.
+function hyroxComoFoiHtml(week, day) {
+  try {
+    const s = hxSessaoGet(week, day);
+    const linha = function (campo, mapa, rotulo) {
+      const opts = Object.keys(mapa).map(function (k) {
+        const sel = s[campo] === k ? ' sel' : '';
+        return '<button type="button" class="hx-opt' + sel + '" data-hx-sessao="' + campo
+          + '" data-hx-valor="' + k + '" title="' + mapa[k].desc + '">' + mapa[k].rot + '</button>';
+      }).join('');
+      return '<div class="hx-comofoi-linha"><span class="hx-comofoi-rot">' + rotulo + '</span>'
+        + '<div class="hx-comofoi-opts">' + opts + '</div></div>';
+    };
+    return '<div class="hx-comofoi">'
+      + linha('pred', HX_PRED, 'Como foi')
+      + linha('esf', HX_ESF, 'Esforço')
+      + '</div>';
+  } catch (e) { return ''; }
+}
+document.addEventListener('click', function (e) {
+  const b = e.target && e.target.closest ? e.target.closest('[data-hx-sessao]') : null;
+  if (!b) return;
+  e.preventDefault();
+  hxSessaoSet(STATE.week, STATE.day, b.dataset.hxSessao, b.dataset.hxValor);
+  renderMain();
+});
+
+// ---------- Aviso de recuperação antes de um dia pesado de perna ----------
+// A regra vem da análise de interferência: o prejuízo sobre força máxima
+// de membro inferior aparece quando os estímulos se aproximam no tempo, e
+// some quando ficam em sessões separadas. 48h é a margem que a grade já
+// garante; o aviso existe para o caso em que o Hyrox de véspera foi
+// pesado de perna — aí a distância real de recuperação encurta.
+function avisoRecuperacaoLower(week, day) {
+  try {
+    const sess = getSessionForDay(day, week);
+    if (!sess || sess.type !== 'lower-heavy' || sess.hyroxDay) return '';
+    const i = DAYS.indexOf(day);
+    if (i < 0) return '';
+    // olha os dois dias anteriores
+    for (let atras = 1; atras <= 2; atras++) {
+      const j = i - atras; if (j < 0) break;
+      const dAnt = DAYS[j];
+      const sAnt = getSessionForDay(dAnt, week);
+      if (!sAnt || !sAnt.hyroxDay) continue;
+      const carga = hxCargaLower(week, dAnt);
+      if (carga == null) {
+        if (atras === 1) return '<div class="rec-aviso neutro">Hyrox ontem. Se tiver sido pesado de perna '
+          + '(trenó, lunges, wall ball), registre no dia — o app passa a avisar aqui.</div>';
+        continue;
+      }
+      const horas = atras * 24;
+      // CALIBRAGEM: a grade já coloca 48h entre o Hyrox de quarta e o dia
+      // pesado de perna, justamente para que não haja conflito. Alertar a
+      // 48h seria contradizer o próprio desenho. O alerta existe para o
+      // caso em que a semana foi reorganizada e a folga caiu para ~24h.
+      if (horas <= 24) {
+        if (carga >= 0.7) {
+          return '<div class="rec-aviso alerta"><strong>Hyrox pesado de perna há ~24h.</strong> '
+            + 'Quadríceps, posterior e pegada ainda estão pagando. Entre com menos carga e suba '
+            + 'só se a primeira série sair limpa — não force recorde hoje. '
+            + 'Na grade padrão este dia fica a 48h do Hyrox; a semana foi reorganizada.</div>';
+        }
+        if (carga >= 0.45) {
+          return '<div class="rec-aviso neutro">Hyrox misto ontem. Comece conservador e deixe a primeira '
+            + 'série de trabalho decidir a carga do dia.</div>';
+        }
+        return '';
+      }
+      // 48h: a folga planejada. Só informa quando o Hyrox foi pesado E máximo.
+      if (horas <= 48 && carga >= 0.95) {
+        return '<div class="rec-aviso neutro">O Hyrox de ' + (DAY_LABELS[dAnt] || dAnt)
+          + ' foi pesado e no máximo. As 48h de folga desta grade costumam dar conta, '
+          + 'mas vale conferir a primeira série antes de decidir a carga.</div>';
+      }
+      return '';
+    }
+    return '';
+  } catch (e) { return ''; }
+}
+
+// Lembra se o Pedro deixou o bloco de registro aberto naquele dia.
+let HX_DET = {};
+function hxDetLoad() { HX_DET = readJson('pwr.hyroxDet', {}) || {}; }
+function hxDetalheAberto(week, day) { return !!HX_DET[week + '::' + day]; }
+function hxAlternarDetalhe(week, day) {
+  const k = week + '::' + day;
+  if (HX_DET[k]) delete HX_DET[k]; else HX_DET[k] = true;
+  safeSet('pwr.hyroxDet', JSON.stringify(HX_DET));
+}
+function attachHyroxDetHandlers() {
+  const b = document.getElementById('hyroxDetToggle');
+  if (!b) return;
+  b.addEventListener('click', function () {
+    hxAlternarDetalhe(STATE.week, STATE.day);
+    renderMain();
+  });
+}
 function hxSaveHist() { safeSet('pwr.hyroxHist', JSON.stringify(HX_HIST)); }
 function hxKey(week, day, exId) { return week + '::' + day + '::' + exId; }
 
@@ -8540,9 +8919,14 @@ function hxPlanejado(ex, week, day) {
 function hxEfetivo(ex, week, day) {
   const p = hxPlanejado(ex, week, day);
   const f = hxGet(week, day, ex.id);
+  // Num dia SEM prescrição (o Hyrox da grade), não existe plano para
+  // herdar. A distância de prova é referência do regulamento, não algo
+  // que o Pedro fez hoje — herdá-la colocaria no histórico um número
+  // que ele nunca digitou. Vale a regra de ouro: null é "não informado".
+  const semPlano = !!ex.opcional;
   return {
-    dist: f.dist != null ? f.dist : p.dist,
-    reps: f.reps != null ? f.reps : p.reps,
+    dist: f.dist != null ? f.dist : (semPlano ? null : p.dist),
+    reps: f.reps != null ? f.reps : (semPlano ? null : p.reps),
     kg:   f.kg   != null ? f.kg   : p.kg,
     seg:  f.seg,                      // tempo NUNCA é herdado
     trans: f.trans,
@@ -8682,6 +9066,20 @@ function hxPainelHtml(ex, week, day) {
       + '<span class="hx-val hx-crono-val' + (e.tempoInformado ? ' edit' : '') + '" data-crono="' + ex.id + '">'
       + (e.seg != null ? hxFmtTempo(e.seg) : '—') + '</span></div>');
 
+    // Num dia sem prescrição, o padrão da prova vira REFERÊNCIA visível
+    // (e não valor preenchido). Assim a informação não se perde sem
+    // fingir que foi feita.
+    let refProva = '';
+    if (ex.opcional && st) {
+      const partes = [];
+      if (c.dist && st.provaDist != null) partes.push(st.provaDist + ' m');
+      if (c.reps && st.provaReps != null) partes.push(st.provaReps + ' reps');
+      const cg = hxCargaDeProva(st.id);
+      if (c.load && cg != null) partes.push(fmtKgExact(cg) + ' kg');
+      if (partes.length) refProva = '<div class="hx-ref">Prova: ' + partes.join(' · ')
+        + (st.cargaNota && c.load ? ' <small>(' + st.cargaNota + ')</small>' : '') + '</div>';
+    }
+
     // Ritmo só quando há os dois dados. Nunca calculado a partir de plano.
     let ritmo = '';
     if (c.time && e.tempoInformado && e.dist != null && e.dist > 0) {
@@ -8726,6 +9124,7 @@ function hxPainelHtml(ex, week, day) {
 
     return '<div class="hx-painel' + (concluido ? ' feito' : '') + '" data-hx-for="' + ex.id + '">'
       + '<div class="hx-linha">' + blocos.join('') + '</div>'
+      + refProva
       + (ritmo ? '<div class="hx-ritmo-linha">' + ritmo + '</div>' : '')
       + cronoBtns
       + '<div class="hx-acoes">'
@@ -8816,154 +9215,111 @@ document.addEventListener('change', (e) => {
 });
 
 // ============================================================
-// HYROX — segunda (força) e quarta (motor)
+// HYROX — UM DIA, SEM TREINO PRÉ-DEFINIDO
 // ------------------------------------------------------------
-// As 8 estações oficiais, com a corrida de 1 km entre elas. Os dois
-// dias cobrem todas, com ênfases opostas: SEGUNDA carrega peso (trenó,
-// farmers, sandbag), QUARTA constrói motor (ski, remo, wall ball,
-// corrida). Assim a perna continua recebendo carga mesmo sem o
-// SQUAT DAY na grade.
-// Distâncias vão no campo de REPS porque são fixas pelo regulamento —
-// o que muda de treino pra treino é o peso do implemento.
+// A academia decide o treino; o app só sabe que o dia é de Hyrox.
+// Por isso aqui NÃO existe prescrição: nada de sets, reps, RPE ou
+// deload. O dia é MARCÁVEL (mesmo mecanismo do cardio) e as nove
+// estações ficam disponíveis como registro OPCIONAL do que foi feito.
+//
+// As estações vêm de HYROX_ESTACOES — fonte única. O conteúdo
+// técnico (o que observar, o que fazer quando falta equipamento)
+// fica em HYROX_NOTAS, casado por id de estação.
 // ============================================================
-SESSIONS.hyrox_forca = {
-    title: "HYROX / CARGA",
-    eyebrow: "Híbrido — Estações pesadas",
-    pills: ["65–80min"],
-    type: "lower-heavy",
-    typeLabel: "Hyrox / Força",
-    exercises: [
-      {
-        id: "hxf1", name: "Empurrar trenó (sled push)", primary: true,
-        station: "sledPush", metric: "DISTANCE+LOAD+TIME", planDist: 50,
-        sets: 4, reps: "25 m", rpeByWeek: { 1: "7", 2: "8", 3: "8.5" },
-        deload: { sets: 2, reps: "25 m", intensity: "60% do peso de prova", rpe: "6" },
-        notes: "Peso de prova: 152 kg (masculino open, trenó incluso). Braços estendidos e travados, tronco baixo a 45 graus, passada curta e contínua — quem dá passo longo perde a inércia e para. Não deixe o trenó parar: retomar custa mais que manter.",
-        swaps: [
-          { name: "Leg press pesado com pausa curta", reason: "Academia sem pista de trenó.", notes: "Séries de 20–30s sob tensão, descanso curto. Não é igual, mas cobre a demanda de quadríceps em fadiga." },
-          { name: "Agachamento búlgaro com halter", reason: "Sem trenó e sem leg press livre.", notes: "Unilateral aproxima o padrão de passada do sled. 10–12 por perna, controlado." }
-        ]
-      },
-      {
-        id: "hxf2", name: "Puxar trenó (sled pull)", primary: true,
-        station: "sledPull", metric: "DISTANCE+LOAD+TIME", planDist: 50,
-        sets: 4, reps: "25 m", rpeByWeek: { 1: "7", 2: "8", 3: "8.5" },
-        deload: { sets: 2, reps: "25 m", intensity: "60% do peso de prova", rpe: "6" },
-        notes: "Peso de prova: 103 kg. Puxe com o corpo inclinado pra trás e os pés plantados — braço sozinho cansa em 10 metros. Recolha a corda em braçadas curtas e ritmadas, sem soltar a tensão.",
-        swaps: [
-          { name: "Remada baixa na polia, pesada", reason: "Sem trenó disponível.", notes: "Séries de 15–20 reps com pausa curta. Foco em manter a cadência, não em carga máxima." },
-          { name: "Puxada de corda na polia", reason: "Alternativa mais próxima do gesto.", notes: "Se a academia tiver corda presa a peso, arraste no chão." }
-        ]
-      },
-      {
-        id: "hxf3", name: "Farmers carry (transporte)", primary: true,
-        station: "farmers", metric: "DISTANCE+LOAD+TIME", planDist: 200,
-        sets: 4, reps: "200 m", rpeByWeek: { 1: "7", 2: "8", 3: "8" },
-        deload: { sets: 2, reps: "100 m", intensity: "60% do peso de prova", rpe: "6" },
-        notes: "Peso de prova: 2 de 24 kg. O campo de carga guarda o peso POR MÃO. Ombros pra trás, escápulas travadas, passada rápida e curta. A pegada é o gargalo — treine segurar, não só andar.",
-        swaps: [
-          { name: "Caminhada do fazendeiro com halteres", reason: "Sem kettlebell no peso certo.", notes: "Halteres exigem mais da pegada por serem mais largos. Vale como progressão." },
-          { name: "Trap bar carry", reason: "Se a barra hexagonal estiver livre.", notes: "Permite carga maior. Bom pra sobrecarga, menos específico." }
-        ]
-      },
-      {
-        id: "hxf4", name: "Lunge com sandbag (sandbag lunges)", primary: true,
-        station: "lunges", metric: "DISTANCE+LOAD+TIME", planDist: 100,
-        sets: 3, reps: "50 m", rpeByWeek: { 1: "7", 2: "8", 3: "8.5" },
-        deload: { sets: 2, reps: "25 m", intensity: "60% do peso de prova", rpe: "6" },
-        notes: "Peso de prova: 30 kg nas costas. Joelho de trás TOCA o chão — na prova, passada sem tocar é anulada. Sandbag alto na nuca, cotovelos pra frente. É aqui que a maioria quebra: treine em fadiga.",
-        swaps: [
-          { name: "Afundo caminhando com barra nas costas", reason: "Sem sandbag.", notes: "Mesma exigência, carga mais estável. Toque o joelho no chão em toda repetição." },
-          { name: "Afundo com colete de peso", reason: "Alternativa com peso distribuído.", notes: "Menos exigência de core que o sandbag, mas mantém o padrão." }
-        ]
-      },
-      {
-        id: "hxf5", name: "Burpee broad jump", primary: false,
-        station: "burpee", metric: "DISTANCE+TIME", planDist: 20,
-        sets: 3, reps: "20 m", rpeByWeek: { 1: "7", 2: "7.5", 3: "8" },
-        deload: { sets: 2, reps: "10 m", rpe: "6" },
-        notes: "Peito no chão, salto pra frente com os dois pés juntos. Respire no topo do salto, não no chão. Ritmo constante vence sprint seguido de parada.",
-        swaps: [
-          { name: "Burpee no lugar com salto horizontal", reason: "Espaço curto na academia.", notes: "Mesma demanda cardíaca com menos deslocamento." }
-        ]
-      },
-      {
-        id: "hxf6", name: "Corrida comprometida (entre estações)", primary: false,
-        station: "run", metric: "DISTANCE+TIME", planDist: 400,
-        sets: 5, reps: "400 m", rpeByWeek: { 1: "6", 2: "7", 3: "7.5" },
-        deload: { sets: 3, reps: "400 m", rpe: "5" },
-        notes: "Corra LOGO depois de cada estação, com a perna ainda queimando — é isso que a prova cobra. Ritmo alvo: 10–20s/km mais lento que seu ritmo fresco. Sem peso: deixe o campo de carga vazio.",
-        swaps: [
-          { name: "Esteira em ritmo de prova", reason: "Sem pista ou tempo ruim.", notes: "Inclinação de 1% aproxima o custo da corrida ao ar livre." }
-        ]
-      }
+const HYROX_NOTAS = {
+  ski: {
+    notes: "Puxe com tronco e quadril, não com o tríceps: o braço é só a corrente. Cadência baixa e forte bate cadência alta e fraca.",
+    swaps: [
+      { name: "Remo ergômetro", reason: "Academia sem SkiErg.", notes: "Demanda parecida de motor, padrão diferente." },
+      { name: "Corda naval em intervalos", reason: "Última opção.", notes: "30s forte e 30s leve. Mantém o custo cardíaco dos membros superiores." }
     ]
+  },
+  sledPush: {
+    notes: "Braços estendidos e travados, tronco baixo a 45 graus, passada curta e contínua — quem dá passo longo perde a inércia e para. Retomar custa mais que manter.",
+    swaps: [
+      { name: "Leg press pesado com pausa curta", reason: "Academia sem pista de trenó.", notes: "Séries de 20–30s sob tensão, descanso curto. Cobre a demanda de quadríceps em fadiga." },
+      { name: "Agachamento búlgaro com halter", reason: "Sem trenó e sem leg press livre.", notes: "Unilateral aproxima o padrão de passada do sled." }
+    ]
+  },
+  sledPull: {
+    notes: "Puxe com o corpo inclinado pra trás e os pés plantados — braço sozinho cansa em 10 metros. Recolha a corda em braçadas curtas e ritmadas, sem soltar a tensão.",
+    swaps: [
+      { name: "Remada baixa na polia, pesada", reason: "Sem trenó disponível.", notes: "Séries de 15–20 reps com pausa curta. Foco na cadência, não na carga máxima." },
+      { name: "Puxada de corda na polia", reason: "Alternativa mais próxima do gesto.", notes: "Se houver corda presa a peso, arraste no chão." }
+    ]
+  },
+  burpee: {
+    notes: "Peito no chão, salto pra frente com os dois pés juntos. Respire no topo do salto, não no chão. Ritmo constante vence sprint seguido de parada.",
+    swaps: [
+      { name: "Burpee no lugar com salto horizontal", reason: "Espaço curto na academia.", notes: "Mesma demanda cardíaca com menos deslocamento." }
+    ]
+  },
+  row: {
+    notes: "Sequência da remada: pernas, quadril, braços; na volta, braços, quadril, pernas. Damper entre 4 e 6. Erro clássico é puxar de braço no início e não ter perna no fim.",
+    swaps: [
+      { name: "SkiErg", reason: "Remo ocupado.", notes: "Inverte a ênfase, mantém o motor." }
+    ]
+  },
+  farmers: {
+    notes: "Ombros pra trás, escápulas travadas, passada rápida e curta. A pegada é o gargalo — treine segurar, não só andar.",
+    swaps: [
+      { name: "Caminhada do fazendeiro com halteres", reason: "Sem kettlebell no peso certo.", notes: "Halteres exigem mais da pegada por serem mais largos." },
+      { name: "Trap bar carry", reason: "Se a barra hexagonal estiver livre.", notes: "Permite carga maior. Bom pra sobrecarga, menos específico." }
+    ]
+  },
+  lunges: {
+    notes: "Joelho de trás TOCA o chão — na prova, passada sem tocar é anulada. Sandbag alto na nuca, cotovelos pra frente. É aqui que a maioria quebra.",
+    swaps: [
+      { name: "Afundo caminhando com barra nas costas", reason: "Sem sandbag.", notes: "Mesma exigência, carga mais estável. Toque o joelho no chão sempre." },
+      { name: "Afundo com colete de peso", reason: "Alternativa com peso distribuído.", notes: "Menos exigência de core que o sandbag, mas mantém o padrão." }
+    ]
+  },
+  wallball: {
+    notes: "Agachamento completo, a bola sai do fundo e não dos braços. Última estação da prova, feita com a perna destruída — treinar em fadiga importa mais que treinar descansado.",
+    swaps: [
+      { name: "Thruster com halteres leves", reason: "Sem medicine ball.", notes: "Mesmo padrão de agachar e empurrar, sem a captura da bola." },
+      { name: "Agachamento com salto e arremesso na parede", reason: "Sem bola e sem halteres.", notes: "Mantém a cadeia, perde a carga." }
+    ]
+  },
+  run: {
+    notes: "Na prova são 8 km quebrados em 8 blocos, cada um começando com a perna já queimando. Ritmo alvo: o que você sustentaria DEPOIS de uma estação, não o seu melhor tempo.",
+    swaps: [
+      { name: "Esteira com 1% de inclinação", reason: "Chuva ou falta de pista.", notes: "Aproxima o custo da corrida ao ar livre." },
+      { name: "Bike ergométrica em blocos", reason: "Se houver dor articular.", notes: "Preserva o motor sem impacto. Menos específico." }
+    ]
+  }
 };
 
-SESSIONS.hyrox_motor = {
-    title: "HYROX / MOTOR",
-    eyebrow: "Híbrido — Ergos e corrida",
-    pills: ["55–70min"],
-    type: "cardio",
-    typeLabel: "Hyrox / Motor",
-    exercises: [
-      {
-        id: "hxm1", name: "SkiErg", primary: true,
-        station: "ski", metric: "DISTANCE+TIME", planDist: 1000,
-        sets: 4, reps: "1000 m", rpeByWeek: { 1: "6.5", 2: "7.5", 3: "8" },
-        deload: { sets: 2, reps: "500 m", rpe: "6" },
-        notes: "Primeira estação da prova — e a que mais gente estoura. Puxe com tronco e quadril, não com o tríceps: o braço é só a corrente. Cadência baixa e forte bate cadência alta e fraca. Sem peso: campo de carga vazio.",
-        swaps: [
-          { name: "Remo ergômetro", reason: "Academia sem SkiErg.", notes: "Demanda parecida de motor, padrão diferente. Não substitui a técnica, mas mantém o condicionamento." },
-          { name: "Corda naval em intervalos", reason: "Última opção.", notes: "30s forte e 30s leve. Mantém o custo cardíaco dos membros superiores." }
-        ]
-      },
-      {
-        id: "hxm2", name: "Remo ergômetro (rowing)", primary: true,
-        station: "row", metric: "DISTANCE+TIME", planDist: 1000,
-        sets: 4, reps: "1000 m", rpeByWeek: { 1: "6.5", 2: "7.5", 3: "8" },
-        deload: { sets: 2, reps: "500 m", rpe: "6" },
-        notes: "Sequência da remada: pernas, quadril, braços; na volta, braços, quadril, pernas. Damper entre 4 e 6. Erro clássico é puxar de braço no início e não ter perna no fim.",
-        swaps: [
-          { name: "SkiErg", reason: "Remo ocupado.", notes: "Inverte a ênfase, mantém o motor." }
-        ]
-      },
-      {
-        id: "hxm3", name: "Wall balls", primary: true,
-        station: "wallball", metric: "REPS+LOAD+TIME", planReps: 25,
-        sets: 4, reps: "25", rpeByWeek: { 1: "7", 2: "8", 3: "8.5" },
-        deload: { sets: 2, reps: "15", intensity: "bola mais leve", rpe: "6" },
-        notes: "Peso de prova: bola de 6 kg, alvo a 3 metros. Última estação da prova, feita com a perna destruída — por isso treinar em fadiga importa mais que treinar descansado. Agachamento completo, a bola sai do fundo, não dos braços.",
-        swaps: [
-          { name: "Thruster com halteres leves", reason: "Sem medicine ball.", notes: "Mesmo padrão de agachar e empurrar. Não tem a captura da bola, que é onde cansa a pegada." },
-          { name: "Agachamento com salto e arremesso na parede", reason: "Sem bola e sem halteres.", notes: "Mantém a cadeia, perde a carga." }
-        ]
-      },
-      {
-        id: "hxm4", name: "Burpee broad jump", primary: false,
-        station: "burpee", metric: "DISTANCE+TIME", planDist: 20,
-        sets: 3, reps: "20 m", rpeByWeek: { 1: "7", 2: "7.5", 3: "8" },
-        deload: { sets: 2, reps: "10 m", rpe: "6" },
-        notes: "Repete da segunda de propósito: é a estação mais penalizada por técnica ruim. Peito no chão, salto com pés juntos, respiração no topo.",
-        swaps: [
-          { name: "Burpee no lugar com salto horizontal", reason: "Espaço curto.", notes: "Mesma demanda cardíaca." }
-        ]
-      },
-      {
-        id: "hxm5", name: "Corrida em blocos de 1 km", primary: true,
-        station: "run", metric: "DISTANCE+TIME", planDist: 1000,
-        sets: 6, reps: "1000 m", rpeByWeek: { 1: "6.5", 2: "7.5", 3: "8" },
-        deload: { sets: 3, reps: "1000 m", rpe: "5.5" },
-        notes: "O coração da prova: 8 km no total, quebrados em 8 blocos. Faça cada quilômetro no ritmo que você sustentaria DEPOIS de uma estação, não no seu melhor tempo. Anote o tempo do km nas notas.",
-        swaps: [
-          { name: "Esteira com 1% de inclinação", reason: "Chuva ou falta de pista.", notes: "Aproxima o custo da corrida ao ar livre." },
-          { name: "Bike ergométrica em blocos de 3 min", reason: "Se houver dor articular.", notes: "Preserva o motor sem impacto. Menos específico." }
-        ]
-      }
-    ]
+// Ordem de exibição: a da prova, com a corrida no fim por ser o
+// segmento que liga as estações e não uma estação em si.
+const HYROX_ORDEM_DIA = ['ski', 'sledPush', 'sledPull', 'burpee', 'row', 'farmers', 'lunges', 'wallball', 'run'];
+
+SESSIONS.hyrox = {
+    title: "HYROX",
+    eyebrow: "Treino definido na academia",
+    pills: [],
+    type: "hyrox",
+    typeLabel: "Hyrox",
+    markable: true,          // dia marcável — mesmo motor do cardio
+    hyroxDay: true,          // pede a tela própria de Hyrox
+    exercises: HYROX_ORDEM_DIA.map(function (sid) {
+      const st = HYROX_ESTACOES[sid];
+      const nt = HYROX_NOTAS[sid] || {};
+      return {
+        // id estável e distinto dos antigos (hxf*/hxm*), pra não
+        // colidir com registros já salvos
+        id: 'hx_' + sid,
+        name: st.nome,
+        station: sid,
+        metric: st.metrica,
+        // SEM sets/reps/rpe/deload de propósito: nada é prescrito.
+        opcional: true,
+        notes: nt.notes || '',
+        swaps: nt.swaps || []
+      };
+    })
 };
 
-// Sessão Deadlift
 SESSIONS.deadlift = {
     title: "DEADLIFT DAY",
     eyebrow: "Força — Pull",
@@ -9199,7 +9555,7 @@ const SKIP_REASONS = [
 ];
 
 // Ordem de prioridade visual no menu de troca
-const SESSION_ORDER = ['hyrox_forca', 'hyrox_motor', 'squat', 'bench', 'deadlift', 'upper_hiper', 'cardio_mid', 'cardio_long', 'rest', 'skip'];
+const SESSION_ORDER = ['hyrox', 'squat', 'bench', 'deadlift', 'upper_hiper', 'cardio_mid', 'cardio_long', 'rest', 'skip'];
 
 // Schedule padrão — o que existia antes, agora explícito
 // ============================================================
@@ -9409,20 +9765,20 @@ SESSIONS.hyper_lowerB = {
 };
 
 const DEFAULT_SCHEDULE = {
-  seg: 'hyrox_forca',   // Hyrox entrou no lugar do SQUAT DAY
+  seg: 'hyrox',   // dia de Hyrox — o treino quem define é a academia
   ter: 'bench',
-  qua: 'hyrox_motor',   // Hyrox entrou no lugar do Cardio Z2
-  qui: 'deadlift',
-  sex: 'upper_hiper',
+  qua: 'hyrox',
+  qui: 'upper_hiper',  // tronco na quinta: pouca sobreposição com o Hyrox
+  sex: 'deadlift',     // terra a 48h do Hyrox de quarta, não a 24h
   sab: 'cardio_long',
   dom: 'rest'
 };
 
 // Calendário da linha OLÍMPICA (hipertrofia): 5 dias de musculação + cardio + descanso
 const HYPER_SCHEDULE = {
-  seg: 'hyrox_forca',   // Hyrox entrou no lugar do PUSH DAY
+  seg: 'hyrox',   // dia de Hyrox — o treino quem define é a academia
   ter: 'hyper_pull',
-  qua: 'hyrox_motor',   // Hyrox entrou no lugar do LOWER A
+  qua: 'hyrox',
   qui: 'hyper_upper',
   sex: 'hyper_lowerB',
   sab: 'cardio_long',
@@ -9439,7 +9795,7 @@ function saveModeSchedules() { if (STATE.mode === 'hyper') saveHyperSchedules();
 // Sessões oferecidas no painel "Gerenciar Semana" por modo
 const HYPER_SESSION_ORDER = ['hyper_push', 'hyper_pull', 'hyper_lowerA', 'hyper_upper', 'hyper_lowerB', 'cardio_mid', 'cardio_long', 'rest', 'skip'];
 function modeSessionOrder() { return STATE.mode === 'hyper' ? HYPER_SESSION_ORDER : SESSION_ORDER; }
-function modeCoreSessions() { return STATE.mode === 'hyper' ? ['hyrox_forca', 'hyrox_motor', 'hyper_pull', 'hyper_upper', 'hyper_lowerB'] : ['hyrox_forca', 'hyrox_motor', 'bench', 'deadlift', 'upper_hiper']; }
+function modeCoreSessions() { return STATE.mode === 'hyper' ? ['hyrox', 'hyper_pull', 'hyper_upper', 'hyper_lowerB'] : ['hyrox', 'bench', 'deadlift', 'upper_hiper']; }
 
 // Dias em que TRT é aplicada (seg/qui, independe do treino do dia)
 const TRT_DAYS = ['seg', 'qui'];
@@ -9478,25 +9834,15 @@ function weekBlurb(m) { return STATE.mode === 'hyper' ? (m.blurbH || m.blurb) : 
 // Cada sessão é um "reino" com: classe de skin, título de ascensão,
 // e mensagem secreta de conclusão (inscrição em pedra, revelada só ao completar).
 const REALM_CONFIG = {
-  hyrox_forca: {
-    rune: 'ᚢ', // Uruz — o auroque, força bruta domada
+  hyrox: {
+    rune: 'ᚢ', // Uruz — o auroque, vitalidade bruta
     runeName: 'Uruz',
     runeTranslit: 'ᚢ · "U" · O Auroque',
-    runeMeaning: 'Uruz é o auroque, o touro selvagem que os povos do norte caçavam para provar a própria coragem. Não é a força que se exibe: é a força que se arrasta, resiste e não cede. Vitalidade bruta, saúde animal, o corpo que aguenta o que a mente mandar.',
-    runeConnection: 'Hoje tu não levantas peso — tu o ARRASTAS. Trenó, sandbag, os ferros na mão por duzentos metros. Não há plateia nem recorde: há só o chão, a distância e a recusa em parar. O auroque não foge da carga; ele a empurra até o fim do campo.',
+    runeMeaning: 'Uruz é o auroque, o touro selvagem que os povos do norte caçavam para provar a própria coragem. Não é a força que se exibe: é a força que resiste e não cede. Vitalidade bruta, saúde animal, o corpo que aguenta o que a mente mandar.',
+    runeConnection: 'Hoje tu não escolhes a prova — ela é posta diante de ti. Pode ser trenó, pode ser o oitavo quilômetro, pode ser a bola subindo quando a perna já não responde. O auroque não pergunta qual será a carga: ele atravessa o campo com a que vier.',
     effect: 'sparks',
-    ascendedTitle: 'O AUROQUE PASSOU',
-    ascendedMessage: 'O peso foi arrastado do começo ao fim, sem trégua.\nOs ferros marcaram a mão e a mão não abriu.\nUruz reconhece: este corpo aguenta.'
-  },
-  hyrox_motor: {
-    rune: 'ᛖ', // Ehwaz — o cavalo, movimento sustentado
-    runeName: 'Ehwaz',
-    runeTranslit: 'ᛖ · "E" · O Cavalo',
-    runeMeaning: 'Ehwaz é o cavalo e, mais que isso, a união entre cavaleiro e montaria — dois corpos que se movem como um. Representa progresso constante, confiança e a viagem longa feita em ritmo, não em arranque. Quem galopa sem pausa chega; quem dispara, tomba.',
-    runeConnection: 'Hoje o inimigo não é o peso, é a distância. Oito quilômetros quebrados em oito pedaços, cada um começando com a perna já queimando. Ehwaz ensina o ritmo: não é o mais rápido que termina o Hyrox, é o que não precisou parar. Teu pulmão e tuas pernas são cavaleiro e cavalo.',
-    effect: 'frost',
-    ascendedTitle: 'A CAVALGADA NÃO CESSOU',
-    ascendedMessage: 'A distância foi devorada em ritmo, não em fúria.\nO fôlego se manteve inteiro do primeiro ao último bloco.\nEhwaz galopa — e quem galopa junto, chega.'
+    ascendedTitle: 'O AUROQUE ATRAVESSOU',
+    ascendedMessage: 'A prova foi posta e o corpo respondeu.\nNão importa o que a academia mandou — foi feito.\nUruz reconhece: este corpo aguenta.'
   },
   squat: {
     rune: 'ᚲ', // Kenaz — a tocha, fogo da forja, ofício
@@ -9645,7 +9991,7 @@ const REALM_THEME_COLORS = {
   squat: '#120a06', bench: '#0c0a08', deadlift: '#0a0604',
   upper_hiper: '#0e0d08', cardio_mid: '#06100f', cardio_long: '#0a0d11',
   rest: '#070b12', skip: '#0a0a0b',
-  hyrox_forca: '#100b05', hyrox_motor: '#070f12',
+  hyrox: '#0d0906',
   hyper_push: '#100c06', hyper_pull: '#0c0a08', hyper_lowerA: '#100a06',
   hyper_upper: '#0e0c08', hyper_lowerB: '#0a0604'
 };
@@ -9754,6 +10100,12 @@ function setTrainingMode(mode) {
 
 // Cardio done helpers
 function cardioDoneKey(week, day) { return `${week}::${day}`; }
+// Dia MARCÁVEL: aquele que se conclui por um toque, sem depender de
+// séries. O cardio já era assim; o Hyrox entrou na mesma porta em vez
+// de ganhar um mecanismo paralelo. O armazenamento é o mesmo
+// (pwr.cardioDone, chaveado por semana::dia), então streak, heatmap,
+// histórico e XP funcionam sem nenhuma regra nova.
+function ehDiaMarcavel(session) { return !!(session && (session.cardio || session.markable)); }
 function isCardioDone(week, day) { return !!STATE.cardioDone[cardioDoneKey(week, day)]; }
 function toggleCardioDone(week, day) {
   const k = cardioDoneKey(week, day);
@@ -10048,8 +10400,9 @@ function resetSetProgress(week, day, exId) {
 function isDayFullyComplete(week, day) {
   const session = getSessionForDay(day);
   if (!session) return false;
-  // Cardio: completo quando o botão de conclusão foi marcado
-  if (session.cardio) return isCardioDone(week, day);
+  // Dia marcável (cardio ou Hyrox): completo quando o botão foi tocado.
+  // NÃO exige estação registrada — "treinei hoje" basta.
+  if (ehDiaMarcavel(session)) return isCardioDone(week, day);
   if (!session.exercises || session.exercises.length === 0) return false;
   const isDeload = week === 'deload';
   
@@ -10160,9 +10513,10 @@ function validateSchedule(schedule) {
     hyper_push: ['upper-push', 'peito + ombro + tríceps'],
     hyper_upper: ['upper-push', 'peito + costas + braços'],
     hyper_pull: ['upper-pull', 'costas + bíceps'],
-    // O Hyrox de carga puxa quadríceps e posterior tanto quanto um dia de
-    // força: o validador precisa saber disso, senão deixa ele colado no terra.
-    hyrox_forca: ['lower-heavy', 'quadríceps + posterior + grip']
+    // O Hyrox é fisicamente relevante e quase sempre carrega perna
+    // (trenó, lunge, wall ball). Mantido na mesma regra de recuperação
+    // que já existia — sem criar alerta novo nesta rodada.
+    hyrox: ['lower-heavy', 'quadríceps + posterior + grip']
   };
   
   // Cria lista circular dos dias com suas sessões
@@ -10614,8 +10968,12 @@ function getDayHeatStatus(week, day) {
     return getSkipJustification(week, day) ? 'skip-justified' : 'skip-unjustified';
   }
   
-  // CARDIO: concluído acende dourado no heatmap (conta como treino do dia)
-  if (session.cardio) return isCardioDone(week, day) ? 'complete' : 'cardio';
+  // MARCÁVEL: concluído acende dourado no heatmap (conta como treino do dia).
+  // O Hyrox tem estado próprio quando pendente, pra se distinguir do cardio.
+  if (ehDiaMarcavel(session)) {
+    if (isCardioDone(week, day)) return 'complete';
+    return session.hyroxDay ? 'hyrox' : 'cardio';
+  }
   
   // Exercícios: contagem
   if (!session.exercises || session.exercises.length === 0) return 'empty';
@@ -10704,8 +11062,7 @@ function renderMain() {
     bench: 'skin-warhall',       // Salão de Guerra — dourado clássico
     deadlift: 'skin-boss',       // Boss Fight (convive com .boss-fight)
     upper_hiper: 'skin-bronze',  // Bronze de Esparta — pátina oliva
-    hyrox_forca: 'skin-forge',   // Forja — o dia que arrasta peso
-    hyrox_motor: 'skin-tundra',  // Tundra — vento frio, corrida longa
+    hyrox: 'skin-hyrox',         // identidade própria: piso de academia
     cardio_mid: 'skin-lake',     // Lago dos Nove — água parada
     cardio_long: 'skin-tundra',  // Tundra de Midgard — vento frio
     rest: 'skin-winter',         // Fimbulwinter — inverno, neve
@@ -10718,7 +11075,7 @@ function renderMain() {
     hyper_lowerB: 'skin-boss'    // Boss — Poseidon
   };
   // Remove todas as skins antes de aplicar a atual
-  ['skin-forge','skin-warhall','skin-boss','skin-bronze','skin-lake','skin-tundra','skin-winter','skin-skip'].forEach(s => {
+  ['skin-forge','skin-warhall','skin-boss','skin-bronze','skin-lake','skin-tundra','skin-winter','skin-skip','skin-hyrox'].forEach(s => {
     document.body.classList.remove(s);
   });
   const activeSkin = SKIN_MAP[sessionKey] || 'skin-warhall';
@@ -10761,7 +11118,10 @@ function renderMain() {
   
   // Progress
   let totalEx = 0, doneEx = 0;
-  if (day.exercises && !(isDeload && day.deloadCutAll)) {
+  // Dia marcável não tem contador de exercícios: as estações do Hyrox são
+  // registro OPCIONAL, e "00 / 09" faria parecer que há nove pendências.
+  // O estado do dia é concluído ou não — e quem diz isso é o botão.
+  if (day.exercises && !ehDiaMarcavel(day) && !(isDeload && day.deloadCutAll)) {
     day.exercises.forEach(ex => {
       if (isDeload && shouldHideOnDeload(ex)) return;
       totalEx++;
@@ -10771,6 +11131,7 @@ function renderMain() {
   const progressHtml = totalEx > 0 ? 
     `<div class="day-progress"><span class="done">${String(doneEx).padStart(2,'0')}</span> / ${String(totalEx).padStart(2,'0')}</div>` : '';
   
+  const avisoRec = avisoRecuperacaoLower(STATE.week, STATE.day);
   const customBadge = isModifiedDay ? '<span class="custom-badge" title="Sessão movida">REORG</span>' : '';
   
   // Runa do reino — todos os dias têm a sua (deadlift usa a boss-rune estilizada)
@@ -10819,6 +11180,11 @@ function renderMain() {
     </div>
   `;
   
+  // Aviso de recuperação: só aparece num dia pesado de perna que vem
+  // logo depois de um Hyrox que o Pedro marcou como pesado. Não bloqueia
+  // nada — informa e sugere entrar conservador.
+  if (avisoRec) html += avisoRec;
+
   // Schedule warning banner if applicable
   if (isCustom && STATE.day === todayKeyForBanner()) {
     const warnings = validateSchedule(getCurrentSchedule());
@@ -10848,6 +11214,58 @@ function renderMain() {
     return;
   }
   
+  if (day.hyroxDay) {
+    const feito = isCardioDone(STATE.week, STATE.day);
+    const detAberto = hxDetalheAberto(STATE.week, STATE.day);
+    const nEstacoes = (day.exercises || []).length;
+    const nRegistradas = (day.exercises || []).filter(function (ex) {
+      const e = hxEfetivo(ex, STATE.week, STATE.day);
+      return e && (e.distInformada || e.repsInformada || e.kgInformada || e.tempoInformado);
+    }).length;
+    html += `
+      <div class="hyrox-day fade-in">
+        <div class="hyrox-hero ${feito ? 'feito' : ''}">
+          <div class="hyrox-hero-tag">Treino do dia</div>
+          <div class="hyrox-hero-sub">Quem define o treino é a academia. O app registra.</div>
+          <button class="hyrox-done-btn ${feito ? 'done' : ''}" id="cardioCompleteBtn" data-sk="${sessionKey}">
+            <span class="hyrox-db-glyph">${feito ? '✦' : '◇'}</span>
+            <span class="hyrox-db-label">${feito ? 'TREINO CONCLUÍDO' : 'MARCAR COMO CONCLUÍDO'}</span>
+            ${feito ? '<span class="hyrox-db-check">✓</span>' : ''}
+          </button>
+          ${hyroxComoFoiHtml(STATE.week, STATE.day)}
+        </div>
+
+        <div class="hyrox-det ${detAberto ? 'aberto' : ''}">
+          <button class="hyrox-det-toggle" id="hyroxDetToggle" aria-expanded="${detAberto ? 'true' : 'false'}">
+            <span class="hyrox-det-arrow">${detAberto ? '▾' : '▸'}</span>
+            <span class="hyrox-det-txt">Registrar o que foi feito</span>
+            <span class="hyrox-det-meta">${nRegistradas > 0 ? nRegistradas + '/' + nEstacoes : 'opcional'}</span>
+          </button>
+          ${detAberto ? `
+            <div class="hyrox-det-corpo">
+              <p class="hyrox-det-nota">Preencha só o que a academia passou hoje. Nada aqui é obrigatório para concluir o dia.</p>
+              ${(day.exercises || []).map(function (ex) {
+                const st = hxEstacaoDoEx(ex);
+                return `<div class="hyrox-est" data-ex-id="${ex.id}">
+                  <div class="hyrox-est-cab">
+                    <span class="hyrox-est-nome">${ex.name}</span>
+                    ${st && st.curto ? `<span class="hyrox-est-curto">${st.curto}</span>` : ''}
+                  </div>
+                  ${hxPainelHtml(ex, STATE.week, STATE.day)}
+                  ${ex.notes ? `<div class="hyrox-est-nota">${ex.notes}</div>` : ''}
+                </div>`;
+              }).join('')}
+            </div>` : ''}
+        </div>
+      </div>
+    `;
+    if (feito) html += buildAscendedSection(sessionKey, false);
+    main.innerHTML = html;
+    attachCardioHandlers();      // mesmo botão, mesmo motor de conclusão
+    attachHyroxDetHandlers();
+    return;
+  }
+
   if (day.cardio) {
     const c = day.cardioContent;
     const cardioComplete = isCardioDone(STATE.week, STATE.day);
@@ -13214,6 +13632,22 @@ function buildFullBackup() {
         weekData.adherence.planned++;
       } else if (session.rest) {
         dayData.rest = true;
+      } else if (session.hyroxDay) {
+        // Hyrox: marcado = sessão realizada, mesmo sem nenhuma estação
+        // preenchida. As estações registradas entram como complemento.
+        dayData.hyrox = true;
+        dayData.hyroxCompleted = isCardioDone(week, dayKey);
+        dayData.hyroxStations = (session.exercises || []).map(function (ex) {
+          const e = hxEfetivo(ex, week, dayKey);
+          if (!e || !(e.distInformada || e.repsInformada || e.kgInformada || e.tempoInformado)) return null;
+          return { station: ex.station, nome: ex.name,
+                   dist: e.distInformada ? e.dist : null,
+                   reps: e.repsInformada ? e.reps : null,
+                   kg: e.kgInformada ? e.kg : null,
+                   seg: e.tempoInformado ? e.seg : null };
+        }).filter(Boolean);
+        weekData.adherence.planned++;
+        if (dayData.hyroxCompleted) weekData.adherence.completed++;
       } else if (session.cardio) {
         dayData.cardio = true;
         dayData.cardioCompleted = isCardioDone(week, dayKey);
@@ -13422,6 +13856,19 @@ function buildHumanReadableSummary(backup) {
         return;
       }
       
+      if (d.hyrox) {
+        md += `### ${dayLabel} — ${d.sessionTitle}\n`;
+        md += `_${d.hyroxCompleted ? 'Concluído' : 'Não realizado'} — treino definido na academia_\n\n`;
+        if (d.hyroxStations && d.hyroxStations.length) {
+          md += `| Estação | Distância | Reps | Carga | Tempo |\n|---|---|---|---|---|\n`;
+          d.hyroxStations.forEach(function (e) {
+            md += `| ${e.nome} | ${e.dist != null ? e.dist + ' m' : '—'} | ${e.reps != null ? e.reps : '—'} | ${e.kg != null ? e.kg + ' kg' : '—'} | ${e.seg != null ? hxFmtTempo(e.seg) : '—'} |\n`;
+          });
+          md += `\n`;
+        }
+        return;
+      }
+
       if (d.cardio) {
         md += `### ${dayLabel} — ${d.sessionTitle}\n`;
         md += `_Cardio Z2 — registrar manualmente_\n\n`;
@@ -13577,14 +14024,13 @@ const SESSION_DOT_COLORS = {
   squat: '#e8801e', bench: '#c89b3c', deadlift: '#d4502a', upper_hiper: '#b4a04a',
   cardio_mid: '#5ab8b8', cardio_long: '#8499b0', rest: '#7da8c8', skip: '#6b5c47',
   // Linha olímpica (hipertrofia)
-  hyrox_forca: '#f0932f', hyrox_motor: '#5eb1b1',
+  hyrox: '#f0932f',
   hyper_push: '#e0a93e', hyper_pull: '#b4894a', hyper_lowerA: '#e8801e',
   hyper_upper: '#c9a85a', hyper_lowerB: '#d4502a'
 };
 // Labels do painel — desambiguam os dois cardios e traduzem rest/skip
 const SESSION_PANEL_LABELS = {
-  hyrox_forca: 'Hyrox · Estações pesadas',
-  hyrox_motor: 'Hyrox · Ergos e corrida',
+  hyrox: 'Hyrox · Treino da academia',
   cardio_mid: 'Cardio Z2 · 40-50min',
   cardio_long: 'Cardio Z2 · Longo',
   rest: 'Descanso',
@@ -13951,7 +14397,7 @@ function evaluateDayStatus(week, day) {
   if (!session) return null;
   if (session.rest) return 'rest';                                  // descanso prescrito
   if (session.skip) return getSkipJustification(week, day) ? 'rest' : null; // skip: justificado faz ponte
-  if (session.cardio) return isCardioDone(week, day) ? 'fire' : null;
+  if (ehDiaMarcavel(session)) return isCardioDone(week, day) ? 'fire' : null;
   if (session.exercises) {
     const isDeload = week === 'deload';
     let total = 0, done = 0;
@@ -14302,7 +14748,7 @@ function updateRage(g) {
         if (getSetProgress(STATE.week, STATE.day, ex.id) >= ms) d++;
       });
       if (t > 0) dprog = d / t;
-    } else if (day && day.cardio) {
+    } else if (day && ehDiaMarcavel(day)) {
       dprog = isCardioDone(STATE.week, STATE.day) ? 1 : 0;
     }
   } catch (e) {}

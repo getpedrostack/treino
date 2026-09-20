@@ -18,7 +18,7 @@
    o cache antigo e serve o app atualizado.
    ============================================================ */
 
-const CACHE_VERSION = 'pwr-v15';
+const CACHE_VERSION = 'pwr-v17';
 const CORE_ASSETS = [
   './',
   './index.html',
