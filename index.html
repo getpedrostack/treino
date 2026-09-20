@@ -1294,6 +1294,8 @@
   .ex-equip.eq-halter::before  { background: #7fa3c4; box-shadow: 0 0 8px rgba(127,163,196,0.85); }
   .ex-equip.eq-maquina::before { background: #86a882; box-shadow: 0 0 8px rgba(134,168,130,0.85); }
   .ex-equip.eq-corpo::before   { background: #bd8fa9; box-shadow: 0 0 8px rgba(189,143,169,0.85); }
+  /* Hyrox: laranja da forja — sem cor própria ele se confundia com BARRA */
+  .ex-equip.eq-hyrox::before   { background: #f0932f; box-shadow: 0 0 8px rgba(240,147,47,0.9); }
   .ex-equip { color: var(--text-2); border-color: var(--border-bright); }
 
   .ex-load-hint {
@@ -5882,6 +5884,210 @@
      ampliar a tela continua podendo — pan-y sozinho tirava isso. */
   #main { touch-action: pan-y pinch-zoom; }
 
+  /* ---- HYROX: painel de execução -------------------------
+     Lido de relance, no meio do treino: número grande, rótulo
+     pequeno, nada piscando. Sem animação decorativa de propósito. */
+  .hx-painel {
+    margin-top: 10px; padding: 12px 12px 11px;
+    background: linear-gradient(180deg, rgba(240,147,47,0.05), rgba(0,0,0,0.12));
+    border: 1px solid var(--border); border-left: 2px solid rgba(240,147,47,0.55);
+    border-radius: var(--r-card);
+  }
+  .hx-painel.feito { border-left-color: var(--ok); background: linear-gradient(180deg, rgba(126,224,160,0.06), rgba(0,0,0,0.12)); }
+  .hx-linha { display: flex; flex-wrap: wrap; gap: 14px 20px; align-items: flex-end; }
+  .hx-bloco { display: flex; flex-direction: column; gap: 2px; min-width: 62px; }
+  .hx-rot {
+    font-family: 'JetBrains Mono', monospace; font-size: 8.5px;
+    letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-3);
+  }
+  .hx-val {
+    font-family: 'JetBrains Mono', monospace; font-weight: 700;
+    font-size: 25px; line-height: 1.05; color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+  .hx-val small { font-size: 10px; font-weight: 600; color: var(--text-3); letter-spacing: 0.04em; }
+  /* Editado pelo usuário fica dourado; herdado do plano fica neutro. */
+  .hx-val.edit { color: var(--gold-bright); }
+  .hx-vazio { color: var(--text-3); font-weight: 400; }
+  .hx-tempo .hx-val { font-size: 27px; }
+  .hx-ritmo-linha { margin-top: 7px; }
+  .hx-ritmo {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--text-2); letter-spacing: 0.06em;
+  }
+  .hx-crono-btns { display: flex; gap: 8px; margin-top: 11px; flex-wrap: wrap; }
+  .hx-cb {
+    min-height: 40px; padding: 0 15px; cursor: pointer;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text-2);
+    background: linear-gradient(180deg, var(--bg-elev), var(--bg-card));
+    border: 1px solid var(--border-bright); border-radius: var(--r-ctl);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .hx-cb:active { transform: scale(0.96); }
+  .hx-cb.pausa { color: var(--gold-bright); border-color: var(--gold-deep); }
+  .hx-cb.fim {
+    color: #17120a; border-color: var(--gold-bright);
+    background: linear-gradient(180deg, var(--gold-bright), var(--gold));
+  }
+  .hx-acoes { margin-top: 10px; }
+  .hx-editar {
+    background: none; border: 0; padding: 6px 0; cursor: pointer;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold);
+    min-height: 32px;
+  }
+  .hx-rodape {
+    margin-top: 9px; padding-top: 9px; border-top: 1px solid var(--border);
+    display: flex; flex-wrap: wrap; gap: 4px 14px;
+  }
+  .hx-meta { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-3); }
+  .hx-meta b { color: var(--text-2); font-weight: 700; }
+  .hx-meta small { color: var(--text-3); }
+  .hx-delta { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; }
+  .hx-delta.bom { color: var(--ok); }
+  .hx-delta.pior { color: var(--danger-soft); }
+  /* Formulário de edição */
+  .hx-form {
+    margin-top: 11px; padding-top: 11px; border-top: 1px solid var(--border-bright);
+    display: flex; flex-wrap: wrap; gap: 10px;
+  }
+  .hx-campo { display: flex; flex-direction: column; gap: 4px; flex: 1 1 108px; min-width: 100px; }
+  .hx-campo span {
+    font-family: 'JetBrains Mono', monospace; font-size: 8.5px;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-3);
+  }
+  .hx-campo input {
+    min-height: 44px; padding: 6px 10px; width: 100%; box-sizing: border-box;
+    font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 17px;
+    color: var(--text); background: var(--bg); text-align: center;
+    border: 1px solid var(--border-bright); border-radius: var(--r-ctl);
+  }
+  .hx-campo input:focus { outline: none; border-color: var(--gold); box-shadow: var(--well); }
+  .hx-form-nota {
+    flex: 1 1 100%; font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 12.5px; font-style: italic; color: var(--text-3);
+  }
+  .hx-form-nota b { font-style: normal; color: var(--text-2); }
+  .hx-form-ok {
+    flex: 1 1 100%; min-height: 42px; cursor: pointer;
+    font-family: 'Cinzel', Georgia, serif; font-weight: 700; font-size: 12px;
+    letter-spacing: 0.14em; color: #17120a;
+    background: linear-gradient(180deg, var(--gold-bright), var(--gold));
+    border: 0; border-radius: var(--r-ctl);
+  }
+  @media (max-width: 360px) {
+    .hx-linha { gap: 12px 16px; }
+    .hx-val { font-size: 22px; }
+    .hx-tempo .hx-val { font-size: 24px; }
+    .hx-campo { flex: 1 1 92px; min-width: 88px; }
+  }
+
+  /* ---- REPETIÇÕES REALIZADAS ------------------------------ */
+  .ex-reps:empty { display: none; }
+  .reps-linha {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    margin-top: 9px;
+  }
+  .reps-rotulo {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--text-3); flex-shrink: 0;
+  }
+  .reps-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .rep-chip {
+    display: inline-flex; align-items: baseline; gap: 4px;
+    min-height: 32px; padding: 5px 9px;
+    background: linear-gradient(180deg, var(--bg-elev) 0%, var(--bg-card) 100%);
+    border: 1px solid var(--border); border-radius: var(--r-ctl);
+    cursor: pointer; font: inherit;
+    transition: border-color 0.18s ease, background 0.18s ease, transform 0.1s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .rep-chip:active { transform: scale(0.94); }
+  .rep-serie {
+    font-family: 'JetBrains Mono', monospace; font-size: 8.5px;
+    letter-spacing: 0.08em; color: var(--text-3);
+  }
+  .rep-valor {
+    font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px;
+    color: var(--text-2); font-variant-numeric: tabular-nums;
+  }
+  /* Estados amarrados ao DADO: bateu, passou, ficou abaixo. */
+  .rep-chip.no-alvo { border-color: var(--border-bright); }
+  .rep-chip.no-alvo .rep-valor { color: var(--gold-bright); }
+  .rep-chip.acima {
+    border-color: rgba(126,224,160,0.55);
+    background: linear-gradient(180deg, rgba(126,224,160,0.10), rgba(126,224,160,0.03));
+  }
+  .rep-chip.acima .rep-valor { color: var(--ok); }
+  .rep-chip.abaixo {
+    border-color: rgba(224,133,115,0.5);
+    background: linear-gradient(180deg, rgba(224,133,115,0.09), rgba(224,133,115,0.02));
+  }
+  .rep-chip.abaixo .rep-valor { color: var(--danger-soft); }
+  .rep-chip.editando { border-color: var(--gold); box-shadow: 0 0 0 1px rgba(200,155,60,0.35); }
+  .reps-alvo {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    letter-spacing: 0.08em; color: var(--text-3); margin-left: auto;
+  }
+  /* Teclado curto de valores prováveis */
+  .reps-seletor {
+    display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    margin-top: 8px; padding: 9px 10px;
+    background: var(--bg-elev);
+    border: 1px solid var(--border-bright); border-radius: var(--r-card);
+    box-shadow: var(--well);
+    animation: repsAbre 0.2s var(--ease-out) both;
+  }
+  @keyframes repsAbre { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
+  .reps-seletor-tit {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-3);
+    margin-right: 2px; flex-shrink: 0;
+  }
+  .reps-op {
+    min-width: 38px; min-height: 38px; padding: 0 6px;
+    font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px;
+    color: var(--text-2);
+    background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg) 100%);
+    border: 1px solid var(--border); border-radius: var(--r-ctl);
+    cursor: pointer; transition: all 0.14s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .reps-op:active { transform: scale(0.92); }
+  .reps-op.sel {
+    color: #17120a; border-color: var(--gold-bright);
+    background: linear-gradient(180deg, var(--gold-bright) 0%, var(--gold) 100%);
+    box-shadow: 0 0 14px rgba(200,155,60,0.35);
+  }
+  /* Comentário de autorregulação */
+  .reps-nota {
+    margin-top: 8px; padding: 9px 11px;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 13.5px; line-height: 1.5; font-style: italic;
+    color: var(--text-2);
+    border-left: 2px solid var(--border-bright);
+    background: linear-gradient(90deg, rgba(200,155,60,0.05), transparent 70%);
+  }
+  .reps-nota strong { font-style: normal; font-weight: 700; color: var(--text); }
+  .reps-nota.pronta {
+    border-left-color: var(--ok);
+    background: linear-gradient(90deg, rgba(126,224,160,0.08), transparent 70%);
+  }
+  .reps-nota.pronta strong { color: var(--ok); }
+  .reps-nota.atencao {
+    border-left-color: var(--danger-soft);
+    background: linear-gradient(90deg, rgba(224,133,115,0.08), transparent 70%);
+  }
+  .reps-nota.atencao strong { color: var(--danger-soft); }
+  body.anims-off .reps-seletor { animation: none !important; }
+  @media (max-width: 360px) {
+    .reps-alvo { margin-left: 0; width: 100%; }
+    .reps-op { min-width: 34px; }
+  }
+
   /* ---- O FECHAR MORA SEMPRE NO MESMO CANTO ----
      Nos modais com cabeçalho (.modal-header) o flex já empurra o × pra
      direita. Nos que montam o conteúdo por JS (patentes, conquistas,
@@ -7828,6 +8034,12 @@
             <option value="halter">Halter</option>
             <option value="maquina">Máquina</option>
             <option value="corpo">Corpo</option>
+            <option value="hyrox_sled">Hyrox · Trenó</option>
+            <option value="hyrox_farmers">Hyrox · Farmers</option>
+            <option value="hyrox_sandbag">Hyrox · Sandbag</option>
+            <option value="hyrox_wallball">Hyrox · Wall ball</option>
+            <option value="hyrox_skierg">Hyrox · SkiErg</option>
+            <option value="hyrox_row">Hyrox · Remo</option>
           </select>
         </div>
       </div>
@@ -8125,6 +8337,632 @@ SESSIONS.cardio_mid = {
     }
 };
 
+
+// ============================================================
+// HYROX — TAXONOMIA DA MODALIDADE
+// ------------------------------------------------------------
+// O Hyrox não se mede como Powerlifting. Aqui a unidade é metro,
+// segundo e ritmo, e a mesma carga feita mais rápido É progresso.
+// Por isso a modalidade declara a MÉTRICA de cada movimento em vez
+// de assumir "série x repetição" como o resto do app faz.
+//
+// Uma entidade por estação, compartilhada pelas duas plataformas:
+// Powerlifting e Hipertrofia apontam para os MESMOS objetos aqui.
+// ============================================================
+
+// Métricas possíveis. Combinadas com '+' quando o movimento exige duas.
+const HX_METRICA = {
+  DISTANCE: 'DISTANCE',
+  TIME: 'TIME',
+  REPS: 'REPS',
+  LOAD: 'LOAD'
+};
+
+// As 8 estações oficiais. A CORRIDA não é uma nona estação: ela é o
+// trecho que costura a prova, e por isso vive aqui como segmento.
+const HYROX_ESTACOES = {
+  run: {
+    id: 'run', nome: 'Corrida', curto: 'RUN', segmento: true,
+    metrica: 'DISTANCE+TIME', unidade: 'm', provaDist: 1000,
+    equip: 'corpo', cargas: null
+  },
+  ski: {
+    id: 'ski', nome: 'SkiErg', curto: 'SKI', ordem: 1,
+    metrica: 'DISTANCE+TIME', unidade: 'm', provaDist: 1000,
+    equip: 'hyrox_skierg', cargas: null, semRampa: true
+  },
+  sledPush: {
+    id: 'sledPush', nome: 'Empurrar trenó', curto: 'SLED PUSH', ordem: 2,
+    metrica: 'DISTANCE+LOAD+TIME', unidade: 'm', provaDist: 50,
+    equip: 'hyrox_sled', cargas: { open: 152, pro: 202 }, cargaNota: 'total, já com o trenó'
+  },
+  sledPull: {
+    id: 'sledPull', nome: 'Puxar trenó', curto: 'SLED PULL', ordem: 3,
+    metrica: 'DISTANCE+LOAD+TIME', unidade: 'm', provaDist: 50,
+    equip: 'hyrox_sled', cargas: { open: 103, pro: 153 }, cargaNota: 'total, já com o trenó'
+  },
+  burpee: {
+    id: 'burpee', nome: 'Burpee broad jump', curto: 'BURPEE BJ', ordem: 4,
+    metrica: 'DISTANCE+TIME', unidade: 'm', provaDist: 80,
+    equip: 'corpo', cargas: null, semRampa: true
+  },
+  row: {
+    id: 'row', nome: 'Remo ergômetro', curto: 'ROW', ordem: 5,
+    metrica: 'DISTANCE+TIME', unidade: 'm', provaDist: 1000,
+    equip: 'hyrox_row', cargas: null, semRampa: true
+  },
+  farmers: {
+    id: 'farmers', nome: 'Farmers carry', curto: 'FARMERS', ordem: 6,
+    metrica: 'DISTANCE+LOAD+TIME', unidade: 'm', provaDist: 200,
+    equip: 'hyrox_farmers', cargas: { open: 24, pro: 32 }, porMao: true, cargaNota: 'por mão'
+  },
+  lunges: {
+    id: 'lunges', nome: 'Lunge com sandbag', curto: 'SANDBAG LUNGE', ordem: 7,
+    metrica: 'DISTANCE+LOAD+TIME', unidade: 'm', provaDist: 100,
+    equip: 'hyrox_sandbag', cargas: { open: 30, pro: 30 }, cargaNota: 'peso do saco'
+  },
+  wallball: {
+    id: 'wallball', nome: 'Wall balls', curto: 'WALL BALLS', ordem: 8,
+    metrica: 'REPS+LOAD+TIME', unidade: 'reps', provaReps: 100,
+    equip: 'hyrox_wallball', cargas: { open: 6, pro: 9 }, cargaNota: 'peso da bola'
+  }
+};
+
+// A estrutura da prova: 8 corridas de 1 km intercaladas com as 8
+// estações. Serve de base para um simulado futuro — hoje é só o mapa.
+const HYROX_PROVA = (function () {
+  const ordem = ['ski', 'sledPush', 'sledPull', 'burpee', 'row', 'farmers', 'lunges', 'wallball'];
+  const blocos = [];
+  ordem.forEach((st, i) => {
+    blocos.push({ tipo: 'run', estacao: 'run', bloco: i + 1 });
+    blocos.push({ tipo: 'estacao', estacao: st, bloco: i + 1 });
+  });
+  return blocos;   // 16 segmentos: run, estação, run, estação...
+})();
+
+// Categorias de prova. A arquitetura NÃO assume uma carga oficial única.
+const HYROX_CATEGORIAS = { open: 'Open', pro: 'Pro' };
+let HX_CATEGORIA = 'open';
+function hxCategoria() { return HX_CATEGORIA; }
+function hxSetCategoria(c) {
+  if (!HYROX_CATEGORIAS[c]) return;
+  HX_CATEGORIA = c; safeSet('pwr.hyroxCat', c);
+}
+// CARGA DE PROVA — o que a competição exige. Diferente da carga de
+// treino (o que está prescrito hoje) e da realizada (o que foi feito).
+function hxCargaDeProva(estacaoId, cat) {
+  const st = HYROX_ESTACOES[estacaoId];
+  if (!st || !st.cargas) return null;
+  return st.cargas[cat || hxCategoria()] != null ? st.cargas[cat || hxCategoria()] : null;
+}
+function hxEstacaoDoEx(ex) {
+  if (!ex) return null;
+  return ex.station ? (HYROX_ESTACOES[ex.station] || null) : null;
+}
+function ehHyroxEx(ex) { return !!(ex && ex.metric); }
+
+// Decompõe "DISTANCE+LOAD+TIME" nos campos que o exercício aceita.
+function hxCampos(metrica) {
+  const m = String(metrica || '').toUpperCase();
+  return {
+    dist: m.indexOf('DISTANCE') >= 0,
+    reps: m.indexOf('REPS') >= 0,
+    load: m.indexOf('LOAD') >= 0,
+    time: m.indexOf('TIME') >= 0
+  };
+}
+
+// ---------- TEMPO ----------
+function hxFmtTempo(seg) {
+  if (seg == null || isNaN(seg)) return '—';
+  const s = Math.max(0, Math.round(seg));
+  const m = Math.floor(s / 60), r = s % 60;
+  return m + ':' + String(r).padStart(2, '0');
+}
+function hxParseTempo(txt) {
+  // aceita "4:35", "275", "4m35"
+  if (txt == null) return null;
+  const t = String(txt).trim();
+  if (!t) return null;
+  const mm = t.match(/^(\d+)\s*[:m]\s*(\d{1,2})$/i);
+  if (mm) return parseInt(mm[1], 10) * 60 + parseInt(mm[2], 10);
+  const n = parseFloat(t.replace(',', '.'));
+  return isNaN(n) ? null : Math.round(n);
+}
+// Ritmo por km só faz sentido em distância longa de deslocamento.
+function hxRitmo(metros, seg) {
+  if (!metros || !seg || metros <= 0 || seg <= 0) return null;
+  const segPorKm = seg / (metros / 1000);
+  if (!isFinite(segPorKm)) return null;
+  return hxFmtTempo(segPorKm) + '/km';
+}
+// Velocidade em m/s serve pra trenó e carry, onde /km não diz nada.
+function hxVelocidade(metros, seg) {
+  if (!metros || !seg || seg <= 0) return null;
+  return (metros / seg).toFixed(2) + ' m/s';
+}
+
+// ============================================================
+// HYROX — REGISTRO DO REALIZADO
+// ------------------------------------------------------------
+// REGRA DE OURO: null é "não informado", 0 é "zero informado".
+// Nunca inventamos tempo nem carga que o Pedro não digitou.
+// ============================================================
+let HX_LOG = {};    // sessão corrente: week::day::exId -> realizado
+let HX_HIST = {};   // longitudinal: exId -> [registros]
+function hxLoad() {
+  HX_LOG = readJson('pwr.hyroxLog', {}) || {};
+  HX_HIST = readJson('pwr.hyroxHist', {}) || {};
+  try { const c = localStorage.getItem('pwr.hyroxCat'); if (c && HYROX_CATEGORIAS[c]) HX_CATEGORIA = c; } catch (e) {}
+}
+function hxSaveLog() { safeSet('pwr.hyroxLog', JSON.stringify(HX_LOG)); }
+function hxSaveHist() { safeSet('pwr.hyroxHist', JSON.stringify(HX_HIST)); }
+function hxKey(week, day, exId) { return week + '::' + day + '::' + exId; }
+
+// Realizado da sessão corrente. Campos ausentes ficam null de propósito.
+function hxGet(week, day, exId) {
+  const r = HX_LOG[hxKey(week, day, exId)];
+  return r && typeof r === 'object'
+    ? r
+    : { dist: null, reps: null, kg: null, seg: null, trans: null, ts: null };
+}
+function hxSet(week, day, exId, campo, valor) {
+  const k = hxKey(week, day, exId);
+  const atual = hxGet(week, day, exId);
+  // string vazia volta a ser "não informado" — apagar não vira zero
+  let v = valor;
+  if (v === '' || v === undefined) v = null;
+  else if (campo === 'seg') v = hxParseTempo(v);
+  else { const n = parseFloat(String(v).replace(',', '.')); v = isNaN(n) ? null : n; }
+  atual[campo] = v;
+  HX_LOG[k] = atual;
+  hxSaveLog();
+  return atual;
+}
+function hxLimpar(week, day, exId) { delete HX_LOG[hxKey(week, day, exId)]; hxSaveLog(); }
+
+// O PLANEJADO vem da prescrição do exercício; a CARGA planejada vem do
+// campo de carga que o app já tinha (pwr.loads), sem duplicar dado.
+function hxPlanejado(ex, week, day) {
+  const c = hxCampos(ex.metric);
+  const st = hxEstacaoDoEx(ex);
+  const kg = parseFloat(getLoad(week, day, ex.id));
+  return {
+    dist: c.dist ? (ex.planDist != null ? ex.planDist : (st ? st.provaDist : null)) : null,
+    reps: c.reps ? (ex.planReps != null ? ex.planReps : (st ? st.provaReps : null)) : null,
+    kg: c.load ? (isNaN(kg) ? null : kg) : null,
+    prova: st ? hxCargaDeProva(st.id) : null
+  };
+}
+// Realizado EFETIVO: o que foi digitado; se nada foi digitado, herda o
+// planejado — igual ao que o app já faz com as séries. Mas só herda o
+// que EXISTE no plano: tempo nunca é inventado.
+function hxEfetivo(ex, week, day) {
+  const p = hxPlanejado(ex, week, day);
+  const f = hxGet(week, day, ex.id);
+  return {
+    dist: f.dist != null ? f.dist : p.dist,
+    reps: f.reps != null ? f.reps : p.reps,
+    kg:   f.kg   != null ? f.kg   : p.kg,
+    seg:  f.seg,                      // tempo NUNCA é herdado
+    trans: f.trans,
+    distInformada: f.dist != null, repsInformada: f.reps != null,
+    kgInformada: f.kg != null, tempoInformado: f.seg != null
+  };
+}
+
+// Fecha a sessão daquele movimento no histórico longitudinal.
+function hxRegistrar(ex, week, day) {
+  try {
+    if (!ehHyroxEx(ex)) return;
+    const st = hxEstacaoDoEx(ex);
+    const p = hxPlanejado(ex, week, day);
+    const e = hxEfetivo(ex, week, day);
+    const hoje = localDateKey(new Date());
+    const reg = {
+      d: hoje,
+      st: st ? st.id : null,
+      metrica: ex.metric,
+      plan: { dist: p.dist, reps: p.reps, kg: p.kg },
+      feito: { dist: e.dist, reps: e.reps, kg: e.kg, seg: e.seg },
+      trans: e.trans != null ? e.trans : null,   // reservado: transição
+      bloco: ex.bloco != null ? ex.bloco : null, // reservado: splits
+      cat: hxCategoria()
+    };
+    if (!Array.isArray(HX_HIST[ex.id])) HX_HIST[ex.id] = [];
+    const arr = HX_HIST[ex.id];
+    const ult = arr[arr.length - 1];
+    if (ult && ult.d === hoje) arr[arr.length - 1] = reg; else arr.push(reg);
+    if (arr.length > 200) arr.splice(0, arr.length - 200);
+    hxSaveHist();
+  } catch (e) {}
+}
+
+// Leitura de comparação — só descreve o dado, não prescreve treino.
+// Compara com a última sessão que tenha a MESMA carga (quando a métrica
+// tem carga) ou a mesma distância (quando não tem).
+function hxComparar(ex, week, day) {
+  try {
+    const arr = HX_HIST[ex.id] || [];
+    if (!arr.length) return null;
+    const hoje = localDateKey(new Date());
+    const e = hxEfetivo(ex, week, day);
+    const antes = arr.filter(x => x.d !== hoje && x.feito);
+    if (!antes.length) return null;
+    const c = hxCampos(ex.metric);
+    const ref = antes[antes.length - 1];
+    const out = { data: ref.d, ref: ref.feito };
+    if (c.time && e.seg != null && ref.feito.seg != null) {
+      const mesmaCarga = !c.load || (e.kg != null && ref.feito.kg != null && Math.abs(e.kg - ref.feito.kg) < 0.001);
+      const mesmaDist  = !c.dist || (e.dist != null && ref.feito.dist != null && Math.abs(e.dist - ref.feito.dist) < 0.001);
+      if (mesmaCarga && mesmaDist) {
+        out.deltaSeg = e.seg - ref.feito.seg;
+        out.comparavel = true;
+      }
+    }
+    return out;
+  } catch (e) { return null; }
+}
+
+
+// ============================================================
+// HYROX — PAINEL DE EXECUÇÃO
+// ------------------------------------------------------------
+// Desenhado pra ser lido de relance, suado, no meio do treino:
+// números grandes, um botão de concluir óbvio, edição escondida
+// atrás de um toque. Sem tela intermediária e sem animação.
+// ============================================================
+let HX_CRONO = {};   // exId -> { t0, acum, rodando, tick }
+
+function hxCronoEstado(exId) {
+  return HX_CRONO[exId] || { t0: null, acum: 0, rodando: false };
+}
+function hxCronoSegundos(exId) {
+  const c = hxCronoEstado(exId);
+  const extra = c.rodando && c.t0 ? (Date.now() - c.t0) / 1000 : 0;
+  return Math.round(c.acum + extra);
+}
+function hxCronoStart(exId) {
+  const c = hxCronoEstado(exId);
+  if (c.rodando) return;
+  c.t0 = Date.now(); c.rodando = true;
+  HX_CRONO[exId] = c;
+  clearInterval(c.tick);
+  c.tick = setInterval(() => {
+    const el = document.querySelector('.hx-crono-val[data-crono="' + exId + '"]');
+    if (el) el.textContent = hxFmtTempo(hxCronoSegundos(exId));
+  }, 250);
+}
+function hxCronoPause(exId) {
+  const c = hxCronoEstado(exId);
+  if (!c.rodando) return;
+  c.acum = hxCronoSegundos(exId); c.t0 = null; c.rodando = false;
+  clearInterval(c.tick); c.tick = null;
+  HX_CRONO[exId] = c;
+}
+function hxCronoZerar(exId) {
+  const c = hxCronoEstado(exId);
+  clearInterval(c.tick);
+  HX_CRONO[exId] = { t0: null, acum: 0, rodando: false, tick: null };
+}
+// Finalizar GRAVA o tempo: é o único caminho em que tempo vira dado.
+function hxCronoFinalizar(exId, week, day) {
+  const seg = hxCronoSegundos(exId);
+  hxCronoPause(exId);
+  if (seg > 0) hxSet(week, day, exId, 'seg', seg);
+  hxCronoZerar(exId);
+  return seg;
+}
+
+function hxNum(v, suf) {
+  return (v == null) ? '<span class="hx-vazio">—</span>' : (fmtKgExact(v) + (suf || ''));
+}
+
+// O painel inteiro de um exercício Hyrox.
+function hxPainelHtml(ex, week, day) {
+  try {
+    if (!ehHyroxEx(ex)) return '';
+    const c = hxCampos(ex.metric);
+    const st = hxEstacaoDoEx(ex);
+    const p = hxPlanejado(ex, week, day);
+    const e = hxEfetivo(ex, week, day);
+    const concluido = !!STATE.checks[setProgressKey(week, day, ex.id)];
+    const unidade = st && st.unidade === 'reps' ? '' : ' m';
+
+    // Linha grande: o que importa enquanto se executa.
+    const blocos = [];
+    if (c.dist) blocos.push('<div class="hx-bloco"><span class="hx-rot">Distância</span>'
+      + '<span class="hx-val' + (e.distInformada ? ' edit' : '') + '">' + hxNum(e.dist, unidade) + '</span></div>');
+    if (c.reps) blocos.push('<div class="hx-bloco"><span class="hx-rot">Reps</span>'
+      + '<span class="hx-val' + (e.repsInformada ? ' edit' : '') + '">' + hxNum(e.reps) + '</span></div>');
+    if (c.load) blocos.push('<div class="hx-bloco"><span class="hx-rot">Carga</span>'
+      + '<span class="hx-val' + (e.kgInformada ? ' edit' : '') + '">' + hxNum(e.kg, ' kg')
+      + (st && st.porMao ? '<small> por mão</small>' : '') + '</span></div>');
+    if (c.time) blocos.push('<div class="hx-bloco hx-tempo"><span class="hx-rot">Tempo</span>'
+      + '<span class="hx-val hx-crono-val' + (e.tempoInformado ? ' edit' : '') + '" data-crono="' + ex.id + '">'
+      + (e.seg != null ? hxFmtTempo(e.seg) : '—') + '</span></div>');
+
+    // Ritmo só quando há os dois dados. Nunca calculado a partir de plano.
+    let ritmo = '';
+    if (c.time && e.tempoInformado && e.dist != null && e.dist > 0) {
+      const longo = e.dist >= 400;
+      const r = longo ? hxRitmo(e.dist, e.seg) : hxVelocidade(e.dist, e.seg);
+      if (r) ritmo = '<span class="hx-ritmo">' + r + '</span>';
+    }
+
+    const cr = hxCronoEstado(ex.id);
+    const cronoBtns = c.time ? (
+      '<div class="hx-crono-btns">'
+      + (cr.rodando
+          ? '<button type="button" class="hx-cb pausa" data-hx-crono="pause" data-hx-ex="' + ex.id + '">Pausar</button>'
+          : '<button type="button" class="hx-cb start" data-hx-crono="start" data-hx-ex="' + ex.id + '">'
+            + (hxCronoSegundos(ex.id) > 0 ? 'Retomar' : 'Cronômetro') + '</button>')
+      + (hxCronoSegundos(ex.id) > 0
+          ? '<button type="button" class="hx-cb fim" data-hx-crono="fim" data-hx-ex="' + ex.id + '">Registrar tempo</button>'
+          : '')
+      + '</div>') : '';
+
+    // Rodapé: prova x planejado, e a última sessão.
+    const rodape = [];
+    if (c.load && p.prova != null) {
+      rodape.push('<span class="hx-meta">Prova: <b>' + fmtKgExact(p.prova) + ' kg</b>'
+        + (st && st.cargaNota ? ' <small>(' + st.cargaNota + ')</small>' : '') + '</span>');
+    }
+    const cmp = hxComparar(ex, week, day);
+    if (cmp && cmp.ref) {
+      const partes = [];
+      if (cmp.ref.dist != null) partes.push(fmtKgExact(cmp.ref.dist) + unidade);
+      if (cmp.ref.reps != null && c.reps) partes.push(fmtKgExact(cmp.ref.reps) + ' reps');
+      if (cmp.ref.kg != null) partes.push(fmtKgExact(cmp.ref.kg) + ' kg');
+      if (cmp.ref.seg != null) partes.push(hxFmtTempo(cmp.ref.seg));
+      if (partes.length) rodape.push('<span class="hx-meta">Último: ' + partes.join(' · ') + '</span>');
+      if (cmp.comparavel && cmp.deltaSeg != null && Math.abs(cmp.deltaSeg) >= 1) {
+        const melhor = cmp.deltaSeg < 0;
+        rodape.push('<span class="hx-delta ' + (melhor ? 'bom' : 'pior') + '">'
+          + (melhor ? '−' : '+') + hxFmtTempo(Math.abs(cmp.deltaSeg))
+          + (melhor ? ' mais rápido' : ' mais lento') + ' na mesma carga</span>');
+      }
+    }
+
+    return '<div class="hx-painel' + (concluido ? ' feito' : '') + '" data-hx-for="' + ex.id + '">'
+      + '<div class="hx-linha">' + blocos.join('') + '</div>'
+      + (ritmo ? '<div class="hx-ritmo-linha">' + ritmo + '</div>' : '')
+      + cronoBtns
+      + '<div class="hx-acoes">'
+      +   '<button type="button" class="hx-editar" data-hx-edit="' + ex.id + '">Editar dados</button>'
+      + '</div>'
+      + (rodape.length ? '<div class="hx-rodape">' + rodape.join('') + '</div>' : '')
+      + '</div>';
+  } catch (err) { return ''; }
+}
+
+// Formulário de edição: um campo por métrica declarada. Apagar o campo
+// devolve o valor para "não informado" — não vira zero.
+function hxAbrirEditor(exId) {
+  const ex = hxAchaEx(exId);
+  if (!ex) return;
+  const cont = document.querySelector('.hx-painel[data-hx-for="' + exId + '"]');
+  if (!cont) return;
+  const velho = cont.querySelector('.hx-form');
+  if (velho) { velho.remove(); return; }
+  const c = hxCampos(ex.metric);
+  const st = hxEstacaoDoEx(ex);
+  const f = hxGet(STATE.week, STATE.day, exId);
+  const p = hxPlanejado(ex, STATE.week, STATE.day);
+  const campo = (id, rot, val, ph, inputmode) =>
+    '<label class="hx-campo"><span>' + rot + '</span>'
+    + '<input type="text" inputmode="' + (inputmode || 'decimal') + '" data-hx-campo="' + id + '" data-hx-ex="' + exId + '"'
+    + ' value="' + (val != null ? val : '') + '" placeholder="' + ph + '"></label>';
+  let html = '<div class="hx-form">';
+  if (c.dist) html += campo('dist', 'Distância (m)', f.dist, p.dist != null ? String(p.dist) : 'não informado');
+  if (c.reps) html += campo('reps', 'Repetições', f.reps, p.reps != null ? String(p.reps) : 'não informado');
+  if (c.load) html += campo('kg', 'Carga (kg)' + (st && st.porMao ? ' por mão' : ''), f.kg,
+      p.kg != null ? String(p.kg) : 'não informado');
+  if (c.time) html += campo('seg', 'Tempo (m:ss)', f.seg != null ? hxFmtTempo(f.seg) : null, 'ex: 4:35', 'text');
+  html += '<div class="hx-form-nota">Campo vazio = <b>não informado</b>. Não vira zero.</div>';
+  html += '<button type="button" class="hx-form-ok" data-hx-fechar="' + exId + '">Pronto</button>';
+  html += '</div>';
+  cont.insertAdjacentHTML('beforeend', html);
+  const first = cont.querySelector('.hx-form input');
+  if (first) setTimeout(() => first.focus(), 60);
+}
+
+function hxAchaEx(exId) {
+  try {
+    const sess = getSessionForDay(STATE.day);
+    if (!sess || !sess.exercises) return null;
+    return sess.exercises.find(e => e.id === exId) || null;
+  } catch (e) { return null; }
+}
+function hxAtualizarPainel(exId) {
+  const cont = document.querySelector('.hx-painel[data-hx-for="' + exId + '"]');
+  const ex = hxAchaEx(exId);
+  if (!cont || !ex) return;
+  const aberto = !!cont.querySelector('.hx-form');
+  const novo = document.createElement('div');
+  novo.innerHTML = hxPainelHtml(ex, STATE.week, STATE.day);
+  const subst = novo.firstElementChild;
+  if (subst) { cont.replaceWith(subst); if (aberto) hxAbrirEditor(exId); }
+}
+
+// Delegação: o painel é recriado a cada render, então ouvintes presos
+// nele virariam lixo a cada troca de dia.
+document.addEventListener('click', (e) => {
+  const t = e.target;
+  if (!t || !t.closest) return;
+  const cb = t.closest('[data-hx-crono]');
+  if (cb) {
+    e.preventDefault();
+    const exId = cb.dataset.hxEx, acao = cb.dataset.hxCrono;
+    if (acao === 'start') hxCronoStart(exId);
+    else if (acao === 'pause') hxCronoPause(exId);
+    else if (acao === 'fim') hxCronoFinalizar(exId, STATE.week, STATE.day);
+    hxAtualizarPainel(exId);
+    return;
+  }
+  const ed = t.closest('[data-hx-edit]');
+  if (ed) { e.preventDefault(); hxAbrirEditor(ed.dataset.hxEdit); return; }
+  const fe = t.closest('[data-hx-fechar]');
+  if (fe) { e.preventDefault(); hxAtualizarPainel(fe.dataset.hxFechar); return; }
+});
+document.addEventListener('change', (e) => {
+  const inp = e.target && e.target.closest ? e.target.closest('[data-hx-campo]') : null;
+  if (!inp) return;
+  const exId = inp.dataset.hxEx, campo = inp.dataset.hxCampo;
+  hxSet(STATE.week, STATE.day, exId, campo, inp.value);
+  // se o exercício já estava fechado, o histórico acompanha a correção
+  const ex = hxAchaEx(exId);
+  if (ex && STATE.checks[setProgressKey(STATE.week, STATE.day, exId)]) hxRegistrar(ex, STATE.week, STATE.day);
+});
+
+// ============================================================
+// HYROX — segunda (força) e quarta (motor)
+// ------------------------------------------------------------
+// As 8 estações oficiais, com a corrida de 1 km entre elas. Os dois
+// dias cobrem todas, com ênfases opostas: SEGUNDA carrega peso (trenó,
+// farmers, sandbag), QUARTA constrói motor (ski, remo, wall ball,
+// corrida). Assim a perna continua recebendo carga mesmo sem o
+// SQUAT DAY na grade.
+// Distâncias vão no campo de REPS porque são fixas pelo regulamento —
+// o que muda de treino pra treino é o peso do implemento.
+// ============================================================
+SESSIONS.hyrox_forca = {
+    title: "HYROX / CARGA",
+    eyebrow: "Híbrido — Estações pesadas",
+    pills: ["65–80min"],
+    type: "lower-heavy",
+    typeLabel: "Hyrox / Força",
+    exercises: [
+      {
+        id: "hxf1", name: "Empurrar trenó (sled push)", primary: true,
+        station: "sledPush", metric: "DISTANCE+LOAD+TIME", planDist: 50,
+        sets: 4, reps: "25 m", rpeByWeek: { 1: "7", 2: "8", 3: "8.5" },
+        deload: { sets: 2, reps: "25 m", intensity: "60% do peso de prova", rpe: "6" },
+        notes: "Peso de prova: 152 kg (masculino open, trenó incluso). Braços estendidos e travados, tronco baixo a 45 graus, passada curta e contínua — quem dá passo longo perde a inércia e para. Não deixe o trenó parar: retomar custa mais que manter.",
+        swaps: [
+          { name: "Leg press pesado com pausa curta", reason: "Academia sem pista de trenó.", notes: "Séries de 20–30s sob tensão, descanso curto. Não é igual, mas cobre a demanda de quadríceps em fadiga." },
+          { name: "Agachamento búlgaro com halter", reason: "Sem trenó e sem leg press livre.", notes: "Unilateral aproxima o padrão de passada do sled. 10–12 por perna, controlado." }
+        ]
+      },
+      {
+        id: "hxf2", name: "Puxar trenó (sled pull)", primary: true,
+        station: "sledPull", metric: "DISTANCE+LOAD+TIME", planDist: 50,
+        sets: 4, reps: "25 m", rpeByWeek: { 1: "7", 2: "8", 3: "8.5" },
+        deload: { sets: 2, reps: "25 m", intensity: "60% do peso de prova", rpe: "6" },
+        notes: "Peso de prova: 103 kg. Puxe com o corpo inclinado pra trás e os pés plantados — braço sozinho cansa em 10 metros. Recolha a corda em braçadas curtas e ritmadas, sem soltar a tensão.",
+        swaps: [
+          { name: "Remada baixa na polia, pesada", reason: "Sem trenó disponível.", notes: "Séries de 15–20 reps com pausa curta. Foco em manter a cadência, não em carga máxima." },
+          { name: "Puxada de corda na polia", reason: "Alternativa mais próxima do gesto.", notes: "Se a academia tiver corda presa a peso, arraste no chão." }
+        ]
+      },
+      {
+        id: "hxf3", name: "Farmers carry (transporte)", primary: true,
+        station: "farmers", metric: "DISTANCE+LOAD+TIME", planDist: 200,
+        sets: 4, reps: "200 m", rpeByWeek: { 1: "7", 2: "8", 3: "8" },
+        deload: { sets: 2, reps: "100 m", intensity: "60% do peso de prova", rpe: "6" },
+        notes: "Peso de prova: 2 de 24 kg. O campo de carga guarda o peso POR MÃO. Ombros pra trás, escápulas travadas, passada rápida e curta. A pegada é o gargalo — treine segurar, não só andar.",
+        swaps: [
+          { name: "Caminhada do fazendeiro com halteres", reason: "Sem kettlebell no peso certo.", notes: "Halteres exigem mais da pegada por serem mais largos. Vale como progressão." },
+          { name: "Trap bar carry", reason: "Se a barra hexagonal estiver livre.", notes: "Permite carga maior. Bom pra sobrecarga, menos específico." }
+        ]
+      },
+      {
+        id: "hxf4", name: "Lunge com sandbag (sandbag lunges)", primary: true,
+        station: "lunges", metric: "DISTANCE+LOAD+TIME", planDist: 100,
+        sets: 3, reps: "50 m", rpeByWeek: { 1: "7", 2: "8", 3: "8.5" },
+        deload: { sets: 2, reps: "25 m", intensity: "60% do peso de prova", rpe: "6" },
+        notes: "Peso de prova: 30 kg nas costas. Joelho de trás TOCA o chão — na prova, passada sem tocar é anulada. Sandbag alto na nuca, cotovelos pra frente. É aqui que a maioria quebra: treine em fadiga.",
+        swaps: [
+          { name: "Afundo caminhando com barra nas costas", reason: "Sem sandbag.", notes: "Mesma exigência, carga mais estável. Toque o joelho no chão em toda repetição." },
+          { name: "Afundo com colete de peso", reason: "Alternativa com peso distribuído.", notes: "Menos exigência de core que o sandbag, mas mantém o padrão." }
+        ]
+      },
+      {
+        id: "hxf5", name: "Burpee broad jump", primary: false,
+        station: "burpee", metric: "DISTANCE+TIME", planDist: 20,
+        sets: 3, reps: "20 m", rpeByWeek: { 1: "7", 2: "7.5", 3: "8" },
+        deload: { sets: 2, reps: "10 m", rpe: "6" },
+        notes: "Peito no chão, salto pra frente com os dois pés juntos. Respire no topo do salto, não no chão. Ritmo constante vence sprint seguido de parada.",
+        swaps: [
+          { name: "Burpee no lugar com salto horizontal", reason: "Espaço curto na academia.", notes: "Mesma demanda cardíaca com menos deslocamento." }
+        ]
+      },
+      {
+        id: "hxf6", name: "Corrida comprometida (entre estações)", primary: false,
+        station: "run", metric: "DISTANCE+TIME", planDist: 400,
+        sets: 5, reps: "400 m", rpeByWeek: { 1: "6", 2: "7", 3: "7.5" },
+        deload: { sets: 3, reps: "400 m", rpe: "5" },
+        notes: "Corra LOGO depois de cada estação, com a perna ainda queimando — é isso que a prova cobra. Ritmo alvo: 10–20s/km mais lento que seu ritmo fresco. Sem peso: deixe o campo de carga vazio.",
+        swaps: [
+          { name: "Esteira em ritmo de prova", reason: "Sem pista ou tempo ruim.", notes: "Inclinação de 1% aproxima o custo da corrida ao ar livre." }
+        ]
+      }
+    ]
+};
+
+SESSIONS.hyrox_motor = {
+    title: "HYROX / MOTOR",
+    eyebrow: "Híbrido — Ergos e corrida",
+    pills: ["55–70min"],
+    type: "cardio",
+    typeLabel: "Hyrox / Motor",
+    exercises: [
+      {
+        id: "hxm1", name: "SkiErg", primary: true,
+        station: "ski", metric: "DISTANCE+TIME", planDist: 1000,
+        sets: 4, reps: "1000 m", rpeByWeek: { 1: "6.5", 2: "7.5", 3: "8" },
+        deload: { sets: 2, reps: "500 m", rpe: "6" },
+        notes: "Primeira estação da prova — e a que mais gente estoura. Puxe com tronco e quadril, não com o tríceps: o braço é só a corrente. Cadência baixa e forte bate cadência alta e fraca. Sem peso: campo de carga vazio.",
+        swaps: [
+          { name: "Remo ergômetro", reason: "Academia sem SkiErg.", notes: "Demanda parecida de motor, padrão diferente. Não substitui a técnica, mas mantém o condicionamento." },
+          { name: "Corda naval em intervalos", reason: "Última opção.", notes: "30s forte e 30s leve. Mantém o custo cardíaco dos membros superiores." }
+        ]
+      },
+      {
+        id: "hxm2", name: "Remo ergômetro (rowing)", primary: true,
+        station: "row", metric: "DISTANCE+TIME", planDist: 1000,
+        sets: 4, reps: "1000 m", rpeByWeek: { 1: "6.5", 2: "7.5", 3: "8" },
+        deload: { sets: 2, reps: "500 m", rpe: "6" },
+        notes: "Sequência da remada: pernas, quadril, braços; na volta, braços, quadril, pernas. Damper entre 4 e 6. Erro clássico é puxar de braço no início e não ter perna no fim.",
+        swaps: [
+          { name: "SkiErg", reason: "Remo ocupado.", notes: "Inverte a ênfase, mantém o motor." }
+        ]
+      },
+      {
+        id: "hxm3", name: "Wall balls", primary: true,
+        station: "wallball", metric: "REPS+LOAD+TIME", planReps: 25,
+        sets: 4, reps: "25", rpeByWeek: { 1: "7", 2: "8", 3: "8.5" },
+        deload: { sets: 2, reps: "15", intensity: "bola mais leve", rpe: "6" },
+        notes: "Peso de prova: bola de 6 kg, alvo a 3 metros. Última estação da prova, feita com a perna destruída — por isso treinar em fadiga importa mais que treinar descansado. Agachamento completo, a bola sai do fundo, não dos braços.",
+        swaps: [
+          { name: "Thruster com halteres leves", reason: "Sem medicine ball.", notes: "Mesmo padrão de agachar e empurrar. Não tem a captura da bola, que é onde cansa a pegada." },
+          { name: "Agachamento com salto e arremesso na parede", reason: "Sem bola e sem halteres.", notes: "Mantém a cadeia, perde a carga." }
+        ]
+      },
+      {
+        id: "hxm4", name: "Burpee broad jump", primary: false,
+        station: "burpee", metric: "DISTANCE+TIME", planDist: 20,
+        sets: 3, reps: "20 m", rpeByWeek: { 1: "7", 2: "7.5", 3: "8" },
+        deload: { sets: 2, reps: "10 m", rpe: "6" },
+        notes: "Repete da segunda de propósito: é a estação mais penalizada por técnica ruim. Peito no chão, salto com pés juntos, respiração no topo.",
+        swaps: [
+          { name: "Burpee no lugar com salto horizontal", reason: "Espaço curto.", notes: "Mesma demanda cardíaca." }
+        ]
+      },
+      {
+        id: "hxm5", name: "Corrida em blocos de 1 km", primary: true,
+        station: "run", metric: "DISTANCE+TIME", planDist: 1000,
+        sets: 6, reps: "1000 m", rpeByWeek: { 1: "6.5", 2: "7.5", 3: "8" },
+        deload: { sets: 3, reps: "1000 m", rpe: "5.5" },
+        notes: "O coração da prova: 8 km no total, quebrados em 8 blocos. Faça cada quilômetro no ritmo que você sustentaria DEPOIS de uma estação, não no seu melhor tempo. Anote o tempo do km nas notas.",
+        swaps: [
+          { name: "Esteira com 1% de inclinação", reason: "Chuva ou falta de pista.", notes: "Aproxima o custo da corrida ao ar livre." },
+          { name: "Bike ergométrica em blocos de 3 min", reason: "Se houver dor articular.", notes: "Preserva o motor sem impacto. Menos específico." }
+        ]
+      }
+    ]
+};
+
 // Sessão Deadlift
 SESSIONS.deadlift = {
     title: "DEADLIFT DAY",
@@ -8361,7 +9199,7 @@ const SKIP_REASONS = [
 ];
 
 // Ordem de prioridade visual no menu de troca
-const SESSION_ORDER = ['squat', 'bench', 'deadlift', 'upper_hiper', 'cardio_mid', 'cardio_long', 'rest', 'skip'];
+const SESSION_ORDER = ['hyrox_forca', 'hyrox_motor', 'squat', 'bench', 'deadlift', 'upper_hiper', 'cardio_mid', 'cardio_long', 'rest', 'skip'];
 
 // Schedule padrão — o que existia antes, agora explícito
 // ============================================================
@@ -8571,9 +9409,9 @@ SESSIONS.hyper_lowerB = {
 };
 
 const DEFAULT_SCHEDULE = {
-  seg: 'squat',
+  seg: 'hyrox_forca',   // Hyrox entrou no lugar do SQUAT DAY
   ter: 'bench',
-  qua: 'cardio_mid',
+  qua: 'hyrox_motor',   // Hyrox entrou no lugar do Cardio Z2
   qui: 'deadlift',
   sex: 'upper_hiper',
   sab: 'cardio_long',
@@ -8582,9 +9420,9 @@ const DEFAULT_SCHEDULE = {
 
 // Calendário da linha OLÍMPICA (hipertrofia): 5 dias de musculação + cardio + descanso
 const HYPER_SCHEDULE = {
-  seg: 'hyper_push',
+  seg: 'hyrox_forca',   // Hyrox entrou no lugar do PUSH DAY
   ter: 'hyper_pull',
-  qua: 'hyper_lowerA',
+  qua: 'hyrox_motor',   // Hyrox entrou no lugar do LOWER A
   qui: 'hyper_upper',
   sex: 'hyper_lowerB',
   sab: 'cardio_long',
@@ -8601,7 +9439,7 @@ function saveModeSchedules() { if (STATE.mode === 'hyper') saveHyperSchedules();
 // Sessões oferecidas no painel "Gerenciar Semana" por modo
 const HYPER_SESSION_ORDER = ['hyper_push', 'hyper_pull', 'hyper_lowerA', 'hyper_upper', 'hyper_lowerB', 'cardio_mid', 'cardio_long', 'rest', 'skip'];
 function modeSessionOrder() { return STATE.mode === 'hyper' ? HYPER_SESSION_ORDER : SESSION_ORDER; }
-function modeCoreSessions() { return STATE.mode === 'hyper' ? ['hyper_push', 'hyper_pull', 'hyper_lowerA', 'hyper_upper', 'hyper_lowerB'] : ['squat', 'bench', 'deadlift', 'upper_hiper']; }
+function modeCoreSessions() { return STATE.mode === 'hyper' ? ['hyrox_forca', 'hyrox_motor', 'hyper_pull', 'hyper_upper', 'hyper_lowerB'] : ['hyrox_forca', 'hyrox_motor', 'bench', 'deadlift', 'upper_hiper']; }
 
 // Dias em que TRT é aplicada (seg/qui, independe do treino do dia)
 const TRT_DAYS = ['seg', 'qui'];
@@ -8640,6 +9478,26 @@ function weekBlurb(m) { return STATE.mode === 'hyper' ? (m.blurbH || m.blurb) : 
 // Cada sessão é um "reino" com: classe de skin, título de ascensão,
 // e mensagem secreta de conclusão (inscrição em pedra, revelada só ao completar).
 const REALM_CONFIG = {
+  hyrox_forca: {
+    rune: 'ᚢ', // Uruz — o auroque, força bruta domada
+    runeName: 'Uruz',
+    runeTranslit: 'ᚢ · "U" · O Auroque',
+    runeMeaning: 'Uruz é o auroque, o touro selvagem que os povos do norte caçavam para provar a própria coragem. Não é a força que se exibe: é a força que se arrasta, resiste e não cede. Vitalidade bruta, saúde animal, o corpo que aguenta o que a mente mandar.',
+    runeConnection: 'Hoje tu não levantas peso — tu o ARRASTAS. Trenó, sandbag, os ferros na mão por duzentos metros. Não há plateia nem recorde: há só o chão, a distância e a recusa em parar. O auroque não foge da carga; ele a empurra até o fim do campo.',
+    effect: 'sparks',
+    ascendedTitle: 'O AUROQUE PASSOU',
+    ascendedMessage: 'O peso foi arrastado do começo ao fim, sem trégua.\nOs ferros marcaram a mão e a mão não abriu.\nUruz reconhece: este corpo aguenta.'
+  },
+  hyrox_motor: {
+    rune: 'ᛖ', // Ehwaz — o cavalo, movimento sustentado
+    runeName: 'Ehwaz',
+    runeTranslit: 'ᛖ · "E" · O Cavalo',
+    runeMeaning: 'Ehwaz é o cavalo e, mais que isso, a união entre cavaleiro e montaria — dois corpos que se movem como um. Representa progresso constante, confiança e a viagem longa feita em ritmo, não em arranque. Quem galopa sem pausa chega; quem dispara, tomba.',
+    runeConnection: 'Hoje o inimigo não é o peso, é a distância. Oito quilômetros quebrados em oito pedaços, cada um começando com a perna já queimando. Ehwaz ensina o ritmo: não é o mais rápido que termina o Hyrox, é o que não precisou parar. Teu pulmão e tuas pernas são cavaleiro e cavalo.',
+    effect: 'frost',
+    ascendedTitle: 'A CAVALGADA NÃO CESSOU',
+    ascendedMessage: 'A distância foi devorada em ritmo, não em fúria.\nO fôlego se manteve inteiro do primeiro ao último bloco.\nEhwaz galopa — e quem galopa junto, chega.'
+  },
   squat: {
     rune: 'ᚲ', // Kenaz — a tocha, fogo da forja, ofício
     runeName: 'Kenaz',
@@ -8787,6 +9645,7 @@ const REALM_THEME_COLORS = {
   squat: '#120a06', bench: '#0c0a08', deadlift: '#0a0604',
   upper_hiper: '#0e0d08', cardio_mid: '#06100f', cardio_long: '#0a0d11',
   rest: '#070b12', skip: '#0a0a0b',
+  hyrox_forca: '#100b05', hyrox_motor: '#070f12',
   hyper_push: '#100c06', hyper_pull: '#0c0a08', hyper_lowerA: '#100a06',
   hyper_upper: '#0e0c08', hyper_lowerB: '#0a0604'
 };
@@ -8903,6 +9762,232 @@ function toggleCardioDone(week, day) {
   saveCardioDone();
 }
 
+// ============================================================
+// REPETIÇÕES REALIZADAS
+// ------------------------------------------------------------
+// Com as anilhas da academia (5/10/15/20) o menor salto na barra é de
+// 10 kg. Num supino isso é ~10%: o Pedro passa SEMANAS na mesma carga.
+// Registrando só carga, o gráfico vira linha reta enquanto ele fica mais
+// forte de verdade. É a repetição que carrega o progresso agora.
+// Guardado à parte (pwr.reps), aditivo: nada do que já existe muda.
+// ============================================================
+let REPS_LOG = {};
+let REPS_HIST = {};
+function loadRepsLog() {
+  REPS_LOG = readJson('pwr.reps', {}) || {};
+  REPS_HIST = readJson('pwr.repsHistory', {}) || {};
+}
+function saveRepsLog() { safeSet('pwr.reps', JSON.stringify(REPS_LOG)); }
+function saveRepsHist() { safeSet('pwr.repsHistory', JSON.stringify(REPS_HIST)); }
+
+// A prescrição vem como texto livre: "4", "8", "10/perna", "8-10", "6 a 8".
+// Devolve {min,max} ou null quando não dá pra ler um número.
+function alvoReps(txt) {
+  if (txt == null) return null;
+  const t = String(txt).replace(',', '.');
+  // "1000 m", "25 m", "40 min" são DISTÂNCIA ou TEMPO, não repetição.
+  // Sem esta guarda, uma estação de 1000 m abriria um seletor de 997 a 1003.
+  if (/\d\s*(m|km|mi|min|s|seg|h)\b/i.test(t) && !/rep/i.test(t)) return null;
+  const faixa = t.match(/(\d+)\s*(?:-|–|—|\s+a\s+|\/\s*a\s*)\s*(\d+)/i);
+  if (faixa) {
+    const a = parseInt(faixa[1], 10), b = parseInt(faixa[2], 10);
+    if (a > 0 && b > 0) return { min: Math.min(a, b), max: Math.max(a, b) };
+  }
+  const um = t.match(/(\d+)/);
+  if (um) { const n = parseInt(um[1], 10); if (n > 0) return { min: n, max: n }; }
+  return null;
+}
+function repsKey(week, day, exId) { return `${week}::${day}::${exId}`; }
+function getRepsArr(week, day, exId) {
+  const a = REPS_LOG[repsKey(week, day, exId)];
+  return Array.isArray(a) ? a : [];
+}
+function setRepAt(week, day, exId, i, valor) {
+  const k = repsKey(week, day, exId);
+  if (!Array.isArray(REPS_LOG[k])) REPS_LOG[k] = [];
+  REPS_LOG[k][i] = Math.max(0, parseInt(valor, 10) || 0);
+  saveRepsLog();
+}
+function pushRepPadrao(week, day, exId, alvo) {
+  const k = repsKey(week, day, exId);
+  if (!Array.isArray(REPS_LOG[k])) REPS_LOG[k] = [];
+  // padrão = topo da faixa: se bateu o alvo, ele não toca em nada
+  REPS_LOG[k].push(alvo ? alvo.max : 0);
+  saveRepsLog();
+}
+function popRep(week, day, exId) {
+  const k = repsKey(week, day, exId);
+  if (Array.isArray(REPS_LOG[k])) { REPS_LOG[k].pop(); if (!REPS_LOG[k].length) delete REPS_LOG[k]; saveRepsLog(); }
+}
+function limparReps(week, day, exId) {
+  delete REPS_LOG[repsKey(week, day, exId)]; saveRepsLog();
+}
+// Grava a sessão fechada no histórico longitudinal do exercício.
+function registrarSessaoReps(exId, kg, reps, alvo) {
+  try {
+    if (!exId || !Array.isArray(reps) || !reps.length) return;
+    const hoje = localDateKey(new Date());
+    if (!Array.isArray(REPS_HIST[exId])) REPS_HIST[exId] = [];
+    const arr = REPS_HIST[exId];
+    const reg = { d: hoje, kg: (parseFloat(kg) || 0), r: reps.slice(),
+                  a: alvo ? [alvo.min, alvo.max] : null };
+    const ult = arr[arr.length - 1];
+    if (ult && ult.d === hoje && ult.kg === reg.kg) arr[arr.length - 1] = reg;
+    else arr.push(reg);
+    if (arr.length > 120) arr.splice(0, arr.length - 120);
+    saveRepsHist();
+  } catch (e) {}
+}
+// Leitura de autorregulação: o que as últimas sessões dizem.
+// Só olha sessões com a MESMA carga — comparar reps entre cargas
+// diferentes não significa nada.
+function lerTendenciaReps(exId, kgAtual) {
+  try {
+    const arr = REPS_HIST[exId] || [];
+    if (!arr.length) return null;
+    const kg = parseFloat(kgAtual) || 0;
+    const mesmas = arr.filter(x => Math.abs((x.kg || 0) - kg) < 0.001 && Array.isArray(x.r) && x.r.length);
+    if (!mesmas.length) return null;
+    const ultimas = mesmas.slice(-3);
+    const avalia = (x) => {
+      if (!x.a) return null;
+      const [mn, mx] = x.a;
+      const abaixo = x.r.some(v => v > 0 && v < mn);
+      const todasNoTopo = x.r.every(v => v >= mx);
+      return { abaixo, todasNoTopo };
+    };
+    const notas = ultimas.map(avalia).filter(Boolean);
+    if (notas.length < 2) return null;
+    const doisAbaixo = notas.slice(-2).every(n => n.abaixo);
+    const doisNoTopo = notas.slice(-2).every(n => n.todasNoTopo);
+    if (doisAbaixo) return { tipo: 'queda', sessoes: 2 };
+    if (doisNoTopo) return { tipo: 'pronto', sessoes: 2 };
+    return null;
+  } catch (e) { return null; }
+}
+
+// Toque no chip abre um teclado curto de valores prováveis. Dois toques
+// no total pra corrigir uma série — e zero toques quando bateu o alvo.
+function abrirSeletorReps(exId, i, chipEl) {
+  const cont = document.querySelector('.ex-reps[data-reps-for="' + exId + '"]');
+  if (!cont) return;
+  const jaAberto = cont.querySelector('.reps-seletor');
+  const mesmo = jaAberto && jaAberto.dataset.repI === String(i);
+  if (jaAberto) jaAberto.remove();
+  cont.querySelectorAll('.rep-chip.editando').forEach(c => c.classList.remove('editando'));
+  if (mesmo) return;                       // segundo toque no mesmo chip fecha
+
+  const btn = document.querySelector('.set-tracker[data-ex-id="' + exId + '"]');
+  const alvo = alvoReps(btn && btn.dataset.repsAlvo);
+  const atual = getRepsArr(STATE.week, STATE.day, exId)[i] || 0;
+  const base = alvo ? alvo.max : (atual || 8);
+  const de = Math.max(0, Math.min(base - 3, atual - 2));
+  const opcoes = [];
+  for (let v = de; v <= base + 3; v++) opcoes.push(v);
+  if (!opcoes.includes(atual)) { opcoes.push(atual); opcoes.sort((a, b) => a - b); }
+
+  const sel = document.createElement('div');
+  sel.className = 'reps-seletor';
+  sel.dataset.repI = String(i);
+  sel.setAttribute('role', 'group');
+  sel.setAttribute('aria-label', 'Repetições da série ' + (i + 1));
+  sel.innerHTML = '<span class="reps-seletor-tit">Série ' + (i + 1) + '</span>'
+    + opcoes.map(v => '<button type="button" class="reps-op' + (v === atual ? ' sel' : '') + '"'
+        + ' data-rep-set="' + exId + '" data-rep-i="' + i + '" data-rep-v="' + v + '">' + v + '</button>').join('');
+  cont.appendChild(sel);
+  if (chipEl) chipEl.classList.add('editando');
+}
+
+// Monta a linha de repetições do cartão. Só aparece depois da 1ª série:
+// antes disso não há o que registrar, e o cartão fica limpo.
+function repsRowHtml(exId, presc, load) {
+  try {
+    if (ehHyroxEx(hxAchaEx(exId))) return '';   // Hyrox tem painel próprio
+    const alvo = alvoReps(presc && presc.reps);
+    if (!alvo) return '';   // distância/tempo não tem repetição pra registrar
+    const feitas = getRepsArr(STATE.week, STATE.day, exId);
+    if (!feitas.length) return '';
+    const chips = feitas.map((v, i) => {
+      let estado = '';
+      if (alvo) {
+        if (v > alvo.max) estado = 'acima';
+        else if (v < alvo.min) estado = 'abaixo';
+        else estado = 'no-alvo';
+      }
+      return '<button type="button" class="rep-chip ' + estado + '" data-rep-ex="' + exId + '" data-rep-i="' + i + '"'
+        + ' aria-label="Série ' + (i + 1) + ': ' + v + ' repetições. Tocar para ajustar.">'
+        + '<span class="rep-serie">S' + (i + 1) + '</span><span class="rep-valor">' + v + '</span></button>';
+    }).join('');
+    const alvoTxt = alvo
+      ? (alvo.min === alvo.max ? ('alvo ' + alvo.max) : ('alvo ' + alvo.min + '–' + alvo.max))
+      : '';
+    const btnT = document.querySelector('.set-tracker[data-ex-id="' + exId + '"]');
+    const maxSets = parseInt((btnT && btnT.dataset.maxSets) || (presc && presc.sets), 10) || feitas.length;
+    const nota = notaTendenciaHtml(exId, load, alvo, feitas, maxSets);
+    return '<div class="reps-linha"><span class="reps-rotulo">Reps</span>'
+      + '<div class="reps-chips">' + chips + '</div>'
+      + (alvoTxt ? '<span class="reps-alvo">' + alvoTxt + '</span>' : '')
+      + '</div>' + nota;
+  } catch (e) { return ''; }
+}
+
+// O comentário de autorregulação. Fala pouco e só quando tem o que dizer.
+//
+// CUIDADO DE PROJETO: as reps nascem preenchidas no alvo, então uma
+// sessão que o Pedro só "tocou passando" parece perfeita. Por isso o
+// veredito NUNCA sai de uma sessão isolada — ele consulta o que veio
+// ANTES, na mesma carga. Duas sessões de queda não podem ser apagadas
+// por um dia de valores padrão.
+function sessoesAnteriores(exId, kg) {
+  try {
+    const hoje = localDateKey(new Date());
+    return (REPS_HIST[exId] || [])
+      .filter(x => x && x.d !== hoje && Array.isArray(x.r) && x.r.length && x.a
+                   && Math.abs((x.kg || 0) - (parseFloat(kg) || 0)) < 0.001);
+  } catch (e) { return []; }
+}
+function notaTendenciaHtml(exId, load, alvo, feitas, maxSets) {
+  try {
+    if (!alvo) return '';
+    // Veredito só com o exercício FECHADO: com 1 de 4 séries no topo não
+    // dá pra dizer nada — e dizer cedo demais faz o app parecer bobo.
+    const fechado = feitas.length >= (maxSets || feitas.length);
+    if (!fechado) return '';
+
+    const kg = parseFloat(load) || 0;
+    const antes = sessoesAnteriores(exId, kg);
+    const ultimas2 = antes.slice(-2);
+    const abaixoDe = (x) => x.r.some(v => v > 0 && v < x.a[0]);
+    const topoDe   = (x) => x.r.every(v => v >= x.a[1]);
+    const quedaAntes = ultimas2.length >= 2 && ultimas2.every(abaixoDe);
+    const topoAntes  = ultimas2.length >= 1 && topoDe(ultimas2[ultimas2.length - 1]);
+
+    const hojeAbaixo = feitas.some(v => v > 0 && v < alvo.min);
+    const hojeNoTopo = alvo.max > 0 && feitas.every(v => v >= alvo.max);
+    const proxima = kg > 0 ? (fmtKgExact(kg + PASSO_BARRA) + ' kg') : 'a próxima carga';
+
+    if (hojeAbaixo) {
+      if (quedaAntes || (ultimas2.length >= 1 && abaixoDe(ultimas2[ultimas2.length - 1]))) {
+        return '<div class="reps-nota atencao"><strong>Duas sessões seguidas abaixo do alvo</strong> nesta carga. '
+          + 'Segure o peso mais um ciclo, ou recue 10 kg e reconstrua a base.</div>';
+      }
+      return '<div class="reps-nota">Ficou abaixo do alvo. Uma sessão não diz nada — repita a carga.</div>';
+    }
+    if (hojeNoTopo) {
+      if (quedaAntes) {
+        return '<div class="reps-nota">Voltou ao alvo depois de duas sessões abaixo. '
+          + 'Confirme numa próxima antes de pensar em subir.</div>';
+      }
+      if (topoAntes) {
+        return '<div class="reps-nota pronta"><strong>Topo da faixa em duas sessões seguidas.</strong> '
+          + 'Hora dos +10 kg: ' + proxima + '.</div>';
+      }
+      return '<div class="reps-nota pronta">Todas as séries no topo. Se repetir na próxima, sobe pra ' + proxima + '.</div>';
+    }
+    return '';
+  } catch (e) { return ''; }
+}
+
 // Set progress helpers
 function setProgressKey(week, day, exId) { return `${week}::${day}::${exId}`; }
 
@@ -8910,7 +9995,7 @@ function getSetProgress(week, day, exId) {
   return STATE.setProgress[setProgressKey(week, day, exId)] || 0;
 }
 
-function incrementSetProgress(week, day, exId, maxSets) {
+function incrementSetProgress(week, day, exId, maxSets, alvo) {
   const k = setProgressKey(week, day, exId);
   const current = STATE.setProgress[k] || 0;
   if (current >= maxSets) {
@@ -8919,7 +10004,13 @@ function incrementSetProgress(week, day, exId, maxSets) {
     // Sincroniza com check (desmarca)
     if (STATE.checks[k]) delete STATE.checks[k];
     saveChecks();
+    limparReps(week, day, exId);
   } else {
+    // Cada série marcada nasce com o topo da faixa já preenchido:
+    // se bateu o alvo, o Pedro não toca em nada.
+    // Só quando HÁ repetição pra contar: estação de 25 m ou 1000 m é
+    // distância, e um chip "S1 0" ali não significaria nada.
+    if (alvo) pushRepPadrao(week, day, exId, alvo);
     STATE.setProgress[k] = current + 1;
     // Auto-marca como concluído se atingiu max
     if (STATE.setProgress[k] >= maxSets) {
@@ -8934,6 +10025,10 @@ function incrementSetProgress(week, day, exId, maxSets) {
         // longitudinal (gráfico de Evolução › Histórico) ao longo dos meses.
         recordLoadHistory(exId, currentLoad);
       }
+      // Exercício fechado: guarda as repetições da sessão
+      registrarSessaoReps(exId, currentLoad, getRepsArr(week, day, exId), alvo);
+      // Hyrox tem registro próprio, com métrica, tempo e distância.
+      try { const exH = hxAchaEx(exId); if (ehHyroxEx(exH)) hxRegistrar(exH, week, day); } catch (e) {}
     }
   }
   saveSetProgress();
@@ -8945,6 +10040,8 @@ function resetSetProgress(week, day, exId) {
   delete STATE.checks[k];
   saveSetProgress();
   saveChecks();
+  limparReps(week, day, exId);
+  try { hxLimpar(week, day, exId); hxCronoZerar(exId); } catch (e) {}
 }
 
 // Verifica se TODOS os exercícios do dia estão completos (ascensão)
@@ -9062,7 +10159,10 @@ function validateSchedule(schedule) {
     hyper_lowerB: ['lower-heavy', 'posterior + glúteo'],
     hyper_push: ['upper-push', 'peito + ombro + tríceps'],
     hyper_upper: ['upper-push', 'peito + costas + braços'],
-    hyper_pull: ['upper-pull', 'costas + bíceps']
+    hyper_pull: ['upper-pull', 'costas + bíceps'],
+    // O Hyrox de carga puxa quadríceps e posterior tanto quanto um dia de
+    // força: o validador precisa saber disso, senão deixa ele colado no terra.
+    hyrox_forca: ['lower-heavy', 'quadríceps + posterior + grip']
   };
   
   // Cria lista circular dos dias com suas sessões
@@ -9180,12 +10280,41 @@ const EQUIP_META = {
   barra:   { label: 'BARRA',   unit: 'kg', step: 10,   hint: 'Peso TOTAL na barra (com a barra). Sobe de 10 em 10.' },
   halter:  { label: 'HALTER',  unit: 'kg', step: 4,    hint: 'Soma dos DOIS halteres.' },
   maquina: { label: 'MÁQUINA', unit: 'kg', step: 5,    hint: 'Quilos marcados no pino/placa.' },
-  corpo:   { label: 'CORPO',   unit: '+kg', step: 1.25, hint: 'Só o peso ADICIONAL (fora o seu corpo).' }
+  corpo:   { label: 'CORPO',   unit: '+kg', step: 1.25, hint: 'Só o peso ADICIONAL (fora o seu corpo).' },
+  hyrox:   { label: 'HYROX',   unit: 'kg', step: 5,    hint: 'Peso do implemento: trenó (total, já com o trenó), sandbag, bola — ou POR MÃO no farmers.' },
+  // SUBTIPOS: existem para o aquecimento e as dicas saberem do que se
+  // trata. Todos herdam o rótulo HYROX na interface — ver equipFamilia().
+  hyrox_sled:     { label: 'HYROX', unit: 'kg', step: 10, familia: 'hyrox', hint: 'Peso TOTAL no trenó, já contando o trenó.' },
+  hyrox_farmers:  { label: 'HYROX', unit: 'kg', step: 2,  familia: 'hyrox', hint: 'Peso de UMA mão. São dois iguais.' },
+  hyrox_sandbag:  { label: 'HYROX', unit: 'kg', step: 5,  familia: 'hyrox', hint: 'Peso do saco.' },
+  hyrox_wallball: { label: 'HYROX', unit: 'kg', step: 1,  familia: 'hyrox', hint: 'Peso da bola.' },
+  hyrox_skierg:   { label: 'HYROX', unit: 'm',  step: 100, familia: 'hyrox', semCarga: true, hint: 'SkiErg não tem carga — mede distância.' },
+  hyrox_row:      { label: 'HYROX', unit: 'm',  step: 100, familia: 'hyrox', semCarga: true, hint: 'Remo não tem carga — mede distância.' }
 };
+// A família é o que a interface mostra; o subtipo é o que a lógica usa.
+function equipFamilia(tipo) {
+  const m = EQUIP_META[tipo];
+  return (m && m.familia) ? m.familia : tipo;
+}
+// Só os tipos "de primeira classe" entram no seletor manual — os
+// subtipos são derivados do exercício, não escolhidos à mão.
+const EQUIP_ESCOLHIVEIS = ['barra', 'halter', 'maquina', 'corpo', 'hyrox'];
 
 // Primeira regra que casar vence — a ordem resolve os nomes ambíguos
 // do programa ("Barra fixa (ou pulldown)", "Búlgaro no Smith (ou halteres)").
 const EQUIP_RULES = [
+  // As regras do Hyrox vêm PRIMEIRO de propósito: "remada baixa" e
+  // "agachamento búlgaro" aparecem nas alternativas e casariam com as
+  // regras antigas, mandando o implemento errado pro campo de carga.
+  [/burpee|corrida|correr|esteira/i, 'corpo'],
+  [/skierg|ski erg/i, 'hyrox_skierg'],
+  [/remo erg|rowing|erg[ôo]metro do remo/i, 'hyrox_row'],
+  [/tren[óo]|sled/i, 'hyrox_sled'],
+  [/farmers/i, 'hyrox_farmers'],
+  [/sandbag/i, 'hyrox_sandbag'],
+  [/wall ball|medicine ball/i, 'hyrox_wallball'],
+  [/colete/i, 'hyrox'],
+  [/erg[ôo]metro|bike erg/i, 'corpo'],
   [/barra fixa|pull-?up|paralelas|prancha|ab wheel|rollout|hiperextens/i, 'corpo'],
   [/agachamento livre|supino reto|levantamento terra|terra com|stiff|rdl|pendlay|remada curvada|desenvolvimento militar|ohp|barra ez|\(barra\)|hip thrust|smith|encolhimento \(shrug\)/i, 'barra'],
   [/halter|dumbbell/i, 'halter'],
@@ -9300,6 +10429,26 @@ function loadHintHtml(exId, name, rawLoad) {
     }
   } else if (eq === 'corpo') {
     main = 'Seu peso + <strong>' + fmtKgExact(v) + ' kg</strong>';
+  } else if (equipFamilia(eq) === 'hyrox') {
+    // Cada implemento do Hyrox mede o peso de um jeito. Dizer "no pino"
+    // aqui seria errado, e a comparação com o peso de prova é o que
+    // realmente orienta o treino.
+    const P = (kg, txt) => (Math.abs(v - kg) < 0.001
+      ? ' <span class="lh-side">= peso de prova</span>'
+      : (v < kg ? ' <span class="lh-side">prova: ' + fmtKgExact(kg) + ' kg</span>'
+                : ' <span class="lh-side">acima da prova (' + fmtKgExact(kg) + ' kg)</span>'));
+    if (/tren[óo]|sled/i.test(name)) {
+      const prova = /puxar|pull/i.test(name) ? 103 : 152;
+      main = '<strong>' + fmtKgExact(v) + ' kg</strong> no trenó, já com o trenó' + P(prova);
+    } else if (/farmers/i.test(name)) {
+      main = '2 de <strong>' + fmtKgExact(v) + ' kg</strong>, um em cada mão' + P(24);
+    } else if (/sandbag/i.test(name)) {
+      main = 'Sandbag de <strong>' + fmtKgExact(v) + ' kg</strong>' + P(30);
+    } else if (/wall ball|medicine/i.test(name)) {
+      main = 'Bola de <strong>' + fmtKgExact(v) + ' kg</strong>' + P(6);
+    } else {
+      main = '<strong>' + fmtKgExact(v) + ' kg</strong> no implemento';
+    }
   } else {
     main = '<strong>' + fmtKgExact(v) + ' kg</strong> no pino';
   }
@@ -9555,6 +10704,8 @@ function renderMain() {
     bench: 'skin-warhall',       // Salão de Guerra — dourado clássico
     deadlift: 'skin-boss',       // Boss Fight (convive com .boss-fight)
     upper_hiper: 'skin-bronze',  // Bronze de Esparta — pátina oliva
+    hyrox_forca: 'skin-forge',   // Forja — o dia que arrasta peso
+    hyrox_motor: 'skin-tundra',  // Tundra — vento frio, corrida longa
     cardio_mid: 'skin-lake',     // Lago dos Nove — água parada
     cardio_long: 'skin-tundra',  // Tundra de Midgard — vento frio
     rest: 'skin-winter',         // Fimbulwinter — inverno, neve
@@ -9880,6 +11031,7 @@ function renderMain() {
       <button class="set-tracker ${checked ? 'complete' : ''} ${setsCompleted > 0 && !checked ? 'active' : ''}" 
               data-ex-id="${ex.id}" 
               data-max-sets="${maxSets}" 
+              data-reps-alvo="${escAttr(String(presc.reps == null ? '' : presc.reps))}"
               data-fire="${setsCompleted}"
               style="--progress: ${Math.round((setsCompleted / maxSets) * 100)}; --sets-done: ${setsCompleted}; --sets-max: ${maxSets}; --intensity: ${maxSets > 0 ? (setsCompleted / maxSets).toFixed(3) : 0}; --fire-step: ${setsCompleted}"
               aria-label="${displayName}: ${setsCompleted} de ${maxSets} séries${checked ? ' (completo)' : ''}. Tocar para marcar série.">
@@ -9927,7 +11079,7 @@ function renderMain() {
             <input type="number" inputmode="decimal" step="${EQUIP_META[getEquip(ex.id, displayName)].step}" class="ex-load-input" data-ex-id="${ex.id}" data-ex-name="${escAttr(displayName)}" value="${load}" placeholder="—"
               aria-label="Carga em kg — ${escAttr(displayName)} (${EQUIP_META[getEquip(ex.id, displayName)].label})">
             <span class="ex-load-unit">${EQUIP_META[getEquip(ex.id, displayName)].unit}</span>
-            <button type="button" class="ex-equip eq-${getEquip(ex.id, displayName)}" data-equip-for="${ex.id}"
+            <button type="button" class="ex-equip eq-${equipFamilia(getEquip(ex.id, displayName))}" data-equip-for="${ex.id}"
               aria-label="Equipamento: ${EQUIP_META[getEquip(ex.id, displayName)].label}. Tocar para mudar."
               title="${EQUIP_META[getEquip(ex.id, displayName)].hint} Tocar para mudar.">${EQUIP_META[getEquip(ex.id, displayName)].label}</button>
             ${load && isPrLoad(ex.id, parseFloat(load)) ? '<span class="ex-load-pr" title="Recorde pessoal">⚜</span>' : ''}
@@ -9942,6 +11094,8 @@ function renderMain() {
             })()}
           </div>
           <div class="ex-load-hint" data-hint-for="${ex.id}">${loadHintHtml(ex.id, displayName, load)}</div>
+          <div class="ex-reps" data-reps-for="${ex.id}">${repsRowHtml(ex.id, presc, load)}</div>
+          ${ehHyroxEx(ex) ? hxPainelHtml(ex, STATE.week, STATE.day) : ''}
           <div class="ex-actions-row">
             <button class="ex-notes-toggle" data-ex-id="${ex.id}">
               <span class="arrow">▸</span> Notas
@@ -10252,6 +11406,11 @@ function updateSetTrackerInPlace(btn, exId, newCount, maxSets) {
   // Dots
   const dots = btn.querySelectorAll('.set-dot');
   dots.forEach((d, i) => d.classList.toggle('filled', i < newCount));
+  // Linha de repetições: este é o caminho IN-PLACE (não chama renderMain),
+  // então ela precisa ser redesenhada aqui — senão o chip da série que
+  // acabou de ser marcada só apareceria na próxima renderização do dia.
+  try { atualizarLinhaReps(exId); } catch (e) {}
+  try { if (ehHyroxEx(hxAchaEx(exId))) hxAtualizarPainel(exId); } catch (e) {}
   // Card pai ganha classe in-progress (pro glow lateral, se houver)
   const card = btn.closest('.exercise');
   if (card) {
@@ -10295,12 +11454,13 @@ function openEquipModal(exId) {
     barra:   'Peso TOTAL na barra, contando a barra. Mostra as anilhas por lado.',
     halter:  'Soma dos DOIS halteres. Mostra quanto pegar em cada mão.',
     maquina: 'Quilos marcados no pino da máquina ou da polia.',
-    corpo:   'Só o peso ADICIONAL (cinto/colete). Seu corpo não entra na conta.'
+    corpo:   'Só o peso ADICIONAL (cinto/colete). Seu corpo não entra na conta.',
+    hyrox:   'Implemento de Hyrox: trenó, sandbag, bola ou farmers.'
   };
   body.innerHTML =
     '<div style="color:var(--text-2);font:600 13px/1.5 Inter,sans-serif;margin-bottom:14px;">' + name + '</div>' +
-    Object.keys(EQUIP_META).map(k =>
-      '<button type="button" class="equip-opt' + (k === current ? ' sel' : '') + '" data-equip-set="' + k + '">' +
+    EQUIP_ESCOLHIVEIS.map(k =>
+      '<button type="button" class="equip-opt' + (k === equipFamilia(current) ? ' sel' : '') + '" data-equip-set="' + k + '">' +
         '<span class="equip-opt-name">' + EQUIP_META[k].label + (k === auto ? ' · automático' : '') + '</span>' +
         '<span class="equip-opt-desc">' + DESCS[k] + '</span>' +
       '</button>'
@@ -10326,6 +11486,47 @@ function openEquipModal(exId) {
   openModalEl(modal);
 }
 
+// Delegado no documento: a linha de reps é recriada a cada render, então
+// prender o ouvinte nela daria listener órfão a cada troca de dia.
+document.addEventListener('click', (e) => {
+  const chip = e.target && e.target.closest && e.target.closest('.rep-chip');
+  if (chip) {
+    e.preventDefault();
+    abrirSeletorReps(chip.dataset.repEx, parseInt(chip.dataset.repI, 10), chip);
+    return;
+  }
+  const op = e.target && e.target.closest && e.target.closest('.reps-op');
+  if (op) {
+    e.preventDefault();
+    const exId = op.dataset.repSet, i = parseInt(op.dataset.repI, 10), v = parseInt(op.dataset.repV, 10);
+    setRepAt(STATE.week, STATE.day, exId, i, v);
+    // se o exercício já estava fechado, atualiza também o histórico
+    const k = setProgressKey(STATE.week, STATE.day, exId);
+    if (STATE.checks[k]) {
+      const btn = document.querySelector('.set-tracker[data-ex-id="' + exId + '"]');
+      registrarSessaoReps(exId, getLoad(STATE.week, STATE.day, exId),
+        getRepsArr(STATE.week, STATE.day, exId), alvoReps(btn && btn.dataset.repsAlvo));
+    }
+    atualizarLinhaReps(exId);
+    return;
+  }
+  // toque fora fecha o seletor aberto
+  if (!(e.target && e.target.closest && e.target.closest('.reps-seletor'))) {
+    document.querySelectorAll('.reps-seletor').forEach(x => x.remove());
+    document.querySelectorAll('.rep-chip.editando').forEach(c => c.classList.remove('editando'));
+  }
+});
+
+// Redesenha SÓ a linha de reps daquele exercício — o cartão inteiro não
+// precisa ser reconstruído, e assim nada pisca durante o ajuste.
+function atualizarLinhaReps(exId) {
+  const cont = document.querySelector('.ex-reps[data-reps-for="' + exId + '"]');
+  if (!cont) return;
+  const btn = document.querySelector('.set-tracker[data-ex-id="' + exId + '"]');
+  const presc = { reps: btn ? btn.dataset.repsAlvo : '' };
+  cont.innerHTML = repsRowHtml(exId, presc, getLoad(STATE.week, STATE.day, exId));
+}
+
 function attachExerciseHandlers() {
   // Set trackers — incrementa contagem de séries a cada toque
   document.querySelectorAll('.set-tracker').forEach(btn => {
@@ -10336,7 +11537,8 @@ function attachExerciseHandlers() {
       const prevCount = getSetProgress(STATE.week, STATE.day, exId);
       const xpBefore = computeGamState().xp;
 
-      incrementSetProgress(STATE.week, STATE.day, exId, maxSets);
+      const alvoDoEx = alvoReps(btn.dataset.repsAlvo);
+      incrementSetProgress(STATE.week, STATE.day, exId, maxSets, alvoDoEx);
 
       const newCount = getSetProgress(STATE.week, STATE.day, exId);
       const nowComplete = newCount >= maxSets;
@@ -11318,13 +12520,33 @@ document.querySelectorAll('#modeSwitch .mode-opt').forEach(btn => {
   // Incremento real de cada equipamento (o menor salto possível):
   // barra 10 (menor anilha da academia é 5, e vai uma de cada lado)
   // halter 4 (2 por halter) · máquina 5 · corpo 2,5
-  const WARM_INC = { barra: 10, halter: 4, maquina: 5, corpo: 2.5 };
+  // hyrox 10: trenó também leva anilha dos dois lados, então o salto
+  // real é de 10 em 10. Sandbag e bola não se micro-carregam — nesses
+  // o degrau serve como referência de "pegue o implemento mais leve".
+  const WARM_INC = { barra: 10, halter: 4, maquina: 5, corpo: 2.5, hyrox: 10,
+    // Subtipos: cada implemento sobe no passo que existe de verdade.
+    hyrox_sled: 10,      // anilha dos dois lados do trenó
+    hyrox_farmers: 2,    // kettlebell/halter de 2 em 2, POR MÃO
+    hyrox_sandbag: 5,
+    hyrox_wallball: 1,
+    hyrox_skierg: 0,     // ergo não tem rampa de carga
+    hyrox_row: 0 };
+  // Guarda dura: qualquer equipamento desconhecido cujo nome comece por
+  // "hyrox" NUNCA pode ser tratado como barra.
+  function incDe(equip) {
+    if (WARM_INC[equip] != null) return WARM_INC[equip];
+    return String(equip || '').indexOf('hyrox') === 0 ? 10 : 2.5;
+  }
+  function semRampaDeCarga(equip) {
+    return equip === 'hyrox_skierg' || equip === 'hyrox_row';
+  }
   const WARM_SCHEMES = { 3: [50, 70, 85], 4: [40, 60, 75, 88], 5: [40, 55, 70, 82, 92] };
   function warmReps(p) { return p <= 50 ? 5 : p <= 65 ? 4 : p <= 75 ? 3 : p <= 85 ? 2 : 1; }
   function roundInc(v, inc) { return Math.round(v / inc) * inc; }
 
   function computeWarmup(work, equip, n) {
-    const inc = WARM_INC[equip] || 2.5;
+    if (semRampaDeCarga(equip)) return [];   // SkiErg e remo: sem carga pra escalonar
+    const inc = incDe(equip);
     const out = [];
     if (equip === 'barra') out.push({ label: 'Barra', kg: 20, reps: 8 });
     if (equip === 'corpo') out.push({ label: 'Só o corpo', kg: 0, reps: 6 });
@@ -11339,6 +12561,13 @@ document.querySelectorAll('#modeSwitch .mode-opt').forEach(btn => {
     return out;
   }
 
+  function rotuloHyrox(equip) {
+    if (equip === 'hyrox_sled') return 'no trenó';
+    if (equip === 'hyrox_farmers') return 'por mão';
+    if (equip === 'hyrox_sandbag') return 'no saco';
+    if (equip === 'hyrox_wallball') return 'na bola';
+    return 'no implemento';
+  }
   function renderWarm() {
     const work = parseFloat(String(warmWorkIn.value).replace(',', '.'));
     const equip = warmEquipIn.value;
@@ -11351,7 +12580,10 @@ document.querySelectorAll('#modeSwitch .mode-opt').forEach(btn => {
     const rows = steps.map(s => {
       const pct = s.label ? s.label : s.pct + '%';
       let kgTxt, plates = '';
-      if (equip === 'halter') {
+      if (equip === 'hyrox_farmers') {
+        // POR MÃO. Somar as duas mãos aqui seria erro grosseiro.
+        kgTxt = '2 × ' + fmtP(s.kg) + ' <small>kg</small>';
+      } else if (equip === 'halter') {
         kgTxt = fmtP(s.kg) + ' <small>kg · 2×' + fmtP(s.kg / 2) + '</small>';
       } else if (equip === 'corpo') {
         kgTxt = s.kg > 0 ? '+' + fmtP(s.kg) + ' <small>kg</small>' : '<small>sem peso</small>';
@@ -11360,6 +12592,8 @@ document.querySelectorAll('#modeSwitch .mode-opt').forEach(btn => {
         if (equip === 'barra') {
           const pl = platesPerSide(s.kg, 20);
           plates = (pl && pl.txt) ? pl.txt : (s.kg === 20 ? 'só a barra' : '');
+        } else if (equipFamilia(equip) === 'hyrox') {
+          plates = rotuloHyrox(equip);
         }
       }
       return '<div class="pwrwarm-row"><span class="pwrwarm-pct">' + pct + '</span>' +
@@ -11370,21 +12604,35 @@ document.querySelectorAll('#modeSwitch .mode-opt').forEach(btn => {
 
     // Série de trabalho fecha a lista
     let workKg, workPlates = '';
-    if (equip === 'halter') workKg = fmtP(work) + ' <small>kg · 2×' + fmtP(work / 2) + '</small>';
+    if (equip === 'hyrox_farmers') workKg = '2 × ' + fmtP(work) + ' <small>kg</small>';
+    else if (equip === 'halter') workKg = fmtP(work) + ' <small>kg · 2×' + fmtP(work / 2) + '</small>';
     else if (equip === 'corpo') workKg = '+' + fmtP(work) + ' <small>kg</small>';
     else {
       workKg = fmtP(work) + ' <small>kg</small>';
       if (equip === 'barra') { const pl = platesPerSide(work, 20); workPlates = (pl && pl.txt) ? pl.txt : ''; }
+      else if (equipFamilia(equip) === 'hyrox') { workPlates = rotuloHyrox(equip); }
     }
-    warmList.innerHTML = rows +
-      '<div class="pwrwarm-row work"><span class="pwrwarm-pct">TRABALHO</span>' +
-      '<span class="pwrwarm-kg">' + workKg + '</span>' +
-      '<span class="pwrwarm-reps">série</span>' +
-      '<span class="pwrwarm-plates">' + workPlates + '</span></div>';
+    if (semRampaDeCarga(equip)) {
+      // Ergo não tem carga: mostrar "TRABALHO 152 kg" aqui seria inventar
+      // um número que não existe no aparelho.
+      warmList.innerHTML = '';
+    } else {
+      warmList.innerHTML = rows +
+        '<div class="pwrwarm-row work"><span class="pwrwarm-pct">TRABALHO</span>' +
+        '<span class="pwrwarm-kg">' + workKg + '</span>' +
+        '<span class="pwrwarm-reps">série</span>' +
+        '<span class="pwrwarm-plates">' + workPlates + '</span></div>';
+    }
 
-    warmHint.textContent = steps.length
-      ? 'Descanso curto nos degraus leves; 2–3 min antes da série de trabalho.'
-      : 'Carga leve demais para escalonar — vá direto à série de trabalho.';
+    if (semRampaDeCarga(equip)) {
+      warmHint.textContent = 'SkiErg e remo não têm carga: aqueça com 200–300 m fáceis e suba o ritmo aos poucos.';
+    } else {
+      warmHint.textContent = steps.length
+        ? (equipFamilia(equip) === 'hyrox'
+            ? 'Faça um trajeto curto em cada degrau para achar a postura e o ritmo, não para cansar.'
+            : 'Descanso curto nos degraus leves; 2–3 min antes da série de trabalho.')
+        : 'Carga leve demais para escalonar — vá direto à série de trabalho.';
+    }
   }
 
   warmWorkIn.addEventListener('input', renderWarm);
@@ -11402,7 +12650,11 @@ document.querySelectorAll('#modeSwitch .mode-opt').forEach(btn => {
   window.pwrOpenWarmWith = function (kg, equip) {
     try {
       warmWorkIn.value = String(kg);
-      if (equip && WARM_INC[equip]) warmEquipIn.value = equip;
+      // aceita subtipo; se o navegador não tiver a opção, cai no genérico
+      if (equip) {
+        const tem = [...warmEquipIn.options].some(o => o.value === equip);
+        warmEquipIn.value = tem ? equip : (String(equip).indexOf('hyrox') === 0 ? 'hyrox_sled' : (WARM_INC[equip] != null ? equip : warmEquipIn.value));
+      }
       selectTab('warm');
       renderWarm();
       openModalEl(modal);
@@ -12325,11 +13577,14 @@ const SESSION_DOT_COLORS = {
   squat: '#e8801e', bench: '#c89b3c', deadlift: '#d4502a', upper_hiper: '#b4a04a',
   cardio_mid: '#5ab8b8', cardio_long: '#8499b0', rest: '#7da8c8', skip: '#6b5c47',
   // Linha olímpica (hipertrofia)
+  hyrox_forca: '#f0932f', hyrox_motor: '#5eb1b1',
   hyper_push: '#e0a93e', hyper_pull: '#b4894a', hyper_lowerA: '#e8801e',
   hyper_upper: '#c9a85a', hyper_lowerB: '#d4502a'
 };
 // Labels do painel — desambiguam os dois cardios e traduzem rest/skip
 const SESSION_PANEL_LABELS = {
+  hyrox_forca: 'Hyrox · Estações pesadas',
+  hyrox_motor: 'Hyrox · Ergos e corrida',
   cardio_mid: 'Cardio Z2 · 40-50min',
   cardio_long: 'Cardio Z2 · Longo',
   rest: 'Descanso',
@@ -14307,6 +15562,8 @@ try {
   loadGam();
   loadLoadHistory();
   loadEquip();
+  loadRepsLog();
+  hxLoad();
 
   // Default to today
   const todayKey = JS_DAY_TO_KEY[new Date().getDay()];
