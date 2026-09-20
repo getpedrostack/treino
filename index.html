@@ -8422,6 +8422,43 @@
 // SESSIONS — biblioteca de sessões fixas em conteúdo
 // O calendário (qual sessão acontece em qual dia) é dinâmico.
 // ============================================================
+function ligarAtalho(seletor, acao) {
+  let inicio = null, ultimo = 0;
+  const dispara = function (alvo) {
+    const agora = Date.now();
+    if (agora - ultimo < 450) return;      // não abre duas vezes pelo mesmo toque
+    ultimo = agora;
+    try { acao(alvo); } catch (e) { console.error('Atalho falhou: ' + seletor, e); }
+  };
+  const achar = function (alvo) {
+    return (alvo && alvo.closest) ? alvo.closest(seletor) : null;
+  };
+  document.addEventListener('touchstart', function (e) {
+    if (e.touches.length !== 1) { inicio = null; return; }
+    const alvo = achar(e.target);
+    inicio = alvo ? { x: e.touches[0].clientX, y: e.touches[0].clientY, alvo: alvo } : null;
+  }, { capture: true, passive: true });
+  document.addEventListener('touchend', function (e) {
+    const t = inicio; inicio = null;
+    if (!t) return;
+    const pt = e.changedTouches && e.changedTouches[0];
+    if (!pt) return;
+    if (Math.abs(pt.clientX - t.x) > 16 || Math.abs(pt.clientY - t.y) > 16) return;  // foi arrasto
+    if (e.cancelable) e.preventDefault();   // evita o clique duplicado logo depois
+    dispara(t.alvo);
+  }, { capture: true, passive: false });
+  document.addEventListener('touchcancel', function () { inicio = null; }, { capture: true, passive: true });
+  document.addEventListener('click', function (e) {
+    const alvo = achar(e.target);
+    if (alvo) dispara(alvo);
+  }, true);
+}
+
+ligarAtalho('#dayTitleBtn', function () { openSessionSwapModal(); });
+ligarAtalho('#hudRankBtn',  function () { openRankModal(); });
+ligarAtalho('#hudAchBtn',   function () { openAchievements(); });
+ligarAtalho('#diffCrest',   function () { openDifficultyModal(); });
+
 const SESSIONS = {};
 
 SESSIONS.squat = {
@@ -10090,6 +10127,38 @@ function safeSet(key, val) {
   }
 }
 
+// Troca toda chave de sessão que não existe mais pelo padrão daquele dia,
+// no modo certo, e grava. Depois disso "ordem visual" e "ordem persistida"
+// são a mesma coisa — inclusive no backup.
+function sanearCalendarios() {
+  const pares = [
+    { store: STATE.schedules,      dflt: DEFAULT_SCHEDULE, salvar: saveSchedules },
+    { store: STATE.hyperSchedules, dflt: HYPER_SCHEDULE,   salvar: saveHyperSchedules }
+  ];
+  const trocadas = [];
+  pares.forEach(function (par) {
+    const store = par.store;
+    if (!store || typeof store !== 'object') return;
+    let mudou = false;
+    Object.keys(store).forEach(function (semana) {
+      const sem = store[semana];
+      if (!sem || typeof sem !== 'object') { delete store[semana]; mudou = true; return; }
+      DAYS.forEach(function (d) {
+        const k = sem[d];
+        if (k && SESSIONS[k]) return;               // chave válida: não mexe
+        trocadas.push(semana + '/' + d + ': ' + k + ' → ' + par.dflt[d]);
+        sem[d] = par.dflt[d];
+        mudou = true;
+      });
+      // dia sobrando que não é dia da semana
+      Object.keys(sem).forEach(function (d) { if (DAYS.indexOf(d) < 0) { delete sem[d]; mudou = true; } });
+    });
+    if (mudou) { try { par.salvar(); } catch (e) {} }
+  });
+  if (trocadas.length) console.warn('Calendário: chaves de versão antiga trocadas →', trocadas);
+  return trocadas;
+}
+
 function loadState() {
   try { const mode = localStorage.getItem('pwr.mode'); if (mode === 'hyper' || mode === 'pwr') STATE.mode = mode; } catch (e) {}
   try { const week = localStorage.getItem('pwr.week'); if (week) STATE.week = week; } catch (e) {}
@@ -10102,6 +10171,7 @@ function loadState() {
   STATE.weeklyNotes = readJson('pwr.weeklyNotes', STATE.weeklyNotes);
   STATE.setProgress = readJson('pwr.setProgress', STATE.setProgress);
   STATE.cardioDone = readJson('pwr.cardioDone', STATE.cardioDone);
+  sanearCalendarios();
   const pr = readJson('pwr.prHistory', null);
   if (pr) STATE.prHistory = pr;
   else {
@@ -11401,7 +11471,7 @@ function renderMain() {
       <div class="export-section fade-in">
         <div class="export-divider">Versão</div>
         <div class="build-stamp" id="buildStamp">
-          <span class="build-rot">build</span> <b>2026-09-20.3</b>
+          <span class="build-rot">build</span> <b>2026-09-20.4</b>
           <span class="build-sw" id="buildSw">cache: —</span>
         </div>
         <div class="export-hint" style="margin-bottom:22px;">
@@ -14101,7 +14171,10 @@ const SESSION_PANEL_LABELS = {
   hyper_lowerB: 'Lower B · Posterior'
 };
 function sessionPanelLabel(key) {
-  return SESSION_PANEL_LABELS[key] || SESSIONS[key].title;
+  if (SESSION_PANEL_LABELS[key]) return SESSION_PANEL_LABELS[key];
+  const s = SESSIONS[key];
+  if (s && s.title) return s.title;
+  return key ? ('Sessão antiga (' + key + ')') : 'Sem sessão';
 }
 const WEEK_KEY_ORDER = ['1', '2', '3', 'deload'];
 
@@ -14114,9 +14187,34 @@ let weekDraft = null;        // rascunho da semana em edição
 let swapModalListenersWired = false; // backdrop listener anexado uma vez só
 
 function openSessionSwapModal() {
-  weekDraft = { ...getCurrentSchedule() };
-  renderWeekPanel();
   const modal = document.getElementById('swapModal');
+  if (!modal) return;
+  if (modal.classList.contains('open')) return;     // já está aberto
+  // O rascunho nasce saneado: chave que não existe mais vira o padrão do dia.
+  const base = getCurrentSchedule();
+  const dflt = activeDefaultSchedule();
+  weekDraft = {};
+  DAYS.forEach(function (d) {
+    const k = base[d];
+    weekDraft[d] = (k && SESSIONS[k]) ? k : dflt[d];
+  });
+  try {
+    renderWeekPanel();
+  } catch (err) {
+    console.error('Falha ao montar Gerenciar Semana', err);
+    const cartao = modal.querySelector('.modal');
+    if (cartao) {
+      cartao.innerHTML = '<div class="modal-handle"></div>'
+        + '<div class="modal-header"><div class="modal-title">Gerenciar Semana</div>'
+        + '<button class="modal-close" id="swapModalClose" type="button" aria-label="Fechar">×</button></div>'
+        + '<p class="wk-intro">Não consegui montar o painel desta vez.<br>'
+        + '<b>' + String(err && err.message ? err.message : err) + '</b></p>'
+        + '<div class="wk-footer"><button class="wk-cancel" id="wkCancel" type="button">FECHAR</button></div>';
+      const fecha = function () { closeModalEl(modal); };
+      const a = cartao.querySelector('#swapModalClose'); if (a) a.addEventListener('click', fecha);
+      const b = cartao.querySelector('#wkCancel'); if (b) b.addEventListener('click', fecha);
+    }
+  }
   openModalEl(modal);
   if (!swapModalListenersWired) {
     modal.addEventListener('click', (e) => {
@@ -16331,14 +16429,6 @@ try {
       + '</div></div>';
   }
 }
-
-// Wire up session swap + menu de patentes (delegado, pois ficam em áreas que re-renderizam)
-document.body.addEventListener('click', (e) => {
-  if (e.target.closest('#dayTitleBtn')) { openSessionSwapModal(); return; }
-  if (e.target.closest('#hudRankBtn')) { openRankModal(); return; }
-  if (e.target.closest('#hudAchBtn')) { openAchievements(); return; }
-  if (e.target.closest('#diffCrest')) { openDifficultyModal(); return; }
-});
 
 // Fecha os modais (patentes / dificuldade) ao tocar no fundo
 const rankModalEl = document.getElementById('rankModal');
