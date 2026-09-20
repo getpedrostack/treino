@@ -5198,12 +5198,19 @@
   .wk-row.dragging { opacity:0.35; border-style:dashed; }
   .wk-row.drop-target { border-color:var(--gold-bright); box-shadow:0 0 14px rgba(240,198,116,0.35), inset 0 0 10px rgba(240,198,116,0.08); }
   .wk-row.is-skip .wk-session-title { color:var(--text-3); font-style:italic; }
+  body.wk-arrastando .modal { overscroll-behavior:contain; }
+  body.wk-arrastando { cursor:grabbing; }
   .wk-ghost { background:linear-gradient(180deg,var(--bg-elev),var(--bg-card)); border:1px solid var(--gold); border-radius:3px; display:flex; align-items:center; gap:10px; padding:11px 12px; }
   .wk-handle {
-    cursor:grab; font-size:15px; color:var(--text-3); padding:8px 6px; margin:-8px -2px -8px 0;
-    touch-action:none; user-select:none; -webkit-user-select:none; line-height:1; border:none; background:transparent;
+    cursor:grab; font-size:17px; color:var(--text-2); line-height:1;
+    width:44px; height:44px; min-width:44px; padding:0; margin:-8px -6px -8px -8px;
+    display:flex; align-items:center; justify-content:center;
+    touch-action:none; user-select:none; -webkit-user-select:none;
+    border:none; background:transparent; border-radius:3px; transition:color 0.15s, background 0.15s;
   }
-  .wk-handle:active { cursor:grabbing; color:var(--gold); }
+  .wk-handle:active, .wk-row.dragging .wk-handle {
+    cursor:grabbing; color:var(--gold-bright); background:rgba(240,198,116,0.12);
+  }
   .wk-day-label { font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:0.1em; color:var(--gold-pale); width:34px; flex-shrink:0; }
   .wk-trt-dot { width:5px; height:5px; border-radius:50%; background:var(--gold-bright); box-shadow:0 0 4px var(--gold); flex-shrink:0; margin-left:-5px; }
   .wk-session-btn {
@@ -9793,7 +9800,7 @@ function bossSession() { return STATE.mode === 'hyper' ? 'hyper_lowerB' : 'deadl
 function modeSchedules() { return STATE.mode === 'hyper' ? STATE.hyperSchedules : STATE.schedules; }
 function saveModeSchedules() { if (STATE.mode === 'hyper') saveHyperSchedules(); else saveSchedules(); }
 // Sessões oferecidas no painel "Gerenciar Semana" por modo
-const HYPER_SESSION_ORDER = ['hyper_push', 'hyper_pull', 'hyper_lowerA', 'hyper_upper', 'hyper_lowerB', 'cardio_mid', 'cardio_long', 'rest', 'skip'];
+const HYPER_SESSION_ORDER = ['hyrox', 'hyper_push', 'hyper_pull', 'hyper_lowerA', 'hyper_upper', 'hyper_lowerB', 'cardio_mid', 'cardio_long', 'rest', 'skip'];
 function modeSessionOrder() { return STATE.mode === 'hyper' ? HYPER_SESSION_ORDER : SESSION_ORDER; }
 function modeCoreSessions() { return STATE.mode === 'hyper' ? ['hyrox', 'hyper_pull', 'hyper_upper', 'hyper_lowerB'] : ['hyrox', 'bench', 'deadlift', 'upper_hiper']; }
 
@@ -14074,14 +14081,21 @@ function countPendingChanges() {
   return DAYS.filter(d => weekDraft[d] !== committed[d]).length;
 }
 
+// Quantas vezes cada sessão-âncora deve aparecer na semana.
+// Hyrox são dois dias de propósito (segunda e quarta); os levantamentos
+// pesados, um cada. Sem isso o painel avisa sobre o próprio plano.
+const CORE_ESPERADO = { hyrox: 2 };
+function coreEsperado(key) { return CORE_ESPERADO[key] || 1; }
+
 function computeWeekWarnings(draft) {
   const w = [];
   const values = DAYS.map(d => draft[d]);
   modeCoreSessions().forEach(core => {
     const count = values.filter(v => v === core).length;
     const label = sessionPanelLabel(core);
+    const esperado = coreEsperado(core);
     if (count === 0) w.push(`Sem <b>${label}</b> nesta semana`);
-    if (count > 1) w.push(`${count}× <b>${label}</b> na mesma semana`);
+    else if (count > esperado) w.push(`${count}× <b>${label}</b> na mesma semana`);
   });
   if (!values.includes('cardio_mid') && !values.includes('cardio_long')) {
     w.push('Nenhum cardio Zona 2 nesta semana');
@@ -14207,8 +14221,52 @@ function wireWeekPanel(expandedDay) {
 }
 
 function wireWeekDrag() {
+  // Arrastar a alça ⠿ TROCA as sessões de dois dias.
+  // Três coisas que faltavam e faziam o gesto morrer no celular:
+  //  1. o arrasto de fechar o cartão roubava o dedo (corrigido na zona morta);
+  //  2. nada rolava o cartão, então dias fora da tela eram inalcançáveis;
+  //  3. o alvo só era recalculado quando o dedo se movia — parado na
+  //     borda enquanto rolava, o destaque ficava no dia errado.
+  const BORDA = 72;      // px de cada ponta onde a rolagem automática liga
+  const VEL = 13;        // px por quadro
+
+  function alvoEm(x, y) {
+    if (!weekDragState) return null;
+    weekDragState.ghost.style.display = 'none';
+    const el = document.elementFromPoint(x, y);
+    weekDragState.ghost.style.display = '';
+    const row = el && el.closest ? el.closest('.wk-row') : null;
+    return (row && !row.classList.contains('dragging')) ? row : null;
+  }
+
+  function marcaAlvo(row) {
+    if (!weekDragState) return;
+    if (weekDragState.target && weekDragState.target !== row) {
+      weekDragState.target.classList.remove('drop-target');
+    }
+    if (row) row.classList.add('drop-target');
+    weekDragState.target = row;
+  }
+
+  function quadro() {
+    if (!weekDragState) return;
+    const st = weekDragState;
+    const cartao = st.cartao;
+    if (cartao) {
+      const cr = cartao.getBoundingClientRect();
+      const podeSubir = cartao.scrollTop > 0;
+      const podeDescer = cartao.scrollTop + cartao.clientHeight < cartao.scrollHeight - 1;
+      if (st.y < cr.top + BORDA && podeSubir) cartao.scrollTop -= VEL;
+      else if (st.y > cr.bottom - BORDA && podeDescer) cartao.scrollTop += VEL;
+    }
+    // o alvo é recalculado todo quadro: vale para o dedo parado rolando
+    marcaAlvo(alvoEm(st.x, st.y));
+    st.raf = requestAnimationFrame(quadro);
+  }
+
   document.querySelectorAll('.wk-handle').forEach(h => {
     h.addEventListener('pointerdown', (e) => {
+      if (weekDragState) return;
       e.preventDefault();
       const row = h.closest('.wk-row');
       const day = row.dataset.day;
@@ -14216,50 +14274,60 @@ function wireWeekDrag() {
       const ghost = document.createElement('div');
       ghost.className = 'wk-ghost';
       ghost.innerHTML = row.innerHTML;
-      ghost.style.cssText = `position:fixed;left:${r.left}px;top:${r.top}px;width:${r.width}px;z-index:300;pointer-events:none;opacity:0.93;box-shadow:0 10px 32px rgba(0,0,0,0.65);`;
+      ghost.style.cssText = 'position:fixed;left:' + r.left + 'px;top:' + r.top + 'px;width:' + r.width
+        + 'px;z-index:300;pointer-events:none;opacity:0.93;box-shadow:0 10px 32px rgba(0,0,0,0.65);';
       document.body.appendChild(ghost);
       row.classList.add('dragging');
-      weekDragState = { day, row, ghost, offsetY: e.clientY - r.top, target: null };
-      h.setPointerCapture(e.pointerId);
+      document.body.classList.add('wk-arrastando');
+      weekDragState = {
+        day: day, row: row, ghost: ghost, offsetY: e.clientY - r.top,
+        target: null, cartao: h.closest('.modal'),
+        x: e.clientX, y: e.clientY, raf: 0, moveu: false
+      };
+      try { h.setPointerCapture(e.pointerId); } catch (err) {}
       if (navigator.vibrate) navigator.vibrate(8);
+      weekDragState.raf = requestAnimationFrame(quadro);
     });
-    
+
     h.addEventListener('pointermove', (e) => {
       if (!weekDragState) return;
-      weekDragState.ghost.style.top = (e.clientY - weekDragState.offsetY) + 'px';
-      weekDragState.ghost.style.display = 'none';
-      const el = document.elementFromPoint(e.clientX, e.clientY);
-      weekDragState.ghost.style.display = '';
-      const overRow = el ? el.closest('.wk-row') : null;
-      const valid = overRow && !overRow.classList.contains('dragging');
-      if (weekDragState.target && weekDragState.target !== overRow) {
-        weekDragState.target.classList.remove('drop-target');
+      e.preventDefault();
+      weekDragState.x = e.clientX;
+      weekDragState.y = e.clientY;
+      if (Math.abs(e.clientY - (weekDragState.offsetY + weekDragState.row.getBoundingClientRect().top)) > 3) {
+        weekDragState.moveu = true;
       }
-      if (valid) overRow.classList.add('drop-target');
-      weekDragState.target = valid ? overRow : null;
+      weekDragState.ghost.style.top = (e.clientY - weekDragState.offsetY) + 'px';
     });
-    
+
     const finishDrag = () => {
       if (!weekDragState) return;
-      const { day, row, ghost, target } = weekDragState;
-      ghost.remove();
-      row.classList.remove('dragging');
+      const st = weekDragState;
+      if (st.raf) cancelAnimationFrame(st.raf);
+      st.ghost.remove();
+      st.row.classList.remove('dragging');
+      document.body.classList.remove('wk-arrastando');
+      const target = st.target;
+      let trocou = false;
       if (target) {
         target.classList.remove('drop-target');
         const other = target.dataset.day;
-        if (other && other !== day) {
-          // TROCA as sessões dos dois dias no rascunho
-          const tmp = weekDraft[day];
-          weekDraft[day] = weekDraft[other];
+        if (other && other !== st.day) {
+          const tmp = weekDraft[st.day];
+          weekDraft[st.day] = weekDraft[other];
           weekDraft[other] = tmp;
-          if (navigator.vibrate) navigator.vibrate([12, 25]);
-          renderWeekPanel();
+          trocou = true;
         }
       }
       weekDragState = null;
+      if (trocou) {
+        if (navigator.vibrate) navigator.vibrate([12, 25]);
+        renderWeekPanel();
+      }
     };
     h.addEventListener('pointerup', finishDrag);
     h.addEventListener('pointercancel', finishDrag);
+    h.addEventListener('lostpointercapture', finishDrag);
   });
 }
 
@@ -15750,7 +15818,8 @@ function montarDeslizeDeCards() {
     const c = bd.querySelector('.modal');
     if (!c || !c.contains(e.target)) return;
     // zonas onde arrastar já significa outra coisa
-    if (e.target.closest && e.target.closest('input, select, textarea, .pwrprog-chartwrap, svg, [data-sem-deslize]')) return;
+    if (weekDragState) return;   // reorganizando a semana: o dedo já tem dono
+    if (e.target.closest && e.target.closest('input, select, textarea, .pwrprog-chartwrap, svg, .wk-handle, [data-sem-deslize]')) return;
     const naAlca = !!(e.target.closest && e.target.closest('.modal-handle, .modal-header'));
     if (!naAlca && c.scrollTop > 2) return;   // está rolando o conteúdo: não é gesto de fechar
     card = c; fundo = bd;
@@ -15761,6 +15830,7 @@ function montarDeslizeDeCards() {
   }, { passive: true });
 
   document.addEventListener('touchmove', (e) => {
+    if (weekDragState) { card = null; return; }
     if (!card || e.touches.length !== 1) return;
     dy = e.touches[0].clientY - y0;
     const dx = e.touches[0].clientX - x0;
