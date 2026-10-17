@@ -132,6 +132,7 @@
     // primeira instalação — e aí recarregar seria só um piscar inútil na
     // estreia. O recarregamento só vale quando um SW NOVO substitui o antigo.
     var hadController = !!navigator.serviceWorker.controller;
+    var abriuEm = Date.now();
     window.addEventListener('load', function () {
       navigator.serviceWorker.register('sw.js').then(function (reg) {
         // Ao publicar um index.html novo, ativa o SW novo assim que baixar,
@@ -146,14 +147,32 @@
             }
           });
         });
+        // App instalado que ficou em segundo plano NÃO abre de novo ao voltar:
+        // o celular só reexibe a página antiga, e nada checava atualização.
+        // A versão nova só chegava quando o sistema matasse o app. Agora
+        // confere toda vez que o app volta pra frente (no máx. 1x/minuto).
+        var ultimaChecagem = 0;
+        document.addEventListener('visibilitychange', function () {
+          if (document.visibilityState !== 'visible') return;
+          if (Date.now() - ultimaChecagem < 60000) return;
+          ultimaChecagem = Date.now();
+          try { var pr = reg.update(); if (pr && pr.catch) pr.catch(function () {}); } catch (e) {}
+        });
       }).catch(function () {});
       // Recarrega UMA vez quando o SW novo assume, pra pegar a versão nova.
       var _reloaded = false;
+      var recarrega = function () { if (_reloaded) return; _reloaded = true; location.reload(); };
       navigator.serviceWorker.addEventListener('controllerchange', function () {
         if (!hadController) return;      // primeira instalação: não recarrega
-        if (_reloaded) return;
-        _reloaded = true;
-        location.reload();
+        // No meio de algo (painel aberto, digitando uma carga)? Não arranca a
+        // tela da sua mão: a troca de versão acontece quando você sair do app.
+        var ae = document.activeElement;
+        var ocupado = !!document.querySelector('.modal-backdrop.open') ||
+          !!(ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName));
+        if (!ocupado || Date.now() - abriuEm < 4000) { recarrega(); return; }
+        document.addEventListener('visibilitychange', function () {
+          if (document.visibilityState === 'hidden') recarrega();
+        });
       });
     });
   } catch (e) {}
@@ -5445,6 +5464,13 @@
     box-shadow: inset 4px 0 0 var(--gold), inset 0 1px 0 rgba(240,198,116,0.12), 0 6px 20px rgba(0,0,0,0.5);
   }
   .backup-banner[hidden] { display: none; }
+  .cal-banner { flex-wrap: wrap; }
+  .cal-lista { margin: 8px 0 0; padding-left: 16px; font-size: 11.5px; line-height: 1.55; color: var(--text-2); }
+  .cal-lista b { color: var(--text); font-weight: 600; }
+  .cal-lista li { margin-bottom: 4px; }
+  .cal-sem { display: block; font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 1px; }
+  .cal-acoes { width: 100%; justify-content: flex-end; }
   .backup-banner-text {
     flex: 1 1 auto;
     color: var(--text-2);
@@ -7765,6 +7791,7 @@
      reescreve o main inteiro a cada troca de dia/semana, e aqui o aviso
      sobrevive sem precisar ser recriado em todos os caminhos de render. -->
 <div class="backup-banner" id="backupBanner" role="status" hidden></div>
+<div class="backup-banner cal-banner" id="calBanner" role="status" hidden></div>
 
 <main id="main"></main>
 
@@ -7953,6 +7980,17 @@
       <div class="gym-row gym-sub"><span class="gym-day">Seg–Sex</span><span class="gym-hours">05h às 23h</span></div>
       <div class="gym-row gym-sub"><span class="gym-day">Sábado</span><span class="gym-hours">07h às 20h</span></div>
       <div class="gym-row gym-sub"><span class="gym-day">Domingo</span><span class="gym-hours">08h às 20h</span></div>
+    </div>
+
+    <div class="settings-section" style="margin-top:22px;">
+      <div class="settings-label" style="margin-bottom:10px;">
+        <span class="settings-label-title">Versão instalada</span>
+        <span class="settings-label-desc">Se não bater com a última publicação, o aparelho ainda está com a anterior: feche o app e abra de novo com internet.</span>
+      </div>
+      <div class="build-stamp" id="gymBuildStamp">
+        <span class="build-rot">build</span> <b class="build-num">—</b>
+        <span class="build-sw">cache: —</span>
+      </div>
     </div>
 
     <!-- Zona de perigo por ÚLTIMO — padrão de settings: destrutivo no fim -->
@@ -8422,12 +8460,16 @@
 // SESSIONS — biblioteca de sessões fixas em conteúdo
 // O calendário (qual sessão acontece em qual dia) é dinâmico.
 // ============================================================
+// Número da versão publicada. Aparece em Ajustes (GYM) e no fim do dia de
+// descanso. Mudou o app? Mude aqui e o CACHE_VERSION do sw.js.
+const PWR_BUILD = '2026-10-16.1';
+
 function ligarAtalho(seletor, acao) {
-  let inicio = null, ultimo = 0;
+  // Só existe UM caso de disparo duplo: o toque abre no touchend e, em algum
+  // navegador que ignore o preventDefault, o clique sintético chega logo depois.
+  // Então só esse clique é descartado — nunca um toque ou clique legítimo novo.
+  let inicio = null, ultimoToque = 0;
   const dispara = function (alvo) {
-    const agora = Date.now();
-    if (agora - ultimo < 450) return;      // não abre duas vezes pelo mesmo toque
-    ultimo = agora;
     try { acao(alvo); } catch (e) { console.error('Atalho falhou: ' + seletor, e); }
   };
   const achar = function (alvo) {
@@ -8445,12 +8487,15 @@ function ligarAtalho(seletor, acao) {
     if (!pt) return;
     if (Math.abs(pt.clientX - t.x) > 16 || Math.abs(pt.clientY - t.y) > 16) return;  // foi arrasto
     if (e.cancelable) e.preventDefault();   // evita o clique duplicado logo depois
+    ultimoToque = Date.now();
     dispara(t.alvo);
   }, { capture: true, passive: false });
   document.addEventListener('touchcancel', function () { inicio = null; }, { capture: true, passive: true });
   document.addEventListener('click', function (e) {
     const alvo = achar(e.target);
-    if (alvo) dispara(alvo);
+    if (!alvo) return;
+    if (Date.now() - ultimoToque < 700) return;   // eco do toque que já abriu
+    dispara(alvo);
   }, true);
 }
 
@@ -9849,6 +9894,63 @@ SESSIONS.hyper_lowerB = {
   ]
 };
 
+// ============================================================
+// === CENÁRIO C (modo Hipertrofia) — decidido com o Pedro ====
+// ============================================================
+// Hyrox seg e sex (96h/72h entre eles), terra na quarta (48h de cada
+// Hyrox), superiores ter e sáb (o dia seguinte ao Hyrox é o que menos
+// sofre com ele), quinta e domingo livres.
+// Dose de propósito moderada: ~19–21 séries por sessão de superiores,
+// ~8–11 séries diretas por grupo na semana. A quarta é ENXUTA: o terra
+// é o que protege o Hyrox de sexta — sem volume excêntrico extra
+// (sem RDL, sem déficit, sem remada curvada), só o lift, puxada e
+// estabilizadores em RPE moderado.
+function exDe(sessao, id) {
+  const s = SESSIONS[sessao];
+  const ex = s && s.exercises ? s.exercises.find(function (e) { return e.id === id; }) : null;
+  if (!ex) console.error('Cenário C: exercício ' + id + ' não encontrado em ' + sessao);
+  return ex;
+}
+function soValidos(lista) { return lista.filter(Boolean); }
+
+SESSIONS.hyper_supA = {
+  title: "SUPERIORES A", eyebrow: "Olimpo — Supino e remada", pills: ["~55min"],
+  type: "upper-push", typeLabel: "Superiores A (Peito/Costas/Ombro/Braços)",
+  exercises: soValidos([
+    exDe('hyper_push', 'hpu1'),   // Supino reto (barra) — principal
+    exDe('hyper_pull', 'hpl2'),   // Remada apoiada no peito — zero lombar antes do terra
+    exDe('hyper_push', 'hpu3'),   // Desenvolvimento com halteres
+    exDe('hyper_push', 'hpu4'),   // Elevação lateral
+    exDe('hyper_push', 'hpu5'),   // Tríceps na polia (corda)
+    exDe('hyper_pull', 'hpl6')    // Curl bíceps (barra EZ)
+  ])
+};
+
+SESSIONS.hyper_terra = {
+  title: "TERRA + COSTAS", eyebrow: "Olimpo — Força enxuta", pills: ["~50min"],
+  type: "lower-heavy", typeLabel: "Terra + Costas (Força)",
+  exercises: soValidos([
+    exDe('deadlift', 'dl1'),      // Levantamento terra — 4×3, RPE 7–8,5: força sem cavar fadiga
+    exDe('hyper_pull', 'hpl1'),   // Barra fixa (ou pulldown) — costas sem carga na lombar
+    exDe('hyper_lowerB', 'hlb4'), // Hiperextensão 45° — estabilizadores, sem falha
+    exDe('hyper_lowerB', 'hlb6')  // Pallof press — anti-rotação
+  ])
+};
+
+SESSIONS.hyper_supB = {
+  title: "SUPERIORES B", eyebrow: "Olimpo — Inclinado e puxada", pills: ["~60min"],
+  type: "upper-push", typeLabel: "Superiores B (Peito alto/Costas/Ombro/Braços)",
+  exercises: soValidos([
+    exDe('hyper_upper', 'hup1'),  // Supino inclinado (barra) — principal
+    exDe('hyper_upper', 'hup4'),  // Puxada alta — cabo: a pegada chega cansada do Hyrox
+    exDe('hyper_upper', 'hup5'),  // Crucifixo (peck deck/cabo)
+    exDe('hyper_push', 'hpu4'),   // Elevação lateral — 2ª dose semanal do deltoide medial
+    exDe('hyper_pull', 'hpl4'),   // Face pull
+    exDe('hyper_upper', 'hup7'),  // Tríceps acima da cabeça (cabo)
+    exDe('hyper_pull', 'hpl7')    // Curl inclinado
+  ])
+};
+
 const DEFAULT_SCHEDULE = {
   seg: 'hyrox',   // dia de Hyrox — o treino quem define é a academia
   ter: 'bench',
@@ -9859,28 +9961,30 @@ const DEFAULT_SCHEDULE = {
   dom: 'rest'
 };
 
-// Calendário da linha OLÍMPICA (hipertrofia): 5 dias de musculação + cardio + descanso
+// Calendário da linha OLÍMPICA (hipertrofia) — CENÁRIO C
+// 2 Hyrox + 2 superiores + 1 terra, com dois dias livres. Os três dias que
+// mais cobram perna, lombar e pegada (seg, qua, sex) ficam a 48h/48h/72h.
 const HYPER_SCHEDULE = {
-  seg: 'hyrox',   // dia de Hyrox — o treino quem define é a academia
-  ter: 'hyper_pull',
-  qua: 'hyrox',
-  qui: 'hyper_upper',
-  sex: 'hyper_lowerB',
-  sab: 'cardio_long',
+  seg: 'hyrox',        // Hyrox — o treino quem define é a academia
+  ter: 'hyper_supA',   // superiores no dia seguinte ao Hyrox
+  qua: 'hyper_terra',  // terra a 48h de cada Hyrox
+  qui: 'rest',         // véspera do Hyrox: livre (Z2 leve sem impacto é opcional)
+  sex: 'hyrox',        // 96h depois do Hyrox de segunda
+  sab: 'hyper_supB',
   dom: 'rest'
 };
 
 // Calendário ativo conforme o modo (Powerlifting nórdico vs Hipertrofia olímpica)
 function activeDefaultSchedule() { return STATE.mode === 'hyper' ? HYPER_SCHEDULE : DEFAULT_SCHEDULE; }
 // Sessão de "chefão" por modo (o lift mais brutal do dia)
-function bossSession() { return STATE.mode === 'hyper' ? 'hyper_lowerB' : 'deadlift'; }
+function bossSession() { return STATE.mode === 'hyper' ? 'hyper_terra' : 'deadlift'; }
 // Reorganização da semana é POR MODO — cada modo tem seus calendários custom
 function modeSchedules() { return STATE.mode === 'hyper' ? STATE.hyperSchedules : STATE.schedules; }
 function saveModeSchedules() { if (STATE.mode === 'hyper') saveHyperSchedules(); else saveSchedules(); }
 // Sessões oferecidas no painel "Gerenciar Semana" por modo
-const HYPER_SESSION_ORDER = ['hyrox', 'hyper_push', 'hyper_pull', 'hyper_lowerA', 'hyper_upper', 'hyper_lowerB', 'cardio_mid', 'cardio_long', 'rest', 'skip'];
+const HYPER_SESSION_ORDER = ['hyrox', 'hyper_supA', 'hyper_terra', 'hyper_supB', 'hyper_push', 'hyper_pull', 'hyper_lowerA', 'hyper_upper', 'hyper_lowerB', 'cardio_mid', 'cardio_long', 'rest', 'skip'];
 function modeSessionOrder() { return STATE.mode === 'hyper' ? HYPER_SESSION_ORDER : SESSION_ORDER; }
-function modeCoreSessions() { return STATE.mode === 'hyper' ? ['hyrox', 'hyper_pull', 'hyper_upper', 'hyper_lowerB'] : ['hyrox', 'bench', 'deadlift', 'upper_hiper']; }
+function modeCoreSessions() { return STATE.mode === 'hyper' ? ['hyrox', 'hyper_supA', 'hyper_terra', 'hyper_supB'] : ['hyrox', 'bench', 'deadlift', 'upper_hiper']; }
 
 // Dias em que TRT é aplicada (seg/qui, independe do treino do dia)
 const TRT_DAYS = ['seg', 'qui'];
@@ -10044,6 +10148,27 @@ const HYPER_REALM_CONFIG = {
     effect: 'fire', ascendedTitle: 'OS MARES SE ERGUERAM',
     ascendedMessage: 'A força subiu do chão como maré em fúria.\nO quadril disparou e a terra tremeu sob a barra.\nPoseidon ergue o tridente em saudação.'
   },
+  hyper_supA: {
+    rune: 'Ζ', runeName: 'Zeus', runeTranslit: 'Ζ · Zeus · O Rei do Olimpo',
+    runeMeaning: 'Zeus governa o céu e empunha o raio. É o poder que se impõe e o poder que se sustenta — o trono não se conquista só empurrando, se mantém de pé.',
+    runeConnection: 'Superiores A é o trono de Zeus: o supino lança a carga como raio, a remada a traz de volta e firma as costas que sustentam o trono. Força que se impõe e força que se segura, no mesmo dia.',
+    effect: 'rays', ascendedTitle: 'O TRONO FOI FIRMADO',
+    ascendedMessage: 'O raio partiu e voltou à mão que o lançou.\nEmpurrar e puxar, na mesma medida.\nZeus reconhece o trono bem sustentado.'
+  },
+  hyper_supB: {
+    rune: 'Φ', runeName: 'Apolo', runeTranslit: 'Φ · Apolo · Deus da Forma Perfeita',
+    runeMeaning: 'Apolo é a beleza, a proporção e a luz. Φ é a proporção áurea: o belo que também é forte.',
+    runeConnection: 'Superiores B é o cinzel de Apolo: peito alto, ombro redondo, braço cheio. Aqui se lapida a forma — cada série acerta a proporção do mármore.',
+    effect: 'waves', ascendedTitle: 'O MÁRMORE GANHA FORMA',
+    ascendedMessage: 'Cada fibra foi cinzelada com precisão de escultor.\nO detalhe de hoje é a proporção de amanhã.\nApolo contempla a forma que se aproxima do ideal.'
+  },
+  hyper_terra: {
+    rune: 'Ψ', runeName: 'Poseidon', runeTranslit: 'Ψ · Poseidon · Senhor dos Mares',
+    runeMeaning: 'Poseidon empunha o tridente e abala a terra. Seu poder vem de baixo — a força que ergue do fundo.',
+    runeConnection: 'O levantamento terra é o tridente de Poseidon: a barra sai do chão e a força sobe pela cadeia posterior como maré. Poucas repetições, todas perfeitas — o mar não se esgota antes da tempestade de sexta.',
+    effect: 'fire', ascendedTitle: 'OS MARES SE ERGUERAM',
+    ascendedMessage: 'A barra saiu do chão como onda que ergue navios.\nForça sem desperdício — a tempestade de sexta te espera inteiro.\nPoseidon ergue o tridente em saudação.'
+  },
   cardio_long: {
     rune: 'Ε', runeName: 'Hermes', runeTranslit: 'Ε · Hermes · O Mensageiro Alado',
     runeMeaning: 'Hermes cruza distâncias com sandálias aladas — velocidade, fluxo, a viagem entre mundos. Ritmo constante, fôlego que não cansa. O movimento como mensagem que nunca para.',
@@ -10078,7 +10203,8 @@ const REALM_THEME_COLORS = {
   rest: '#070b12', skip: '#0a0a0b',
   hyrox: '#0d0906',
   hyper_push: '#100c06', hyper_pull: '#0c0a08', hyper_lowerA: '#100a06',
-  hyper_upper: '#0e0c08', hyper_lowerB: '#0a0604'
+  hyper_upper: '#0e0c08', hyper_lowerB: '#0a0604',
+  hyper_supA: '#100c06', hyper_supB: '#0e0c08', hyper_terra: '#0a0604'
 };
 function updateThemeColor(sessionKey) {
   const meta = document.querySelector('meta[name="theme-color"]');
@@ -10127,15 +10253,42 @@ function safeSet(key, val) {
   }
 }
 
-// Troca toda chave de sessão que não existe mais pelo padrão daquele dia,
-// no modo certo, e grava. Depois disso "ordem visual" e "ordem persistida"
-// são a mesma coisa — inclusive no backup.
+// ------------------------------------------------------------------
+// MIGRAÇÃO DO CALENDÁRIO (roda na carga)
+// ------------------------------------------------------------------
+// O que cada dia JÁ FOI como padrão, em todas as versões do app. Um valor
+// salvo que bate com um padrão antigo daquele dia não foi escolha sua: é
+// a foto que o app tirou quando você mexeu em OUTRO dia. Esse vira "segue
+// o padrão". O que não bate com padrão nenhum (um pular, uma troca, uma
+// sessão fora do lugar) é alteração sua — e fica exatamente como está.
+const HISTORICO_PADRAO = {
+  pwr: {
+    seg: ['squat', 'hyrox_forca', 'hyrox'], ter: ['bench'],
+    qua: ['cardio_mid', 'hyrox_motor', 'hyrox'], qui: ['deadlift', 'upper_hiper'],
+    sex: ['upper_hiper', 'deadlift'], sab: ['cardio_long'], dom: ['rest']
+  },
+  hyper: {
+    seg: ['hyper_push', 'hyrox_forca', 'hyrox'], ter: ['hyper_pull'],
+    qua: ['hyper_lowerA', 'hyrox_motor', 'hyrox'], qui: ['hyper_upper'],
+    sex: ['hyper_lowerB'], sab: ['cardio_long'], dom: ['rest']
+  }
+};
+const CALENDARIO_V = 2;
+
 function sanearCalendarios() {
   const pares = [
-    { store: STATE.schedules,      dflt: DEFAULT_SCHEDULE, salvar: saveSchedules },
-    { store: STATE.hyperSchedules, dflt: HYPER_SCHEDULE,   salvar: saveHyperSchedules }
+    { modo: 'pwr',   store: STATE.schedules,      dflt: DEFAULT_SCHEDULE, salvar: saveSchedules },
+    { modo: 'hyper', store: STATE.hyperSchedules, dflt: HYPER_SCHEDULE,   salvar: saveHyperSchedules }
   ];
-  const trocadas = [];
+  let v = 0;
+  try { v = parseInt(localStorage.getItem('pwr.calendarioV') || '0', 10) || 0; } catch (e) {}
+  const migrar = v < CALENDARIO_V;
+  const antes = migrar ? {
+    schedules: JSON.parse(JSON.stringify(STATE.schedules || {})),
+    hyperSchedules: JSON.parse(JSON.stringify(STATE.hyperSchedules || {}))
+  } : null;
+  const mudancasVisiveis = [];
+
   pares.forEach(function (par) {
     const store = par.store;
     if (!store || typeof store !== 'object') return;
@@ -10143,20 +10296,123 @@ function sanearCalendarios() {
     Object.keys(store).forEach(function (semana) {
       const sem = store[semana];
       if (!sem || typeof sem !== 'object') { delete store[semana]; mudou = true; return; }
-      DAYS.forEach(function (d) {
+      Object.keys(sem).forEach(function (d) {
         const k = sem[d];
-        if (k && SESSIONS[k]) return;               // chave válida: não mexe
-        trocadas.push(semana + '/' + d + ': ' + k + ' → ' + par.dflt[d]);
-        sem[d] = par.dflt[d];
-        mudou = true;
+        const antesVisto = (k && SESSIONS[k]) ? k : par.dflt[d];
+        // SEMPRE: dia que não é dia, sessão que não existe mais
+        if (DAYS.indexOf(d) < 0) { delete sem[d]; mudou = true; return; }
+        if (!k || !SESSIONS[k]) { delete sem[d]; mudou = true; return; }
+        // UMA VEZ: foto de padrão antigo vira "segue o padrão"
+        if (migrar) {
+          const hist = HISTORICO_PADRAO[par.modo][d] || [];
+          if (k === par.dflt[d] || hist.indexOf(k) >= 0) {
+            delete sem[d]; mudou = true;
+            if (antesVisto !== par.dflt[d]) {
+              mudancasVisiveis.push({ modo: par.modo, semana: semana, dia: d, de: antesVisto, para: par.dflt[d] });
+            }
+          }
+        }
       });
-      // dia sobrando que não é dia da semana
-      Object.keys(sem).forEach(function (d) { if (DAYS.indexOf(d) < 0) { delete sem[d]; mudou = true; } });
+      if (!Object.keys(sem).length) { delete store[semana]; mudou = true; }
     });
     if (mudou) { try { par.salvar(); } catch (e) {} }
   });
-  if (trocadas.length) console.warn('Calendário: chaves de versão antiga trocadas →', trocadas);
-  return trocadas;
+
+  if (migrar) {
+    try {
+      if (mudancasVisiveis.length) {
+        safeSet('pwr.calendarioAntes', JSON.stringify({ quando: new Date().toISOString(), dados: antes }));
+        safeSet('pwr.calendarioAviso', JSON.stringify(mudancasVisiveis));
+      }
+      safeSet('pwr.calendarioV', String(CALENDARIO_V));
+    } catch (e) {}
+  }
+  return mudancasVisiveis;
+}
+
+// Desfaz a migração: volta as semanas como estavam gravadas (sem as chaves
+// de sessão que não existem mais — essas quebravam o painel).
+function desfazerMigracaoCalendario() {
+  let a = null;
+  try { a = JSON.parse(localStorage.getItem('pwr.calendarioAntes') || 'null'); } catch (e) { a = null; }
+  if (!a || !a.dados) return false;
+  const limpa = function (st) {
+    const o = {};
+    Object.keys(st || {}).forEach(function (w) {
+      const sem = st[w]; if (!sem || typeof sem !== 'object') return;
+      const n = {};
+      DAYS.forEach(function (d) { if (sem[d] && SESSIONS[sem[d]]) n[d] = sem[d]; });
+      if (Object.keys(n).length) o[w] = n;
+    });
+    return o;
+  };
+  STATE.schedules = limpa(a.dados.schedules);
+  STATE.hyperSchedules = limpa(a.dados.hyperSchedules);
+  saveSchedules(); saveHyperSchedules();
+  try { localStorage.removeItem('pwr.calendarioAviso'); } catch (e) {}
+  return true;
+}
+
+// Aviso único: o que mudou na sua grade, com DESFAZER. Nada silencioso.
+function atualizarAvisoCalendario() {
+  const el = document.getElementById('calBanner');
+  if (!el) return;
+  let lista = [];
+  try { lista = JSON.parse(localStorage.getItem('pwr.calendarioAviso') || '[]') || []; } catch (e) { lista = []; }
+  if (!lista.length) { el.hidden = true; el.innerHTML = ''; return; }
+  // Curto: uma linha por grupo de semanas com as MESMAS mudanças.
+  const curto = function (k) { return String(sessionPanelLabel(k)).replace(/\s·.*$/, ''); };
+  const ORDEM = ['1', '2', '3', 'deload'];
+  const porSemana = {};
+  lista.forEach(function (m) {
+    const ch = m.modo + '|' + m.semana;
+    (porSemana[ch] = porSemana[ch] || { modo: m.modo, semana: m.semana, itens: [] }).itens.push(m);
+  });
+  const grupos = {};
+  Object.keys(porSemana).forEach(function (ch) {
+    const g = porSemana[ch];
+    g.itens.sort(function (a, b) { return DAYS.indexOf(a.dia) - DAYS.indexOf(b.dia); });
+    const txt = g.itens.map(function (m) {
+      return '<b>' + (DAY_LABELS[m.dia] || m.dia) + '</b> ' + curto(m.de) + ' → <b>' + curto(m.para) + '</b>';
+    }).join(' · ');
+    const chave = g.modo + '|' + txt;
+    (grupos[chave] = grupos[chave] || { modo: g.modo, txt: txt, semanas: [] }).semanas.push(g.semana);
+  });
+  const nomeSemanas = function (ws) {
+    ws.sort(function (a, b) { return ORDEM.indexOf(a) - ORDEM.indexOf(b); });
+    const n = ws.map(function (w) { return w === 'deload' ? 'Deload' : w; });
+    if (n.length === 1) return n[0] === 'Deload' ? 'Deload' : 'Semana ' + n[0];
+    return 'Semanas ' + n.slice(0, -1).join(', ') + ' e ' + n[n.length - 1];
+  };
+  const linhas = Object.keys(grupos).map(function (k) { return grupos[k]; })
+    .sort(function (a, b) { return (a.modo === 'hyper') - (b.modo === 'hyper'); });
+  const itens = linhas.slice(0, 4).map(function (g) {
+    return '<li><span class="cal-sem">' + nomeSemanas(g.semanas) + (g.modo === 'hyper' ? ' · hipertrofia' : '')
+      + '</span> ' + g.txt + '</li>';
+  }).join('');
+  const resto = linhas.length > 4 ? '<li>… e mais ' + (linhas.length - 4) + ' grupo(s)</li>' : '';
+  el.innerHTML =
+    '<span class="backup-banner-text">Algumas semanas estavam <strong>congeladas numa grade antiga</strong> '
+    + 'e não recebiam as mudanças que você pediu na grade. Agora seguem a grade atual. '
+    + 'Suas mudanças manuais (pulos, trocas) ficaram como estavam.'
+    + '<ul class="cal-lista">' + itens + resto + '</ul></span>'
+    + '<span class="backup-banner-actions cal-acoes">'
+    + '<button type="button" class="backup-banner-btn" id="calOkBtn">ENTENDI</button>'
+    + '<button type="button" class="backup-banner-btn ghost" id="calDesfazerBtn">DESFAZER</button>'
+    + '</span>';
+  el.hidden = false;
+  const ok = document.getElementById('calOkBtn');
+  const dz = document.getElementById('calDesfazerBtn');
+  if (ok) ok.addEventListener('click', function () {
+    try { localStorage.removeItem('pwr.calendarioAviso'); } catch (e) {}
+    atualizarAvisoCalendario();
+  });
+  if (dz) dz.addEventListener('click', function () {
+    if (desfazerMigracaoCalendario()) {
+      if (navigator.vibrate) navigator.vibrate([10, 30, 10]);
+      atualizarAvisoCalendario(); renderDayTabs(); renderHeatmap(); renderMain();
+    }
+  });
 }
 
 function loadState() {
@@ -10583,8 +10839,21 @@ function clearExerciseSwap(week, day, exId) {
 }
 
 // Schedule helpers
+// A semana como ela É: o padrão do modo, por cima dele só as alterações
+// manuais que ainda existem. Toda tela lê daqui — não existe mais "ordem
+// visual" diferente de "ordem salva".
+function semanaResolvida(week) {
+  const dflt = activeDefaultSchedule();
+  const manual = modeSchedules()[week] || {};
+  const out = {};
+  DAYS.forEach(function (d) {
+    const k = manual[d];
+    out[d] = (k && SESSIONS[k]) ? k : dflt[d];
+  });
+  return out;
+}
 function getCurrentSchedule() {
-  return modeSchedules()[STATE.week] || { ...activeDefaultSchedule() };
+  return semanaResolvida(STATE.week);
 }
 
 function getSessionForDay(dayKey, weekOverride) {
@@ -10592,27 +10861,24 @@ function getSessionForDay(dayKey, weekOverride) {
 }
 
 function getSessionKeyForDay(dayKey, weekOverride) {
-  const week = weekOverride || STATE.week;
-  const dflt = activeDefaultSchedule();
-  const schedule = modeSchedules()[week] || dflt;
-  const k = schedule[dayKey] || dflt[dayKey];
-  // Chave stale/corrompida no calendário salvo não pode derrubar o render:
-  // se a sessão não existe mais, cai no padrão do dia.
-  return SESSIONS[k] ? k : dflt[dayKey];
+  return semanaResolvida(weekOverride || STATE.week)[dayKey];
 }
 
 function setSessionForDay(dayKey, sessionKey) {
   const store = modeSchedules();
-  if (!store[STATE.week]) store[STATE.week] = { ...activeDefaultSchedule() };
-  store[STATE.week][dayKey] = sessionKey;
+  const dflt = activeDefaultSchedule();
+  const manual = store[STATE.week] || {};
+  if (sessionKey === dflt[dayKey]) delete manual[dayKey];   // de volta ao padrão
+  else manual[dayKey] = sessionKey;                         // alteração manual
+  if (Object.keys(manual).length) store[STATE.week] = manual;
+  else delete store[STATE.week];                            // semana 100% padrão
   saveModeSchedules();
 }
 
 function isCustomSchedule() {
-  const sched = modeSchedules()[STATE.week];
-  if (!sched) return false;
+  const r = semanaResolvida(STATE.week);
   const dflt = activeDefaultSchedule();
-  return DAYS.some(d => sched[d] !== dflt[d]);
+  return DAYS.some(d => r[d] !== dflt[d]);
 }
 
 // Validação de espaçamento entre sessões
@@ -10631,6 +10897,9 @@ function validateSchedule(schedule) {
     hyper_push: ['upper-push', 'peito + ombro + tríceps'],
     hyper_upper: ['upper-push', 'peito + costas + braços'],
     hyper_pull: ['upper-pull', 'costas + bíceps'],
+    hyper_supA: ['upper-push', 'peito + costas + braços'],
+    hyper_supB: ['upper-push', 'peito + costas + braços'],
+    hyper_terra: ['lower-heavy', 'cadeia posterior + grip'],
     // O Hyrox é fisicamente relevante e quase sempre carrega perna
     // (trenó, lunge, wall ball). Mantido na mesma regra de recuperação
     // que já existia — sem criar alerta novo nesta rodada.
@@ -10991,28 +11260,34 @@ function isPrLoad(exId, loadValue) {
   return loadValue >= (STATE.prHistory[exId] || 0) && loadValue > 0;
 }
 
-function getPrevLoad(week, day, exId) {
-  // Look at previous weeks for this exercise
+// Carga anterior do exercício: primeiro o MESMO dia da semana anterior; se
+// não houver (o exercício mudou de dia — ex.: entrada do Cenário C), o mesmo
+// exercício em qualquer outro dia daquela semana. Só depois volta mais uma semana.
+function cargaAnterior(week, day, exId) {
   const weeks = ['1','2','3'];
   const currentIdx = weeks.indexOf(week);
-  if (currentIdx <= 0) return '';
+  if (currentIdx <= 0) return null;
   for (let i = currentIdx - 1; i >= 0; i--) {
     const v = STATE.loads[loadKey(weeks[i], day, exId)];
-    if (v) return `W${weeks[i]}: ${v}kg`;
+    if (v) return { semana: weeks[i], dia: day, valor: v };
+    for (let j = 0; j < DAYS.length; j++) {
+      const d = DAYS[j];
+      if (d === day) continue;
+      const v2 = STATE.loads[loadKey(weeks[i], d, exId)];
+      if (v2) return { semana: weeks[i], dia: d, valor: v2 };
+    }
   }
-  return '';
+  return null;
 }
-
-// Versão numérica do prevLoad, para comparação no forge effect
+function getPrevLoad(week, day, exId) {
+  const c = cargaAnterior(week, day, exId);
+  if (!c) return '';
+  const quando = c.dia === day ? `W${c.semana}` : `W${c.semana} · ${DAY_LABELS[c.dia].toLowerCase()}`;
+  return `${quando}: ${c.valor}kg`;
+}
 function getPrevLoadNumeric(week, day, exId) {
-  const weeks = ['1','2','3'];
-  const currentIdx = weeks.indexOf(week);
-  if (currentIdx <= 0) return 0;
-  for (let i = currentIdx - 1; i >= 0; i--) {
-    const v = STATE.loads[loadKey(weeks[i], day, exId)];
-    if (v) return parseFloat(v) || 0;
-  }
-  return 0;
+  const c = cargaAnterior(week, day, exId);
+  return c ? (parseFloat(c.valor) || 0) : 0;
 }
 
 // ============================================================
@@ -11156,7 +11431,7 @@ function renderMain() {
   const isDeload = STATE.week === 'deload';
   const isCustom = isCustomSchedule();
   const isTrtDay = TRT_DAYS.includes(STATE.day);
-  const isModifiedDay = (modeSchedules()[STATE.week] && modeSchedules()[STATE.week][STATE.day] !== activeDefaultSchedule()[STATE.day]);
+  const isModifiedDay = semanaResolvida(STATE.week)[STATE.day] !== activeDefaultSchedule()[STATE.day];
   
   // === Modos visuais especiais ===
   const isBossFight = sessionKey === bossSession() && !isDeload;
@@ -11190,7 +11465,10 @@ function renderMain() {
     hyper_pull: 'skin-bronze',   // Bronze de Atlas
     hyper_lowerA: 'skin-forge',  // Forja de Ares — guerra
     hyper_upper: 'skin-bronze',  // Mármore de Apolo
-    hyper_lowerB: 'skin-boss'    // Boss — Poseidon
+    hyper_lowerB: 'skin-boss',   // Boss — Poseidon
+    hyper_supA: 'skin-warhall',  // Trono de Zeus
+    hyper_supB: 'skin-bronze',   // Mármore de Apolo
+    hyper_terra: 'skin-boss'     // Boss do Cenário C — o terra
   };
   // Remove todas as skins antes de aplicar a atual
   ['skin-forge','skin-warhall','skin-boss','skin-bronze','skin-lake','skin-tundra','skin-winter','skin-skip','skin-hyrox'].forEach(s => {
@@ -11471,8 +11749,8 @@ function renderMain() {
       <div class="export-section fade-in">
         <div class="export-divider">Versão</div>
         <div class="build-stamp" id="buildStamp">
-          <span class="build-rot">build</span> <b>2026-09-20.4</b>
-          <span class="build-sw" id="buildSw">cache: —</span>
+          <span class="build-rot">build</span> <b class="build-num">${PWR_BUILD}</b>
+          <span class="build-sw">cache: —</span>
         </div>
         <div class="export-hint" style="margin-bottom:22px;">
           Se este número não bater com o da última entrega,<br>
@@ -13669,8 +13947,8 @@ function buildFullBackup() {
         age: 37,
         weight: 108,
         height: 180,
-        program: isHyper ? "Hipertrofia Olímpica (5 sessões + cardio)" : "Powerlifting Híbrido (força + hipertrofia)",
-        trt: "Enantato 0,13ml SC, 2×/sem (seg/qui)",
+        program: isHyper ? "Hipertrofia + Hyrox — Cenário C (Hyrox seg/sex, superiores ter/sáb, terra qua)" : "Powerlifting Híbrido (força + hipertrofia)",
+        trt: "2×/sem (seg/qui) — dose e éster conforme prescrição vigente",
         cardiovascularRisk: "elevated (ApoB, histórico desde infância)"
       }
     },
@@ -13712,7 +13990,7 @@ function buildFullBackup() {
   // Dados por semana (calendário do modo ativo)
   const allWeeks = ['1', '2', '3', 'deload'];
   allWeeks.forEach(week => {
-    const schedule = activeStore[week] || { ...activeDflt };
+    const schedule = semanaResolvida(week);
     const isCustomWeek = DAYS.some(d => schedule[d] !== activeDflt[d]);
     
     const weekData = {
@@ -14154,7 +14432,8 @@ const SESSION_DOT_COLORS = {
   // Linha olímpica (hipertrofia)
   hyrox: '#f0932f',
   hyper_push: '#e0a93e', hyper_pull: '#b4894a', hyper_lowerA: '#e8801e',
-  hyper_upper: '#c9a85a', hyper_lowerB: '#d4502a'
+  hyper_upper: '#c9a85a', hyper_lowerB: '#d4502a',
+  hyper_supA: '#e0a93e', hyper_supB: '#c9a85a', hyper_terra: '#d4502a'
 };
 // Labels do painel — desambiguam os dois cardios e traduzem rest/skip
 const SESSION_PANEL_LABELS = {
@@ -14168,7 +14447,10 @@ const SESSION_PANEL_LABELS = {
   hyper_pull: 'Pull · Costas/Bíceps',
   hyper_lowerA: 'Lower A · Quadríceps',
   hyper_upper: 'Upper · Escultura',
-  hyper_lowerB: 'Lower B · Posterior'
+  hyper_lowerB: 'Lower B · Posterior',
+  hyper_supA: 'Superiores A · Supino',
+  hyper_supB: 'Superiores B · Inclinado',
+  hyper_terra: 'Terra + Costas'
 };
 function sessionPanelLabel(key) {
   if (SESSION_PANEL_LABELS[key]) return SESSION_PANEL_LABELS[key];
@@ -14274,7 +14556,9 @@ function computeWeekWarnings(draft) {
     }
   }
 
-  if (!values.includes('cardio_mid') && !values.includes('cardio_long')) {
+  const dfltZ = activeDefaultSchedule();
+  const padraoTemZ2 = DAYS.some(function (d) { return dfltZ[d] === 'cardio_mid' || dfltZ[d] === 'cardio_long'; });
+  if (padraoTemZ2 && !values.includes('cardio_mid') && !values.includes('cardio_long')) {
     w.push('Nenhum cardio Zona 2 nesta semana');
   }
   const skips = DAYS.filter(function (d) { return draft[d] === 'skip'; });
@@ -14368,7 +14652,7 @@ function wireWeekPanel(expandedDay) {
   if (prevBtn && !prevBtn.disabled) {
     prevBtn.addEventListener('click', () => {
       const prevKey = getPreviousWeekKey(STATE.week);
-      weekDraft = { ...(modeSchedules()[prevKey] || activeDefaultSchedule()) };
+      weekDraft = semanaResolvida(prevKey);
       if (navigator.vibrate) navigator.vibrate(10);
       renderWeekPanel();
     });
@@ -15795,11 +16079,20 @@ function resetWeek(week) {
   // do powerlifting (e vice-versa). Cardio é compartilhado (mesma semana física).
   const prefix = `${week}::`;
   const keep = otherModeExIds();
+  const sched = semanaResolvida(week);
+  const doModo = {};                       // dia -> ids da sessão do modo ativo
+  DAYS.forEach(d => {
+    const sess = SESSIONS[sched[d]];
+    doModo[d] = {};
+    ((sess && sess.exercises) || []).forEach(ex => { doModo[d][ex.id] = true; });
+  });
   const wipe = (store) => Object.keys(store).forEach(k => {
     if (!k.startsWith(prefix)) return;
-    const exId = k.split('::')[2];
+    const partes = k.split('::');
+    const dia = partes[1], exId = partes[2];
+    if (exId && doModo[dia] && doModo[dia][exId]) { delete store[k]; return; }  // deste modo, neste dia
     if (exId && keep[exId]) return;   // registro do outro modo — preserva
-    delete store[k];
+    delete store[k];                  // órfão de versão antiga — limpa como antes
   });
   boardClear(() => {   // queda deliberada: vitalício/XP sobrevivem
     wipe(STATE.checks);
@@ -16416,6 +16709,7 @@ try {
 
   // Lembrete de backup por último: nunca pode derrubar o boot do app
   try { seedBackupReminder(); updateBackupBanner(); } catch (e) { console.warn('Lembrete de backup falhou', e); }
+  try { atualizarAvisoCalendario(); } catch (e) { console.warn('Aviso do calendário falhou', e); }
 } catch (bootErr) {
   console.error('Falha no boot', bootErr);
   const mainEl = document.getElementById('main');
@@ -16441,15 +16735,18 @@ if (achModalEl) achModalEl.addEventListener('click', (e) => { if (e.target === a
 // Mostra QUAL cache do service worker está servindo — a prova de que o
 // aparelho pegou o arquivo novo, e não uma cópia velha.
 function atualizarCarimboSw() {
-  const el = document.getElementById('buildSw');
-  if (!el || !('caches' in window)) return;
+  document.querySelectorAll('.build-num').forEach(function (b) { b.textContent = PWR_BUILD; });
+  const alvos = document.querySelectorAll('.build-sw');
+  if (!alvos.length) return;
+  if (!('caches' in window)) { alvos.forEach(function (el) { el.textContent = 'cache: n/d'; }); return; }
   caches.keys().then(function (ks) {
     const meu = ks.filter(function (k) { return k.indexOf('pwr-') === 0; });
-    el.textContent = 'cache: ' + (meu.length ? meu.join(', ') : 'nenhum');
+    const t = 'cache: ' + (meu.length ? meu.join(', ') : 'nenhum');
+    alvos.forEach(function (el) { el.textContent = t; });
   }).catch(function () {});
 }
 document.addEventListener('click', function (e) {
-  if (e.target.closest && e.target.closest('#gymBtn, #gymModalClose, .gym-tab')) setTimeout(atualizarCarimboSw, 120);
+  if (e.target.closest && e.target.closest('#gymInfoBtn, #gymBtn, .day-tab')) setTimeout(atualizarCarimboSw, 150);
 }, true);
 setTimeout(atualizarCarimboSw, 1500);
 

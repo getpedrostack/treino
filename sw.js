@@ -16,9 +16,15 @@
    IMPORTANTE: ao publicar uma versão nova do index.html, suba o
    número de CACHE_VERSION abaixo (ex.: v2 → v3). Assim o SW troca
    o cache antigo e serve o app atualizado.
+
+   Entrega da versão nova (o que faz "republiquei → abri → está lá"):
+   - resposta de erro do servidor (404/500 no meio de uma publicação)
+     nunca é mostrada nem substitui o app guardado;
+   - a página checa atualização também ao VOLTAR do segundo plano
+     (ver registro no index.html), não só ao abrir do zero.
    ============================================================ */
 
-const CACHE_VERSION = 'pwr-v20';
+const CACHE_VERSION = 'pwr-v22';
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -111,17 +117,26 @@ self.addEventListener('fetch', (event) => {
 
   if (isNavigation) {
     event.respondWith((async () => {
+      const cache = await caches.open(CACHE_VERSION);
+      const doCache = async () =>
+        (await cache.match(req, { ignoreSearch: true })) ||
+        (await cache.match('./index.html')) ||
+        (await cache.match('./'));
       try {
         const fresh = await fetch(req);
-        const cache = await caches.open(CACHE_VERSION);
-        cache.put('./index.html', fresh.clone()).catch(() => {});
-        return fresh;
+        // Redirecionamento (ex.: /pwr → /pwr/): deixa o navegador seguir.
+        if (fresh.type === 'opaqueredirect') return fresh;
+        if (fresh.ok) {
+          cache.put('./index.html', fresh.clone()).catch(() => {});
+          return fresh;
+        }
+        // 404/500 no meio de uma publicação no GitHub: antes, a página de
+        // erro era MOSTRADA e ainda GRAVADA por cima do app — e aí, sem
+        // internet, o app abria "404" até a próxima abertura com rede.
+        // Agora serve o último app bom e não grava o erro.
+        return (await doCache()) || fresh;
       } catch (e) {
-        const cache = await caches.open(CACHE_VERSION);
-        return (await cache.match(req, { ignoreSearch: true })) ||
-               (await cache.match('./index.html')) ||
-               (await cache.match('./')) ||
-               Response.error();
+        return (await doCache()) || Response.error();
       }
     })());
     return;
