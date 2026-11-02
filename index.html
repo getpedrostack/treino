@@ -263,7 +263,7 @@
     /* Clareado (era #6b5c47): dava 2,78:1 sobre o card — abaixo do mínimo
        legível (4,5:1). Mesma tonalidade de bronze, agora 4,6:1. Faz
        diferença real lendo o app na academia, com suor e luz ruim. */
-    --text-3: #937e61;                 /* bronze escurecido */
+    --text-3: #9e896b;                 /* bronze escurecido — clareado na auditoria 11/2026: 4,33:1 → ≥4,6:1 nos painéis (WCAG 1.4.3) */
 
     /* === LINGUAGEM VISUAL — "pedra lavrada" =========================
        Uma linguagem só, aplicada em todo componente:
@@ -653,7 +653,9 @@
   .day-tab.active .trt-dot { background: var(--accent); }
   
   /* ============ DAY HEADER ============ */
-  main { padding-bottom: 100px; }
+  /* O rodapé deixou de ser fixo (auditoria 11/2026): o main não precisa
+     mais reservar 100px para ele. */
+  main { padding-bottom: 28px; }
   
   .day-header {
     padding: 32px 18px 22px;
@@ -1182,10 +1184,36 @@
   
   .ex-prescription {
     display: flex;
-    gap: 20px;
+    flex-wrap: wrap;
+    gap: 10px 20px;
     margin-bottom: 8px;
     align-items: baseline;
   }
+  /* Descanso entre séries (auditoria 11/2026). É botão: o toque abre o
+     cronômetro já no tempo do exercício. Área de toque de 44px na vertical
+     sem empurrar a linha (margem negativa compensa o preenchimento). */
+  .ex-stat.ex-desc {
+    background: none; border: 0; padding: 7px 0; margin: -7px 0;
+    min-height: 44px; justify-content: center; text-align: left;
+    font: inherit; color: inherit; cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .ex-stat.ex-desc .ex-stat-value {
+    font-size: 16px; color: var(--text-2);
+    border-bottom: 1px dashed var(--gold-deep); padding-bottom: 2px;
+  }
+  .ex-stat.ex-desc:active .ex-stat-value,
+  .ex-stat.ex-desc:focus-visible .ex-stat-value { color: var(--gold-bright); }
+  /* Linha de contexto do dia: objetivo, volume e vizinhos na semana */
+  .day-contexto {
+    margin: 12px 0 2px;
+    font-size: 12.5px; line-height: 1.45;
+    color: var(--text-2);
+  }
+  .day-contexto .ctx-obj { display: block; color: var(--text); }
+  .day-contexto .ctx-sem { display: block; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.04em; margin-top: 3px; }
+  .day-contexto .ctx-sem b { color: var(--gold-bright); font-weight: 700; }
+  .rest-opcional { margin: 16px auto 0; max-width: 320px; font-size: 12.5px; line-height: 1.5; color: var(--text-2); }
   
   .ex-stat {
     display: flex;
@@ -2841,16 +2869,17 @@
   }
   
   /* ============ FOOTER / FAB ============ */
+  /* AUDITORIA 11/2026: o RESET ficava FIXO no rodapé — cobria ~78px de
+     conteúdo em toda tela e ocupava a zona do polegar com uma ação
+     destrutiva e rara. Agora fica no fim da lista, e só nos dias com
+     séries (nos dias de Hyrox/cardio/descanso ele não tinha o que zerar). */
   .footer-actions {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 16px 18px calc(14px + env(safe-area-inset-bottom));
-    background: linear-gradient(180deg, transparent 0%, rgba(12,10,8,0.7) 25%, var(--bg) 50%);
-    pointer-events: none;
-    z-index: 50;
+    position: relative; z-index: 2;   /* acima da vinheta, como o main */
+    padding: 4px 18px calc(28px + env(safe-area-inset-bottom));
+    background: none;
+    pointer-events: auto;
   }
+  .footer-actions[hidden] { display: none !important; }
   
   .reset-btn {
     pointer-events: auto;
@@ -5276,6 +5305,9 @@
   .wk-session-btn {
     flex:1; display:flex; align-items:center; gap:9px; background:transparent; border:none; cursor:pointer;
     padding:4px 2px; -webkit-tap-highlight-color:transparent; min-width:0; font: inherit;
+    /* a linha tem ~46px, o botão tinha 24: tocar acima/abaixo do nome não
+       pegava. Agora ele ocupa a altura toda da linha sem mudar o desenho. */
+    align-self: stretch; margin: -11px 0; padding-top: 15px; padding-bottom: 15px;
   }
   .wk-realm-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; box-shadow:0 0 6px currentColor; }
   .wk-session-title { font-family:'Cinzel',Georgia,serif; font-size:13px; font-weight:700; color:var(--text); letter-spacing:0.03em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -5393,7 +5425,7 @@
     flex-shrink: 0;
     border: none;
     background: transparent;
-    padding: 4px;
+    padding: 7px 4px;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
   }
@@ -6105,10 +6137,10 @@
   .hx-ref {
     margin-top: 7px;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 9.5px; letter-spacing: 0.08em;
+    font-size: 10.5px; letter-spacing: 0.06em;
     color: var(--text-3);
   }
-  .hx-ref small { opacity: 0.8; }
+  .hx-ref small { font-size: 10px; }
 
 
   /* ---- Hyrox: como foi a sessão (dois toques) ---- */
@@ -6116,12 +6148,12 @@
   .hx-comofoi-linha { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
   .hx-comofoi-rot {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase;
+    font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
     color: var(--text-3); flex: 0 0 62px;
   }
   .hx-comofoi-opts { display: flex; gap: 6px; flex: 1 1 auto; flex-wrap: wrap; }
   .hx-opt {
-    flex: 1 1 auto; min-width: 70px; min-height: 38px; padding: 9px 8px;
+    flex: 1 1 auto; min-width: 70px; min-height: 44px; padding: 9px 8px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 10px; letter-spacing: 0.1em;
     color: var(--text-2);
@@ -6214,7 +6246,7 @@
   .hx-linha { display: flex; flex-wrap: wrap; gap: 14px 20px; align-items: flex-end; }
   .hx-bloco { display: flex; flex-direction: column; gap: 2px; min-width: 62px; }
   .hx-rot {
-    font-family: 'JetBrains Mono', monospace; font-size: 8.5px;
+    font-family: 'JetBrains Mono', monospace; font-size: 9.5px;
     letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-3);
   }
   .hx-val {
@@ -6234,7 +6266,7 @@
   }
   .hx-crono-btns { display: flex; gap: 8px; margin-top: 11px; flex-wrap: wrap; }
   .hx-cb {
-    min-height: 40px; padding: 0 15px; cursor: pointer;
+    min-height: 44px; padding: 0 15px; cursor: pointer;
     font-family: 'JetBrains Mono', monospace; font-size: 11px;
     letter-spacing: 0.1em; text-transform: uppercase;
     color: var(--text-2);
@@ -6253,7 +6285,7 @@
     background: none; border: 0; padding: 6px 0; cursor: pointer;
     font-family: 'JetBrains Mono', monospace; font-size: 10px;
     letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold);
-    min-height: 32px;
+    min-height: 44px;
   }
   .hx-rodape {
     margin-top: 9px; padding-top: 9px; border-top: 1px solid var(--border);
@@ -6261,7 +6293,7 @@
   }
   .hx-meta { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-3); }
   .hx-meta b { color: var(--text-2); font-weight: 700; }
-  .hx-meta small { color: var(--text-3); }
+  .hx-meta small { color: var(--text-3); font-size: 10px; }
   .hx-delta { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; }
   .hx-delta.bom { color: var(--ok); }
   .hx-delta.pior { color: var(--danger-soft); }
@@ -7792,6 +7824,7 @@
      sobrevive sem precisar ser recriado em todos os caminhos de render. -->
 <div class="backup-banner" id="backupBanner" role="status" hidden></div>
 <div class="backup-banner cal-banner" id="calBanner" role="status" hidden></div>
+<div class="backup-banner cal-banner" id="gradeBanner" role="status" hidden></div>
 
 <main id="main"></main>
 
@@ -8462,7 +8495,7 @@
 // ============================================================
 // Número da versão publicada. Aparece em Ajustes (GYM) e no fim do dia de
 // descanso. Mudou o app? Mude aqui e o CACHE_VERSION do sw.js.
-const PWR_BUILD = '2026-10-16.1';
+const PWR_BUILD = '2026-11-02.1';
 
 function ligarAtalho(seletor, acao) {
   // Só existe UM caso de disparo duplo: o toque abre no touchend e, em algum
@@ -8508,6 +8541,7 @@ const SESSIONS = {};
 
 SESSIONS.squat = {
     title: "SQUAT DAY",
+    objetivo: "Força no agachamento + pernas",
     eyebrow: "Força — Lower",
     pills: ["80–95min"],
     type: "lower-heavy",
@@ -8596,6 +8630,7 @@ SESSIONS.squat = {
 // Sessão Bench
 SESSIONS.bench = {
     title: "BENCH DAY",
+    objetivo: "Força no supino + volume de tronco",
     eyebrow: "Força — Upper",
     pills: ["80–90min"],
     type: "upper-heavy",
@@ -8706,7 +8741,7 @@ SESSIONS.cardio_mid = {
       duration: "40min mínimo · 60min ideal",
       modes: "Bike ergométrica · Elíptico · Caminhada inclinada · <strong style=\"color:var(--accent)\">Forró ≥60min</strong> (com FC monitorada)",
       cue: "Você consegue conversar em frases completas, mas com leve desconforto.",
-      why: "Z2 melhora densidade mitocondrial, oxidação de gordura, sensibilidade à insulina e marcadores cardiovasculares — sem comprometer o recovery do treino de força. <strong>Forró substitui completamente o cardio se for ≥60min contínuos com FC entre 115-145 bpm</strong>. Bônus: coordenação, propriocepção e regulação de cortisol crônico via exposição social. <strong>Evitar stairmaster nesse dia</strong> — pernas precisam de pause entre squat e deadlift."
+      why: "Z2 melhora densidade mitocondrial, oxidação de gordura, sensibilidade à insulina e marcadores cardiovasculares — sem comprometer o recovery do treino de força. <strong>Forró substitui completamente o cardio se for ≥60min contínuos com FC entre 115-145 bpm</strong>. Bônus: coordenação, propriocepção e regulação de cortisol crônico via exposição social. <strong>Evite stairmaster</strong> se o dia seguinte for Hyrox ou perna pesada — prefira bike ou caminhada."
     }
 };
 
@@ -8772,7 +8807,7 @@ const HYROX_ESTACOES = {
   lunges: {
     id: 'lunges', nome: 'Lunge com sandbag', curto: 'SANDBAG LUNGE', ordem: 7,
     metrica: 'DISTANCE+LOAD+TIME', unidade: 'm', provaDist: 100,
-    equip: 'hyrox_sandbag', cargas: { open: 30, pro: 30 }, cargaNota: 'peso do saco'
+    equip: 'hyrox_sandbag', cargas: { open: 20, pro: 30 }, cargaNota: 'peso do saco'
   },
   wallball: {
     id: 'wallball', nome: 'Wall balls', curto: 'WALL BALLS', ordem: 8,
@@ -8959,7 +8994,7 @@ function avisoRecuperacaoLower(week, day) {
         continue;
       }
       const horas = atras * 24;
-      // CALIBRAGEM: a grade já coloca 48h entre o Hyrox de quarta e o dia
+      // CALIBRAGEM: a grade já coloca 48h entre o Hyrox (seg/sex) e o dia
       // pesado de perna, justamente para que não haja conflito. Alertar a
       // 48h seria contradizer o próprio desenho. O alerta existe para o
       // caso em que a semana foi reorganizada e a folga caiu para ~24h.
@@ -9452,6 +9487,7 @@ SESSIONS.hyrox = {
 
 SESSIONS.deadlift = {
     title: "DEADLIFT DAY",
+    objetivo: "Força no terra + costas e pegada",
     eyebrow: "Força — Pull",
     pills: ["85–100min"],
     type: "lower-heavy",
@@ -9552,6 +9588,7 @@ SESSIONS.deadlift = {
 // Sessão Upper Hipertrofia
 SESSIONS.upper_hiper = {
     title: "UPPER HIPER",
+    objetivo: "Supino técnico (frequência 2) + hipertrofia de tronco",
     eyebrow: "Hipertrofia + bench freq 2",
     pills: ["70–85min"],
     type: "upper-volume",
@@ -9592,7 +9629,7 @@ SESSIONS.upper_hiper = {
         sets: 3, reps: "12", rpe: "8",
         notes: "Pegada neutra ou supinada. Peito estufado, barra desce no esterno, contrair lats no fundo.",
         swaps: [
-          { name: "Barra fixa (lastrada se possível)", reason: "Padrão-ouro. Use se já tiver bom volume na quinta.", notes: "Adicione peso no cinto se 10 reps ficarem fáceis. Suba até o queixo passar, desça controlando totalmente (não despenque). Peito aberto, puxe com os cotovelos." },
+          { name: "Barra fixa (lastrada se possível)", reason: "Padrão-ouro. Use se as costas não chegaram cansadas do dia de perna.", notes: "Adicione peso no cinto se 10 reps ficarem fáceis. Suba até o queixo passar, desça controlando totalmente (não despenque). Peito aberto, puxe com os cotovelos." },
           { name: "Pulldown unilateral", reason: "Corrige assimetria entre os lados. Bom em mesociclos de hipertrofia.", notes: "Uma mão por vez expõe assimetria e dá mais ROM. Cabo na polia alta, puxe ao ombro girando levemente. Sinta o lat alongar no topo." },
           { name: "Pulldown com pegada V (neutra fechada)", reason: "Foco em lats inferior. Variação útil.", notes: "Pegada neutra fechada pega mais a porção interna das costas e é confortável pro ombro. Puxe ao peito, cotovelos pra baixo, aperte no fim." }
         ]
@@ -9643,8 +9680,8 @@ SESSIONS.cardio_long = {
       heartRate: "125–140 bpm",
       duration: "40min mínimo · 60min ideal · até 75min se houver disposição",
       modes: "<strong style=\"color:var(--accent)\">Stairmaster (preferencial)</strong> · Bike ergométrica · Elíptico · Caminhada inclinada outdoor",
-      cue: "Mesmo cue da quarta — frase completa com leve desconforto.",
-      why: "<strong>Stairmaster é ideal aqui</strong>: ativa cadeia posterior (glúteo, isquios, panturrilha) sem carga axial, força postura ereta. Cadência baixa-média (50-65 passos/min), apoio leve nas alças, sem segurar. Sessão mais longa que quarta pra acumular volume mitocondrial. Opcional: substituir por squat leve + acessórios pernas se sentir que precisa de estímulo extra de hipertrofia."
+      cue: "Você consegue conversar em frases completas, com leve desconforto (teste da fala).",
+      why: "<strong>Stairmaster é ideal aqui</strong>: ativa cadeia posterior (glúteo, isquios, panturrilha) sem carga axial, força postura ereta. Cadência baixa-média (50-65 passos/min), apoio leve nas alças, sem segurar. Sessão longa pra acumular volume aeróbio fácil — é o que mais falta numa semana com só duas aulas de Hyrox. Evite na véspera do Hyrox ou do dia pesado de perna."
     }
 };
 
@@ -9685,7 +9722,7 @@ const SKIP_REASONS = [
 ];
 
 // Ordem de prioridade visual no menu de troca
-const SESSION_ORDER = ['hyrox', 'squat', 'bench', 'deadlift', 'upper_hiper', 'cardio_mid', 'cardio_long', 'rest', 'skip'];
+const SESSION_ORDER = ['hyrox', 'lower_pl', 'bench', 'volume_pl', 'upper_hiper', 'squat', 'deadlift', 'cardio_mid', 'cardio_long', 'rest', 'skip'];
 
 // Schedule padrão — o que existia antes, agora explícito
 // ============================================================
@@ -9699,6 +9736,7 @@ const SESSION_ORDER = ['hyrox', 'squat', 'bench', 'deadlift', 'upper_hiper', 'ca
 // → core no fim. Tudo escolhido pra academia CHEIA: máquinas, cabos e bancos
 // (um ponto só), nada de deslocamento (sem farmer's walk / avanço andando).
 SESSIONS.hyper_push = {
+  objetivo: "Hipertrofia de peito, ombro e tríceps",
   title: "PUSH DAY", eyebrow: "Olimpo — Empurrar", pills: ["~60min"], type: "upper-push", typeLabel: "Push (Peito/Ombro/Tríceps)",
   exercises: [
     { id: 'hpu1', name: 'Supino reto (barra)', primary: true, sets: 4, reps: '5–8', rpeByWeek: { 1: '8', 2: '9', 3: '9.5' },
@@ -9738,6 +9776,7 @@ SESSIONS.hyper_push = {
   ]
 };
 SESSIONS.hyper_pull = {
+  objetivo: "Hipertrofia de costas e bíceps",
   title: "PULL DAY", eyebrow: "Olimpo — Puxar", pills: ["~60min"], type: "upper-pull", typeLabel: "Pull (Costas/Bíceps)",
   exercises: [
     { id: 'hpl1', name: 'Barra fixa (ou pulldown)', primary: true, sets: 4, reps: '5–8', rpeByWeek: { 1: '8', 2: '9', 3: '9.5' },
@@ -9779,6 +9818,7 @@ SESSIONS.hyper_pull = {
   ]
 };
 SESSIONS.hyper_lowerA = {
+  objetivo: "Hipertrofia de quadríceps",
   title: "LOWER A · JOELHO", eyebrow: "Olimpo — Quadríceps", pills: ["~60min"], type: "lower-heavy", typeLabel: "Lower A (Quadríceps)",
   exercises: [
     { id: 'hla1', name: 'Agachamento livre (ou hack)', primary: true, sets: 4, reps: '5–8', rpeByWeek: { 1: '8', 2: '9', 3: '9.5' },
@@ -9816,6 +9856,7 @@ SESSIONS.hyper_lowerA = {
   ]
 };
 SESSIONS.hyper_upper = {
+  objetivo: "Hipertrofia de tronco — peito alto, costas e braços",
   title: "UPPER DAY", eyebrow: "Olimpo — Escultura", pills: ["~60min"], type: "upper-push", typeLabel: "Upper (Peito/Costas/Braços)",
   exercises: [
     { id: 'hup1', name: 'Supino inclinado (barra)', primary: true, sets: 4, reps: '6–10', rpeByWeek: { 1: '8', 2: '9', 3: '9.5' },
@@ -9856,6 +9897,7 @@ SESSIONS.hyper_upper = {
   ]
 };
 SESSIONS.hyper_lowerB = {
+  objetivo: "Hipertrofia de posterior e glúteo",
   title: "LOWER B · QUADRIL", eyebrow: "Olimpo — Cadeia posterior", pills: ["~60min"], type: "lower-heavy", typeLabel: "Lower B (Posterior/Glúteo)",
   exercises: [
     { id: 'hlb1', name: 'Levantamento terra romeno (RDL)', primary: true, sets: 4, reps: '6–10', rpeByWeek: { 1: '8', 2: '9', 3: '9.5' },
@@ -9869,7 +9911,7 @@ SESSIONS.hyper_lowerB = {
       swaps: [{ name: 'Máquina de glúteos (hip thrust machine)', reason: 'Mesmo alvo sem montar a barra — rápido em dia cheio.', notes: 'Empurra pelo calcanhar; contrai forte no topo.' },
               { name: 'Elevação pélvica no Smith', reason: 'Carga estável guiada.', notes: 'Barra na dobra do quadril (use almofada); ROM completo.' },
               { name: 'Ponte de glúteo unilateral', reason: 'Sem equipamento, corrige assimetria.', notes: 'Uma perna; empurra pelo calcanhar, segura no topo.' }] },
-    { id: 'hlb3', name: 'Mesa flexora sentado', sets: 3, reps: '10–15', rpe: '8–9',
+    { id: 'hlb3', name: 'Cadeira flexora (sentado)', sets: 3, reps: '10–15', rpe: '8–9',
       notes: 'Isquiotibiais isolados — a versão SENTADA alonga mais o posterior (a cabeça longa), crescendo mais que a deitada. Excêntrico de 2–3s, encosta o quadril no fundo.',
       swaps: [{ name: 'Cadeira/mesa flexora deitada', reason: 'Mesmo músculo, ângulo de quadril diferente.', notes: 'Não levante o quadril; controle a volta 2–3s.' },
               { name: 'Flexora unilateral (sentado/em pé)', reason: 'Corrige assimetria do posterior.', notes: 'Uma perna por vez; pico de contração.' },
@@ -9915,6 +9957,7 @@ function soValidos(lista) { return lista.filter(Boolean); }
 
 SESSIONS.hyper_supA = {
   title: "SUPERIORES A", eyebrow: "Olimpo — Supino e remada", pills: ["~55min"],
+  objetivo: "Hipertrofia de tronco — ênfase no supino e na remada",
   type: "upper-push", typeLabel: "Superiores A (Peito/Costas/Ombro/Braços)",
   exercises: soValidos([
     exDe('hyper_push', 'hpu1'),   // Supino reto (barra) — principal
@@ -9926,12 +9969,24 @@ SESSIONS.hyper_supA = {
   ])
 };
 
+// AUDITORIA 11/2026 — a quarta ganhou o trabalho de JOELHO que faltava.
+// Medido antes: quadríceps 2 e isquiotibiais 3,5 séries/semana (só a parte
+// indireta do terra). Contar a aula de Hyrox como volume de hipertrofia num
+// treinado não tem sustentação (HIPÓTESE — Callahan 2021), e agachamento/
+// terra não crescem o reto femoral nem a cabeça curta do bíceps femoral
+// (Kubo 2019; Zabaleta-Korta 2021). Extensora e flexora SENTADA
+// (comprimento longo — Maeo 2021) são isoladas, sem carga axial nem pegada:
+// REDUZEM o buraco (quad 2→5, isquio 3,5→6,5 séries) sem cobrar o Hyrox de
+// sexta. RPE 8 fixo aqui (não 9): 48h antes do Hyrox, falha só cobra dor.
 SESSIONS.hyper_terra = {
-  title: "TERRA + COSTAS", eyebrow: "Olimpo — Força enxuta", pills: ["~50min"],
-  type: "lower-heavy", typeLabel: "Terra + Costas (Força)",
+  title: "TERRA + COSTAS", eyebrow: "Olimpo — Terra, costas e joelho", pills: ["~65min"],
+  type: "lower-heavy", typeLabel: "Terra + Costas + Joelho (Força)",
+  objetivo: "Força no terra, costas e o trabalho direto de joelho da semana",
   exercises: soValidos([
     exDe('deadlift', 'dl1'),      // Levantamento terra — 4×3, RPE 7–8,5: força sem cavar fadiga
     exDe('hyper_pull', 'hpl1'),   // Barra fixa (ou pulldown) — costas sem carga na lombar
+    Object.assign({}, exDe('hyper_lowerB', 'hlb3'), { rpe: '8' }), // Cadeira flexora SENTADA — isquiotibiais em comprimento longo
+    Object.assign({}, exDe('hyper_lowerA', 'hla4'), { rpe: '8' }), // Cadeira extensora — reto femoral (o agachamento não cresce)
     exDe('hyper_lowerB', 'hlb4'), // Hiperextensão 45° — estabilizadores, sem falha
     exDe('hyper_lowerB', 'hlb6')  // Pallof press — anti-rotação
   ])
@@ -9939,6 +9994,7 @@ SESSIONS.hyper_terra = {
 
 SESSIONS.hyper_supB = {
   title: "SUPERIORES B", eyebrow: "Olimpo — Inclinado e puxada", pills: ["~60min"],
+  objetivo: "Hipertrofia de tronco — ênfase no peito alto e nas dorsais",
   type: "upper-push", typeLabel: "Superiores B (Peito alto/Costas/Ombro/Braços)",
   exercises: soValidos([
     exDe('hyper_upper', 'hup1'),  // Supino inclinado (barra) — principal
@@ -9951,13 +10007,72 @@ SESSIONS.hyper_supB = {
   ])
 };
 
+// ============================================================
+// === POWERLIFTING — grade revista na auditoria de 11/2026 ===
+// ============================================================
+// Antes: Hyrox seg/qua, terra sex, e o AGACHAMENTO fora da semana (0×).
+// Agora, com o Hyrox nos dias reais (seg e sex, confirmados pelo Pedro) e o
+// agachamento de volta, a lógica é a mesma do Cenário C: o único dia pesado
+// de perna (quarta) fica a 48h de cada Hyrox, o supino fica 2×/semana nos
+// dias seguintes ao Hyrox (ter e sáb), quinta e domingo livres.
+// A quarta junta os dois levantamentos de perna em dose enxuta: agachamento
+// primeiro (prioridade e ordem de prova; o terra perde um pouco por vir
+// depois — PRÁTICA, não há ensaio comparando os dois no mesmo dia), sem
+// variações de déficit/pausa nem remada curvada — a carga axial PESADA da
+// semana fica num dia só (o sábado só tem agachamento técnico, RPE 7).
+// 4×4 e 4×3 abaixo da falha recuperam em 24–48h (Bartolomei 2017;
+// Morán-Navarro 2017): cabe entre os dois Hyrox. SQUAT DAY e DEADLIFT DAY
+// continuam no painel para quem quiser separar os dois.
+SESSIONS.lower_pl = {
+  title: "LOWER DAY", eyebrow: "Força — Agachamento + Terra", pills: ["70–85min"],
+  type: "lower-heavy", typeLabel: "Lower / Agachamento + Terra",
+  objetivo: "Força no agachamento e no terra — a única carga axial pesada da semana",
+  exercises: soValidos([
+    exDe('squat', 'sq1'),     // Agachamento livre — 4×4, RPE 7/8/8,5 (prioridade: vem primeiro)
+    // Terra 4×3 com id de registro próprio (ver EX_CANON): mesmo recorde e
+    // histórico do 'dl1', sem misturar o dia com o terra do Hipertrofia.
+    Object.assign({}, exDe('deadlift', 'dl1'), { id: 'dl1pl' }),
+    // Barra fixa SEM falha: 48h antes do sled pull de sexta, falha só cobra
+    // fadiga (Vieira 2022) — 5–8 reps a RPE 8 mantém o estímulo.
+    Object.assign({}, exDe('deadlift', 'dl4'), { reps: '5–8', rpe: '8',
+      notes: 'Sem falha neste dia (o Hyrox de sexta tem sled pull). Pegada pronada ombro+, queixo passa da barra, descida controlada. Passou de 8 reps limpas em todas as séries: adicione carga.' }),
+    // Flexora: o agachamento não cresce os isquiotibiais (Kubo 2019); sentada
+    // treina em comprimento longo e cresceu mais que a deitada (Maeo 2021).
+    Object.assign({}, exDe('squat', 'sq5'), { name: 'Cadeira flexora (sentado) OU mesa flexora',
+      notes: 'Prefira a cadeira SENTADA: alonga mais os isquiotibiais e cresceu mais que a mesa deitada (Maeo 2021). Sem falha, sem tranco; desça controlando 2–3 s.' }),
+    exDe('squat', 'sq7')      // Prancha lateral OU ab wheel
+  ])
+};
+
+// Sábado = 2ª exposição do agachamento e do supino. Uma vez por semana com
+// 4 séries é dose de MANUTENÇÃO para força (Spiering 2021; Ralston 2017);
+// a força responde a frequência (Pelland 2026; ACSM 2026: ≥2×/semana).
+// Por isso o sábado abre com agachamento técnico (frontal ou com pausa,
+// 3×5 a RPE 7 — autorregulado: 24h depois do Hyrox, a carga se ajusta ao
+// dia) e segue com o supino 5×5 do antigo UPPER HIPER. O crucifixo saiu: o
+// peito tinha 22 séries/semana (excesso redundante para força); fica 19.
+SESSIONS.volume_pl = {
+  title: "VOLUME DAY", eyebrow: "Força — Frequência 2", pills: ["75–85min"],
+  type: "upper-volume", typeLabel: "Volume / Agachamento técnico + Supino",
+  objetivo: "2ª exposição da semana: agachamento técnico (RPE 7) e supino 5×5, mais tronco",
+  exercises: soValidos([
+    exDe('squat', 'sq2'),         // Agachamento frontal OU pause squat — 3×5 RPE 7
+    exDe('upper_hiper', 'fr1'),   // Supino reto (frequência 2) — 5×5 a 75–80%
+    exDe('upper_hiper', 'fr2'),   // Desenvolvimento militar
+    exDe('upper_hiper', 'fr3'),   // Remada cavalinho / T-bar
+    exDe('upper_hiper', 'fr4'),   // Puxada alta
+    exDe('upper_hiper', 'fr6'),   // Elevação lateral sentado
+    exDe('upper_hiper', 'fr7')    // Rosca direta + tríceps testa (bi-set)
+  ])
+};
+
 const DEFAULT_SCHEDULE = {
-  seg: 'hyrox',   // dia de Hyrox — o treino quem define é a academia
-  ter: 'bench',
-  qua: 'hyrox',
-  qui: 'upper_hiper',  // tronco na quinta: pouca sobreposição com o Hyrox
-  sex: 'deadlift',     // terra a 48h do Hyrox de quarta, não a 24h
-  sab: 'cardio_long',
+  seg: 'hyrox',        // Hyrox — o treino quem define é a academia
+  ter: 'bench',        // supino pesado no dia seguinte ao Hyrox (tronco)
+  qua: 'lower_pl',     // agachamento + terra a 48h de cada Hyrox
+  qui: 'rest',         // véspera do Hyrox: livre (Z2 leve sem impacto é opcional)
+  sex: 'hyrox',        // 48h depois da perna pesada
+  sab: 'volume_pl',    // 2ª exposição: agachamento técnico + supino 5×5 + tronco
   dom: 'rest'
 };
 
@@ -9977,14 +10092,16 @@ const HYPER_SCHEDULE = {
 // Calendário ativo conforme o modo (Powerlifting nórdico vs Hipertrofia olímpica)
 function activeDefaultSchedule() { return STATE.mode === 'hyper' ? HYPER_SCHEDULE : DEFAULT_SCHEDULE; }
 // Sessão de "chefão" por modo (o lift mais brutal do dia)
-function bossSession() { return STATE.mode === 'hyper' ? 'hyper_terra' : 'deadlift'; }
+function bossSession() { return STATE.mode === 'hyper' ? 'hyper_terra' : 'lower_pl'; }
+// O terra avulso continua sendo chefão quando o Pedro o põe na semana.
+function ehChefao(key) { return key === bossSession() || (STATE.mode !== 'hyper' && key === 'deadlift'); }
 // Reorganização da semana é POR MODO — cada modo tem seus calendários custom
 function modeSchedules() { return STATE.mode === 'hyper' ? STATE.hyperSchedules : STATE.schedules; }
 function saveModeSchedules() { if (STATE.mode === 'hyper') saveHyperSchedules(); else saveSchedules(); }
 // Sessões oferecidas no painel "Gerenciar Semana" por modo
 const HYPER_SESSION_ORDER = ['hyrox', 'hyper_supA', 'hyper_terra', 'hyper_supB', 'hyper_push', 'hyper_pull', 'hyper_lowerA', 'hyper_upper', 'hyper_lowerB', 'cardio_mid', 'cardio_long', 'rest', 'skip'];
 function modeSessionOrder() { return STATE.mode === 'hyper' ? HYPER_SESSION_ORDER : SESSION_ORDER; }
-function modeCoreSessions() { return STATE.mode === 'hyper' ? ['hyrox', 'hyper_supA', 'hyper_terra', 'hyper_supB'] : ['hyrox', 'bench', 'deadlift', 'upper_hiper']; }
+function modeCoreSessions() { return STATE.mode === 'hyper' ? ['hyrox', 'hyper_supA', 'hyper_terra', 'hyper_supB'] : ['hyrox', 'bench', 'lower_pl', 'volume_pl']; }
 
 // Dias em que TRT é aplicada (seg/qui, independe do treino do dia)
 const TRT_DAYS = ['seg', 'qui'];
@@ -10062,6 +10179,26 @@ const REALM_CONFIG = {
     effect: 'fire',
     ascendedTitle: 'O CHEFÃO TOMBOU',
     ascendedMessage: 'A terra resistiu, mas foi arrancada do chão.\nO gigante caiu de joelhos diante da tua pegada.\nThurisaz arde — a força bruta encontrou seu mestre.'
+  },
+  lower_pl: {
+    rune: 'ᚦ', // Thurisaz — o gigante (o dia que reúne agachamento e terra)
+    runeName: 'Thurisaz',
+    runeTranslit: 'ᚦ · "Th" · O Gigante',
+    runeMeaning: 'Thurisaz é a runa do espinho e do gigante (thurs) — força bruta, primal e perigosa. Associada a Thor e ao seu martelo, carrega o poder de destruir e de proteger. É a energia caótica da terra dominada pela vontade de quem a empunha.',
+    runeConnection: 'Hoje os dois gigantes vêm juntos: o agachamento finca a fundação, o terra arranca o peso do chão. Poucas repetições, todas limpas — a força de perna da semana inteira cabe neste dia, e o Hyrox de sexta te espera inteiro.',
+    effect: 'fire',
+    ascendedTitle: 'OS GIGANTES TOMBARAM',
+    ascendedMessage: 'A fundação aguentou e a terra foi arrancada do chão.\nDois gigantes no mesmo dia — nenhum te dobrou.\nThurisaz arde: a força de perna da semana está feita.'
+  },
+  volume_pl: {
+    rune: 'ᛃ', // Jera — a colheita: o que volta toda semana e rende com o tempo
+    runeName: 'Jera',
+    runeTranslit: 'ᛃ · "J" · A Colheita',
+    runeMeaning: 'Jera é a runa do ano e da colheita — o ciclo que se repete e recompensa quem semeia com paciência. Não é a força de um golpe: é o fruto da constância, estação após estação.',
+    runeConnection: 'O sábado é a segunda semeadura da semana: o agachamento volta leve e técnico, o supino volta em volume. Ninguém fica forte num dia só — fica forte voltando ao mesmo gesto, bem feito, toda semana.',
+    effect: 'waves',
+    ascendedTitle: 'A COLHEITA VEIO',
+    ascendedMessage: 'O gesto voltou e saiu mais limpo que na quarta.\nA força não nasce num dia — ela é colhida.\nJera gira: a semana está completa.'
   },
   upper_hiper: {
     rune: 'ᛒ', // Berkano — crescimento, regeneração (a hipertrofia)
@@ -10198,7 +10335,7 @@ function getRealm(sessionKey) {
 }
 
 const REALM_THEME_COLORS = {
-  squat: '#120a06', bench: '#0c0a08', deadlift: '#0a0604',
+  squat: '#120a06', bench: '#0c0a08', deadlift: '#0a0604', lower_pl: '#0a0604', volume_pl: '#0e0d08',
   upper_hiper: '#0e0d08', cardio_mid: '#06100f', cardio_long: '#0a0d11',
   rest: '#070b12', skip: '#0a0a0b',
   hyrox: '#0d0906',
@@ -10302,6 +10439,10 @@ function sanearCalendarios() {
         // SEMPRE: dia que não é dia, sessão que não existe mais
         if (DAYS.indexOf(d) < 0) { delete sem[d]; mudou = true; return; }
         if (!k || !SESSIONS[k]) { delete sem[d]; mudou = true; return; }
+        // SEMPRE: alteração igual ao padrão do dia não altera nada — é
+        // registro redundante (aparece quando o próprio padrão muda, como na
+        // grade nova do Powerlifting). Apagar não muda a semana resolvida.
+        if (k === par.dflt[d]) { delete sem[d]; mudou = true; return; }
         // UMA VEZ: foto de padrão antigo vira "segue o padrão"
         if (migrar) {
           const hist = HISTORICO_PADRAO[par.modo][d] || [];
@@ -10415,7 +10556,56 @@ function atualizarAvisoCalendario() {
   });
 }
 
+// ------------------------------------------------------------------
+// AVISO ÚNICO: A GRADE DO POWERLIFTING MUDOU (auditoria 11/2026)
+// ------------------------------------------------------------------
+// Nada silencioso: quem já usava o app é avisado uma vez (no modo
+// Powerlifting) e pode manter a grade antiga. Quem instala agora não vê.
+const GRADE_PL_ANTIGA = { seg: 'hyrox', ter: 'bench', qua: 'hyrox', qui: 'upper_hiper', sex: 'deadlift', sab: 'cardio_long', dom: 'rest' };
+function manterGradePLAntiga() {
+  WEEK_KEY_ORDER.forEach(function (w) {
+    const manual = STATE.schedules[w] || {};
+    DAYS.forEach(function (d) {
+      if (GRADE_PL_ANTIGA[d] !== DEFAULT_SCHEDULE[d] && !manual[d]) manual[d] = GRADE_PL_ANTIGA[d];
+    });
+    if (Object.keys(manual).length) STATE.schedules[w] = manual;
+  });
+  saveSchedules();
+}
+function atualizarAvisoGradePL() {
+  const el = document.getElementById('gradeBanner');
+  if (!el) return;
+  let st = null;
+  try { st = localStorage.getItem('pwr.gradePL3'); } catch (e) {}
+  if (STATE.mode !== 'pwr' || st) { el.hidden = true; el.innerHTML = ''; return; }
+  el.innerHTML =
+    '<span class="backup-banner-text"><strong>A grade do Powerlifting mudou.</strong> '
+    + 'Hyrox na segunda e na sexta (os dias das suas aulas), supino terça e sábado, agachamento + terra na quarta, '
+    + 'quinta e domingo livres. O agachamento voltou: estava fora da semana. '
+    + 'Recordes, cargas e histórico ficam como estão — e as semanas que você reorganizou à mão também.</span>'
+    + '<span class="backup-banner-actions cal-acoes">'
+    + '<button type="button" class="backup-banner-btn" id="gradeOkBtn">ENTENDI</button>'
+    + '<button type="button" class="backup-banner-btn ghost" id="gradeAntigaBtn">MANTER A ANTIGA</button>'
+    + '</span>';
+  el.hidden = false;
+  const fecha = function (valor) { safeSet('pwr.gradePL3', valor); el.hidden = true; el.innerHTML = ''; };
+  const ok = document.getElementById('gradeOkBtn');
+  const ant = document.getElementById('gradeAntigaBtn');
+  if (ok) ok.addEventListener('click', function () { fecha('ok'); });
+  if (ant) ant.addEventListener('click', function () {
+    manterGradePLAntiga(); fecha('antiga');
+    if (navigator.vibrate) navigator.vibrate([10, 30, 10]);
+    renderDayTabs(); renderHeatmap(); renderMain();
+  });
+}
+
 function loadState() {
+  // Primeira abertura de todas? Então não há grade antiga para avisar.
+  try {
+    const usuarioAntigo = ['pwr.loads', 'pwr.checks', 'pwr.schedules', 'pwr.week', 'pwr.mode', 'pwr.calendarioV']
+      .some(function (k) { return localStorage.getItem(k) !== null; });
+    if (!usuarioAntigo && localStorage.getItem('pwr.gradePL3') === null) safeSet('pwr.gradePL3', 'novo');
+  } catch (e) {}
   try { const mode = localStorage.getItem('pwr.mode'); if (mode === 'hyper' || mode === 'pwr') STATE.mode = mode; } catch (e) {}
   try { const week = localStorage.getItem('pwr.week'); if (week) STATE.week = week; } catch (e) {}
   STATE.checks = readJson('pwr.checks', STATE.checks);
@@ -10433,7 +10623,7 @@ function loadState() {
   else {
     // Primeira execução: reconstrói PR history a partir das cargas existentes
     Object.keys(STATE.loads).forEach(k => {
-      const exId = k.split('::')[2];
+      const exId = exCanon(k.split('::')[2]);
       const v = parseFloat(STATE.loads[k]);
       if (!isNaN(v)) {
         if (!STATE.prHistory[exId] || v > STATE.prHistory[exId]) {
@@ -10464,6 +10654,7 @@ function setTrainingMode(mode) {
   if (STATE.mode === mode) return;
   STATE.mode = mode;
   saveMode();
+  try { atualizarAvisoGradePL(); } catch (e) {}
   if (navigator.vibrate) navigator.vibrate([15, 30, 15]);
   updateThemeColor(getSessionKeyForDay(STATE.day));
   renderWeekSelector();
@@ -10550,6 +10741,7 @@ function limparReps(week, day, exId) {
 }
 // Grava a sessão fechada no histórico longitudinal do exercício.
 function registrarSessaoReps(exId, kg, reps, alvo) {
+  exId = exCanon(exId);
   try {
     if (!exId || !Array.isArray(reps) || !reps.length) return;
     const hoje = localDateKey(new Date());
@@ -10568,6 +10760,7 @@ function registrarSessaoReps(exId, kg, reps, alvo) {
 // Só olha sessões com a MESMA carga — comparar reps entre cargas
 // diferentes não significa nada.
 function lerTendenciaReps(exId, kgAtual) {
+  exId = exCanon(exId);
   try {
     const arr = REPS_HIST[exId] || [];
     if (!arr.length) return null;
@@ -10626,7 +10819,7 @@ function abrirSeletorReps(exId, i, chipEl) {
 
 // Monta a linha de repetições do cartão. Só aparece depois da 1ª série:
 // antes disso não há o que registrar, e o cartão fica limpo.
-function repsRowHtml(exId, presc, load) {
+function repsRowHtml(exId, presc, load, nome) {
   try {
     if (ehHyroxEx(hxAchaEx(exId))) return '';   // Hyrox tem painel próprio
     const alvo = alvoReps(presc && presc.reps);
@@ -10649,7 +10842,7 @@ function repsRowHtml(exId, presc, load) {
       : '';
     const btnT = document.querySelector('.set-tracker[data-ex-id="' + exId + '"]');
     const maxSets = parseInt((btnT && btnT.dataset.maxSets) || (presc && presc.sets), 10) || feitas.length;
-    const nota = notaTendenciaHtml(exId, load, alvo, feitas, maxSets);
+    const nota = notaTendenciaHtml(exId, load, alvo, feitas, maxSets, nome);
     return '<div class="reps-linha"><span class="reps-rotulo">Reps</span>'
       + '<div class="reps-chips">' + chips + '</div>'
       + (alvoTxt ? '<span class="reps-alvo">' + alvoTxt + '</span>' : '')
@@ -10665,6 +10858,7 @@ function repsRowHtml(exId, presc, load) {
 // ANTES, na mesma carga. Duas sessões de queda não podem ser apagadas
 // por um dia de valores padrão.
 function sessoesAnteriores(exId, kg) {
+  exId = exCanon(exId);
   try {
     const hoje = localDateKey(new Date());
     return (REPS_HIST[exId] || [])
@@ -10672,13 +10866,32 @@ function sessoesAnteriores(exId, kg) {
                    && Math.abs((x.kg || 0) - (parseFloat(kg) || 0)) < 0.001);
   } catch (e) { return []; }
 }
-function notaTendenciaHtml(exId, load, alvo, feitas, maxSets) {
+// Menor salto REAL de carga para aquele exercício. Antes a dica usava a
+// constante da barra (+10 kg) para tudo: numa elevação lateral com 2×8 kg
+// mandava ir a 26 kg (+62%). O passo vem do equipamento do exercício
+// (o mesmo que o Pedro escolhe no chip BARRA/HALTER/MÁQUINA/CORPO).
+function passoProgressao(exId, nome) {
+  let eq = 'barra';
+  let n = nome || '';
+  try {
+    if (!n) { const inp = document.querySelector('.ex-load-input[data-ex-id="' + exId + '"]'); n = inp ? (inp.dataset.exName || '') : ''; }
+    eq = getEquip(exId, n);
+  } catch (e) {}
+  if (eq === 'barra') return PASSO_BARRA;            // 5 kg por lado (anilhas da academia)
+  if (eq === 'halter') return isUnilateral(n) ? 2 : 4;   // +2 kg em cada halter (um só, se unilateral)
+  if (eq === 'maquina') return 5;                    // um furo no pino
+  if (eq === 'corpo') return MENOR_ANILHA;           // a menor anilha no cinto
+  const m = EQUIP_META[eq];
+  return (m && m.step) || PASSO_BARRA;
+}
+function notaTendenciaHtml(exId, load, alvo, feitas, maxSets, nome) {
   try {
     if (!alvo) return '';
     // Veredito só com o exercício FECHADO: com 1 de 4 séries no topo não
     // dá pra dizer nada — e dizer cedo demais faz o app parecer bobo.
     const fechado = feitas.length >= (maxSets || feitas.length);
     if (!fechado) return '';
+    if (STATE.week === 'deload') return '';   // recuperação não é hora de decidir carga
 
     const kg = parseFloat(load) || 0;
     const antes = sessoesAnteriores(exId, kg);
@@ -10690,12 +10903,14 @@ function notaTendenciaHtml(exId, load, alvo, feitas, maxSets) {
 
     const hojeAbaixo = feitas.some(v => v > 0 && v < alvo.min);
     const hojeNoTopo = alvo.max > 0 && feitas.every(v => v >= alvo.max);
-    const proxima = kg > 0 ? (fmtKgExact(kg + PASSO_BARRA) + ' kg') : 'a próxima carga';
+    const passo = passoProgressao(exId, nome);
+    const proxima = kg > 0 ? (fmtKgExact(kg + passo) + ' kg') : 'a próxima carga';
 
     if (hojeAbaixo) {
       if (quedaAntes || (ultimas2.length >= 1 && abaixoDe(ultimas2[ultimas2.length - 1]))) {
         return '<div class="reps-nota atencao"><strong>Duas sessões seguidas abaixo do alvo</strong> nesta carga. '
-          + 'Segure o peso mais um ciclo, ou recue 10 kg e reconstrua a base.</div>';
+          + (kg > passo ? 'Segure o peso mais um ciclo, ou recue ' + fmtKgExact(passo) + ' kg e reconstrua a base.'
+                        : 'Segure mais um ciclo, ou use uma variação mais fácil e reconstrua a base.') + '</div>';
       }
       return '<div class="reps-nota">Ficou abaixo do alvo. Uma sessão não diz nada — repita a carga.</div>';
     }
@@ -10706,7 +10921,7 @@ function notaTendenciaHtml(exId, load, alvo, feitas, maxSets) {
       }
       if (topoAntes) {
         return '<div class="reps-nota pronta"><strong>Topo da faixa em duas sessões seguidas.</strong> '
-          + 'Hora dos +10 kg: ' + proxima + '.</div>';
+          + 'Hora de subir +' + fmtKgExact(passo) + ' kg: ' + proxima + '.</div>';
       }
       return '<div class="reps-nota pronta">Todas as séries no topo. Se repetir na próxima, sobe pra ' + proxima + '.</div>';
     }
@@ -10751,8 +10966,10 @@ function incrementSetProgress(week, day, exId, maxSets, alvo) {
         // longitudinal (gráfico de Evolução › Histórico) ao longo dos meses.
         recordLoadHistory(exId, currentLoad);
       }
-      // Exercício fechado: guarda as repetições da sessão
-      registrarSessaoReps(exId, currentLoad, getRepsArr(week, day, exId), alvo);
+      // Exercício fechado: guarda as repetições da sessão. Deload NÃO entra:
+      // série a RPE 6 com volume cortado não é teste de força e não pode
+      // contar como "sessão no topo" para mandar subir carga.
+      if (week !== 'deload') registrarSessaoReps(exId, currentLoad, getRepsArr(week, day, exId), alvo);
       // Hyrox tem registro próprio, com métrica, tempo e distância.
       try { const exH = hxAchaEx(exId); if (ehHyroxEx(exH)) hxRegistrar(exH, week, day); } catch (e) {}
     }
@@ -10900,6 +11117,8 @@ function validateSchedule(schedule) {
     hyper_supA: ['upper-push', 'peito + costas + braços'],
     hyper_supB: ['upper-push', 'peito + costas + braços'],
     hyper_terra: ['lower-heavy', 'cadeia posterior + grip'],
+    lower_pl: ['lower-heavy', 'quadríceps + cadeia posterior'],
+    volume_pl: ['upper-push', 'peitoral + ombro + tríceps'],
     // O Hyrox é fisicamente relevante e quase sempre carrega perna
     // (trenó, lunge, wall ball). Mantido na mesma regra de recuperação
     // que já existia — sem criar alerta novo nesta rodada.
@@ -10946,7 +11165,7 @@ function validateSchedule(schedule) {
   if (heavyCount > 5) {
     warnings.push({
       type: 'overload',
-      message: `${heavyCount} dias de treino pesado — sem recovery suficiente. Ideal: ${STATE.mode === 'hyper' ? '5 sessões de musculação + 1 cardio + 1 rest' : '4 sessões de força + 2 cardios + 1 rest'}.`
+      message: `${heavyCount} dias de treino pesado — sem recovery suficiente. A grade padrão tem 2 Hyrox + 3 sessões de força + 2 dias livres.`
     });
   }
   
@@ -10983,9 +11202,20 @@ function setLoad(week, day, exId, val) {
   // se a carga atual >= PR histórico, mas só vira PR oficial após execução.
 }
 
+// === IDENTIDADE CANÔNICA DO EXERCÍCIO ==========================
+// Séries, cargas e checks são gravados por semana::dia::exercício — SEM o
+// modo. Com o Powerlifting e o Hipertrofia fazendo terra na QUARTA, o mesmo
+// id ('dl1') no mesmo dia misturaria os dois modos (zerar um apagava o
+// outro). Solução: no LOWER DAY o terra tem id próprio ('dl1pl') para o
+// registro do dia, mas recorde, histórico e reps continuam num lugar só
+// ('dl1') — o terra é UM levantamento, com UM recorde, nos dois modos.
+const EX_CANON = { dl1pl: 'dl1' };
+function exCanon(id) { return EX_CANON[id] || id; }
+
 // === PR (Personal Record) tracking ===
 // Mantém max load por exId acumulado entre todas as semanas/dias
 function updatePrHistory(exId, loadValue) {
+  exId = exCanon(exId);
   if (!loadValue || isNaN(loadValue)) return;
   const current = STATE.prHistory[exId] || 0;
   if (loadValue > current) {
@@ -11001,7 +11231,7 @@ function updatePrHistory(exId, loadValue) {
 }
 
 function getPr(exId) {
-  return STATE.prHistory[exId] || 0;
+  return STATE.prHistory[exCanon(exId)] || 0;
 }
 
 // === EQUIPAMENTO POR EXERCÍCIO ==============================
@@ -11085,11 +11315,12 @@ function setEquip(exId, type) {
 // Valor "típico" desse exercício (mediana do que já foi usado), pra
 // detectar quando a carga digitada destoa muito do padrão.
 function typicalLoad(exId) {
+  exId = exCanon(exId);
   const vals = [];
   try {
     for (const k in STATE.loads) {
       const p = k.split('::');
-      if (p.length >= 3 && p[2] === exId) {
+      if (p.length >= 3 && exCanon(p[2]) === exId) {
         const v = parseFloat(STATE.loads[k]);
         if (v > 0) vals.push(v);
       }
@@ -11239,6 +11470,7 @@ function loadLoadHistory() {
 }
 function saveLoadHistory() { safeSet('pwr.loadHistory', JSON.stringify(LOAD_HISTORY)); }
 function recordLoadHistory(exId, value) {
+  exId = exCanon(exId);
   try {
     const v = parseFloat(value);
     if (!exId || isNaN(v) || v <= 0) return;
@@ -11257,7 +11489,7 @@ function recordLoadHistory(exId, value) {
 // Recalcula PR de um exercício varrendo todas as cargas (usado quando carga é apagada/diminuída)
 function isPrLoad(exId, loadValue) {
   if (!loadValue || isNaN(loadValue)) return false;
-  return loadValue >= (STATE.prHistory[exId] || 0) && loadValue > 0;
+  return loadValue >= (STATE.prHistory[exCanon(exId)] || 0) && loadValue > 0;
 }
 
 // Carga anterior do exercício: primeiro o MESMO dia da semana anterior; se
@@ -11293,8 +11525,68 @@ function getPrevLoadNumeric(week, day, exId) {
 // ============================================================
 // RENDERING
 // ============================================================
+// ------------------------------------------------------------
+// DESCANSO ENTRE SÉRIES (auditoria 11/2026 — antes não havia nenhum)
+// Força em treinados pede >2 min (Grgic 2018); para hipertrofia, acima de
+// 60–90 s quase não há ganho extra (Singer 2024), mas composto pesado rende
+// mais com ~3 min (Schoenfeld 2016). Três faixas, por padrão de movimento.
+// ------------------------------------------------------------
+const EX_ISOLADOS = new Set([
+  'sq5', 'sq6', 'sq7', 'be6', 'be7', 'be8', 'dl5', 'dl6', 'dl7', 'dl8', 'fr5', 'fr6', 'fr7',
+  'hpu4', 'hpu5', 'hpu6', 'hpu7', 'hpl4', 'hpl5', 'hpl6', 'hpl7', 'hpl8',
+  'hla4', 'hla5', 'hla6', 'hla7', 'hup5', 'hup6', 'hup7', 'hup8',
+  'hlb3', 'hlb4', 'hlb5', 'hlb6', 'hlb7'
+]);
+function descansoDe(ex) {
+  if (!ex || ex.metric || !(parseInt(ex.sets, 10) > 0)) return null;
+  // levantamento principal de força (e o terra, nos dois modos)
+  if (exCanon(ex.id) === 'dl1' || (ex.primary && ['sq1', 'be1'].indexOf(ex.id) >= 0)) return { seg: 180, txt: '3–5 min', curto: '3–5′' };
+  if (EX_ISOLADOS.has(ex.id)) return { seg: 90, txt: '1–2 min', curto: '1–2′' };
+  return { seg: 120, txt: '2–3 min', curto: '2–3′' };
+}
+
+// Contexto do dia no cabeçalho: objetivo, volume previsto e o que vem
+// antes/depois na semana — a sessão lida como parte da semana, não solta.
+function semanaAnteriorKey(week) {
+  const i = WEEK_KEY_ORDER.indexOf(week);
+  return i > 0 ? WEEK_KEY_ORDER[i - 1] : WEEK_KEY_ORDER[WEEK_KEY_ORDER.length - 1];
+}
+function semanaSeguinteKey(week) {
+  const i = WEEK_KEY_ORDER.indexOf(week);
+  return WEEK_KEY_ORDER[(i + 1) % WEEK_KEY_ORDER.length];
+}
+function contextoDoDiaHtml(week, dia, sess, isDeload) {
+  try {
+    const i = DAYS.indexOf(dia);
+    if (i < 0 || !sess) return '';
+    const sem = semanaResolvida(week);
+    // nome curto; no deload, sessão cortada aparece como o que ela vira (off/Z2)
+    const curto = (k, w) => (w === 'deload' && SESSIONS[k] && SESSIONS[k].deloadCutAll)
+      ? 'Off / Z2 (deload)' : String(sessionPanelLabel(k)).replace(/\s·.*$/, '');
+    const wOntem = i > 0 ? week : semanaAnteriorKey(week);
+    const wAmanha = i < DAYS.length - 1 ? week : semanaSeguinteKey(week);
+    const ontem = i > 0 ? sem[DAYS[i - 1]] : semanaResolvida(wOntem).dom;
+    const amanha = i < DAYS.length - 1 ? sem[DAYS[i + 1]] : semanaResolvida(wAmanha).seg;
+    let series = 0;
+    if (!(isDeload && sess.deloadCutAll)) (sess.exercises || []).forEach(ex => {
+      if (ex.metric || (isDeload && shouldHideOnDeload(ex))) return;
+      const n = parseInt(getPrescription(ex, week).sets, 10);
+      if (n > 0) series += n;
+    });
+    const sub = [];
+    if (series > 0) sub.push('<b>' + series + '</b> séries');
+    if (ontem) sub.push('Ontem: ' + curto(ontem, wOntem));
+    if (amanha) sub.push('Amanhã: ' + curto(amanha, wAmanha));
+    if (!sub.length && !sess.objetivo) return '';
+    return '<div class="day-contexto">'
+      + (sess.objetivo && !(isDeload && sess.deloadCutAll) ? '<span class="ctx-obj">' + sess.objetivo + '</span>' : '')
+      + (sub.length ? '<span class="ctx-sem">' + sub.join(' · ') + '</span>' : '')
+      + '</div>';
+  } catch (e) { return ''; }
+}
+
 function getRpe(ex, week) {
-  if (week === 'deload') return ex.deload?.rpe || ex.rpe || '6';
+  if (week === 'deload') return ex.deload?.rpe || (ex.primary ? (ex.rpe || '6') : '6');
   if (ex.rpeByWeek && ex.rpeByWeek[week]) return ex.rpeByWeek[week];
   return ex.rpe || '';
 }
@@ -11308,6 +11600,19 @@ function getPrescription(ex, week) {
     // promessa do banner "acessórios cortados em volume").
     if (ex.deloadHalf) {
       return { sets: Math.max(1, Math.ceil((parseInt(ex.sets, 10) || 2) / 2)), reps: ex.reps, rpe: '6', intensity: ex.intensity };
+    }
+    // AUDITORIA 11/2026: acessório SEM regra própria seguia com todas as
+    // séries e RPE 8–9 na TRÉGUA (17 exercícios do modo Hipertrofia), o que
+    // desmentia o banner "acessórios cortados em volume". Deload reduz
+    // volume e esforço sem parar o treino (Bell 2023; Rogerson 2024): o
+    // padrão agora é metade das séries a RPE 6. Quem tem regra própria
+    // (deload/deloadHalf/deloadCut) continua com ela.
+    const nSeries = parseInt(ex.sets, 10);
+    if (!ex.primary && nSeries > 0) {
+      // prescrição em % (ex.: supino 5×5 a 75–80%) recua para os mesmos 60%
+      // dos principais — senão o card mandaria 75–80% na semana de recuperação
+      return { sets: Math.max(1, Math.ceil(nSeries / 2)), reps: ex.reps, rpe: '6',
+               intensity: ex.intensity ? '60% 1RM' : ex.intensity };
     }
     return { sets: ex.sets, reps: ex.reps, rpe: getRpe(ex, week), intensity: ex.intensity };
   }
@@ -11429,12 +11734,15 @@ function renderMain() {
   }
   _lastNavKey = navKey;
   const isDeload = STATE.week === 'deload';
+  // Dia com séries prescritas: é onde existem RPE e o RESET do dia
+  // (Hyrox/cardio/descanso/pulo não têm séries para zerar nem RPE).
+  const diaComSeries = !!(day && day.exercises && day.exercises.length && !ehDiaMarcavel(day) && !(isDeload && day.deloadCutAll));
   const isCustom = isCustomSchedule();
   const isTrtDay = TRT_DAYS.includes(STATE.day);
   const isModifiedDay = semanaResolvida(STATE.week)[STATE.day] !== activeDefaultSchedule()[STATE.day];
   
   // === Modos visuais especiais ===
-  const isBossFight = sessionKey === bossSession() && !isDeload;
+  const isBossFight = ehChefao(sessionKey) && !isDeload;
   const isAscended = isDayFullyComplete(STATE.week, STATE.day);
 
   // NÍVEL 3 — a virada para "dia completo" acontece UMA vez: quando o
@@ -11454,6 +11762,8 @@ function renderMain() {
     squat: 'skin-forge',         // Forja de Brok — calor de metal
     bench: 'skin-warhall',       // Salão de Guerra — dourado clássico
     deadlift: 'skin-boss',       // Boss Fight (convive com .boss-fight)
+    lower_pl: 'skin-boss',       // Agachamento + terra — o chefão da grade PL
+    volume_pl: 'skin-bronze',    // Sábado de volume (frequência 2)
     upper_hiper: 'skin-bronze',  // Bronze de Esparta — pátina oliva
     hyrox: 'skin-hyrox',         // identidade própria: piso de academia
     cardio_mid: 'skin-lake',     // Lago dos Nove — água parada
@@ -11476,7 +11786,7 @@ function renderMain() {
   });
   const activeSkin = SKIN_MAP[sessionKey] || 'skin-warhall';
   // No deload, o chefão não é boss — usa skin neutra de força
-  document.body.classList.add(isBossFight ? 'skin-boss' : (sessionKey === bossSession() ? 'skin-warhall' : activeSkin));
+  document.body.classList.add(isBossFight ? 'skin-boss' : (ehChefao(sessionKey) ? 'skin-warhall' : activeSkin));
   
   // Atualiza a theme-color do navegador pra combinar com o reino do dia
   updateThemeColor(isBossFight ? 'deadlift' : sessionKey);
@@ -11528,6 +11838,10 @@ function renderMain() {
     `<div class="day-progress"><span class="done">${String(doneEx).padStart(2,'0')}</span> / ${String(totalEx).padStart(2,'0')}</div>` : '';
   
   const avisoRec = avisoRecuperacaoLower(STATE.week, STATE.day);
+  try {
+    const rodape = document.querySelector('.footer-actions');
+    if (rodape) rodape.hidden = !diaComSeries;
+  } catch (e) {}
   const customBadge = isModifiedDay ? '<span class="custom-badge" title="Sessão movida">REORG</span>' : '';
   
   // Runa do reino — todos os dias têm a sua (deadlift usa a boss-rune estilizada)
@@ -11546,7 +11860,7 @@ function renderMain() {
       <span class="diff-crest-ico" aria-hidden="true">⚔</span>
       <span class="diff-crest-body">
         <span class="diff-crest-name">${wm.name}</span>
-        <span class="diff-crest-sub">${wm.tier} · ${weekRpe(wm)}</span>
+        <span class="diff-crest-sub">${wm.tier}${diaComSeries ? ' · ' + weekRpe(wm) : ''}</span>
       </span>
       <span class="diff-crest-pips" aria-hidden="true">${diffPips}</span>
       <span class="diff-crest-more" aria-hidden="true">▾</span>
@@ -11565,6 +11879,7 @@ function renderMain() {
         <span class="day-title-swap">⇄</span>
       </button>
       <div class="day-subtitle">${pillsHtml}</div>
+      ${contextoDoDiaHtml(STATE.week, STATE.day, day, isDeload)}
       ${diffCrestHtml}
       ${isBossFight ? `
         <div class="boss-particles">
@@ -11736,6 +12051,10 @@ function renderMain() {
         <div class="glyph">·</div>
         <div class="label">Recovery total</div>
         <div class="quote">Sono, hidratação, comida boa. O músculo cresce na recuperação, não no treino.</div>
+        ${(() => { try { const i = DAYS.indexOf(STATE.day); const prox = i < DAYS.length - 1 ? getSessionKeyForDay(DAYS[i + 1]) : null;
+          return (prox && SESSIONS[prox] && SESSIONS[prox].hyroxDay)
+            ? '<div class="rest-opcional">Véspera do Hyrox. Se quiser, Z2 leve de 30–45 min sem impacto (bike, caminhada) — opcional, não atrapalha amanhã.</div>' : '';
+        } catch (e) { return ''; } })()}
       </div>
       <div class="week-reset-section fade-in">
         <div class="week-reset-divider">Virada de semana</div>
@@ -11832,6 +12151,10 @@ function renderMain() {
     } else if (presc.rpe) {
       stats.push(`<div class="ex-stat rpe"><div class="ex-stat-label">RPE</div><div class="ex-stat-value">${presc.rpe}</div></div>`);
     }
+    const desc = descansoDe(ex);
+    if (desc) {
+      stats.push(`<button type="button" class="ex-stat ex-desc" data-descanso-ex="${ex.id}" data-descanso-seg="${desc.seg}" aria-label="Descanso de ${desc.txt} entre séries. Tocar para abrir o cronômetro."><span class="ex-stat-label">Descanso</span><span class="ex-stat-value">${desc.curto}</span></button>`);
+    }
     
     const num = String(idx + 1).padStart(2, '0');
     
@@ -11918,7 +12241,7 @@ function renderMain() {
             })()}
           </div>
           <div class="ex-load-hint" data-hint-for="${ex.id}">${loadHintHtml(ex.id, displayName, load)}</div>
-          <div class="ex-reps" data-reps-for="${ex.id}">${repsRowHtml(ex.id, presc, load)}</div>
+          <div class="ex-reps" data-reps-for="${ex.id}">${repsRowHtml(ex.id, presc, load, displayName)}</div>
           ${ehHyroxEx(ex) ? hxPainelHtml(ex, STATE.week, STATE.day) : ''}
           <div class="ex-actions-row">
             <button class="ex-notes-toggle" data-ex-id="${ex.id}">
@@ -12348,7 +12671,8 @@ function atualizarLinhaReps(exId) {
   if (!cont) return;
   const btn = document.querySelector('.set-tracker[data-ex-id="' + exId + '"]');
   const presc = { reps: btn ? btn.dataset.repsAlvo : '' };
-  cont.innerHTML = repsRowHtml(exId, presc, getLoad(STATE.week, STATE.day, exId));
+  const inp = document.querySelector('.ex-load-input[data-ex-id="' + exId + '"]');
+  cont.innerHTML = repsRowHtml(exId, presc, getLoad(STATE.week, STATE.day, exId), inp ? inp.dataset.exName : '');
 }
 
 function attachExerciseHandlers() {
@@ -12589,14 +12913,23 @@ document.getElementById('resetBtn').addEventListener('click', () => {
     
     const prefix = `${STATE.week}::${STATE.day}::`;
     const keep = otherModeExIds();   // não toca no registro do outro modo
+    // ...MAS o que é da sessão de hoje sai sempre. Antes, um exercício que
+    // existe nos dois modos (o terra 'dl1') caía no "keep" e o RESET o pulava.
+    const hoje = {};
+    ((getSessionForDay(STATE.day) || {}).exercises || []).forEach(ex => { hoje[ex.id] = true; });
+    const sai = k => { const id = k.split('::')[2]; return hoje[id] || !keep[id]; };
     boardClear(() => {               // queda deliberada: vitalício/XP sobrevivem
       Object.keys(STATE.checks).forEach(k => {
-        if (k.startsWith(prefix) && !keep[k.split('::')[2]]) delete STATE.checks[k];
+        if (k.startsWith(prefix) && sai(k)) delete STATE.checks[k];
       });
       Object.keys(STATE.setProgress).forEach(k => {
-        if (k.startsWith(prefix) && !keep[k.split('::')[2]]) delete STATE.setProgress[k];
+        if (k.startsWith(prefix) && sai(k)) delete STATE.setProgress[k];
       });
     });
+    // As reps do dia saem junto (antes ficavam: o anel mostrava 0/4 e a
+    // linha de reps ainda exibia S1/S2 — e a próxima série empilhava em cima).
+    Object.keys(REPS_LOG).forEach(k => { if (k.startsWith(prefix) && sai(k)) delete REPS_LOG[k]; });
+    saveRepsLog();
     saveChecks();
     saveSetProgress();
     renderMain();
@@ -12877,6 +13210,21 @@ document.querySelectorAll('#modeSwitch .mode-opt').forEach(btn => {
   presetsWrap.querySelectorAll('.pwrtimer-preset').forEach(p => {
     p.addEventListener('click', () => setTotal(parseInt(p.dataset.sec, 10)));
   });
+  // Atalho do cartão: o "Descanso" de cada exercício abre o cronômetro já
+  // no tempo certo (não dispara sozinho — o Pedro inicia quando largar a barra).
+  window.pwrAbrirDescanso = function (seg) {
+    try {
+      if (!running) setTotal(seg);
+      selectTab('timer');
+      openModalEl(modal);
+    } catch (e) {}
+  };
+  document.addEventListener('click', (e) => {
+    const b = e.target && e.target.closest ? e.target.closest('[data-descanso-seg]') : null;
+    if (!b) return;
+    e.preventDefault();
+    window.pwrAbrirDescanso(parseInt(b.dataset.descansoSeg, 10) || 90);
+  });
   // Reancorar ao voltar pra aba (a aba em background pode congelar o rAF)
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden && running) { if (raf) cancelAnimationFrame(raf); raf = requestAnimationFrame(tick); }
@@ -12958,7 +13306,7 @@ document.querySelectorAll('#modeSwitch .mode-opt').forEach(btn => {
     const loads = (typeof STATE !== 'undefined' && STATE.loads) ? STATE.loads : {};
     Object.keys(loads).forEach(k => {
       const p = k.split('::');
-      if (p.length >= 3 && p[2] === exId) {
+      if (p.length >= 3 && exCanon(p[2]) === exId) {
         const v = parseFloat(loads[k]);
         if (!isNaN(v) && v > 0) byWeek[p[0]] = Math.max(byWeek[p[0]] || 0, v);
       }
@@ -12979,7 +13327,7 @@ document.querySelectorAll('#modeSwitch .mode-opt').forEach(btn => {
     const idx = exerciseIndex();
     const ids = new Set();
     const loads = (typeof STATE !== 'undefined' && STATE.loads) ? STATE.loads : {};
-    Object.keys(loads).forEach(k => { const p = k.split('::'); if (p.length >= 3 && parseFloat(loads[k]) > 0) ids.add(p[2]); });
+    Object.keys(loads).forEach(k => { const p = k.split('::'); if (p.length >= 3 && parseFloat(loads[k]) > 0) ids.add(exCanon(p[2])); });
     try { Object.keys(LOAD_HISTORY || {}).forEach(id => { if ((LOAD_HISTORY[id] || []).length) ids.add(id); }); } catch (e) {}
     try { Object.keys((STATE && STATE.prHistory) || {}).forEach(id => { if (STATE.prHistory[id] > 0) ids.add(id); }); } catch (e) {}
     return Array.from(ids)
@@ -13947,7 +14295,7 @@ function buildFullBackup() {
         age: 37,
         weight: 108,
         height: 180,
-        program: isHyper ? "Hipertrofia + Hyrox — Cenário C (Hyrox seg/sex, superiores ter/sáb, terra qua)" : "Powerlifting Híbrido (força + hipertrofia)",
+        program: isHyper ? "Hipertrofia + Hyrox — Cenário C (Hyrox seg/sex, superiores ter/sáb, terra + joelho qua)" : "Powerlifting + Hyrox (Hyrox seg/sex, supino ter/sáb, agachamento + terra qua)",
         trt: "2×/sem (seg/qui) — dose e éster conforme prescrição vigente",
         cardiovascularRisk: "elevated (ApoB, histórico desde infância)"
       }
@@ -14427,7 +14775,7 @@ function todayKeyForBanner() { return STATE.day; }
 // Suporta troca por seletor inline e drag-and-drop entre dias.
 
 const SESSION_DOT_COLORS = {
-  squat: '#e8801e', bench: '#c89b3c', deadlift: '#d4502a', upper_hiper: '#b4a04a',
+  squat: '#e8801e', bench: '#c89b3c', deadlift: '#d4502a', upper_hiper: '#b4a04a', lower_pl: '#d4502a', volume_pl: '#b4a04a',
   cardio_mid: '#5ab8b8', cardio_long: '#8499b0', rest: '#7da8c8', skip: '#6b5c47',
   // Linha olímpica (hipertrofia)
   hyrox: '#f0932f',
@@ -14438,6 +14786,10 @@ const SESSION_DOT_COLORS = {
 // Labels do painel — desambiguam os dois cardios e traduzem rest/skip
 const SESSION_PANEL_LABELS = {
   hyrox: 'Hyrox · Treino da academia',
+  // Powerlifting — mesma grafia dos outros rótulos (antes saía "BENCH DAY")
+  squat: 'Squat Day · Agachamento', bench: 'Bench Day · Supino', deadlift: 'Deadlift Day · Terra',
+  upper_hiper: 'Upper Hiper · Supino freq. 2',
+  volume_pl: 'Volume Day · Agach. + Supino',
   cardio_mid: 'Cardio Z2 · 40-50min',
   cardio_long: 'Cardio Z2 · Longo',
   rest: 'Descanso',
@@ -14450,7 +14802,8 @@ const SESSION_PANEL_LABELS = {
   hyper_lowerB: 'Lower B · Posterior',
   hyper_supA: 'Superiores A · Supino',
   hyper_supB: 'Superiores B · Inclinado',
-  hyper_terra: 'Terra + Costas'
+  hyper_terra: 'Terra + Costas + Joelho',
+  lower_pl: 'Agachamento + Terra'
 };
 function sessionPanelLabel(key) {
   if (SESSION_PANEL_LABELS[key]) return SESSION_PANEL_LABELS[key];
@@ -14512,7 +14865,7 @@ function countPendingChanges() {
 }
 
 // Quantas vezes cada sessão-âncora deve aparecer na semana.
-// Hyrox são dois dias de propósito (segunda e quarta); os levantamentos
+// Hyrox são dois dias de propósito (segunda e sexta); os levantamentos
 // pesados, um cada. Sem isso o painel avisa sobre o próprio plano.
 // O que o painel deve estranhar e o que ele deve aceitar calado.
 // A conta esperada de cada sessão-âncora sai do PRÓPRIO calendário padrão
@@ -14536,15 +14889,32 @@ function computeWeekWarnings(draft) {
   const w = [];
   const values = DAYS.map(function (d) { return draft[d]; });
 
+  // Qual sessão leva cada levantamento — o painel olha o CONTEÚDO, não só a
+  // chave: separar o dia de perna em SQUAT DAY + DEADLIFT DAY não é "faltar".
+  const temEx = function (id) {
+    return values.some(function (v) { const s = SESSIONS[v]; return !!(s && s.exercises && s.exercises.some(function (e) { return exCanon(e.id) === id; })); });
+  };
   modeCoreSessions().forEach(function (core) {
     const count = values.filter(function (v) { return v === core; }).length;
     const label = sessionPanelLabel(core);
     const esperado = coreEsperado(core);
-    if (count === 0) w.push('Sem <b>' + label + '</b> nesta semana');
+    if (count === 0) {
+      // dia de perna dividido (SQUAT DAY + DEADLIFT DAY) não é falta; e se
+      // faltar um dos dois lifts, o aviso específico abaixo diz qual
+      if (core === 'lower_pl') return;
+      w.push('Sem <b>' + label + '</b> nesta semana');
+    }
     else if (count > esperado) {
       w.push(count + '× <b>' + label + '</b> na semana — o padrão tem ' + esperado + '×');
     }
   });
+  // Powerlifting sem um dos três levantamentos de prova é a falha que esta
+  // auditoria encontrou (o agachamento sumiu da grade sem ninguém avisar).
+  if (STATE.mode !== 'hyper') {
+    [['sq1', 'agachamento'], ['dl1', 'terra'], ['be1', 'supino pesado']].forEach(function (par) {
+      if (!temEx(par[0])) w.push('Semana sem <b>' + par[1] + '</b> — powerlifting precisa dos três levantamentos');
+    });
+  }
 
   // Inconsistência de verdade: dois dias exigentes em sequência (24h).
   for (let i = 0; i < DAYS.length - 1; i++) {
@@ -16099,6 +16469,13 @@ function resetWeek(week) {
     wipe(STATE.setProgress);
     Object.keys(STATE.cardioDone).forEach(k => { if (k.startsWith(prefix)) delete STATE.cardioDone[k]; });
   });
+  // Registro DO DIA que sobrava depois de zerar (auditoria 11/2026): reps
+  // marcadas, estações do Hyrox e o "como foi" voltavam no ciclo seguinte —
+  // chips S1/S2 com o anel em 0, e um "Hyrox pesado ontem" de semanas atrás.
+  // O histórico longitudinal (reps, cargas, Hyrox) NÃO é tocado.
+  try { wipe(REPS_LOG); saveRepsLog(); } catch (e) {}
+  try { wipe(HX_LOG); hxSaveLog(); } catch (e) {}
+  try { Object.keys(HX_SESSAO).forEach(k => { if (k.startsWith(prefix)) delete HX_SESSAO[k]; }); hxSessaoSave(); } catch (e) {}
   saveChecks(); saveSetProgress(); saveCardioDone();
 }
 
@@ -16710,6 +17087,7 @@ try {
   // Lembrete de backup por último: nunca pode derrubar o boot do app
   try { seedBackupReminder(); updateBackupBanner(); } catch (e) { console.warn('Lembrete de backup falhou', e); }
   try { atualizarAvisoCalendario(); } catch (e) { console.warn('Aviso do calendário falhou', e); }
+  try { atualizarAvisoGradePL(); } catch (e) { console.warn('Aviso da grade PL falhou', e); }
 } catch (bootErr) {
   console.error('Falha no boot', bootErr);
   const mainEl = document.getElementById('main');
