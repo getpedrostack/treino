@@ -24,7 +24,7 @@
      (ver registro no index.html), não só ao abrir do zero.
    ============================================================ */
 
-const CACHE_VERSION = 'pwr-v23';
+const CACHE_VERSION = 'pwr-v25';
 const CORE_ASSETS = [
   './',
   './index.html',
