@@ -7946,6 +7946,332 @@
     .wk-tag { display: none; }
   }
 
+  /* ============================================================ */
+  /* === REVISÃO DE DESIGN (v25.1) — hierarquia e experiência móvel */
+  /* ============================================================ */
+  /* Princípio: o que é navegação fica fixo e pequeno; o que é contexto
+     rola e recolhe; o que é execução (exercícios) chega à primeira tela
+     e meia. A identidade fica na proporção, no alinhamento e na
+     tipografia — não na quantidade de efeitos. Este bloco vem por
+     último de propósito: na cascata ele vence as regras antigas de
+     mesma especificidade sem precisar reescrevê-las uma a uma.       */
+  :root {
+    --fs-micro: 10.5px;   /* rótulos curtos (mono) */
+    --fs-small: 12px;     /* legendas e prévias */
+    --fs-body: 13px;      /* texto operacional */
+    --fs-ui: 12.5px;      /* botões e controles de texto */
+    --fs-h2: 15px;        /* títulos de seção */
+    --fs-title: 27px;     /* título do dia (celular) */
+    --sp-1: 6px; --sp-2: 10px; --sp-3: 14px; --sp-4: 20px;
+    --gutter: 16px;
+  }
+
+  /* ---- Cabeçalho fixo: marca + semana numa linha, dias na outra ---- */
+  header {
+    box-shadow: 0 2px 18px rgba(0,0,0,0.5);
+    border-image: linear-gradient(90deg, transparent 0%, var(--gold-deep) 30%, var(--gold-deep) 70%, transparent 100%) 1;
+  }
+  .header-row {
+    padding: 6px var(--gutter) 5px;
+    gap: 10px;
+    flex-wrap: nowrap;
+    row-gap: 0;
+  }
+  .header-row .logo { flex: 0 1 auto; min-width: 0; white-space: nowrap; }
+  .logo {
+    font-size: 15px;
+    letter-spacing: 0.14em;
+    text-shadow: 0 1px 0 rgba(0,0,0,0.8);
+  }
+  .logo .dim { font-size: 0.8em; }
+  .week-selector { padding: 2px; gap: 2px; box-shadow: none; flex-shrink: 0; }
+  .week-btn { min-width: 44px; min-height: 40px; padding: 0 8px; font-size: 10.5px; letter-spacing: 0.08em; }
+  .week-btn.active {
+    background: linear-gradient(180deg, var(--gold-bright) 0%, var(--gold) 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+    text-shadow: none;
+  }
+  @media (max-width: 520px) {
+    .header-row { padding: 6px 12px 5px; }
+    .header-row .logo { flex: 0 1 auto; }
+  }
+  @media (max-width: 360px) {
+    .week-btn { min-width: 42px; padding: 0 6px; }
+    .logo { font-size: 14px; letter-spacing: 0.1em; }
+  }
+  .day-tabs { background: rgba(0,0,0,0.22); }
+  .day-tab {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+    min-height: 44px; padding: 6px 0 6px;
+    font-size: 11.5px; letter-spacing: 0.05em;
+  }
+  .day-tab .tab-lbl { line-height: 1; display: inline-flex; align-items: center; }
+  .day-tab .trt-dot { transform: translateY(-4px); margin-left: 3px; }
+  .day-tab .tab-heat {
+    display: block; width: 22px; height: 3px; border-radius: 2px;
+    background: var(--border-bright);
+  }
+  .day-tab.h-complete .tab-heat { background: var(--gold-bright); }
+  .day-tab.h-partial .tab-heat { background: linear-gradient(90deg, var(--gold-bright) 0 50%, var(--border-bright) 50% 100%); }
+  .day-tab.h-rest .tab-heat { height: 0; background: none; border-top: 1px dashed var(--text-3); border-radius: 0; }
+  .day-tab.h-hyrox .tab-heat { background: var(--hx-cobre, #e8873a); }
+  .day-tab.h-cardio .tab-heat { background: var(--frost); }
+  .day-tab.h-skip-justified .tab-heat { background: var(--text-3); }
+  .day-tab.h-skip-unjustified .tab-heat { background: var(--blood); }
+  .day-tab.today .tab-lbl { color: var(--text-2); text-decoration: underline dotted; text-decoration-color: var(--text-3); text-underline-offset: 4px; }
+  .day-tab.active, .day-tab.active.today .tab-lbl { color: var(--gold-bright); }
+  .day-tab.active {
+    text-shadow: none;
+    background: linear-gradient(180deg, rgba(200,155,60,0.16) 0%, rgba(200,155,60,0.03) 100%);
+    box-shadow: inset 0 2px 0 var(--gold);
+  }
+  .day-tab.active::after { display: none; animation: none; }
+  .heatmap { display: none; }   /* o status mora na aba de cada dia */
+  /* Dica do deslize: fora do fluxo (não empurra a página), some sozinha */
+  .dica-deslize {
+    position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom)); transform: translateX(-50%);
+    z-index: 90; padding: 9px 14px; border: 1px solid var(--border-bright); border-radius: 20px;
+    background: rgba(14,11,8,0.96); box-shadow: var(--el-2);
+    font-family: 'Inter', sans-serif; font-size: var(--fs-small); letter-spacing: 0; text-transform: none;
+    color: var(--text-2); animation: none; transition: opacity 0.3s ease;
+  }
+  .dica-deslize.sai { animation: none; opacity: 0; }
+  .dica-deslize { white-space: nowrap; pointer-events: none; }   /* lembrete, não controle: o toque atravessa */
+  .logo::after { display: none; }
+  body.boss-fight .logo { text-shadow: 0 1px 0 rgba(0,0,0,0.8); color: var(--gold-pale); }
+
+  /* ---- Faixa de utilidades (rola) + HUD recolhível ---- */
+  .util-strip {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    padding: 6px var(--gutter);
+    border-bottom: 1px solid var(--border);
+    background: rgba(0,0,0,0.18);
+  }
+  .hud-chip {
+    display: inline-flex; align-items: center; gap: 7px; min-height: 40px; min-width: 0; flex: 1 1 auto;
+    padding: 0 10px 0 8px; cursor: pointer; overflow: hidden;
+    background: var(--bg-elev); border: 1px solid var(--border-bright); border-radius: var(--r-ctl);
+    color: var(--text-2); font-family: 'Inter', sans-serif; font-size: var(--fs-small);
+    text-align: left; -webkit-tap-highlight-color: transparent;
+  }
+  .hud-chip.aberto { border-color: var(--gold-deep); }
+  .hud-chip-rune { font-family: 'Cinzel', Georgia, serif; font-weight: 700; font-size: 14px; color: var(--gold); line-height: 1; }
+  .hud-chip-rank { font-family: 'Cinzel', Georgia, serif; font-weight: 700; font-size: 11.5px; letter-spacing: 0.04em; color: var(--gold-pale); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px; }
+  .hud-chip-lv, .hud-chip-xp, .hud-chip-streak { font-family: 'JetBrains Mono', monospace; font-size: 11px; white-space: nowrap; color: var(--text-2); }
+  .hud-chip-lv b { color: var(--gold-pale); }
+  .hud-chip-xp { color: var(--text-3); }
+  .hud-chip-more { margin-left: auto; color: var(--text-3); font-size: 11px; transition: transform 0.2s ease; }
+  .hud-chip.aberto .hud-chip-more { transform: rotate(180deg); }
+  @media (max-width: 374px) { .hud-chip-xp { display: none; } .hud-chip-rank { max-width: 84px; } }
+  .util-tools { display: flex; gap: 6px; flex-shrink: 0; }
+  .util-tools .info-btn { margin: 0; min-height: 40px; min-width: 44px; padding: 0 9px; font-size: 10px; letter-spacing: 0.08em; box-shadow: none; }
+  .pwr-hud { flex-wrap: wrap; row-gap: 10px; padding: 12px var(--gutter) 10px; border-image: none; border-bottom: 1px solid var(--border); box-shadow: none; }
+  .pwr-hud[hidden] { display: none; }
+  .pwr-hud::before { display: none; }
+  .pwr-hud .hud-xp { flex: 1 1 150px; }
+  .pwr-hud .hud-stats { flex: 0 0 auto; }
+  .hud-cry { flex: 1 1 200px; background: none; border: 0; padding: 2px 0 0; text-align: left; font-size: 13px; }
+  .hud-fechar {
+    margin-left: auto; min-height: 36px; padding: 0 12px; cursor: pointer;
+    background: none; border: 1px solid var(--border); border-radius: var(--r-ctl);
+    color: var(--text-3); font-family: 'Inter', sans-serif; font-size: 11.5px; font-weight: 600; letter-spacing: 0.02em;
+    -webkit-tap-highlight-color: transparent;
+  }
+  @media (max-width: 420px) {
+    .pwr-hud .hud-xp-head .lbl, .pwr-hud .hud-stat-lbl { display: inline; }
+  }
+
+  /* ---- Bloco do treino: cabeçalho compacto ---- */
+  .day-header { padding: 14px var(--gutter) 10px; background: none; }
+  .day-header::after { display: none; }
+  .day-meta { margin-bottom: 4px; gap: 8px; align-items: center; }
+  .day-eyebrow {
+    display: flex; align-items: center; gap: 6px; flex-wrap: wrap; min-width: 0;
+    font-size: var(--fs-micro); letter-spacing: 0.10em; text-shadow: none; color: var(--gold);
+  }
+  .day-progress { font-size: 11px; letter-spacing: 0.02em; white-space: nowrap; flex-shrink: 0; }
+  .day-progress .done { text-shadow: none; }
+  .day-progress .dp-lbl { color: var(--text-3); font-weight: 500; }
+  .day-title-row { display: flex; align-items: center; gap: 10px; }
+  .day-title-btn { flex: 1 1 auto; min-width: 0; gap: 8px; width: auto; }
+  #main .day-title {
+    font-size: var(--fs-title); line-height: 1.08; margin: 0; letter-spacing: 0.02em;
+    background: none; -webkit-text-fill-color: currentColor; color: var(--title-ink, var(--gold-pale));
+    filter: none; text-shadow: 0 1px 0 rgba(0,0,0,0.7); animation: none;
+    overflow-wrap: anywhere;
+  }
+  body.skin-warhall { --title-ink: #f3d58f; }
+  body.skin-forge { --title-ink: #f7a94e; }
+  body.skin-boss, body.boss-fight { --title-ink: #f0ae5e; }
+  body.skin-bronze { --title-ink: #e2d08f; }
+  body.skin-winter { --title-ink: #cfe0ee; }
+  body.skin-lake { --title-ink: #a6dcdc; }
+  body.skin-tundra { --title-ink: #c6d3df; }
+  body.skin-hyrox { --title-ink: var(--hx-cobre-alto, #ffc389); }
+  body.skin-skip { --title-ink: var(--text-2); }
+  .day-title-swap { font-size: 15px; opacity: 0.55; }
+  #main .realm-rune, #main .boss-rune {
+    position: static; transform: none; width: 40px; height: 40px; flex-shrink: 0;
+    display: grid; place-items: center; padding: 0; cursor: pointer;
+    font-family: Georgia, 'Times New Roman', serif; font-size: 24px; font-weight: 700; line-height: 1;
+    color: var(--gold); -webkit-text-fill-color: currentColor; background: var(--bg-elev); background-image: none;
+    border: 1px solid var(--border-bright); border-radius: var(--r-ctl);
+    filter: none; animation: none; opacity: 1; z-index: auto; text-shadow: none;
+  }
+  #main .boss-rune { color: #f0a594; border-color: rgba(224,133,115,0.5); }
+  .day-subtitle { margin-top: 9px; gap: 6px; }
+  .day-subtitle .pill { font-size: 10px; letter-spacing: 0.08em; padding: 0 8px; min-height: 26px; display: inline-flex; align-items: center; box-shadow: none; border-radius: 3px; }
+  .custom-badge {
+    background: none; color: var(--gold-pale); border: 1px solid var(--gold-deep); border-radius: 3px;
+    box-shadow: none; text-shadow: none; padding: 2px 6px; margin: 0; font-size: 9.5px; letter-spacing: 0.08em;
+  }
+  .custom-badge.boss-badge { color: #f0a594; border-color: rgba(224,133,115,0.55); }
+  .diff-crest {
+    margin: 0; padding: 0 9px 0 10px; min-height: 36px; gap: 7px;
+    background: var(--bg-elev); border-radius: var(--r-ctl); box-shadow: none;
+  }
+  .diff-crest-body { flex-direction: row; align-items: baseline; gap: 6px; }
+  .diff-crest-name { font-size: 11px; letter-spacing: 0.04em; text-shadow: none; }
+  .diff-crest-sub { font-size: 9.5px; letter-spacing: 0.06em; text-transform: none; }
+  .diff-crest-more { font-size: 10px; }
+
+  /* ---- Objetivo + painéis recolhíveis (estratégia, músculos, contexto) ---- */
+  .day-contexto { margin: 10px 0 0; }
+  .day-contexto .ctx-obj { font-size: var(--fs-body); line-height: 1.45; color: var(--text-2); margin: 0 0 8px; }
+  .dia-paineis { display: flex; flex-direction: column; gap: 4px; }
+  .dia-painel { border: 1px solid var(--border); border-radius: var(--r-card); background: var(--surface-1); }
+  .dia-painel summary {
+    list-style: none; display: flex; align-items: center; gap: 8px;
+    min-height: 40px; padding: 5px 10px; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  .dia-painel summary::-webkit-details-marker { display: none; }
+  .dp-tit { font-family: 'Inter', sans-serif; font-weight: 600; font-size: var(--fs-small); color: var(--text); white-space: nowrap; }
+  .dp-previa { flex: 1 1 auto; min-width: 0; font-size: var(--fs-small); color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dp-seta { margin-left: auto; color: var(--text-3); font-size: 11px; line-height: 1; transition: transform 0.2s ease; flex-shrink: 0; }
+  details[open] > summary .dp-seta { transform: rotate(180deg); }
+  .dia-painel[open] .dp-previa { display: none; }
+  .dp-corpo { padding: 0 10px 10px; font-size: var(--fs-small); line-height: 1.5; color: var(--text-2); }
+  .dp-corpo p { margin: 0 0 6px; }
+  .dp-corpo b { color: var(--text); font-weight: 600; }
+  .dp-lista { list-style: none; margin: 0 0 6px; padding: 0; }
+  .dp-lista li { display: flex; justify-content: space-between; gap: 8px; padding: 4px 0; border-bottom: 1px dotted var(--border); }
+  .dp-num { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text); white-space: nowrap; }
+  .dp-num small { color: var(--text-3); font-size: 11px; }
+  .dp-nota { font-size: 11.5px; color: var(--text-3); }
+  .dp-aviso { color: var(--hx-cobre-alto, #ffc389); }
+
+  /* ---- Prontidão: segmentada, texto em caixa normal ---- */
+  .pront {
+    margin: 10px var(--gutter) 10px; padding: 10px 12px 11px; gap: 8px;
+    border: 1px solid var(--border); border-radius: var(--r-card); background: var(--surface-1);
+  }
+  .pront > .pront-rot { font-family: 'Inter', sans-serif; font-size: var(--fs-small); font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--text); }
+  .pront-ops { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .pront-op, .pront-reg {
+    min-width: 0; padding: 6px 6px; line-height: 1.2;
+    font-family: 'Inter', sans-serif; font-size: var(--fs-ui); font-weight: 500; letter-spacing: 0;
+  }
+  .pront-op { text-align: center; }
+  .pront-linha .pront-rot, .pront-regs .pront-rot { font-family: 'Inter', sans-serif; font-size: 11.5px; letter-spacing: 0; text-transform: none; color: var(--text-3); }
+  @media (max-width: 374px) { .pront-op { font-size: 11.5px; padding: 6px 3px; } }
+
+  /* ---- Alertas em três níveis (apresentação; critérios do motor intactos) ---- */
+  .fad-card {
+    margin: 10px var(--gutter) 10px; padding: 10px 12px;
+    border: 1px solid var(--border); border-left-width: 3px; border-radius: var(--r-card);
+    background: var(--surface-1); font-size: var(--fs-small); line-height: 1.5;
+  }
+  .fad-card.n2 { background: linear-gradient(90deg, rgba(232,135,58,0.08), var(--surface-1) 70%); }
+  .fad-card.n3 { background: linear-gradient(90deg, rgba(224,133,115,0.10), var(--surface-1) 70%); }
+  .fad-card.aplicado { background: linear-gradient(90deg, rgba(126,224,160,0.07), var(--surface-1) 70%); }
+  .fad-cab { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .fad-tit { font-family: 'Inter', sans-serif; font-size: var(--fs-ui); font-weight: 700; letter-spacing: 0; text-transform: none; margin: 0; }
+  .fad-res { font-size: var(--fs-small); color: var(--text-2); }
+  .fad-txt { margin-top: 6px; }
+  .fad-sub { color: var(--text); font-weight: 600; }
+  .fad-mais { margin-top: 6px; }
+  .fad-mais > summary, .dl-regra > summary {
+    list-style: none; display: inline-flex; align-items: center; gap: 6px; min-height: 32px; cursor: pointer;
+    font-family: 'Inter', sans-serif; font-size: 11.5px; font-weight: 600; color: var(--gold-pale);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .fad-mais > summary::-webkit-details-marker, .dl-regra > summary::-webkit-details-marker, .exc-banner > summary::-webkit-details-marker { display: none; }
+  .fad-mais > summary::after, .dl-regra > summary::after { content: '▾'; color: var(--text-3); font-size: 10px; transition: transform 0.2s ease; }
+  .fad-mais[open] > summary::after, .dl-regra[open] > summary::after { transform: rotate(180deg); }
+  .fad-explica { margin: 4px 0 2px; font-size: var(--fs-small); }
+  .fad-lista { margin: 5px 0 2px; font-size: 11.5px; }
+  .fad-nota, .fad-est { font-size: 11.5px; }
+  .fad-acoes { margin-top: 9px; }
+  .fad-btn { min-height: 42px; padding: 8px 12px; font-size: 10.5px; }
+  /* nível ATENÇÃO: o cartão inteiro é uma linha que abre */
+  details.fad-card.fad-dobra { padding: 0; }
+  details.fad-card.fad-dobra > summary {
+    list-style: none; display: flex; align-items: center; gap: 8px;
+    min-height: 44px; padding: 8px 12px; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  details.fad-card.fad-dobra > summary::-webkit-details-marker { display: none; }
+  details.fad-card.fad-dobra > summary .fad-cab { flex: 1 1 auto; }
+  details.fad-card.fad-dobra > summary .fad-res { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  details.fad-card.fad-dobra[open] > summary .fad-res { white-space: normal; }
+  .fad-corpo { padding: 0 12px 10px; }
+  .fad-min { padding: 8px 12px; }
+
+  /* ---- Semana excepcional: linha de estado com opções sob demanda ---- */
+  details.exc-banner { margin: 10px var(--gutter) 0; padding: 0; border-left-width: 3px; }
+  details.exc-banner > summary {
+    list-style: none; display: flex; flex-direction: column; gap: 2px; position: relative;
+    min-height: 44px; padding: 8px 30px 8px 12px; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  details.exc-banner > summary .dp-seta { position: absolute; right: 12px; top: 50%; margin: -6px 0 0; }
+  details.exc-banner .exc-tit { font-family: 'Inter', sans-serif; font-size: var(--fs-ui); font-weight: 700; letter-spacing: 0; text-transform: none; margin: 0; }
+  details.exc-banner .exc-txt { font-size: var(--fs-small); }
+  .exc-corpo { padding: 0 12px 10px; }
+  .exc-nota { margin: 0 0 8px; font-size: var(--fs-small); line-height: 1.5; color: var(--text-2); }
+  .exc-acoes { margin-top: 0; }
+
+  /* ---- Deload: resumo visível, regra e critérios sob demanda ---- */
+  .deload-banner { margin: 10px var(--gutter) 10px; padding: 10px 12px; }
+  .deload-banner-title { font-family: 'Inter', sans-serif; font-size: var(--fs-ui); font-weight: 700; letter-spacing: 0; text-transform: none; margin-bottom: 2px; }
+  .deload-banner-text { font-size: var(--fs-small); line-height: 1.5; font-family: 'Inter', sans-serif; font-style: normal; }
+  .deload-banner-text p { font-family: 'Inter', sans-serif; font-style: normal; }
+  .dl-regra { margin-top: 4px; }
+  .dl-regra p { margin: 6px 0 4px; }
+
+  /* ---- Exercícios: só a escala; a estrutura do cartão fica ---- */
+  .exercises { padding: 2px 0 4px; }
+  .ex-body { padding-top: 14px; padding-bottom: 14px; }
+  .ex-side { padding-top: 14px; }
+  .ex-name { font-size: 16px; margin-bottom: 8px; letter-spacing: 0.02em; }
+  .ex-expo, .ex-ajuste-tag { font-size: 10.5px; padding: 2px 7px; margin-bottom: 6px; }
+
+  /* ---- Descanso e outras telas: o mesmo título ---- */
+  .rest-day .glyph { display: none; }
+  .rest-day { padding: 34px 24px 44px; }
+  .rest-day::before { top: 0; }
+  .rest-day .label { margin-top: 0; }
+  #main .day-header { border-bottom: 1px solid var(--border); overflow: visible; }
+
+  /* ---- Menos ornamento: efeitos a meia intensidade, sem brilho animado ---- */
+  body::before { opacity: 0.3; box-shadow: none; }
+  .skin-atmosphere { opacity: 0.5; }
+  body.boss-fight .set-tracker[data-fire="1"] .boss-fire { opacity: 0.4; }
+  body.boss-fight .set-tracker[data-fire="2"] .boss-fire { opacity: 0.5; }
+  body.boss-fight .set-tracker[data-fire="3"] .boss-fire { opacity: 0.6; }
+  body.boss-fight .set-tracker.complete .boss-fire { opacity: 0.6; }
+  .battle-vignette { opacity: 0.6; }
+  .week-btn.active, .day-eyebrow, .custom-badge, .pill.trt { filter: none; }
+
+  /* ---- Desktop: coluna central; nada estica ---- */
+  @media (min-width: 720px) {
+    .header-row, .util-strip, .pwr-hud { max-width: 720px; margin-left: auto; margin-right: auto; }
+    .header-row { padding: 8px 24px 6px; }
+    .day-header { padding: 18px 24px 12px; }
+    :root { --fs-title: 32px; }
+    #main .day-title { font-size: var(--fs-title); }
+    .ex-name { font-size: 18px; }
+    .pront, .fad-card, .deload-banner, details.exc-banner { margin-left: 24px; margin-right: 24px; }
+  }
+
 </style>
 </head>
 <body>
@@ -8003,27 +8329,35 @@
 <!-- Vinheta de batalha — escurecimento cinematográfico + luz de fúria no topo -->
 <div class="battle-vignette" id="battleVignette" aria-hidden="true"></div>
 
+<!-- REVISÃO DE DESIGN (v25.1): só o que é navegação fica fixo no topo —
+     marca + semana numa linha, dias na outra (~90 px). Ferramentas e
+     gamificação rolam com a página, na faixa logo abaixo. -->
 <header>
   <div class="header-row">
     <div class="logo">PWR<span class="slash">/</span><span class="dim">PEDRO</span></div>
-    <div class="right-cluster">
-      <div class="week-selector" id="weekSelector">
-        <button class="week-btn" data-week="1">W1</button>
-        <button class="week-btn" data-week="2">W2</button>
-        <button class="week-btn" data-week="3">W3</button>
-        <button class="week-btn deload" data-week="deload">DLD</button>
-      </div>
-      <button class="info-btn" id="rpeInfoBtn" title="Escala RPE">RPE?</button>
-      <button class="info-btn" id="toolsInfoBtn" title="Ferramentas: descanso, 1RM, evolução, barra e aquecimento" aria-label="Ferramentas">KIT</button>
-      <button class="info-btn" id="gymInfoBtn" title="Horários das academias">GYM</button>
+    <div class="week-selector" id="weekSelector" aria-label="Semana do ciclo">
+      <button class="week-btn" data-week="1">W1</button>
+      <button class="week-btn" data-week="2">W2</button>
+      <button class="week-btn" data-week="3">W3</button>
+      <button class="week-btn deload" data-week="deload">DLD</button>
     </div>
   </div>
-  <!-- HUD do guerreiro: patente, nível, PODER (XP), sequência de fogo, tonelagem -->
-  <div class="pwr-hud" id="pwrHud" aria-label="Status do guerreiro"></div>
-  <div class="hud-cry" id="hudCry"></div>
   <nav class="day-tabs" id="dayTabs" aria-label="Dias da semana"></nav>
   <div class="heatmap" id="heatmap" aria-label="Progresso da semana"></div>
 </header>
+<!-- Faixa de utilidades (rola com a página): resumo da gamificação à
+     esquerda (abre o HUD completo) e as ferramentas à direita. -->
+<div class="util-strip" id="utilStrip">
+  <button class="hud-chip" id="hudChip" type="button" aria-expanded="false" aria-controls="pwrHud" aria-label="Patente, nível e poder. Tocar para ver o painel completo."></button>
+  <div class="util-tools">
+    <button class="info-btn" id="rpeInfoBtn" title="Escala RPE" aria-label="Escala RPE">RPE</button>
+    <button class="info-btn" id="toolsInfoBtn" title="Ferramentas: descanso, 1RM, evolução, barra e aquecimento" aria-label="Ferramentas">KIT</button>
+    <button class="info-btn" id="gymInfoBtn" title="Horários das academias">GYM</button>
+  </div>
+</div>
+<!-- HUD do guerreiro: patente, nível, PODER (XP), sequência de fogo, tonelagem,
+     conquistas e frase — recolhido por padrão, abre pelo resumo acima -->
+<div class="pwr-hud" id="pwrHud" aria-label="Status do guerreiro" hidden></div>
 
 <!-- Lembrete de backup: fica FORA do #main de propósito — o renderMain()
      reescreve o main inteiro a cada troca de dia/semana, e aqui o aviso
@@ -8702,9 +9036,17 @@
 // ============================================================
 // Número da versão publicada. Aparece em Ajustes (GYM) e no fim do dia de
 // descanso. Mudou o app? Mude aqui e o CACHE_VERSION do sw.js.
-const PWR_BUILD = '2026-11-07.2';
+const PWR_BUILD = '2026-11-07.3';
 // Histórico de alterações (o mais novo primeiro). Aparece em Versão.
 const PWR_CHANGELOG = [
+  { v: '2026-11-07.3 · v25.1 (design)', itens: [
+    'Cabeçalho fixo só com navegação: marca, semana (W1–DLD) e dias; o status de cada dia virou o sublinhado da aba',
+    'Gamificação resumida numa faixa que rola com a página; o painel completo (barra de poder, erguido, conquistas, frase) abre ao tocar no resumo',
+    'Bloco do treino compacto: título menor, selos pequenos (BOSS, REORG, EXCEÇÃO), contagem “0/5 exercícios” e a semana do ciclo como chip',
+    'Estratégia da sessão, músculos e volume e contexto da semana em painéis recolhíveis com prévia de uma linha',
+    'Prontidão em botões de texto normal, logo antes dos exercícios; alertas em três níveis (relevante visível, monitorar expansível, notas dentro dos painéis)',
+    'Menos ornamento: sem gradiente e brilho no título, sem marca-d’água de runa, sem faixa e partículas de BOSS, efeitos ambientais a meia intensidade (o botão Animações Visuais continua)'
+  ] },
   { v: '2026-11-07.2 · v25', itens: [
     'Volume por músculo com matriz graduada (direta, indireta relevante, secundária) e editável, fator de proximidade da falha, explicação por músculo e tendência no bloco',
     'Hipertrofia: pernas com leg press, flexora, extensora e extensão de quadril; panturrilha em pé; prioridade de pernas e de panturrilha escolhível',
@@ -8762,6 +9104,9 @@ function ligarAtalho(seletor, acao) {
 ligarAtalho('#dayTitleBtn', function () { openSessionSwapModal(); });
 ligarAtalho('#hudRankBtn',  function () { openRankModal(); });
 ligarAtalho('#hudAchBtn',   function () { openAchievements(); });
+// Resumo ↔ painel do HUD: um toque abre, outro fecha (ou o botão RECOLHER).
+ligarAtalho('#hudChip',     function () { hudAberto(!UI_HUD_ABERTO); if (UI_HUD_ABERTO) { try { stormChargeHud(); } catch (e) {} } });
+ligarAtalho('#hudFechar',   function () { hudAberto(false); });
 ligarAtalho('#diffCrest',   function () { openDifficultyModal(); });
 
 const SESSIONS = {};
@@ -11860,10 +12205,13 @@ function bannerExcecaoHtml(week) {
     const dias = DAYS.filter(function (d) { return d in e.dias; }).map(function (d) {
       return '<b>' + DAY_LABELS[d] + '</b> ' + nomeCurtoSessao(e.dias[d]);
     }).join(' · ');
-    return '<div class="exc-banner fade-in"><div class="exc-tit">Semana excepcional · ' + fmtDiaMes(e.inicio) + '–' + fmtDiaMes(e.fim) + '</div>'
-      + '<div class="exc-txt">' + dias + '. A grade habitual está guardada e volta sozinha na semana que vem — não se repete no próximo ciclo.</div>'
+    // REVISÃO DE DESIGN (v25.1): uma linha com o essencial; a explicação e as
+    // ações ficam em "Opções" — a grade excepcional é estado, não alerta.
+    return '<details class="exc-banner fade-in"><summary><span class="exc-tit">Semana excepcional · ' + fmtDiaMes(e.inicio) + '–' + fmtDiaMes(e.fim) + '</span>'
+      + '<span class="exc-txt">' + dias + '</span><span class="dp-seta" aria-hidden="true">▾</span></summary>'
+      + '<div class="exc-corpo"><p class="exc-nota">A grade habitual está guardada e volta sozinha na semana que vem — não se repete no próximo ciclo.</p>'
       + '<div class="exc-acoes"><button type="button" class="fad-btn ghost" data-exc-acao="restaurar">VOLTAR AO HABITUAL</button>'
-      + '<button type="button" class="fad-btn ghost" data-exc-acao="editar">REORGANIZAR</button></div></div>';
+      + '<button type="button" class="fad-btn ghost" data-exc-acao="editar">REORGANIZAR</button></div></div></details>';
   } catch (err) { return ''; }
 }
 
@@ -12023,14 +12371,26 @@ function cartaoFadigaHtml(week, day) {
       if (c.comprimida) l.push('<li><b>Semana comprimida:</b> dois HYROX em 48 h</li>');
       return '<ul class="fad-explica">' + l.join('') + '</ul>';
     };
+    // REVISÃO DE DESIGN (v25.1): três níveis de apresentação sobre os mesmos
+    // estados do motor. Síntese de uma linha sempre visível; a justificativa
+    // completa fica em "Por que o alerta"; o "monitorar" (nível 1) inteiro vira
+    // uma linha expansível. Os critérios e os ajustes não mudaram.
+    const sintese = (reg ? rotuloSentenca(REGIAO_NOME[reg]) + ', fadiga ' + intensidadeTxt(c.res[reg] || 0) : '')
+      + (f ? (reg ? ' · ' : '') + (f.prontidao ? 'sua percepção de hoje' : tituloFonte(f, c)) : '');
+    const porque = function (comAfetado) {
+      return '<details class="fad-mais"><summary>Por que o alerta</summary>' + explica(comAfetado) + notaEst + '</details>';
+    };
+    const cabecalho = function (rot) {
+      return '<div class="fad-cab"><span class="fad-tit">' + rot + '</span>' + (sintese ? '<span class="fad-res">' + sintese + '</span>' : '') + '</div>';
+    };
 
     if (s.hyroxDay) {
       // No dia do HYROX (condicionamento) o cartão só aparece com conflito
       // relevante; o "monitorar" fica no painel da semana — menos alerta repetido.
       if (c.nivel < 2) return '';
-      return '<div class="' + cls + '"><div class="fad-tit">' + cat.rot + '</div>'
+      return '<div class="' + cls + '">' + cabecalho(cat.rot)
         + '<div class="fad-txt">A aula de hoje cobra ' + REGIAO_NOME[reg || 'pernas'] + ', que ainda carregam fadiga ' + intensidadeTxt(c.res[reg || 'pernas'] || 0) + '. Segure o ritmo nas estações dessa região e deixe o máximo para o fim, se a primeira volta sair limpa.</div>'
-        + explica(false) + notaEst + '</div>';
+        + porque(false) + '</div>';
     }
 
     if (ajValido && aj.decisao === 'manter') {
@@ -12055,40 +12415,56 @@ function cartaoFadigaHtml(week, day) {
     const motivo = c.comprimida && (!f || c.valor < FAD_LIMIAR[0]) ? 'Dois HYROX em 48 h nesta semana: o volume normal não cabe nos dias entre e logo depois deles.' : '';
 
     if (ajValido && aj.decisao === 'aplicar') {
-      return '<div class="' + cls + ' aplicado"><div class="fad-tit">Ajuste aplicado · ' + catConflito(nivel).curto + '</div>'
-        + '<div class="fad-txt">' + (aj.motivo || motivo || 'Ajuste confirmado por você para hoje.') + '</div>' + lista
+      // Ajuste em vigor: o que mudou já aparece em cada exercício (etiqueta
+      // AJUSTE DO DIA); aqui fica a linha de estado e o DESFAZER.
+      return '<div class="' + cls + ' aplicado"><div class="fad-cab"><span class="fad-tit">Ajuste aplicado · ' + catConflito(nivel).curto + '</span>'
+        + '<span class="fad-res">' + (aj.motivo || motivo || 'Ajuste confirmado por você para hoje.') + '</span></div>'
+        + (lista ? '<details class="fad-mais"><summary>O que mudou hoje</summary>' + lista + '</details>' : '')
         + '<div class="fad-acoes"><button type="button" class="fad-btn ghost" data-ajuste-acao="desfazer">DESFAZER</button></div></div>';
     }
-    return '<div class="' + cls + '" data-aj-nivel="' + nivel + '" data-aj-regioes="' + regs.join(' ') + '" data-aj-alvos="' + alvosTxt(alvos) + '" data-aj-motivo="' + escAttr(motivo || ('Origem: ' + (f ? (f.prontidao ? 'sua percepção' : tituloFonte(f, c)) : 'fadiga acumulada'))) + '">'
-      + '<div class="fad-tit">' + cat.rot + '</div>'
-      + (motivo ? '<div class="fad-txt">' + motivo + '</div>' : '')
-      + explica(true)
-      + (linhas.length ? '<div class="fad-txt">Ajuste que reduz o conflito:</div>' : '') + lista + (linhas.length ? outros : '') + notaEst
+    const attrs = ' data-aj-nivel="' + nivel + '" data-aj-regioes="' + regs.join(' ') + '" data-aj-alvos="' + alvosTxt(alvos) + '" data-aj-motivo="' + escAttr(motivo || ('Origem: ' + (f ? (f.prontidao ? 'sua percepção' : tituloFonte(f, c)) : 'fadiga acumulada'))) + '"';
+    const corpo = (motivo ? '<div class="fad-txt">' + motivo + '</div>' : '')
+      + porque(true)
+      + (linhas.length ? '<div class="fad-txt fad-sub">Ajuste que reduz o conflito:</div>' : '') + lista + (linhas.length ? outros : '')
       + (linhas.length ? '<div class="fad-acoes"><button type="button" class="fad-btn" data-ajuste-acao="aplicar">APLICAR AJUSTE</button>'
-        + '<button type="button" class="fad-btn ghost" data-ajuste-acao="manter">MANTER O PLANO</button></div>' : '')
-      + '</div>';
+        + '<button type="button" class="fad-btn ghost" data-ajuste-acao="manter">MANTER O PLANO</button></div>' : '');
+    if (nivelVis <= 1) {
+      // ATENÇÃO: uma linha; abre para ver a justificativa e as opções.
+      return '<details class="' + cls + ' fad-dobra"' + attrs + '><summary>' + cabecalho(cat.rot) + '<span class="dp-seta" aria-hidden="true">▾</span></summary>'
+        + '<div class="fad-corpo">' + corpo + '</div></details>';
+    }
+    // CRÍTICO (conflito relevante): permanece visível, com a síntese e as ações.
+    return '<div class="' + cls + '"' + attrs + '>' + cabecalho(cat.rot) + corpo + '</div>';
   } catch (e) { console.warn('cartão de fadiga', e); return ''; }
 }
 
 // Prontidão (revisão 3): três níveis + sono e dor muscular, opcionais.
 const PRONT_SONO = { bom: 'BOM', regular: 'REGULAR', ruim: 'RUIM' };
 const PRONT_DOR = { nenhuma: 'NENHUMA', leve: 'LEVE', forte: 'FORTE' };
+// REVISÃO DE DESIGN (v25.1): rótulos em caixa normal ("Bem recuperado"), não
+// em caixa alta espaçada — frases longas em caixa alta cansam a leitura.
+function rotuloSentenca(s) {
+  s = String(s || '').trim();
+  if (!s) return s;
+  const low = s.toLocaleLowerCase('pt-BR');
+  return low.charAt(0).toLocaleUpperCase('pt-BR') + low.slice(1);
+}
 function prontidaoHtml(week, day) {
   try {
     if (day !== JS_DAY_TO_KEY[new Date().getDay()]) return '';
     const p = prontGet(week, day) || {};
     const ops = Object.keys(PRONT_NIVEIS).map(function (k) {
-      return '<button type="button" class="pront-op' + (p.nivel === k ? ' sel' : '') + '" data-pront="' + k + '">' + PRONT_NIVEIS[k].rot + '</button>';
+      return '<button type="button" class="pront-op' + (p.nivel === k ? ' sel' : '') + '" data-pront="' + k + '">' + rotuloSentenca(PRONT_NIVEIS[k].rot) + '</button>';
     }).join('');
     const linha = function (campo, mapa, rot) {
       return '<div class="pront-linha"><span class="pront-rot">' + rot + '</span>' + Object.keys(mapa).map(function (k) {
-        return '<button type="button" class="pront-reg' + (p[campo] === k ? ' sel' : '') + '" data-pront-campo="' + campo + '" data-pront-valor="' + k + '">' + mapa[k] + '</button>';
+        return '<button type="button" class="pront-reg' + (p[campo] === k ? ' sel' : '') + '" data-pront-campo="' + campo + '" data-pront-valor="' + k + '">' + rotuloSentenca(mapa[k]) + '</button>';
       }).join('') + '</div>';
     };
     const pedeRegiao = p.nivel === 'cansado' || p.nivel === 'muito' || p.dor === 'leve' || p.dor === 'forte';
     const regs = pedeRegiao
       ? '<div class="pront-regs"><span class="pront-rot">Onde pesa?</span>' + REGIOES.map(function (r) {
-          return '<button type="button" class="pront-reg' + ((p.regioes || []).indexOf(r) >= 0 ? ' sel' : '') + '" data-pront-reg="' + r + '">' + REGIAO_NOME[r].toUpperCase() + '</button>';
+          return '<button type="button" class="pront-reg' + ((p.regioes || []).indexOf(r) >= 0 ? ' sel' : '') + '" data-pront-reg="' + r + '">' + rotuloSentenca(REGIAO_NOME[r]) + '</button>';
         }).join('') + '</div>' : '';
     const extras = p.nivel ? linha('sono', PRONT_SONO, 'Sono') + linha('dor', PRONT_DOR, 'Dor muscular') : '';
     const ctx = contextoProntidao(week, day);
@@ -12481,8 +12857,8 @@ const WEEK_MODES = {
               blurb: 'O pico do mesociclo. 1 a 2 reps de reserva, técnica sob pressão máxima. Aqui o guerreiro descobre do que é feito.',
               blurbH: 'O pico do mesociclo: à beira da falha, técnica sob pressão máxima. Aqui o atleta descobre do que é feito.' },
   'deload': { short: 'DLD', name: 'TRÉGUA',    tier: 'Recuperação', rpe: 'RPE 6',   rpeH: 'RPE 6',   pips: 1,
-              blurb: 'Recuo estratégico: ~60% da carga, volume cortado. Não é fraqueza — é o corpo reconstruindo pra voltar mais forte.',
-              blurbH: 'Recuo estratégico: ~60% da carga, volume cortado. Não é fraqueza — é o corpo reconstruindo pra voltar mais forte.' }
+              blurb: 'Recuo estratégico: metade das séries, carga pelo RPE 6. Não é fraqueza — é o corpo reconstruindo pra voltar mais forte.',
+              blurbH: 'Recuo estratégico: metade das séries, carga pelo RPE 6. Não é fraqueza — é o corpo reconstruindo pra voltar mais forte.' }
 };
 const WEEK_ORDER = ['1', '2', '3', 'deload'];   // ordem do menu (progressão + recuo)
 function weekMode(w) { return WEEK_MODES[w] || WEEK_MODES['1']; }
@@ -13950,6 +14326,30 @@ function semanaSeguinteKey(week) {
   const i = WEEK_KEY_ORDER.indexOf(week);
   return WEEK_KEY_ORDER[(i + 1) % WEEK_KEY_ORDER.length];
 }
+// REVISÃO DE DESIGN (v25.1): o cabeçalho mostra só o objetivo; prioridade,
+// músculos, séries, ontem/amanhã e avisos de volume ficam em painéis
+// recolhíveis com prévia de uma linha. O estado aberto/fechado sobrevive às
+// re-renderizações do mesmo dia (marcar série) e reinicia ao trocar de dia.
+let UI_PAINEIS = {};
+let UI_PAINEIS_CHAVE = null;
+function painelAberto(k) { return !!UI_PAINEIS[k]; }
+function paineisReiniciar(chave) {
+  if (UI_PAINEIS_CHAVE === chave) return;
+  UI_PAINEIS_CHAVE = chave;
+  UI_PAINEIS = {};
+}
+// Qualquer <details data-ui-painel="k"> guarda o próprio estado aqui.
+document.addEventListener('toggle', function (e) {
+  const d = e.target;
+  if (!d || !d.dataset || !d.dataset.uiPainel) return;
+  UI_PAINEIS[d.dataset.uiPainel] = !!d.open;
+}, true);
+function painelHtml(k, titulo, previa, corpo, extraCls) {
+  if (!corpo) return '';
+  return '<details class="dia-painel ' + (extraCls || '') + '" data-ui-painel="' + k + '" data-painel="' + k + '"' + (painelAberto(k) ? ' open' : '') + '>'
+    + '<summary><span class="dp-tit">' + titulo + '</span>' + (previa ? '<span class="dp-previa">' + previa + '</span>' : '') + '<span class="dp-seta" aria-hidden="true">▾</span></summary>'
+    + '<div class="dp-corpo">' + corpo + '</div></details>';
+}
 function contextoDoDiaHtml(week, dia, sess, isDeload) {
   try {
     const i = DAYS.indexOf(dia);
@@ -13979,30 +14379,49 @@ function contextoDoDiaHtml(week, dia, sess, isDeload) {
       }
     } catch (e) {}
     // REVISÃO 3: músculos que o dia treina DIRETO (séries efetivas)
-    let musc = '';
+    let musc = '', muscTop = [];
     try {
       if (sess.exercises && !sess.hyroxDay && !(isDeload && sess.deloadCutAll)) {
         const so = {}; DAYS.forEach(d => { so[d] = d === dia ? sem[d] : 'rest'; });
         const v = volumeSemana(so, week);
-        const top = MUSCULOS.map(m => ({ m: m, v: v.musc[m.id].dir })).filter(x => x.v > 0).sort((a, b) => b.v - a.v).slice(0, 5);
+        muscTop = MUSCULOS.map(m => ({ m: m, v: v.musc[m.id].dir, ind: v.musc[m.id].ind })).filter(x => x.v > 0 || x.ind > 0).sort((a, b) => (b.v - a.v) || (b.ind - a.ind));
+        const top = muscTop.filter(x => x.v > 0).slice(0, 5);
         if (top.length) musc = top.map(x => x.m.nome.replace('Deltoide ', 'Delt. ').replace(' (eretores)', '') + ' ' + fmtSeries(x.v)).join(' · ');
       }
     } catch (e) {}
     const nadaFeito = !!(sess.exercises && !sess.hyroxDay && dia === JS_DAY_TO_KEY[new Date().getDay()] && week === STATE.week
       && sess.exercises.every(ex => !getSetProgress(week, dia, ex.id)));
-    const sub = [];
-    if (series > 0) sub.push('<b>' + series + '</b> séries');
-    if (ontem) sub.push('Ontem: ' + curto(ontem, wOntem));
-    if (amanha) sub.push('Amanhã: ' + curto(amanha, wAmanha));
-    if (!sub.length && !sess.objetivo) return '';
+    const cortada = isDeload && sess.deloadCutAll;
+    const objetivo = (sess.objetivo && !cortada) ? sess.objetivo : '';
+    if (!objetivo && !ontem && !amanha && !series) return '';
+
+    // --- Painel A: estratégia da sessão -------------------------------
+    let estrategia = '';
+    if (sess.prioridade && !cortada) estrategia += '<p><b>Prioridade:</b> ' + sess.prioridade + '</p>';
+    if (sess.exercises && !sess.hyroxDay && !cortada) estrategia += '<p><b>Registro:</b> carga e reps em cada exercício; nos principais, o RPE real da série mais pesada.' + (nadaFeito ? ' Nada registrado hoje ainda.' : '') + '</p>';
+    const prevEstr = sess.prioridade && !cortada ? sess.prioridade.split(/[;.]/)[0] : '';
+    // --- Painel B: músculos e volume ---------------------------------
+    let musculos = '';
+    if (muscTop.length) {
+      musculos += '<ul class="dp-lista">' + muscTop.slice(0, 8).map(x => '<li><span>' + x.m.nome.replace(' (eretores)', '') + '</span><span class="dp-num">' + (x.v > 0 ? fmtSeries(x.v) : '—') + (x.ind > 0 ? ' <small>+' + fmtSeries(x.ind) + ' indireta' + (x.ind >= 1.5 ? 's' : '') + '</small>' : '') + '</span></li>').join('') + '</ul>';
+      musculos += '<p class="dp-nota">Séries diretas do dia; a indireta entra ponderada pela matriz. Volume da semana inteira: painel da semana, em Regras, prioridades e volume.</p>';
+      if (volTxt) musculos += '<p class="dp-aviso">↳ ' + volTxt + '</p>';
+    }
+    const prevMusc = (series ? series + ' séries' : '') + (musc ? (series ? ' · ' : '') + musc : '');
+    // --- Painel C: contexto da semana --------------------------------
+    let contexto = '';
+    if (ontem) contexto += '<p><b>Ontem:</b> ' + curto(ontem, wOntem) + '</p>';
+    if (amanha) contexto += '<p><b>Amanhã:</b> ' + curto(amanha, wAmanha) + '</p>';
+    if (imp) contexto += '<p class="dp-aviso">↳ ' + imp + '</p>';
+    const prevCtx = [ontem ? 'Ontem: ' + curto(ontem, wOntem) : '', amanha ? 'Amanhã: ' + curto(amanha, wAmanha) : ''].filter(Boolean).join(' · ');
+
     return '<div class="day-contexto">'
-      + (sess.objetivo && !(isDeload && sess.deloadCutAll) ? '<span class="ctx-obj">' + sess.objetivo + '</span>' : '')
-      + (sess.prioridade && !(isDeload && sess.deloadCutAll) ? '<span class="ctx-prio"><b>Prioridade:</b> ' + sess.prioridade + '</span>' : '')
-      + (musc ? '<span class="ctx-musc"><b>Músculos (séries diretas):</b> ' + musc + '</span>' : '')
-      + (sub.length ? '<span class="ctx-sem">' + sub.join(' · ') + '</span>' : '')
-      + (imp ? '<span class="ctx-imp">↳ ' + imp + '</span>' : '')
-      + (volTxt ? '<span class="ctx-imp">↳ ' + volTxt + '</span>' : '')
-      + (nadaFeito ? '<span class="ctx-musc">Registro: carga e reps em cada exercício; nos principais, o RPE real da série mais pesada.</span>' : '')
+      + (objetivo ? '<p class="ctx-obj">' + objetivo + '</p>' : '')
+      + '<div class="dia-paineis">'
+      + painelHtml('estrategia', 'Estratégia da sessão', prevEstr, estrategia)
+      + painelHtml('musculos', 'Músculos e volume', prevMusc, musculos, 'musculos')
+      + painelHtml('contexto', 'Contexto da semana', prevCtx, contexto)
+      + '</div>'
       + '</div>';
   } catch (e) { return ''; }
 }
@@ -14065,13 +14484,17 @@ function shouldHideOnDeload(ex) { return !!ex.deloadCut; }
 function renderDayTabs() {
   const container = document.getElementById('dayTabs');
   const todayKey = JS_DAY_TO_KEY[new Date().getDay()];
+  // REVISÃO DE DESIGN (v25.1): o status do dia (a antiga barra abaixo das
+  // abas) virou o sublinhado de cada aba — mesma informação, uma linha a menos.
   container.innerHTML = DAYS.map(d => {
     const session = getSessionForDay(d);
     const isActive = STATE.day === d ? 'active' : '';
     const isToday = todayKey === d ? 'today' : '';
     const isTrtDay = TRT_DAYS.includes(d);
-    const trtDot = isTrtDay ? '<span class="trt-dot"></span>' : '';
-    return `<button class="day-tab ${isActive} ${isToday}" data-day="${d}" aria-label="${DAY_LABELS_FULL[d] || DAY_LABELS[d]}${isToday ? ' (hoje)' : ''}"${isActive ? ' aria-current="page"' : ''}>${DAY_LABELS[d]}${trtDot}</button>`;
+    const trtDot = isTrtDay ? '<span class="trt-dot" title="Dia de TRT"></span>' : '';
+    let heat = 'empty';
+    try { heat = getDayHeatStatus(STATE.week, d); } catch (e) {}
+    return `<button class="day-tab ${isActive} ${isToday} h-${heat}" data-day="${d}" data-heat="${heat}" aria-label="${DAY_LABELS_FULL[d] || DAY_LABELS[d]}${isToday ? ' (hoje)' : ''}"${isActive ? ' aria-current="page"' : ''}><span class="tab-lbl">${DAY_LABELS[d]}${trtDot}</span><span class="tab-heat" aria-hidden="true"></span></button>`;
   }).join('');
   
   container.querySelectorAll('.day-tab').forEach(btn => {
@@ -14144,6 +14567,15 @@ function renderHeatmap() {
     const status = getDayHeatStatus(STATE.week, d);
     const isToday = todayKey === d ? 'today' : '';
     const isActive = STATE.day === d ? 'active' : '';
+    // o status também vai para a aba do dia (sublinhado) — é ela que o usuário vê
+    try {
+      const tab = document.querySelector('.day-tab[data-day="' + d + '"]');
+      if (tab && tab.dataset.heat !== status) {
+        tab.classList.remove('h-' + tab.dataset.heat);
+        tab.classList.add('h-' + status);
+        tab.dataset.heat = status;
+      }
+    } catch (e) {}
     return `<span class="heat-cell heat-${status} ${isToday} ${isActive}" title="${DAY_LABELS_FULL[d]}: ${status}"></span>`;
   }).join('');
 }
@@ -14175,6 +14607,7 @@ function renderMain() {
     main.classList.remove('main-enter'); void main.offsetWidth; main.classList.add('main-enter');
   }
   _lastNavKey = navKey;
+  paineisReiniciar(navKey);   // painéis recolhíveis voltam a fechados ao trocar de dia/semana/sessão
   const isDeload = STATE.week === 'deload';
   // Dia com séries prescritas: é onde existem RPE e o RESET do dia
   // (Hyrox/cardio/descanso/pulo não têm séries para zerar nem RPE).
@@ -14280,8 +14713,10 @@ function renderMain() {
       if (isChecked(STATE.week, STATE.day, ex.id)) doneEx++;
     });
   }
-  const progressHtml = totalEx > 0 ? 
-    `<div class="day-progress"><span class="done">${String(doneEx).padStart(2,'0')}</span> / ${String(totalEx).padStart(2,'0')}</div>` : '';
+  // REVISÃO DE DESIGN (v25.1): "0/5 exercícios" em vez de "00 / 05" — o
+  // significado fica explícito e o número não compete com o título.
+  const progressHtml = totalEx > 0 ?
+    `<div class="day-progress" aria-label="${doneEx} de ${totalEx} exercícios concluídos"><span class="done">${doneEx}</span>/${totalEx} <span class="dp-lbl">exercícios</span></div>` : '';
   
   try {
     const rodape = document.querySelector('.footer-actions');
@@ -14290,16 +14725,20 @@ function renderMain() {
   const excDoDia = (() => { try { const e = excecaoAtiva(STATE.week); return !!(e && e.dias[STATE.day]); } catch (er) { return false; } })();
   const customBadge = excDoDia ? '<span class="custom-badge" title="Só nesta semana">EXCEÇÃO</span>'
     : (isModifiedDay ? '<span class="custom-badge" title="Sessão movida">REORG</span>' : '');
+  // Dia de chefão: identificador pequeno ao lado da categoria (o corpo ainda
+  // recebe a classe boss-fight, que guia a skin e o fogo dos marcadores).
+  const bossBadge = isBossFight ? '<span class="custom-badge boss-badge" title="Dia de chefão: a sessão mais pesada da semana">⚔ BOSS</span>' : '';
   
-  // Runa do reino — todos os dias têm a sua (deadlift usa a boss-rune estilizada)
-  // Clicável: abre o quadro explicativo do significado da runa.
+  // Runa do reino — um glifo pequeno ao lado do título (era marca-d'água de
+  // 160 px atrás do texto). Continua clicável: abre o significado da runa.
   const realmCfg = getRealm(sessionKey);
   const runeChar = realmCfg.rune || '';
-  const runeHtml = isBossFight
-    ? `<button class="boss-rune rune-clickable" data-rune-sk="${sessionKey}" aria-label="Ver significado da runa ${realmCfg.runeName || ''}">${runeChar}</button>`
-    : (runeChar && !day.skip ? `<button class="realm-rune rune-clickable" data-rune-sk="${sessionKey}" aria-label="Ver significado da runa ${realmCfg.runeName || ''}">${runeChar}</button>` : '');
+  const runeHtml = (runeChar && !day.skip)
+    ? `<button class="${isBossFight ? 'boss-rune' : 'realm-rune'} rune-clickable" data-rune-sk="${sessionKey}" aria-label="Ver significado da runa ${realmCfg.runeName || ''}">${runeChar}</button>`
+    : '';
 
-  // Crista de dificuldade — mostra a "dificuldade" da semana e abre o menu
+  // Semana do ciclo (Investida · Acúmulo · RPE 7): vira um chip discreto na
+  // linha de etiquetas. Mesmo botão, mesmo menu — só perdeu o tamanho de cartão.
   const wm = weekMode(STATE.week);
   const rpeDoDia = (() => {
     try {
@@ -14310,51 +14749,43 @@ function renderMain() {
       return 'RPE ' + (mn === mx ? fmtRpe(mn) : fmtRpe(mn) + '–' + fmtRpe(mx));
     } catch (e) { return weekRpe(wm); }
   })();
-  const diffPips = Array.from({ length: 4 }, (_, i) => `<span class="dp${i < wm.pips ? ' on' : ''}"></span>`).join('');
+  const nomeSemana = wm.name.charAt(0) + wm.name.slice(1).toLowerCase();
   const diffCrestHtml = `
-    <button class="diff-crest diff-${wm.short.toLowerCase()}" id="diffCrest" type="button" aria-label="Dificuldade da semana: ${wm.name}, ${wm.tier}. Tocar para escolher.">
-      <span class="diff-crest-ico" aria-hidden="true">⚔</span>
+    <button class="diff-crest diff-${wm.short.toLowerCase()}" id="diffCrest" type="button" aria-label="Semana do ciclo: ${wm.name}, ${wm.tier}. Tocar para escolher.">
       <span class="diff-crest-body">
-        <span class="diff-crest-name">${wm.name}</span>
+        <span class="diff-crest-name">${nomeSemana}</span>
         <span class="diff-crest-sub">${wm.tier}${diaComSeries ? ' · ' + rpeDoDia : ''}</span>
       </span>
-      <span class="diff-crest-pips" aria-hidden="true">${diffPips}</span>
       <span class="diff-crest-more" aria-hidden="true">▾</span>
     </button>`;
 
   html += bannerExcecaoHtml(STATE.week);
   html += `
     <div class="day-header fade-in">
-      ${isBossFight ? '<div class="boss-eyebrow"><span class="boss-eyebrow-line"></span><span class="boss-eyebrow-text">⚔ BOSS FIGHT ⚔</span><span class="boss-eyebrow-line"></span></div>' : ''}
-      ${runeHtml}
       <div class="day-meta">
-        <div class="day-eyebrow">${day.eyebrow} ${customBadge}</div>
+        <div class="day-eyebrow">${day.eyebrow}${bossBadge}${customBadge}</div>
         ${progressHtml}
       </div>
-      <button class="day-title-btn ${isBossFight ? 'boss-title-btn' : ''}" id="dayTitleBtn" aria-label="Gerenciar semana de treinos">
-        <h1 class="day-title ${isBossFight ? 'boss-title-forged' : ''}" ${isBossFight ? `data-title="${day.title}"` : ''}>${day.title}${isBossFight ? '<span class="title-embers"><span class="te t1"></span><span class="te t2"></span><span class="te t3"></span><span class="te t4"></span><span class="te t5"></span><span class="te t6"></span></span>' : ''}</h1>
-        <span class="day-title-swap">⇄</span>
-      </button>
-      <div class="day-subtitle">${pillsHtml}</div>
+      <div class="day-title-row">
+        <button class="day-title-btn" id="dayTitleBtn" aria-label="Gerenciar semana de treinos">
+          <h1 class="day-title">${day.title}</h1>
+          <span class="day-title-swap" aria-hidden="true">⇄</span>
+        </button>
+        ${runeHtml}
+      </div>
+      <div class="day-subtitle">${pillsHtml}${diffCrestHtml}</div>
       ${contextoDoDiaHtml(STATE.week, STATE.day, day, isDeload)}
-      ${diffCrestHtml}
-      ${isBossFight ? `
-        <div class="boss-particles">
-          <span class="ember e1"></span><span class="ember e2"></span><span class="ember e3"></span>
-          <span class="ember e4"></span><span class="ember e5"></span><span class="ember e6"></span>
-          <span class="ember e7"></span><span class="ember e8"></span>
-        </div>
-      ` : ''}
     </div>
   `;
   
-  // Aviso de recuperação: só aparece num dia pesado de perna que vem
-  // logo depois de um Hyrox que o Pedro marcou como pesado. Não bloqueia
-  // nada — informa e sugere entrar conservador.
-  // REVISÃO 2: o motor de fadiga substitui a regra fixa de 24/48 h e o
-  // aviso de grade customizada — olha horas, intensidade, duração e região.
+  // Alertas e prontidão. REVISÃO 2: o motor de fadiga substitui a regra fixa
+  // de 24/48 h. REVISÃO DE DESIGN (v25.1): conflito relevante aparece ANTES
+  // da prontidão (visível na primeira tela); "monitorar" vem depois dela.
+  const cartao = cartaoFadigaHtml(STATE.week, STATE.day);
+  const cartaoCritico = /class="fad-card n[23]/.test(cartao);
+  if (cartaoCritico) html += cartao;
   if (diaComSeries) html += prontidaoHtml(STATE.week, STATE.day);
-  html += cartaoFadigaHtml(STATE.week, STATE.day);
+  if (!cartaoCritico) html += cartao;
   
   // Deload special cases (apenas se ainda for upper_hiper na sexta)
   if (isDeload && day.deloadCutAll) {
@@ -14565,11 +14996,17 @@ function renderMain() {
   
   // Deload banner for normal training days
   if (isDeload) {
+    // REVISÃO DE DESIGN (v25.1): o resumo numérico fica visível; a regra
+    // completa e a tabela de critérios abrem sob demanda.
     html += `
       <div class="deload-banner fade-in">
-        <div class="deload-banner-title">SEMANA DE DELOAD</div>
-        <div class="deload-banner-text">${deloadResumoTxt()} Principais com menos séries a RPE 6, na carga que der RPE 6 (em geral a da W1 ou até 10% abaixo): a intensidade relativa é o que segura a força. Compostos livres pela metade a RPE 6; apoiados e isolados pela metade a RPE 7; core com uma série a menos. Variações técnicas saem.</div>
-        ${deloadCriteriosHtml()}
+        <div class="deload-banner-title">Semana de deload</div>
+        <div class="deload-banner-text">${deloadResumoTxt()}
+          <details class="dl-regra"><summary>Como o deload funciona</summary>
+            <p>Principais com menos séries a RPE 6, na carga que der RPE 6 (em geral a da W1 ou até 10% abaixo): a intensidade relativa é o que segura a força. Compostos livres pela metade a RPE 6; apoiados e isolados pela metade a RPE 7; core com uma série a menos. Variações técnicas saem.</p>
+            ${deloadCriteriosHtml()}
+          </details>
+        </div>
       </div>
     `;
   }
@@ -18229,6 +18666,18 @@ function fxOn() {
 }
 
 // Renderiza o HUD do guerreiro (header)
+// REVISÃO DE DESIGN (v25.1): o HUD começa recolhido. Na faixa de utilidades
+// fica só um resumo (patente · nível · poder); o painel completo abre ao
+// tocar nele e fica aberto até o Pedro fechar — renderizar de novo (marcar
+// série, trocar de dia) não mexe nesse estado.
+let UI_HUD_ABERTO = false;
+function hudAberto(ligar) {
+  UI_HUD_ABERTO = !!ligar;
+  const hud = document.getElementById('pwrHud');
+  const chip = document.getElementById('hudChip');
+  if (hud) hud.hidden = !UI_HUD_ABERTO;
+  if (chip) { chip.setAttribute('aria-expanded', UI_HUD_ABERTO ? 'true' : 'false'); chip.classList.toggle('aberto', UI_HUD_ABERTO); }
+}
 function renderHud() {
   const hud = document.getElementById('pwrHud');
   if (!hud) return;
@@ -18238,6 +18687,18 @@ function renderHud() {
   const pct = Math.min(100, Math.round((g.intoLevel / g.forLevel) * 100));
   const tonStr = g.tonnage >= 1000 ? _tonFmt(g.tonnage) : Math.round(g.tonnage) + 'kg';
   const streakCls = g.streak === 0 ? 'cold' : (g.streak >= 7 ? 'blaze' : '');
+  const chip = document.getElementById('hudChip');
+  if (chip) {
+    chip.innerHTML = `<span class="hud-chip-rune" aria-hidden="true">${g.rank.rune}</span>`
+      + `<span class="hud-chip-rank">${g.rank.name}</span>`
+      + `<span class="hud-chip-lv">Nv <b>${g.level}</b></span>`
+      + `<span class="hud-chip-xp"><span aria-hidden="true">⚡</span>${g.intoLevel}/${g.forLevel}</span>`
+      + (g.streak > 0 ? `<span class="hud-chip-streak" title="Sequência">🔥${g.streak}</span>` : '')
+      + `<span class="hud-chip-more" aria-hidden="true">▾</span>`;
+    chip.setAttribute('aria-expanded', UI_HUD_ABERTO ? 'true' : 'false');
+    chip.classList.toggle('aberto', UI_HUD_ABERTO);
+  }
+  hud.hidden = !UI_HUD_ABERTO;
   hud.innerHTML = `
     <button class="hud-rank" type="button" id="hudRankBtn" aria-label="Ver a trilha de patentes e em qual nível você está">
       <div class="hud-emblem" id="hudEmblem" aria-hidden="true"><span class="he-rune">${g.rank.rune}</span></div>
@@ -18264,6 +18725,8 @@ function renderHud() {
         <span class="hud-stat-lbl">conquistas</span>
       </button>
     </div>
+    <div class="hud-cry" id="hudCry"></div>
+    <button class="hud-fechar" type="button" id="hudFechar" aria-label="Recolher o painel">Recolher ▴</button>
   `;
   updateRage(g);
   renderCry(g);
@@ -19562,7 +20025,9 @@ function mostrarDicaDeslize() {
     d.className = 'dica-deslize';
     d.setAttribute('role', 'status');
     d.innerHTML = '<span aria-hidden="true">‹</span> deslize para trocar de dia <span aria-hidden="true">›</span>';
-    tabs.parentElement.insertBefore(d, tabs.nextSibling);
+    // REVISÃO DE DESIGN (v25.1): fora do cabeçalho (o backdrop-filter dele
+    // prenderia o position:fixed) e fora do fluxo — não empurra a página.
+    document.body.appendChild(d);
     setTimeout(dispensarDicaDeslize, 9000);
   } catch (e) {}
 }
