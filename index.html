@@ -14374,8 +14374,11 @@ function contextoDoDiaHtml(week, dia, sess, isDeload) {
     try {
       if (week !== 'deload' && sess.exercises && !sess.hyroxDay) {
         const v = volumeSemana(sem, week);
-        const al = alertasVolume(v, STATE.mode).filter(x => x.tipo === 'acima' && (v.musc[x.m].dirDia[dia] || 0) > 0);
-        if (al.length) volTxt = al.map(x => x.txt).slice(0, 2).join(' · ');
+        // acima da faixa nos músculos que este dia treina direto, e sobreposição
+        // (séries diretas em dias seguidos) quando um dos dias é este
+        const al = alertasVolume(v, STATE.mode).filter(x => (x.tipo === 'acima' && (v.musc[x.m].dirDia[dia] || 0) > 0)
+          || (x.tipo === 'sobreposicao' && x.txt.indexOf(DAY_LABELS[dia]) >= 0));
+        if (al.length) volTxt = al.map(x => x.txt).slice(0, 3).join(' · ');
       }
     } catch (e) {}
     // REVISÃO 3: músculos que o dia treina DIRETO (séries efetivas)
