@@ -8450,6 +8450,111 @@
   .trt-item small { margin-left: auto; color: var(--text-3); font-family: 'JetBrains Mono', monospace; font-size: 10.5px; }
   @media (min-width: 720px) { .plano-aviso, .plano-falta, .plano-alerta, .plano-corte { max-width: 672px; margin-left: auto; margin-right: auto; } }
 
+  /* ==================================================================
+     v26.1 — SISTEMA DE INTERAÇÃO E ESTADOS
+     Tokens: --neon-rgb (o dourado da identidade), raios, alvo de toque.
+     Regra: o que é clicável tem borda + brilho discreto; ao tocar o brilho
+     sobe; selecionado fica marcado; desabilitado perde o brilho; foco por
+     teclado tem contorno visível. Nada pulsa; texto comum não brilha.
+     ================================================================== */
+  :root { --neon-rgb: 232, 190, 110; --r-sm: 8px; --r-md: 12px; --toque: 44px; --dur-ui: 0.15s; }
+  .fad-btn, .plano-chip, .rest-backup-btn, .info-btn, .hud-chip, .ex-abrir, .descanso-chip, .plano-aviso, .pm-dia,
+  .trt-op, .pront-op, .pront-reg, .rep-chip, .ex-desc, .ex-equip, .export-btn, .feat-ok, .pwrtool-btn, .pwrtool-tab,
+  .pwrtimer-preset, .mode-opt, .ex-notes-toggle, .ex-swaps-toggle, .ex-warm-toggle, .reps-op, .trt-item, .week-reset-btn,
+  .dia-painel, details.pront-feita, .po-mais, details.exc-banner, .plano-op {
+    transition: box-shadow var(--dur-ui) ease, border-color var(--dur-ui) ease, transform 0.08s ease;
+  }
+  .fad-btn, .plano-chip, .rest-backup-btn, .info-btn, .hud-chip, .ex-abrir, .descanso-chip, .plano-aviso, .pm-dia,
+  .trt-op, .pront-op, .pront-reg, .rep-chip, .ex-equip, .export-btn, .pwrtool-btn, .pwrtool-tab, .pwrtimer-preset, .mode-opt,
+  .reps-op, .trt-item, .week-reset-btn, .dia-painel, details.pront-feita, details.exc-banner {
+    box-shadow: 0 0 0 1px rgba(var(--neon-rgb), 0.12);   /* repouso: anel fino, sem brilho — o brilho fica para toque, seleção e o exercício ativo */
+  }
+  .fad-btn:active, .plano-chip:active, .rest-backup-btn:active, .info-btn:active, .hud-chip:active, .ex-abrir:active, .descanso-chip:active,
+  .plano-aviso:active, .pm-dia:active, .trt-op:active, .pront-op:active, .pront-reg:active, .rep-chip:active, .ex-equip:active,
+  .export-btn:active, .pwrtool-btn:active, .pwrtool-tab:active, .pwrtimer-preset:active, .mode-opt:active, .reps-op:active,
+  .trt-item:active, .week-reset-btn:active, .week-btn:active, .day-tab:active, .set-tracker:active, .ex-desc:active,
+  .dia-painel > summary:active, details.pront-feita > summary:active, .po-mais summary:active, details.exc-banner > summary:active {
+    box-shadow: 0 0 0 1px rgba(var(--neon-rgb), 0.5), 0 0 16px rgba(var(--neon-rgb), 0.38);
+  }
+  .pront-op.sel, .pront-reg.sel, .trt-op.sel, .pwrtool-tab[aria-selected="true"], .pwrtimer-preset.sel, .mode-opt.active, .reps-op.sel, .hud-chip[aria-expanded="true"] {
+    box-shadow: 0 0 0 1px rgba(var(--neon-rgb), 0.65), 0 0 12px rgba(var(--neon-rgb), 0.3);
+  }
+  .dia-painel[open], details.pront-feita[open], details.exc-banner[open], .po-mais[open] { box-shadow: 0 0 0 1px rgba(var(--neon-rgb), 0.22); }
+  button:disabled, button[disabled], .pm-dia[disabled] { box-shadow: none !important; opacity: 0.45; cursor: default; }
+  :is(button, summary, [role="button"], input, a):focus-visible { outline: 2px solid rgba(var(--neon-rgb), 0.95); outline-offset: 2px; }
+  @media (hover: hover) {
+    .fad-btn:hover, .plano-chip:hover, .info-btn:hover, .ex-abrir:hover, .plano-aviso:hover, .pm-dia:hover:not([disabled]), .trt-op:hover,
+    .pront-op:hover, .rep-chip:hover, .export-btn:hover, .dia-painel > summary:hover, .trt-item:hover { box-shadow: 0 0 0 1px rgba(var(--neon-rgb), 0.3), 0 0 12px rgba(var(--neon-rgb), 0.24); }
+  }
+
+  /* ---- Cartão de exercício por estado ---- */
+  .ex-name-row { display: flex; align-items: flex-start; gap: 8px; }
+  .ex-name-row .ex-name { flex: 1 1 auto; min-width: 0; margin-bottom: 0; }
+  .ex-name-row + * { margin-top: 8px; }
+  .ex-abrir { flex-shrink: 0; min-height: var(--toque); min-width: 64px; margin: -10px -6px -8px 0; padding: 0 10px; border: 1px solid var(--border-bright);
+    border-radius: var(--r-sm); background: transparent; color: var(--gold-bright); font-family: 'Inter', sans-serif; font-size: var(--fs-small); font-weight: 600; cursor: pointer; }
+  .exercise:not(.compacto) .ex-abrir span { display: inline-block; }
+  .ex-resumo { display: none; font-family: 'Inter', sans-serif; font-size: var(--fs-small); color: var(--text-2); line-height: 1.4; }
+  .ex-resumo b { color: var(--text); font-weight: 600; }
+  .ex-resumo .ok { color: var(--ok, #7ee0a0); } .ex-resumo .pend { color: var(--text-3); }
+  .exercise.compacto .ex-resumo { display: block; margin-top: 4px; }
+  .exercise.compacto .ex-bloco, .exercise.compacto .ex-load, .exercise.compacto .ex-load-hint, .exercise.compacto .ex-reps,
+  .exercise.compacto .rpe-real, .exercise.compacto .reps-nota, .exercise.compacto .ex-actions-row, .exercise.compacto .ex-notes,
+  .exercise.compacto .ex-swaps, .exercise.compacto .ex-expo, .exercise.compacto .set-reset-btn { display: none !important; }
+  .exercise.est-feito.compacto .ex-prescription { display: none; }
+  .exercise.compacto .ex-body { padding-top: 12px; padding-bottom: 12px; }
+  .exercise.compacto .ex-prescription { margin-top: 8px; margin-bottom: 0; }
+  .exercise.compacto .ex-side { padding-top: 10px; }
+  .exercise.compacto .set-tracker { width: 44px; height: 44px; }
+  .exercise.est-futuro.compacto .ex-name { color: var(--text-2); }
+  .exercise.est-ativo { box-shadow: inset 2px 0 0 rgba(var(--neon-rgb), 0.85), 0 0 0 1px rgba(var(--neon-rgb), 0.18); }
+  .exercise.est-ativo .set-tracker { box-shadow: 0 0 0 1px rgba(var(--neon-rgb), 0.35), 0 0 14px rgba(var(--neon-rgb), 0.25); }
+  .exercise.est-feito.compacto { opacity: 0.92; }
+
+  /* ---- Aviso de conquista: uma linha (nome · +XP · OK); toque abre os detalhes ---- */
+  .feat-toast { padding: 6px 40px 6px 10px; min-height: 52px; }
+  .feat-glyph { width: 28px; height: 28px; font-size: 14px; }
+  .feat-text { display: flex; flex-wrap: wrap; align-items: center; column-gap: 8px; row-gap: 2px; padding-right: 0; cursor: pointer; }
+  .feat-text .feat-kicker, .feat-text .feat-desc { flex: 1 1 100%; }
+  .feat-toast:not(.aberto) .feat-kicker, .feat-toast:not(.aberto) .feat-desc, .feat-toast:not(.aberto) .feat-when, .feat-toast:not(.aberto) .feat-reward { display: none; }
+  .feat-toast .feat-name { flex: 1 1 auto; min-width: 0; margin: 0; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .feat-toast.aberto .feat-name { white-space: normal; }
+  .feat-toast .feat-meta { margin: 0; flex-wrap: nowrap; }
+  .feat-toast.aberto .feat-meta { flex: 1 1 100%; flex-wrap: wrap; }
+  .feat-ok { min-height: 36px; min-width: 48px; }
+  .feat-close { top: 50%; transform: translateY(-50%); right: 4px; width: 36px; height: 36px; }
+  .feat-toast.aberto .feat-close { top: 6px; transform: none; }
+  .feat-fila { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--text-3); }
+
+  /* ---- Cronômetro no topo: a marca fica (PWR), só o "/PEDRO" sai ---- */
+  .header-row.com-descanso .logo { display: inline-flex; }
+  .header-row.com-descanso .logo .slash, .header-row.com-descanso .logo .dim { display: none; }
+  .descanso-chip { min-width: 84px; }
+  @media (max-width: 340px) {
+    .header-row.com-descanso .logo { display: none; }
+    .descanso-chip { min-width: 72px; padding: 0 8px; font-size: 14px; }
+    .week-btn { min-width: 38px; padding: 0 4px; }
+  }
+
+  /* ---- Planejador: síntese, ganho/perda, nº de mudanças ---- */
+  .po-ben { margin: 0; font-size: var(--fs-small); line-height: 1.45; color: var(--text); }
+  .po-mud { display: block; margin-top: 2px; color: var(--text-3); font-size: 11.5px; }
+
+  /* ---- Descanso: próximo compromisso; virada da semana sob demanda ---- */
+  .rest-prox { margin: 6px auto 4px; font-family: 'Inter', sans-serif; font-size: var(--fs-body); color: var(--text-2); }
+  .rest-prox b { color: var(--gold-bright); font-weight: 600; }
+  .rest-virada { margin: 14px var(--gutter) 0; }
+  .rest-virada .week-reset-btn { margin-top: 4px; }
+
+  /* ---- Texto ampliado e movimento reduzido ---- */
+  @media (prefers-reduced-motion: reduce) {
+    .fad-btn, .plano-chip, .ex-abrir, .dia-painel, .plano-op, .feat-toast { transition: none !important; }
+  }
+  @media (max-width: 340px) {
+    .pt-linha { grid-template-columns: 40px repeat(7, minmax(0, 1fr)); }
+    .pt-dia i { font-size: 9px; }
+  }
+
 </style>
 </head>
 <body>
@@ -9267,9 +9372,18 @@
 // ============================================================
 // Número da versão publicada. Aparece em Ajustes (GYM), com o histórico de
 // alterações. Mudou o app? Mude aqui e o CACHE_VERSION do sw.js.
-const PWR_BUILD = '2026-11-14.1';
+const PWR_BUILD = '2026-11-14.2';
 // Histórico de alterações (o mais novo primeiro). Aparece em Versão.
 const PWR_CHANGELOG = [
+  { v: '2026-11-14.2 · v26.1 (interface)', itens: [
+    'Cartão do exercício por estado: o que está em execução fica aberto e marcado; os próximos aparecem recolhidos (nome, séries×reps, carga, "Pendente"); o concluído recolhe sozinho ("4/4 séries · RPE 7 · Concluído") e abre em Editar para corrigir. Parcial continua aberto para retomar. Campo em edição nunca recolhe',
+    'Aviso de conquista em uma linha (nome · +XP · OK), um por vez, com "+N" na fila; toque no texto mostra descrição e data',
+    'Cronômetro no topo mantém a marca curta (PWR); largura fixa — nada pula a cada segundo',
+    'Planejador: uma linha na tela principal ("Reorganização sugerida para sua semana"); cada opção diz o que ganha, o que perde e quantas mudanças faz',
+    'Descanso: mostra o próximo treino; a virada da semana fica recolhida',
+    'Estados de toque padronizados (repouso, toque, selecionado, foco por teclado, desabilitado); brilho só em toque, seleção e no exercício ativo; respeita movimento reduzido. "SETS" virou "Séries"',
+    'Motor, progressões, planejador, dados e backup sem alteração'
+  ] },
   { v: '2026-11-14.1 · v26 (planejador)', itens: [
     'Planejador adaptativo da semana: quando algo muda (falta, descanso, HYROX em outro dia, treino parcial, desconforto registrado), o app avalia a semana inteira e propõe até 3 alternativas — semana atual → sugerida, o que mantém, move, reduz, inclui e retira, volume, exposições e a principal desvantagem',
     'Restrições obrigatórias respeitadas antes de tudo: dias indisponíveis, descanso obrigatório, dias bloqueados, sessões feitas, compromissos (HYROX) e limitação registrada; nada é aplicado sem o toque de confirmação, e dá para desfazer',
@@ -12463,7 +12577,7 @@ const LIFT_NOME = { agachamento: 'agachamento', supino: 'supino', terra: 'terra'
 function planoExplicar(ctx, atualAv, op) {
   const av = op.av, tags = planoDiffDias(ctx, op);
   const L = function (d) { return DAY_LABELS_FULL[d]; };
-  const out = { mantem: [], move: [], retira: [], inclui: [], reduz: [], volume: '', prioridades: '', desvantagem: '', porque: [] };
+  const out = { mantem: [], move: [], retira: [], inclui: [], reduz: [], volume: '', prioridades: '', desvantagem: '', beneficio: '', mudancas: '', porque: [] };
   DAYS.forEach(function (d) {
     const t = tags[d];
     if (t.tag === 'mantida' && sessaoForca(t.para)) out.mantem.push(L(d) + ': ' + nomeSessao(t.para));
@@ -12492,6 +12606,20 @@ function planoExplicar(ctx, atualAv, op) {
   else if (av.n2 || av.overlap) out.desvantagem = 'Ainda há ' + (av.n2 + av.overlap) + ' ponto(s) de conflito possível entre sessões (estimativa do app).';
   else if (av.mudancas > 1) out.desvantagem = 'Mexe em ' + av.mudancas + ' dias da semana.';
   else out.desvantagem = 'Sem perda relevante identificada.';
+  // benefício principal: a maior melhora em relação à semana atual (mesma ordem dos critérios)
+  if (!atualAv.viavel && av.viavel) out.beneficio = 'Respeita as restrições que a semana atual viola (' + atualAv.violacoes.length + ').';
+  else if (av.trtRestr < atualAv.trtRestr || av.trtPref < atualAv.trtPref || av.trtPrefFraca < atualAv.trtPrefFraca) out.beneficio = 'Tira a perna intensa dos dias com desconforto registrado ou esperado.';
+  else if (av.n3 < atualAv.n3 || av.n2 + av.overlap < atualAv.n2 + atualAv.overlap) out.beneficio = 'Menos conflito estimado entre sessões (' + (atualAv.n3 + atualAv.n2 + atualAv.overlap) + ' → ' + (av.n3 + av.n2 + av.overlap) + ').';
+  else if (av.expPerdidas < atualAv.expPerdidas) out.beneficio = 'Recupera ' + (atualAv.expPerdidas - av.expPerdidas) + ' exposição(ões) de levantamento.';
+  else if (av.fora.length < atualAv.fora.length) out.beneficio = 'Dá lugar a ' + (atualAv.fora.length - av.fora.length) + ' sessão(ões) que estavam sem dia.';
+  else out.beneficio = 'Mantém o essencial com menos risco de conflito.';
+  const nMud = out.move.length + out.reduz.length + out.inclui.length + out.retira.length;
+  const partes = [];
+  if (out.move.length) partes.push(out.move.length + ' movida' + (out.move.length > 1 ? 's' : ''));
+  if (out.reduz.length) partes.push(out.reduz.length + ' reduzida' + (out.reduz.length > 1 ? 's' : ''));
+  if (out.inclui.length) partes.push(out.inclui.length + ' incluída' + (out.inclui.length > 1 ? 's' : ''));
+  if (out.retira.length) partes.push(out.retira.length + ' retirada' + (out.retira.length > 1 ? 's' : ''));
+  out.mudancas = nMud ? nMud + ' mudança' + (nMud > 1 ? 's' : '') + ': ' + partes.join(', ') : 'sem mudança de sessão';
   // por quê: só fatores usados no cálculo
   DAYS.forEach(function (d) {
     const rs = ctx.restr[d]; const t = tags[d];
@@ -12568,6 +12696,39 @@ function planoTemSugestao(res) {
 }
 
 
+// v26.1: dia de descanso diz o próximo compromisso (até o começo da semana seguinte)
+function proximoTreinoHtml(week, dia) {
+  try {
+    const i = DAYS.indexOf(dia);
+    const lista = [];
+    const s1 = semanaResolvida(week);
+    for (let k = i + 1; k < DAYS.length; k++) lista.push({ d: DAYS[k], sk: s1[DAYS[k]], prox: false });
+    const w2 = semanaSeguinteKey(week), s2 = semanaResolvida(w2);
+    DAYS.forEach(function (d) { lista.push({ d: d, sk: s2[d], prox: true }); });
+    const x = lista.find(function (e) { const s = SESSIONS[e.sk]; return s && !s.rest && !s.skip; });
+    if (!x) return '';
+    const quando = (DAYS.indexOf(x.d) === i + 1 && !x.prox) ? 'amanhã' : (x.prox ? DAY_LABELS_FULL[x.d].toLowerCase() + ' (' + weekLabel(w2) + ')' : DAY_LABELS_FULL[x.d].toLowerCase());
+    return '<div class="rest-prox">Próximo treino: <b>' + quando + '</b> · ' + nomeSessao(x.sk) + '</div>';
+  } catch (e) { return ''; }
+}
+
+// ---- v26.1: abrir/recolher cartão de exercício (no lugar, sem pular a página) ----
+document.addEventListener('click', function (e) {
+  const b = e.target && e.target.closest ? e.target.closest('[data-ex-abrir]') : null;
+  if (!b) return;
+  e.preventDefault();
+  const id = b.dataset.exAbrir;
+  const card = b.closest('.exercise');
+  const abrir = card.classList.contains('compacto');
+  UI_PAINEIS['ex:' + id] = abrir;
+  card.classList.toggle('compacto', !abrir);
+  b.setAttribute('aria-expanded', String(abrir));
+  const feito = card.classList.contains('est-feito');
+  b.querySelector('span').textContent = (abrir ? 'Recolher' : (feito ? 'Editar' : 'Abrir')) + ' ▾';
+  b.setAttribute('aria-label', b.getAttribute('aria-label').replace(/^(Abrir|Recolher)/, abrir ? 'Recolher' : 'Abrir'));
+  const r = card.querySelector('.ex-resumo'); if (r) r.setAttribute('aria-hidden', String(abrir));
+});
+
 // ---- INTERFACE DO PLANEJADOR (v26) ----
 // Tela principal: uma linha discreta quando há proposta; painel com até 3
 // opções (semana atual → sugerida), justificativas sob demanda. Nada muda
@@ -12610,7 +12771,7 @@ function planoAvisoHtml() {
     }
     if (planoTemSugestao(res)) {
       const ev = res.eventos[0];
-      h += '<button type="button" class="plano-aviso" data-plano="abrir"><span class="pa-ic" aria-hidden="true">⟳</span><span class="pa-txt">Há sugestões para reorganizar sua semana'
+      h += '<button type="button" class="plano-aviso" data-plano="abrir"><span class="pa-ic" aria-hidden="true">⟳</span><span class="pa-txt">Reorganização sugerida para sua semana'
         + (ev ? '<small>' + ev.txt + '</small>' : '') + '</span><span class="pa-seta" aria-hidden="true">›</span></button>';
     }
     return h;
@@ -12634,7 +12795,8 @@ function planoOpcaoHtml(ctx, op, i) {
   const conf = PLANO_CONFIRMA === i;
   return '<div class="plano-op" data-plano-op="' + i + '"><div class="po-cab"><span class="po-n">Opção ' + (i + 1) + '</span><span class="po-nome">' + op.nome + '</span></div>'
     + planoTiraHtml(ctx, op)
-    + '<p class="po-desv"><b>Principal desvantagem:</b> ' + e.desvantagem + '</p>'
+    + '<p class="po-ben"><b>Ganha:</b> ' + e.beneficio + '</p>'
+    + '<p class="po-desv"><b>Perde:</b> ' + e.desvantagem + ' <span class="po-mud">' + e.mudancas + '</span></p>'
     + '<details class="po-mais"><summary>O que muda e por quê<span class="dp-seta" aria-hidden="true">▾</span></summary><div class="po-corpo">'
     + listaHtml('Mantém', e.mantem) + listaHtml('Move', e.move) + listaHtml('Reduz', e.reduz) + listaHtml('Inclui', e.inclui) + listaHtml('Retira', e.retira)
     + '<p>' + e.volume + '</p><p>' + e.prioridades + '</p>'
@@ -16151,21 +16313,25 @@ function renderMain() {
       <div class="rest-day fade-in">
         <div class="glyph">·</div>
         <div class="label">Recovery total</div>
+        ${proximoTreinoHtml(STATE.week, STATE.day)}
         <div class="quote">Sono, hidratação, comida boa. O músculo cresce na recuperação, não no treino.</div>
         ${(() => { try { const i = DAYS.indexOf(STATE.day); const prox = i < DAYS.length - 1 ? getSessionKeyForDay(DAYS[i + 1]) : null;
           return (prox && SESSIONS[prox] && SESSIONS[prox].hyroxDay)
             ? '<div class="rest-opcional">Véspera do Hyrox. Se quiser, Z2 leve de 30–45 min sem impacto (bike, caminhada) — opcional, não atrapalha amanhã.</div>' : '';
         } catch (e) { return ''; } })()}
       </div>
-      <div class="week-reset-section fade-in">
-        <div class="week-reset-divider">Virada de semana</div>
-        <button class="week-reset-btn" id="weekResetBtn">↺ ZERAR ${weekLabel(STATE.week)} INTEIRA</button>
-        <div class="week-reset-hint">
-          Limpa as séries e conclusões de <strong>todos os dias</strong> da semana
-          ${weekLabel(STATE.week)}, pra recomeçar a contagem na próxima.<br>
-          Cargas, recordes, Poder/nível e a sequência 🔥 <strong>são mantidos</strong>.
+      <!-- v26.1: ação rara (zerar a semana) sai do fluxo; abre sob demanda -->
+      <details class="dia-painel rest-virada fade-in" data-ui-painel="virada"${painelAberto('virada') ? ' open' : ''}>
+        <summary><span class="dp-tit">Virada de semana</span><span class="dp-previa">zerar ${weekLabel(STATE.week)} para recomeçar</span><span class="dp-seta" aria-hidden="true">▾</span></summary>
+        <div class="dp-corpo">
+          <button class="week-reset-btn" id="weekResetBtn">↺ ZERAR ${weekLabel(STATE.week)} INTEIRA</button>
+          <div class="week-reset-hint">
+            Limpa as séries e conclusões de <strong>todos os dias</strong> da semana
+            ${weekLabel(STATE.week)}, pra recomeçar a contagem na próxima.<br>
+            Cargas, recordes, Poder/nível e a sequência 🔥 <strong>são mantidos</strong>.
+          </div>
         </div>
-      </div>
+      </details>
       <!-- RODADA DE UX (v25.2): versão, backup e restauração moram em
            Ajustes (acessíveis de qualquer dia). Aqui fica o status do último
            backup e um atalho direto para a seção. -->
@@ -16199,6 +16365,13 @@ function renderMain() {
   // Exercises
   html += planoNotaCorteHtml();
   html += '<div class="exercises" role="list">';
+  // v26.1: estados do cartão. "Ativo" = o primeiro exercício ainda não
+  // concluído (ou qualquer um em andamento): controles à vista. Futuro e
+  // concluído ficam compactos e abrem com um toque. Concluído com RPE real
+  // pendente NÃO recolhe (o registro decide a progressão).
+  const exVis = day.exercises.filter(ex => !exFora(STATE.week, STATE.day, ex));
+  const idAtivo = (exVis.find(ex => { const pr = getPrescription(ex, STATE.week, STATE.day); return getSetProgress(STATE.week, STATE.day, ex.id) < (parseInt(pr.sets, 10) || 3); }) || {}).id;
+  try { const ae = document.activeElement; const c = ae && ae.closest && ae.closest('.exercise[data-ex-id]'); if (c && /INPUT|TEXTAREA|SELECT/.test(ae.tagName)) UI_PAINEIS['ex:' + c.dataset.exId] = true; } catch (e) {}
   day.exercises.forEach((ex, idx) => {
     if (exFora(STATE.week, STATE.day, ex)) return;
     
@@ -16217,11 +16390,21 @@ function renderMain() {
     if (ex.primary) classes.push('primary');
     if (activeSwap) classes.push('swapped');
     if (setsCompleted > 0 && !checked) classes.push('in-progress');
+    const rpePend = checked && STATE.week !== 'deload' && querRpeReal(ex, presc) && rpeRealGet(STATE.week, STATE.day, ex.id) == null;
+    const estado = checked ? (rpePend ? 'rpe' : 'feito') : (setsCompleted > 0 || ex.id === idAtivo ? 'ativo' : 'futuro');
+    const aberto = painelAberto('ex:' + ex.id);
+    classes.push('est-' + estado);
+    const compacto = (estado === 'feito' || estado === 'futuro') && !aberto;
+    if (compacto) classes.push('compacto');
+    const podeAbrir = estado === 'feito' || estado === 'futuro';
+    const resumoEx = estado === 'feito'
+      ? `<div class="ex-resumo" aria-hidden="${!compacto}"><b>${setsCompleted}/${maxSets} séries</b>${load ? ' · ' + load + ' ' + EQUIP_META[getEquip(ex.id, ex.name)].unit : ''}${rpeRealGet(STATE.week, STATE.day, ex.id) != null ? ' · RPE ' + String(rpeRealGet(STATE.week, STATE.day, ex.id)).replace('.', ',') : ''} · <span class="ok">Concluído</span></div>`
+      : (estado === 'futuro' ? `<div class="ex-resumo" aria-hidden="${!compacto}">${load ? 'Carga ' + load + ' ' + EQUIP_META[getEquip(ex.id, ex.name)].unit : (prevLoad ? 'Última carga ' + prevLoad : 'Carga a definir')} · <span class="pend">Pendente</span></div>` : '');
     
     // Build prescription stats
     const stats = [];
     // RODADA DE UX (v25.2): "4", não "04" — o zero à esquerda era ornamento
-    stats.push(`<div class="ex-stat"><div class="ex-stat-label">Sets</div><div class="ex-stat-value">${presc.sets}</div></div>`);
+    stats.push(`<div class="ex-stat"><div class="ex-stat-label">Séries</div><div class="ex-stat-value">${presc.sets}</div></div>`);
     stats.push(`<div class="ex-stat"><div class="ex-stat-label">Reps</div><div class="ex-stat-value">${presc.reps}</div></div>`);
     if (presc.intensity) {
       stats.push(`<div class="ex-stat intensity"><div class="ex-stat-label">Intens</div><div class="ex-stat-value">${presc.intensity}</div></div>`);
@@ -16297,7 +16480,8 @@ function renderMain() {
         </div>
         <div class="ex-body">
           ${originalIndicator}
-          <div class="ex-name"><span class="ex-num">${num}</span>${displayName}</div>
+          <div class="ex-name-row"><div class="ex-name"><span class="ex-num">${num}</span>${displayName}</div>${podeAbrir ? `<button type="button" class="ex-abrir" data-ex-abrir="${ex.id}" aria-expanded="${!compacto}" aria-label="${compacto ? 'Abrir' : 'Recolher'} ${escAttr(displayName)}${estado === 'feito' ? ' (concluído: consultar ou corrigir)' : ''}"><span aria-hidden="true">${compacto ? (estado === 'feito' ? 'Editar' : 'Abrir') : 'Recolher'} ▾</span></button>` : ''}</div>
+          ${resumoEx}
           ${STATE.mode !== 'hyper' ? exposicaoTagHtml(ex, presc) : ''}
           ${presc.ajustado ? `<span class="ex-ajuste-tag">AJUSTE DO DIA · era ${presc.ajustado.setsDe}×${presc.ajustado.repsDe ? presc.ajustado.repsDe : ''} RPE ${String(presc.ajustado.rpeDe).replace('.', ',')}</span>` : ''}
           ${ex.pareadoCom ? `<span class="ex-ajuste-tag" style="color:var(--gold-pale);border-color:var(--gold-deep);background:none">BI-SET com o próximo</span>` : ''}
@@ -20241,7 +20425,7 @@ function triggerPrShake() {
 // data/hora. Fecha por: botão ×, "OK" ou deslize lateral (mobile). Fila p/ várias.
 const _featQueue = [];
 let _featVisible = 0;
-const FEAT_MAX_VISIBLE = 3;
+const FEAT_MAX_VISIBLE = 1;   // v26.1: um aviso por vez (os outros esperam na fila)
 
 function fmtFeatWhen(ts) {
   if (!ts) return '';
@@ -20250,7 +20434,17 @@ function fmtFeatWhen(ts) {
     return `${p(d.getDate())}/${p(d.getMonth() + 1)}/${d.getFullYear()} · ${p(d.getHours())}:${p(d.getMinutes())}`;
   } catch (e) { return ''; }
 }
-function enqueueFeat(feat) { _featQueue.push(feat); pumpFeats(); }
+function enqueueFeat(feat) { _featQueue.push(feat); pumpFeats(); featFilaAtualiza(); }
+// v26.1: o aviso visível mostra quantos esperam (+N), sem empilhar na tela
+function featFilaAtualiza() {
+  try {
+    const t = document.querySelector('#featToastWrap .feat-toast:not(.hide)'); if (!t) return;
+    let f = t.querySelector('.feat-fila'); const n = _featQueue.length;
+    if (!n) { if (f) f.remove(); return; }
+    if (!f) { f = document.createElement('span'); f.className = 'feat-fila'; const meta = t.querySelector('.feat-meta'); meta.insertBefore(f, meta.querySelector('.feat-ok')); }
+    f.textContent = '+' + n; f.setAttribute('aria-label', n + ' na fila');
+  } catch (e) {}
+}
 // RODADA DE UX (v25.2): o aviso mora no pé da tela; enquanto houver aviso,
 // o fim da página ganha a altura dele, para o último controle (RESET DIA
 // ATUAL) poder subir acima do aviso em vez de ficar preso embaixo.
@@ -20296,6 +20490,15 @@ function showFeatToast(feat) {
     + '<button class="feat-ok" type="button">OK</button>'
     + '</div>'
     + '</div>';
+  // v26.1: compacto (nome · +XP · OK); toque no texto mostra descrição e data
+  const txt = t.querySelector('.feat-text');
+  txt.setAttribute('role', 'button'); txt.setAttribute('tabindex', '0'); txt.setAttribute('aria-expanded', 'false');
+  txt.setAttribute('aria-label', 'Conquista ' + featName(feat).replace(/<[^>]+>/g, '') + '. Tocar para ver detalhes.');
+  const alterna = (ev) => { if (ev.target.closest('button')) return; const ab = !t.classList.contains('aberto'); t.classList.toggle('aberto', ab); txt.setAttribute('aria-expanded', String(ab)); respiroDoAviso(); };
+  txt.addEventListener('click', alterna);
+  txt.addEventListener('keydown', (ev) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); alterna(ev); } });
+  const fila = _featQueue.length;
+  if (fila) { const f = document.createElement('span'); f.className = 'feat-fila'; f.textContent = '+' + fila; f.setAttribute('aria-label', fila + ' na fila'); t.querySelector('.feat-meta').insertBefore(f, t.querySelector('.feat-ok')); }
   wrap.appendChild(t);
   _featVisible++;
   respiroDoAviso();
