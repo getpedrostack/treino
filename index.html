@@ -8272,6 +8272,184 @@
     .pront, .fad-card, .deload-banner, details.exc-banner { margin-left: 24px; margin-right: 24px; }
   }
 
+  /* ==================================================================
+     RODADA DE UX (v25.2) — o que a auditoria de uso real apontou:
+     descanso invisível com o modal fechado, aviso de conquista sobre a
+     navegação, cartões e prontidão altos demais, backup preso ao dia de
+     descanso. Nada sai; cada coisa vai para o lugar em que é usada.
+     ================================================================== */
+
+  /* Descanso no topo, no lugar da marca, enquanto corre ou está pausado */
+  .descanso-chip {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    flex: 0 0 auto; min-height: 40px; min-width: 76px; padding: 0 12px;
+    border: 1px solid var(--gold-deep); border-radius: 20px;
+    background: rgba(200,155,60,0.12); color: var(--gold-bright);
+    font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 15px;
+    letter-spacing: 0.02em; font-variant-numeric: tabular-nums; cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .descanso-chip[hidden] { display: none; }
+  .descanso-chip .dc-ic { font-size: 12px; opacity: 0.85; }
+  .descanso-chip.quase { color: var(--gold-pale); border-color: var(--gold-bright); background: rgba(200,155,60,0.22); }
+  .descanso-chip[data-estado="pausa"] { color: var(--text-2); border-color: var(--border-bright); background: rgba(255,255,255,0.04); }
+  .descanso-chip[data-estado="fim"] { color: #7ee0a0; border-color: rgba(126,224,160,0.6); background: rgba(126,224,160,0.12); }
+  .descanso-chip:active { transform: scale(0.97); }
+  .header-row.com-descanso .logo { display: none; }
+
+  /* Aviso de conquista no pé da tela: semanas e dias ficam livres.
+     Continua persistente (OK, × ou deslize), só mais baixo e compacto. */
+  .feat-toast-wrap { top: auto; bottom: calc(env(safe-area-inset-bottom) + 12px); gap: 6px; }
+  .feat-toast { align-items: center; gap: 10px; padding: 8px 12px; transform: translateY(150%); }
+  .feat-toast.show { transform: translateY(0); animation: featSobe 0.5s cubic-bezier(0.16, 1.15, 0.3, 1); }
+  .feat-toast.hide { transform: translateY(150%); }
+  @keyframes featSobe {
+    0%   { transform: translateY(150%) scale(0.96); }
+    60%  { transform: translateY(-5px) scale(1.01); }
+    100% { transform: translateY(0) scale(1); }
+  }
+  .feat-glyph { width: 36px; height: 36px; font-size: 17px; }
+  .feat-name { font-size: 15px; }
+  .feat-desc { font-size: 12px; }
+  .feat-meta { margin-top: 4px; gap: 4px 10px; }
+  .feat-ok { margin-top: 0; padding: 0 14px; min-height: 30px; font-size: 11px; }
+
+  /* Nota de autorregulação: mesma mensagem, em texto operacional compacto
+     (o itálico serifado de 3 linhas pesava mais que o próprio exercício) */
+  .reps-nota {
+    margin-top: 6px; padding: 7px 10px;
+    font-family: 'Inter', sans-serif; font-style: normal;
+    font-size: var(--fs-body); line-height: 1.4; letter-spacing: 0;
+  }
+
+  /* Prontidão respondida: uma linha com o que foi dito; abre para alterar */
+  details.pront-feita { display: block; padding: 0; }
+  details.pront-feita > summary {
+    list-style: none; display: flex; align-items: center; gap: 8px;
+    min-height: 44px; padding: 6px 12px; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  details.pront-feita > summary::-webkit-details-marker { display: none; }
+  .pront-tit { font-family: 'Inter', sans-serif; font-weight: 600; font-size: var(--fs-small); color: var(--text); white-space: nowrap; }
+  /* o que foi respondido aparece inteiro: quebra em duas linhas se precisar */
+  .pront-res { flex: 1 1 auto; min-width: 0; font-size: var(--fs-small); line-height: 1.35; color: var(--gold-pale); }
+  .pront-alt { display: inline-flex; align-items: center; gap: 5px; margin-left: auto; flex-shrink: 0; font-size: 11.5px; color: var(--text-3); }
+  .pront-alt .dp-seta { margin-left: 0; }
+  .pront-corpo { display: flex; flex-direction: column; gap: 8px; padding: 0 12px 11px; }
+  details.pront-feita .pt-a { display: none; }
+  details.pront-feita[open] .pt-a { display: inline; }
+  details.pront-feita[open] .pt-f,
+  details.pront-feita[open] .pront-res,
+  .pront-corpo > .pront-rot:first-child { display: none; }   /* a pergunta já está no topo */
+
+  /* Backup em Ajustes (mesmos botões de antes, alinhados ao modal) */
+  .aj-backup .export-btn { max-width: none; }
+  .aj-backup .export-btn + .export-btn { margin-top: 8px; }
+  .aj-backup .export-last { text-align: left; margin-top: 8px; }
+  #ajChangelog { margin: 10px 0 0; }
+  #ajChangelog summary { justify-content: flex-start; }
+
+  /* Dia de descanso: uma linha com o status do backup e o atalho */
+  .rest-backup {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    margin: 20px var(--gutter) 28px; padding: 8px 8px 8px 12px;
+    border: 1px solid var(--border); border-radius: var(--r-card); background: var(--surface-1);
+  }
+  .rest-backup-txt { min-width: 0; font-size: var(--fs-small); color: var(--text-2); }
+  .rest-backup-btn {
+    flex-shrink: 0; min-height: 44px; padding: 0 12px;
+    border: 1px solid var(--border-bright); border-radius: 10px; background: transparent;
+    color: var(--gold-bright); font-family: 'Inter', sans-serif; font-size: var(--fs-ui); font-weight: 600;
+    cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  .rest-backup-btn:active { transform: scale(0.97); }
+
+  /* ==================================================================
+     PLANEJADOR ADAPTATIVO (v26) — uma linha na tela principal, o resto
+     sob demanda no painel. Mesmas fontes, cores e raios da v25.x.
+     ================================================================== */
+  .plano-aviso {
+    display: flex; align-items: center; gap: 10px; width: calc(100% - 2 * var(--gutter)); margin: 10px var(--gutter) 0;
+    min-height: 44px; padding: 8px 12px; text-align: left; cursor: pointer;
+    border: 1px solid var(--gold-deep); border-radius: var(--r-card); background: rgba(200,155,60,0.08);
+    color: var(--text); font-family: 'Inter', sans-serif; font-size: var(--fs-small); -webkit-tap-highlight-color: transparent;
+  }
+  .plano-aviso .pa-ic { color: var(--gold-bright); font-size: 16px; flex-shrink: 0; }
+  .plano-aviso .pa-txt { flex: 1 1 auto; min-width: 0; font-weight: 600; }
+  .plano-aviso .pa-txt small { display: block; font-weight: 400; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .plano-aviso .pa-seta { color: var(--text-3); flex-shrink: 0; }
+  .plano-falta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 10px var(--gutter) 0; padding: 8px 10px;
+    border: 1px dashed var(--border-bright); border-radius: var(--r-card); font-size: var(--fs-small); color: var(--text-2); }
+  .plano-falta > span { flex: 1 1 100%; }
+  .plano-chip { min-height: 40px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--gold-deep); background: rgba(200,155,60,0.12);
+    color: var(--gold-bright); font-family: 'Inter', sans-serif; font-size: var(--fs-ui); font-weight: 600; cursor: pointer; }
+  .plano-chip.ghost { background: transparent; border-color: var(--border-bright); color: var(--text-2); }
+  .plano-alerta { margin: 10px var(--gutter) 0; padding: 10px 12px; border: 1px solid var(--danger-soft, #e08573); border-left-width: 3px;
+    border-radius: var(--r-card); background: rgba(224,133,115,0.08); font-size: var(--fs-body); line-height: 1.45; color: var(--text); }
+  .modal .plano-alerta { margin: 10px 0 0; }
+  .plano-link { background: none; border: none; padding: 4px 0; min-height: 32px; color: var(--gold-bright); font-family: 'Inter', sans-serif;
+    font-size: var(--fs-small); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; text-align: left; }
+  .plano-corte { margin: 8px var(--gutter) 0; padding: 7px 10px; border-left: 2px solid var(--gold-deep); font-size: var(--fs-small); color: var(--text-2); }
+  #planoCorpo, #trtCorpo { display: flex; flex-direction: column; gap: 12px; padding-bottom: 8px; }
+  .plano-ev ul, .pe-bloco ul { margin: 4px 0 0; padding-left: 18px; font-size: var(--fs-small); line-height: 1.5; color: var(--text-2); }
+  .plano-ev > b, .pe-bloco > b { font-family: 'Inter', sans-serif; font-size: var(--fs-small); color: var(--text); }
+  .etq { display: inline-block; padding: 0 6px; margin-left: 2px; border: 1px solid var(--border-bright); border-radius: 8px;
+    font-size: 10.5px; line-height: 16px; color: var(--text-3); white-space: nowrap; }
+  .plano-marcas .pm-tit { display: block; font-size: var(--fs-small); font-weight: 600; color: var(--text); }
+  .plano-marcas .pm-tit small { display: block; font-weight: 400; color: var(--text-3); }
+  .pm-dias { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; margin-top: 6px; }
+  .pm-dia { min-height: 44px; padding: 4px 0; border: 1px solid var(--border); border-radius: 8px; background: var(--surface-1);
+    color: var(--text-2); font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; }
+  .pm-dia b { font-size: 11px; } .pm-dia i { font-style: normal; font-size: 10px; color: var(--text-3); }
+  .pm-dia[disabled] { opacity: 0.45; cursor: default; }
+  .pm-dia.m-indisp { border-color: var(--danger-soft, #e08573); } .pm-dia.m-indisp i { color: var(--danger-soft, #e08573); }
+  .pm-dia.m-descanso { border-color: var(--frost, #7da8c8); } .pm-dia.m-descanso i { color: var(--frost, #7da8c8); }
+  .pm-dia.m-bloq { border-color: var(--gold); } .pm-dia.m-bloq i { color: var(--gold-bright); }
+  .plano-op { border: 1px solid var(--border); border-radius: var(--r-card); background: var(--surface-1); padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+  .po-cab { display: flex; align-items: baseline; gap: 8px; }
+  .po-n { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--text-3); letter-spacing: 0.06em; }
+  .po-nome { font-family: 'Inter', sans-serif; font-weight: 600; font-size: var(--fs-h2); color: var(--gold-pale); }
+  .po-desv { margin: 0; font-size: var(--fs-small); line-height: 1.45; color: var(--text-2); }
+  .po-mais summary { list-style: none; display: flex; align-items: center; gap: 6px; min-height: 40px; cursor: pointer; font-size: var(--fs-small); color: var(--gold-bright); }
+  .po-mais summary::-webkit-details-marker { display: none; }
+  .po-corpo { display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-small); line-height: 1.5; color: var(--text-2); }
+  .po-corpo p { margin: 0; }
+  .po-acoes { display: flex; flex-wrap: wrap; gap: 8px; }
+  .po-acoes .fad-btn { flex: 1 1 140px; }
+  .fad-btn.confirmando { outline: 2px solid var(--gold-bright); }
+  .plano-tira { display: flex; flex-direction: column; gap: 3px; }
+  .pt-linha { display: grid; grid-template-columns: 50px repeat(7, minmax(0, 1fr)); gap: 3px; align-items: stretch; }
+  .pt-rot { font-size: 10.5px; color: var(--text-3); align-self: center; }
+  .pt-dia { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 40px; padding: 2px 0;
+    border: 1px solid var(--border); border-radius: 6px; background: rgba(0,0,0,0.18); overflow: hidden; }
+  .pt-dia b { font-size: 9.5px; color: var(--text-3); font-weight: 600; }
+  .pt-dia i { font-style: normal; font-size: 10px; line-height: 1.15; color: var(--text-2); text-align: center; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 1px; }
+  .pt-dia.passado { opacity: 0.5; }
+  .pt-dia.muda { border-color: var(--gold); background: rgba(200,155,60,0.12); }
+  .pt-dia.muda i { color: var(--text); font-weight: 600; }
+  .pt-dia em { position: absolute; top: 1px; right: 3px; font-style: normal; font-size: 10px; color: var(--gold-bright); }
+  .pt-dia.t-retirada { border-color: var(--danger-soft, #e08573); } .pt-dia.t-retirada em { color: var(--danger-soft, #e08573); }
+  .pt-dia.t-reduzida em { color: var(--frost, #7da8c8); }
+  .plano-legenda, .plano-nota { margin: 0; font-size: 11.5px; line-height: 1.45; color: var(--text-3); }
+  .plano-vazio { padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--r-card); font-size: var(--fs-small); line-height: 1.5; color: var(--text-2); }
+  .plano-rodape { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .plano-rodape .fad-btn { flex: 1 1 160px; }
+  .trt-rot { display: flex; flex-direction: column; gap: 4px; font-size: var(--fs-small); color: var(--text-2); }
+  .trt-in { min-height: 44px; padding: 0 10px; border: 1px solid var(--border-bright); border-radius: 8px; background: var(--bg-elev, #15110c); color: var(--text); font-family: 'Inter', sans-serif; font-size: 15px; }
+  .trt-seg, .trt-alertas { display: flex; flex-wrap: wrap; gap: 6px; }
+  .trt-op { flex: 1 1 auto; min-height: 40px; padding: 0 10px; border: 1px solid var(--border-bright); border-radius: 8px; background: transparent;
+    color: var(--text-2); font-family: 'Inter', sans-serif; font-size: var(--fs-ui); cursor: pointer; }
+  .trt-op.sel { color: #17120a; background: linear-gradient(180deg, var(--gold-bright), var(--gold)); border-color: var(--gold); }
+  .trt-dor { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .trt-dor .trt-op { padding: 0; }
+  .trt-alertas .trt-op { flex: 1 1 100%; text-align: left; }
+  .trt-alertas .trt-op.sel { background: rgba(224,133,115,0.25); color: var(--text); border-color: var(--danger-soft, #e08573); }
+  .trt-nota { margin: 0; font-size: 11.5px; color: var(--text-3); line-height: 1.45; }
+  .trt-lista { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+  .trt-item { width: 100%; min-height: 44px; display: flex; align-items: center; gap: 6px; padding: 0 10px; text-align: left; border: 1px solid var(--border);
+    border-radius: 8px; background: transparent; color: var(--text-2); font-family: 'Inter', sans-serif; font-size: var(--fs-small); cursor: pointer; }
+  .trt-item small { margin-left: auto; color: var(--text-3); font-family: 'JetBrains Mono', monospace; font-size: 10.5px; }
+  @media (min-width: 720px) { .plano-aviso, .plano-falta, .plano-alerta, .plano-corte { max-width: 672px; margin-left: auto; margin-right: auto; } }
+
 </style>
 </head>
 <body>
@@ -8335,6 +8513,9 @@
 <header>
   <div class="header-row">
     <div class="logo">PWR<span class="slash">/</span><span class="dim">PEDRO</span></div>
+    <!-- RODADA DE UX (v25.2): descanso correndo (ou pausado) com o cronômetro
+         fechado → o tempo ocupa o lugar da marca. Toque reabre o cronômetro. -->
+    <button class="descanso-chip" id="descansoChip" type="button" hidden aria-label="Descanso. Tocar para abrir o cronômetro."><span class="dc-ic" aria-hidden="true">⏱</span><span class="dc-t" id="descansoChipT">00:00</span></button>
     <div class="week-selector" id="weekSelector" aria-label="Semana do ciclo">
       <button class="week-btn" data-week="1">W1</button>
       <button class="week-btn" data-week="2">W2</button>
@@ -8371,6 +8552,9 @@
 <div class="footer-actions">
   <button class="reset-btn" id="resetBtn">RESET DIA ATUAL</button>
 </div>
+<!-- v25.2: com aviso de conquista no pé da tela, a página ganha a altura
+     dele no fim — o último controle nunca fica preso embaixo do aviso -->
+<div class="respiro-aviso" id="respiroAviso" aria-hidden="true"></div>
 
 <!-- RPE Info Modal -->
 <div class="modal-backdrop" id="rpeModal">
@@ -8555,6 +8739,29 @@
       <div class="gym-row gym-sub"><span class="gym-day">Domingo</span><span class="gym-hours">08h às 20h</span></div>
     </div>
 
+    <!-- v26: registro opcional de aplicação e desconforto (usado só pelo planejador) -->
+    <div class="settings-section" id="ajTrt" style="margin-top:22px;"></div>
+
+    <!-- RODADA DE UX (v25.2): backup e restauração só existiam no dia de
+         descanso; agora moram aqui, acessíveis de qualquer dia. Mesmos IDs,
+         mesmos textos e as mesmas funções de antes. -->
+    <div class="settings-section aj-backup" id="ajBackup" style="margin-top:22px;">
+      <div class="settings-label" style="margin-bottom:10px;">
+        <span class="settings-label-title">Backup completo</span>
+        <span class="settings-label-desc">Gera arquivo único com TODO o histórico: cargas, checks, substituições, skips com justificativa, notas semanais, métricas de aderência. Formato .md humano + JSON estruturado pra análise programática.</span>
+      </div>
+      <button class="export-btn" id="shareBtn" type="button" style="display:none;">ENVIAR BACKUP</button>
+      <button class="export-btn" id="exportBtn" type="button">EXPORTAR BACKUP</button>
+      <div class="export-last" id="exportLast">Nenhum backup exportado ainda</div>
+      <div class="settings-label" style="margin:18px 0 10px;">
+        <span class="settings-label-title">Restaurar</span>
+        <span class="settings-label-desc">Reinstalou o app e perdeu o progresso? Escolha um backup exportado aqui pra <strong>restaurar tudo</strong>: cargas, recordes, Poder/nível, sequência 🔥 e feitos. Substitui o estado atual — exporte antes.</span>
+      </div>
+      <button class="export-btn" id="importBtn" type="button">IMPORTAR BACKUP</button>
+      <input type="file" id="importFile" accept=".md,.json,.txt,application/json,text/markdown,text/plain" style="display:none;" aria-hidden="true">
+      <div id="importConfirm" role="status" aria-live="polite"></div>
+    </div>
+
     <div class="settings-section" style="margin-top:22px;">
       <div class="settings-label" style="margin-bottom:10px;">
         <span class="settings-label-title">Versão instalada</span>
@@ -8564,6 +8771,7 @@
         <span class="build-rot">build</span> <b class="build-num">—</b>
         <span class="build-sw">cache: —</span>
       </div>
+      <details class="changelog" id="ajChangelog"><summary>Histórico de alterações</summary></details>
     </div>
 
     <!-- Zona de perigo por ÚLTIMO — padrão de settings: destrutivo no fim -->
@@ -8576,6 +8784,29 @@
       </div>
       <button class="reset-all-btn" id="resetAllBtn" type="button">⚠ RESETAR APLICATIVO</button>
     </div>
+  </div>
+</div>
+
+<!-- v26: planejador da semana -->
+<div class="modal-backdrop" id="planoModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="planoTit">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="planoTit">Reorganizar a semana</div>
+      <button class="modal-close" id="planoModalClose" aria-label="Fechar">×</button>
+    </div>
+    <div id="planoCorpo"></div>
+  </div>
+</div>
+<!-- v26: registro de aplicação e desconforto -->
+<div class="modal-backdrop" id="trtModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="trtTit">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="trtTit">Aplicação e desconforto</div>
+      <button class="modal-close" id="trtModalClose" aria-label="Fechar">×</button>
+    </div>
+    <div id="trtCorpo"></div>
   </div>
 </div>
 
@@ -9034,11 +9265,24 @@
 // SESSIONS — biblioteca de sessões fixas em conteúdo
 // O calendário (qual sessão acontece em qual dia) é dinâmico.
 // ============================================================
-// Número da versão publicada. Aparece em Ajustes (GYM) e no fim do dia de
-// descanso. Mudou o app? Mude aqui e o CACHE_VERSION do sw.js.
-const PWR_BUILD = '2026-11-07.3';
+// Número da versão publicada. Aparece em Ajustes (GYM), com o histórico de
+// alterações. Mudou o app? Mude aqui e o CACHE_VERSION do sw.js.
+const PWR_BUILD = '2026-11-14.1';
 // Histórico de alterações (o mais novo primeiro). Aparece em Versão.
 const PWR_CHANGELOG = [
+  { v: '2026-11-14.1 · v26 (planejador)', itens: [
+    'Planejador adaptativo da semana: quando algo muda (falta, descanso, HYROX em outro dia, treino parcial, desconforto registrado), o app avalia a semana inteira e propõe até 3 alternativas — semana atual → sugerida, o que mantém, move, reduz, inclui e retira, volume, exposições e a principal desvantagem',
+    'Restrições obrigatórias respeitadas antes de tudo: dias indisponíveis, descanso obrigatório, dias bloqueados, sessões feitas, compromissos (HYROX) e limitação registrada; nada é aplicado sem o toque de confirmação, e dá para desfazer',
+    'Registro opcional de aplicação e desconforto (data, região, lado, dor 0–10, limitação, de onde parece vir, sinais de alerta): coxa usa seu padrão de 2–3 dias como preferência, glúteo só pesa com sintoma; sinais de alerta pedem avaliação médica. Sem dose, sem orientação de tratamento',
+    'O que foi feito de verdade conta: exercícios não feitos não viram volume; treino parcial mostra o que ficou pendente; sessão reduzida pelo plano mostra o que ficou fora e pode ser reposta'
+  ] },
+  { v: '2026-11-09.1 · v25.2 (uso)', itens: [
+    'Descanso visível com o cronômetro fechado: o tempo fica no topo, no lugar da marca, enquanto corre ou está pausado; toque reabre o cronômetro; ao terminar avisa “Vai!” e some (continua sem disparar sozinho)',
+    'Aviso de conquista no pé da tela, mais baixo: semanas e dias ficam livres para tocar; continua até o OK, × ou deslize',
+    'Cartão do exercício mais enxuto: séries sem zero à esquerda (“4”) e a nota de autorregulação em texto compacto, mais curta (o alvo e a série mais pesada já estão ao lado do RPE real)',
+    'Prontidão respondida vira uma linha com o que foi dito (nível, sono, dor, região) e abre para alterar; fica aberta enquanto você responde',
+    'Backup, restauração e o histórico de versões agora moram em Ajustes (GYM), acessíveis de qualquer dia; no descanso fica o status do último backup com um atalho para lá'
+  ] },
   { v: '2026-11-07.3 · v25.1 (design)', itens: [
     'Cabeçalho fixo só com navegação: marca, semana (W1–DLD) e dias; o status de cada dia virou o sublinhado da aba',
     'Gamificação resumida numa faixa que rola com a página; o painel completo (barra de poder, erguido, conquistas, frase) abre ao tocar no resumo',
@@ -11336,7 +11580,7 @@ function cargaSessao(sk, week, day, real) {
   const tot = { pernas: 0, lombar: 0, pegada: 0, ombros: 0 };
   let efSoma = 0, nSoma = 0;
   s.exercises.forEach(function (ex) {
-    if (week === 'deload' && shouldHideOnDeload(ex)) return;
+    if (exFora(week, day, ex)) return;
     const inf = infoEx(ex); if (!inf) return;
     const p = getPrescription(ex, week, real ? day : undefined);
     let n = parseInt(p.sets, 10) || 0;
@@ -11454,7 +11698,7 @@ function conflitoDia(seq, T, opts) {
   };
   if (s.hyroxDay) avalia('hyrox', 'Hyrox', HX_DEMANDA);
   else (s.exercises || []).forEach(function (ex) {
-    if (e.week === 'deload' && shouldHideOnDeload(ex)) return;
+    if (exFora(e.week, e.day, ex)) return;
     const inf = infoEx(ex); if (!inf) return;
     avalia(ex.id, ex.name, inf.perfil, ex);
   });
@@ -11632,6 +11876,948 @@ function sugerirDistribuicao(draft, week, opts) {
   }
   return out;
 }
+
+// ============================================================
+// ---------- 7. PLANEJADOR ADAPTATIVO DA SEMANA (v26) ----------
+// ============================================================
+// Módulos (cada um com uma responsabilidade, nada aleatório):
+//  A. ESTADO      planoEstado      — grade atual/habitual, o que foi feito, marcas
+//  B. ESTÍMULOS   planoEstimulos   — séries feitas/pendentes por músculo, padrão, lift
+//  C. RECUPERAÇÃO planoRestricoes  — fadiga estimada (motor v3) + registro de
+//                                    aplicação/desconforto (dados do Pedro)
+//  D. GERADOR     planoGerar       — grades viáveis (restrições obrigatórias)
+//  E. AVALIADOR   planoAvaliar     — critérios em ordem (lexicográfica), por objetivo
+//  F. EXPLICADOR  planoExplicar    — textos montados só com os fatores usados
+//  G. APLICADOR   planoAplicar     — só a opção confirmada, com desfazer
+// O mesmo estado produz sempre as mesmas opções (enumeração determinística).
+
+// ---- armazenamento: pwr.plano (marcas, decisões, cortes, histórico) ----
+const PLANO_MARCAS = {
+  indisp:   { rot: 'Indisponível', curto: 'indisp.' },
+  descanso: { rot: 'Descanso obrigatório', curto: 'descanso' },
+  bloq:     { rot: 'Bloqueado (não mover)', curto: 'bloq.' }
+};
+let PLANO = { dias: {}, decisoes: {}, cortes: {}, hist: [] };
+function planoLoad() {
+  const v = readJson('pwr.plano', null);
+  PLANO = (v && typeof v === 'object' && !Array.isArray(v)) ? v : {};
+  ['dias', 'decisoes', 'cortes'].forEach(function (k) { if (!PLANO[k] || typeof PLANO[k] !== 'object' || Array.isArray(PLANO[k])) PLANO[k] = {}; });
+  if (!Array.isArray(PLANO.hist)) PLANO.hist = [];
+  const cal = semanaCalAtual().inicio;
+  // vencido sai das listas ativas; o histórico de decisões fica
+  Object.keys(PLANO.dias).forEach(function (k) { if (k < cal) delete PLANO.dias[k]; });
+  Object.keys(PLANO.cortes).forEach(function (k) { const c = PLANO.cortes[k]; if (!c || !Array.isArray(c.fora) || c.semanaCal < cal) delete PLANO.cortes[k]; });
+  Object.keys(PLANO.decisoes).forEach(function (k) { const c = PLANO.decisoes[k]; if (!c || c.semanaCal < cal) delete PLANO.decisoes[k]; });
+  if (PLANO.hist.length > 30) PLANO.hist.splice(0, PLANO.hist.length - 30);
+}
+function planoSave() { safeSet('pwr.plano', JSON.stringify(PLANO)); }
+function planoMarca(dia) { const m = PLANO.dias[semanaCalAtual().inicio] || {}; return PLANO_MARCAS[m[dia]] ? m[dia] : ''; }
+function planoMarcar(dia, marca) {
+  const cal = semanaCalAtual().inicio;
+  const m = PLANO.dias[cal] || {};
+  if (!marca || m[dia] === marca) delete m[dia]; else m[dia] = marca;
+  if (Object.keys(m).length) PLANO.dias[cal] = m; else delete PLANO.dias[cal];
+  planoSave();
+}
+// Corte (sessão reduzida pelo plano): vale só na semana de calendário e só
+// para a sessão daquele dia. Exercício cortado não conta como feito nem como
+// volume, e não é apagado: volta com "Repor".
+function corteChave(week, day) { return STATE.mode + '::' + week + '::' + day; }
+function corteDoDia(week, day) {
+  const c = PLANO.cortes && PLANO.cortes[corteChave(week, day)];
+  if (!c || c.semanaCal !== semanaCalAtual().inicio) return null;
+  if (c.sk && c.sk !== semanaResolvida(week)[day]) return null;
+  return c;
+}
+function corteAtivo(week, day, exId) { const c = corteDoDia(week, day); return !!(c && c.fora.indexOf(exId) >= 0); }
+function exFora(week, day, ex) { return (week === 'deload' && shouldHideOnDeload(ex)) || (day ? corteAtivo(week, day, ex.id) : false); }
+
+// ---- A. ESTADO SEMANAL ----
+// Situação de cada dia: o que estava previsto e o que foi feito de verdade.
+function planoStatusDia(week, d) {
+  const sk = semanaResolvida(week)[d]; const s = SESSIONS[sk];
+  if (!s) return { st: 'vazio', sk: sk };
+  if (s.rest) return { st: 'descanso', sk: sk };
+  if (s.skip) return { st: 'pulado', sk: sk };
+  if (s.hyroxDay || ehDiaMarcavel(s)) return { st: isCardioDone(week, d) ? 'feito' : 'nao', sk: sk };
+  if (week === 'deload' && s.deloadCutAll) return { st: 'descanso', sk: sk };
+  let tot = 0, feitas = 0; const exFeitos = [], exPend = [];
+  (s.exercises || []).forEach(function (ex) {
+    if (exFora(week, d, ex)) return;
+    const n = parseInt(getPrescription(ex, week, d).sets, 10) || 0;
+    if (!n) return;
+    const f = Math.min(n, getSetProgress(week, d, ex.id));
+    tot += n; feitas += f;
+    (f >= n ? exFeitos : exPend).push({ ex: ex, n: n, f: f });
+  });
+  if (!tot) return { st: 'vazio', sk: sk };
+  return { st: feitas === 0 ? 'nao' : (feitas >= tot ? 'feito' : 'parcial'), sk: sk, tot: tot, feitas: feitas, exFeitos: exFeitos, exPend: exPend };
+}
+function planoHojeIdx() { const i = idxHoje(); return i < 0 ? 0 : i; }
+function dataDoDia(d) { const ini = semanaCalAtual().inicio.split('-').map(Number); return isoDe(new Date(ini[0], ini[1] - 1, ini[2] + DAYS.indexOf(d), 12)); }
+function planoEstado(week) {
+  const atual = semanaResolvida(week);
+  const habitual = semanaHabitual(week);
+  const hoje = planoHojeIdx();
+  const dias = {};
+  DAYS.forEach(function (d, i) {
+    const st = planoStatusDia(week, d);
+    dias[d] = { dia: d, i: i, sk: atual[d], habitual: habitual[d], status: st, passado: i < hoje, hoje: i === hoje,
+                marca: planoMarca(d), papel: papelDe(d), data: dataDoDia(d) };
+  });
+  // sessões-núcleo já executadas nesta semana (em qualquer dia)
+  const feitas = {};
+  DAYS.forEach(function (d) { const x = dias[d]; if (x.status.st === 'feito' || x.status.st === 'parcial') feitas[x.sk] = d; });
+  return { week: week, atual: atual, habitual: habitual, hoje: hoje, dias: dias, feitas: feitas };
+}
+
+// ---- B. HISTÓRICO DE ESTÍMULOS ----
+const PADROES_MOV = [
+  ['agachamento', /agach|squat|leg ?press|b[uú]lgaro|afundo|lunge|hack/i],
+  ['dobradica', /terra|deadlift|rdl|stiff|hip thrust|hiperext|good ?morning|romeno/i],
+  ['emp_v', /desenvolvimento|ohp|militar|overhead|arnold/i],
+  ['emp_h', /supino|bench|crucifixo|flex[aã]o de bra|chest|peck/i],
+  ['puxar_v', /puxada|barra fixa|pull-?up|chin|pulldown/i],
+  ['puxar_h', /remada|row|face ?pull|cavalinho|serrote/i],
+  ['tronco', /pallof|prancha|ab wheel|abdom|dead ?bug|core/i]
+];
+const PADRAO_NOME = { agachamento: 'agachamento', dobradica: 'dobradiça de quadril', emp_h: 'empurrar horizontal', emp_v: 'empurrar vertical',
+  puxar_h: 'puxar horizontal', puxar_v: 'puxar vertical', tronco: 'tronco', isolado: 'isolados', hyrox: 'corrida, carregamentos e trenó' };
+function padraoEx(ex) {
+  const n = (ex.name || '') + ' ' + (ex.id || '');
+  for (let i = 0; i < PADROES_MOV.length; i++) if (PADROES_MOV[i][1].test(n)) return PADROES_MOV[i][0];
+  return 'isolado';
+}
+// Lift de competição que a exposição representa (só principais e variações).
+function liftEx(ex) {
+  if (!(ex.primary || ex.exposicao)) return null;
+  const n = (ex.name || '') + ' ' + (ex.id || '');
+  if (/agach|squat/i.test(n)) return 'agachamento';
+  if (/supino|bench/i.test(n)) return 'supino';
+  if (/terra|deadlift/i.test(n)) return 'terra';
+  return null;
+}
+// Estímulo de uma sessão com N séries por exercício (feitas, pendentes ou previstas).
+function estimuloDe(sk, week, day, seriesDe) {
+  const s = SESSIONS[sk];
+  const out = { series: 0, musc: {}, dir: {}, padroes: {}, lifts: {} };
+  if (!s) return out;
+  if (s.hyroxDay) { out.padroes.hyrox = 1; return out; }   // HYROX não substitui o resistido de perna
+  (s.exercises || []).forEach(function (ex) {
+    const n = seriesDe(ex); if (!n) return;
+    out.series += n;
+    const p = padraoEx(ex); out.padroes[p] = (out.padroes[p] || 0) + n;
+    const l = liftEx(ex); if (l) out.lifts[l] = (out.lifts[l] || 0) + 1;
+    const pesos = pesosEx(ex) || {};
+    Object.keys(pesos).forEach(function (m) {
+      const w = pesos[m] || 0; if (!w) return;
+      out.musc[m] = (out.musc[m] || 0) + n * w;
+      if (w >= 1) out.dir[m] = (out.dir[m] || 0) + n;
+    });
+  });
+  return out;
+}
+function somaEst(a, b) {
+  ['musc', 'dir', 'padroes', 'lifts'].forEach(function (k) { Object.keys(b[k]).forEach(function (m) { a[k][m] = (a[k][m] || 0) + b[k][m]; }); });
+  a.series += b.series; return a;
+}
+function estVazio() { return { series: 0, musc: {}, dir: {}, padroes: {}, lifts: {} }; }
+// Feito de verdade nesta semana (séries marcadas; nada que não foi feito conta).
+function planoEstimulos(est) {
+  const feito = estVazio(), pendente = estVazio(), porDia = {};
+  DAYS.forEach(function (d) {
+    const x = est.dias[d]; const s = SESSIONS[x.sk];
+    if (!s || s.rest || s.skip) return;
+    if (s.hyroxDay) { if (x.status.st === 'feito') { feito.padroes.hyrox = (feito.padroes.hyrox || 0) + 1; porDia[d] = { hyrox: true }; } return; }
+    const f = estimuloDe(x.sk, est.week, d, function (ex) { return exFora(est.week, d, ex) ? 0 : Math.min(parseInt(getPrescription(ex, est.week, d).sets, 10) || 0, getSetProgress(est.week, d, ex.id)); });
+    somaEst(feito, f); porDia[d] = f;
+    if (x.passado && (x.status.st === 'parcial' || x.status.st === 'nao')) {
+      somaEst(pendente, estimuloDe(x.sk, est.week, d, function (ex) { if (exFora(est.week, d, ex)) return 0; const n = parseInt(getPrescription(ex, est.week, d).sets, 10) || 0; return Math.max(0, n - getSetProgress(est.week, d, ex.id)); }));
+    }
+  });
+  return { feito: feito, pendente: pendente, porDia: porDia };
+}
+
+// ---- C. RECUPERAÇÃO: registro opcional de aplicação e desconforto ----
+// O app NÃO prescreve dose, frequência, técnica, via ou local; não diagnostica.
+// Usa só o que o Pedro registrou, para distribuir os treinos.
+const TRT_REGIOES = { coxa: { rot: 'Coxa', afeta: 'pernas' }, gluteo: { rot: 'Glúteo', afeta: 'pernas' }, deltoide: { rot: 'Deltoide', afeta: 'ombros' }, outro: { rot: 'Outro local', afeta: null } };
+const TRT_LIMITACAO = { nenhuma: 'Sem limitação', leve: 'Limita um pouco', relevante: 'Limita o movimento' };
+const TRT_ORIGEM = { aplicacao: 'Local da aplicação', treino: 'Músculo cansado do treino', nao_sei: 'Não sei' };
+const TRT_ALERTAS = {
+  dor_intensa: 'Dor intensa ou que piora dia a dia',
+  vermelhidao: 'Vermelhidão ou calor aumentando',
+  inchaco: 'Inchaço importante',
+  febre: 'Febre',
+  neuro: 'Formigamento, dormência, fraqueza ou dor que irradia'
+};
+let TRT_REG = { eventos: [], prefs: { usar: true, superioresAposCoxa: true } };
+function trtLoad() {
+  const v = readJson('pwr.trtReg', null);
+  TRT_REG = (v && typeof v === 'object' && !Array.isArray(v)) ? v : {};
+  if (!Array.isArray(TRT_REG.eventos)) TRT_REG.eventos = [];
+  TRT_REG.eventos = TRT_REG.eventos.filter(function (e) { return e && typeof e === 'object' && e.quando && (e.tipo === 'aplicacao' || e.tipo === 'sintoma'); });
+  TRT_REG.prefs = Object.assign({ usar: true, superioresAposCoxa: true }, TRT_REG.prefs || {});
+}
+function trtSave() { safeSet('pwr.trtReg', JSON.stringify(TRT_REG)); }
+function trtSalvar(ev) {
+  const e = Object.assign({}, ev);
+  if (!e.id) e.id = 't' + Date.now().toString(36) + Math.floor(Math.random() * 1e4).toString(36);
+  if (e.dor != null) e.dor = Math.max(0, Math.min(10, parseInt(e.dor, 10) || 0));
+  if (!Array.isArray(e.alerta)) e.alerta = [];
+  e.alerta = e.alerta.filter(function (a) { return TRT_ALERTAS[a]; });
+  const i = TRT_REG.eventos.findIndex(function (x) { return x.id === e.id; });
+  if (i >= 0) TRT_REG.eventos[i] = e; else TRT_REG.eventos.push(e);
+  TRT_REG.eventos.sort(function (a, b) { return a.quando < b.quando ? -1 : 1; });
+  if (TRT_REG.eventos.length > 400) TRT_REG.eventos.splice(0, TRT_REG.eventos.length - 400);
+  trtSave(); return e;
+}
+function trtRemover(id) { TRT_REG.eventos = TRT_REG.eventos.filter(function (x) { return x.id !== id; }); trtSave(); }
+function diasEntre(aIso, bIso) { return daysBetweenKeys(String(aIso).slice(0, 10), String(bIso).slice(0, 10)); }
+// Padrão pessoal: depois de aplicação na coxa, quantos dias o desconforto
+// (dor ≥ 2) durou nos registros do próprio Pedro. Sem dados suficientes,
+// usa a observação dele (2 a 3 dias) — marcada como observação, não regra.
+function trtPadraoCoxa() {
+  const apps = TRT_REG.eventos.filter(function (e) { return e.tipo === 'aplicacao' && e.regiao === 'coxa'; });
+  const dur = [];
+  apps.forEach(function (a) {
+    const s = TRT_REG.eventos.filter(function (e) { return e.tipo === 'sintoma' && (e.regiao === 'coxa' || !e.regiao) && e.quando >= a.quando && diasEntre(a.quando, e.quando) <= 6; });
+    if (s.length < 2) return;
+    const com = s.filter(function (e) { return (e.dor || 0) >= 2; });
+    const sem = s.filter(function (e) { return (e.dor || 0) <= 1; });
+    if (!sem.length) return;   // sem registro de melhora: não dá para medir
+    dur.push(com.length ? diasEntre(a.quando, com[com.length - 1].quando) : 0);
+  });
+  if (dur.length >= 2) {
+    dur.sort(function (a, b) { return a - b; });
+    const med = dur[Math.floor(dur.length / 2)];
+    return { dias: Math.max(0, Math.min(5, med)), aprendido: true, n: dur.length };
+  }
+  return { dias: 3, aprendido: false, n: dur.length };
+}
+// Situação no dia D (YYYY-MM-DD). nivel:
+//  nenhuma · atencao (preferência: evitar perna intensa) · restricao (perna
+//  intensa não é recomendada) · alerta (sinais que pedem avaliação médica).
+function trtSituacao(dataIso) {
+  const out = { nivel: 'nenhuma', regiao: null, afeta: null, motivo: '', fonte: '', app: null, sint: null, pedeAtualizar: false };
+  if (!TRT_REG.prefs.usar) return out;
+  const fimDia = dataIso + 'T23:59';
+  const ev = TRT_REG.eventos.filter(function (e) { return e.quando <= fimDia && diasEntre(e.quando, dataIso) <= 5; });
+  const apps = ev.filter(function (e) { return e.tipo === 'aplicacao'; });
+  const sints = ev.filter(function (e) { return e.tipo === 'sintoma'; });
+  const app = apps.length ? apps[apps.length - 1] : null;
+  const sint = sints.length ? sints[sints.length - 1] : null;
+  out.app = app; out.sint = sint;
+  const novo = sint && (!app || sint.quando >= app.quando) ? sint : null;
+  if (novo) {
+    const idade = diasEntre(novo.quando, dataIso);
+    const reg = TRT_REGIOES[novo.regiao] || TRT_REGIOES.outro;
+    out.regiao = novo.regiao; out.afeta = reg.afeta; out.fonte = 'registrado';
+    if ((novo.alerta || []).length) { out.nivel = 'alerta'; out.motivo = 'sinais registrados: ' + novo.alerta.map(function (a) { return TRT_ALERTAS[a].toLowerCase(); }).join(', '); return out; }
+    if (idade <= 1) {
+      const dor = novo.dor || 0;
+      if (novo.limitacao === 'relevante' || dor >= 5) { out.nivel = 'restricao'; }
+      else if (dor >= 1 || novo.limitacao === 'leve') { out.nivel = 'atencao'; }
+      else { out.nivel = 'nenhuma'; out.motivo = 'desconforto registrado como resolvido (dor 0)'; return out; }
+      out.forte = idade === 0 && (dor >= 3 || novo.limitacao === 'leve');
+      out.motivo = 'dor ' + dor + '/10' + (novo.limitacao && novo.limitacao !== 'nenhuma' ? ', ' + TRT_LIMITACAO[novo.limitacao].toLowerCase() : '') + ' (' + (TRT_ORIGEM[novo.origem] || 'origem não informada').toLowerCase() + ')' + (idade === 1 ? ' — registro de ontem' : '');
+      if (idade === 1) out.pedeAtualizar = true;
+      return out;
+    }
+    // registro velho: não sustenta restrição sozinho
+    if ((novo.dor || 0) >= 1 && app && app.regiao === 'coxa' && diasEntre(app.quando, dataIso) <= trtPadraoCoxa().dias) {
+      out.nivel = 'atencao'; out.fonte = 'padrão pessoal'; out.pedeAtualizar = true;
+      out.motivo = 'último registro há ' + idade + ' dias; dentro do seu padrão após aplicação na coxa';
+    }
+    return out;
+  }
+  if (app) {
+    const reg = TRT_REGIOES[app.regiao] || TRT_REGIOES.outro;
+    out.regiao = app.regiao; out.afeta = reg.afeta;
+    const pad = trtPadraoCoxa();
+    const dd = diasEntre(app.quando, dataIso);
+    if (app.regiao === 'coxa' && TRT_REG.prefs.superioresAposCoxa && dd <= pad.dias && dd >= 0) {
+      out.nivel = 'atencao'; out.fonte = 'padrão pessoal';
+      out.motivo = 'aplicação na coxa ' + (dd === 0 ? 'hoje' : dd === 1 ? 'ontem' : 'há ' + dd + ' dias') + '; seu padrão: desconforto por ' + (pad.aprendido ? 'cerca de ' + pad.dias + ' dia(s), pelos seus registros' : '2 a 3 dias (sua observação)') + ', sobretudo com perna intensa';
+    }
+  }
+  return out;
+}
+// Exigência de uma sessão numa região do corpo: alta / baixa / nenhuma.
+function exigencia(sk, regiao, week, day, cortes) {
+  const s = SESSIONS[sk];
+  if (!s || s.rest || s.skip) return 'nenhuma';
+  if (s.hyroxDay) return regiao === 'pernas' ? 'alta' : (HX_DEMANDA[regiao] >= 0.6 ? 'alta' : 'baixa');
+  if (s.cardio) return regiao === 'pernas' ? 'baixa' : 'nenhuma';
+  let max = 0;
+  (s.exercises || []).forEach(function (ex) {
+    if (week === 'deload' && shouldHideOnDeload(ex)) return;
+    if (cortes && cortes.indexOf(ex.id) >= 0) return;
+    const i = infoEx(ex); if (!i) return;
+    max = Math.max(max, i.perfil[regiao] || 0);
+  });
+  return max >= 0.6 ? 'alta' : max >= 0.3 ? 'baixa' : 'nenhuma';
+}
+function planoRestricoes(est) {
+  const r = {};
+  DAYS.forEach(function (d) { r[d] = trtSituacao(est.dias[d].data); });
+  return r;
+}
+
+// ---- D. GERADOR ----
+function sessaoForca(k) { const s = SESSIONS[k]; return !!(s && s.exercises && !s.hyroxDay && !s.rest && !s.skip && !s.cardio); }
+// Acessórios que saem numa sessão reduzida: tudo menos principais/exposições
+// e o que não tem mapa (nunca o que já foi feito).
+function cortesPossiveis(sk, week) {
+  const s = SESSIONS[sk]; if (!s) return [];
+  return (s.exercises || []).filter(function (ex) { return !ex.primary && !ex.exposicao && !(week === 'deload' && shouldHideOnDeload(ex)); }).map(function (ex) { return ex.id; });
+}
+function planoContexto(week, opts) {
+  opts = opts || {};
+  const est = planoEstado(week);
+  const estim = planoEstimulos(est);
+  const restr = planoRestricoes(est);
+  const fixos = {}, porque = {}, livres = [];
+  DAYS.forEach(function (d) {
+    const x = est.dias[d]; const s = SESSIONS[x.sk];
+    const fixa = function (k, m) { fixos[d] = k; porque[d] = m; };
+    if (x.passado) return fixa(x.sk, 'passado');
+    if (x.status.st === 'feito' || x.status.st === 'parcial') return fixa(x.sk, 'feito');
+    if (x.marca === 'indisp') return fixa('rest', 'indisp');
+    if (x.marca === 'descanso') return fixa('rest', 'descanso');
+    if (x.marca === 'bloq') return fixa(x.sk, 'bloq');
+    if (s && (s.hyroxDay || s.cardio)) return fixa(x.sk, 'compromisso');
+    if (s && s.skip) return fixa(x.sk, 'pulado');
+    if (s && s.rest && x.habitual !== 'rest') return fixa('rest', 'descanso_escolhido');   // descanso que o Pedro pôs: respeitado
+    if (x.papel === 'obrigatorio') return fixa(x.sk, 'obrigatorio');
+    if (x.papel === 'descanso_fixo' && !(opts.autorizados || {})[d]) return fixa(x.sk, s && s.rest ? 'descanso_fixo' : 'escolha');
+    livres.push(d);
+  });
+  // o que ainda precisa de lugar: núcleo do modo não executado e fora dos fixos
+  // sessão de dia passado que não foi feita volta a precisar de lugar
+  const nosFixos = Object.keys(fixos).filter(function (d) { const x = est.dias[d]; return !(x.passado && x.status.st === 'nao'); }).map(function (d) { return fixos[d]; });
+  // as sessões que estão nos dias livres (inclusive repetidas: escolha do Pedro)
+  const alvo = [];
+  livres.forEach(function (d) { const k = est.atual[d]; if (sessaoForca(k)) alvo.push(k); });
+  // + o núcleo do modo que ainda não foi feito e não tem lugar
+  modeCoreSessions().filter(sessaoForca).forEach(function (k) {
+    if (est.feitas[k] || nosFixos.indexOf(k) >= 0 || alvo.indexOf(k) >= 0) return;
+    alvo.push(k);
+  });
+  const liftsHab = {};
+  DAYS.forEach(function (d) { const k = est.habitual[d]; if (!sessaoForca(k)) return; const e = estimuloDe(k, week, d, function (ex) { return (week === 'deload' && shouldHideOnDeload(ex)) ? 0 : (parseInt(getPrescription(ex, week).sets, 10) || 0); }); Object.keys(e.lifts).forEach(function (l) { liftsHab[l] = (liftsHab[l] || 0) + e.lifts[l]; }); });
+  return { week: week, est: est, estim: estim, restr: restr, fixos: fixos, porque: porque, livres: livres, alvo: alvo, liftsHab: liftsHab };
+}
+function planoGerar(ctx) {
+  const out = [];
+  const L = ctx.livres, A = ctx.alvo;
+  const usados = [];
+  const rec = function (pos, sched) {
+    if (pos === A.length) { out.push(Object.assign({}, sched)); return; }
+    for (let j = 0; j < L.length; j++) {
+      if (usados[j]) continue;
+      usados[j] = true; const s2 = Object.assign({}, sched); s2[L[j]] = A[pos];
+      rec(pos + 1, s2); usados[j] = false;
+    }
+    rec(pos + 1, sched);   // esta sessão fica de fora
+  };
+  const base = Object.assign({}, ctx.fixos);
+  L.forEach(function (d) { base[d] = 'rest'; });
+  rec(0, base);
+  return out;
+}
+
+// ---- E. AVALIADOR ----
+const PLANO_PENA = [0, 0.15, 0.35, 0.6];
+function planoAvaliar(ctx, sched, cortes) {
+  cortes = cortes || {};
+  const week = ctx.week, est = ctx.est;
+  const an = analisarSemana(week, sched, {});   // passado = o que foi feito de verdade; futuro = previsto
+  const r = { sched: sched, cortes: cortes, viavel: true, violacoes: [], n3: 0, n2: 0, conflito: 0, trtRestr: 0, trtPref: 0, trtPrefFraca: 0,
+              overlap: 0, liftsPerdidos: [], fora: [], muscAbaixo: 0, series: 0, mudancas: 0, habitual: 0, dias: {}, an: an };
+  // restrições obrigatórias
+  DAYS.forEach(function (d) {
+    const x = est.dias[d]; const k = sched[d]; const rs = ctx.restr[d];
+    if ((x.marca === 'indisp' || x.marca === 'descanso') && sessaoForca(k)) { r.viavel = false; r.violacoes.push(d + ': dia marcado como ' + PLANO_MARCAS[x.marca].rot.toLowerCase()); }
+    if (ctx.porque[d] && ctx.porque[d] !== 'compromisso' && sched[d] !== ctx.fixos[d]) { r.viavel = false; r.violacoes.push(d + ': dia fixo'); }
+    if (!x.passado && rs && rs.afeta && (rs.nivel === 'restricao' || rs.nivel === 'alerta')) {
+      const ex = exigencia(k, rs.afeta, week, d, cortes[d]);
+      if (ex === 'alta') {
+        if (ctx.porque[d] === 'compromisso' || ctx.porque[d] === 'feito') r.trtRestr++;   // não dá para mover: vira aviso
+        else { r.viavel = false; r.violacoes.push(d + ': exigência alta com restrição registrada'); }
+      }
+    } else if (!x.passado && rs && rs.afeta && rs.nivel === 'atencao' && exigencia(k, rs.afeta, week, d, cortes[d]) === 'alta' && sessaoForca(k)) {
+      // registro do próprio dia pesa forte; padrão pessoal ou registro de ontem, fraco
+      if (rs.forte) r.trtPref++; else r.trtPrefFraca++;
+    }
+  });
+  // segurança/recuperação (estimativa do motor de fadiga)
+  DAYS.forEach(function (d, i) {
+    if (est.dias[d].passado) return;
+    const c = an.dias[d]; if (!c) return;
+    let v = c.valor;
+    if (cortes[d] && cortes[d].length) { v = 0; c.itens.forEach(function (it) { if (cortes[d].indexOf(it.id) < 0) v = Math.max(v, it.valor); }); }
+    const n = nivelDe(v);
+    if (n >= 3) r.n3++; else if (n === 2) r.n2++;
+    r.conflito += v + PLANO_PENA[n];
+  });
+  (an.depois || []).forEach(function (x) { if (x.nivel >= 2) r.overlap++; r.conflito += 0.5 * (x.valor + PLANO_PENA[x.nivel]); });
+  // perna exigente em dias seguidos (inclui HYROX)
+  for (let i = 0; i < DAYS.length - 1; i++) {
+    const a = exigencia(sched[DAYS[i]], 'pernas', week, DAYS[i], cortes[DAYS[i]]), b = exigencia(sched[DAYS[i + 1]], 'pernas', week, DAYS[i + 1], cortes[DAYS[i + 1]]);
+    if (a === 'alta' && b === 'alta' && !(est.dias[DAYS[i]].passado && est.dias[DAYS[i + 1]].passado)) r.overlap++;
+  }
+  // objetivos: o que fica de fora, lifts perdidos, volume
+  // dia passado sem registro não conta como presença da sessão
+  const conta = function (d) { const x = est.dias[d]; return !(x.passado && x.status.st === 'nao'); };
+  ctx.alvo.forEach(function (k) { if (DAYS.every(function (d) { return sched[d] !== k || !conta(d); })) r.fora.push(k); });
+  const total = somaEst(estVazio(), ctx.estim.feito);
+  DAYS.forEach(function (d) {
+    const x = est.dias[d];
+    if (x.passado || x.status.st === 'feito' || x.status.st === 'parcial') return;
+    const k = sched[d];
+    if (!sessaoForca(k)) return;
+    somaEst(total, estimuloDe(k, week, d, function (ex) { if ((week === 'deload' && shouldHideOnDeload(ex)) || (cortes[d] || []).indexOf(ex.id) >= 0) return 0; return parseInt(getPrescription(ex, week).sets, 10) || 0; }));
+  });
+  r.estimulo = total;
+  r.series = total.series;
+  // exposições dos levantamentos: semana proposta × semana habitual
+  const hab = ctx.liftsHab || {};
+  r.liftsZero = 0; r.expPerdidas = 0;
+  ['agachamento', 'supino', 'terra'].forEach(function (l) {
+    const h = hab[l] || 0, e = total.lifts[l] || 0;
+    if (h > 0 && e < h) { r.liftsPerdidos.push(l); r.expPerdidas += h - e; if (e === 0) r.liftsZero++; }
+  });
+  const faixas = faixasVol(STATE.mode);
+  MUSCULOS.forEach(function (m) { const f = faixas[m.id]; if (!f) return; if ((total.dir[m.id] || 0) + 0.5 * ((total.musc[m.id] || 0) - (total.dir[m.id] || 0)) < f[0] - 0.5) r.muscAbaixo++; });
+  // mudanças
+  DAYS.forEach(function (d) {
+    if (sched[d] !== est.atual[d]) r.mudancas++;
+    if (sched[d] !== est.habitual[d]) r.habitual++;
+  });
+  r.usaDesc = 0;
+  DAYS.forEach(function (d) { if (sessaoForca(sched[d]) && !est.dias[d].passado && sched[d] !== est.atual[d] && (est.dias[d].papel === 'descanso_flex' || SESSIONS[est.habitual[d]] && SESSIONS[est.habitual[d]].rest)) r.usaDesc++; });
+  r.liftsPerdidos = r.liftsPerdidos.filter(function (l, i, a) { return a.indexOf(l) === i; });
+  r.nCortes = Object.keys(cortes).reduce(function (a, d) { return a + cortes[d].length; }, 0);
+  return r;
+}
+// Critérios em ordem: primeiro o que não pode (segurança), depois o objetivo.
+// Nenhuma soma esconde violação: viabilidade e restrição vêm antes de tudo.
+const PLANO_PERFIS = {
+  forca: { nome: function () { return STATE.mode === 'hyper' ? 'Preservar os estímulos principais' : 'Preservar força'; },
+           chave: function (r) { const dl = STATE.week === 'deload' ? 0.5 : 1; return [r.viavel ? 0 : 1, r.trtRestr, r.n3, r.trtPref, dl * r.liftsZero, dl * r.expPerdidas, dl * (STATE.mode === 'hyper' ? r.muscAbaixo : r.fora.length), r.trtPrefFraca, r.n2, r.overlap, r.fora.length, r.nCortes, r.usaDesc, r.mudancas, r.conflito]; } },
+  recuperacao: { nome: function () { return 'Distribuir a recuperação'; },
+           chave: function (r) { return [r.viavel ? 0 : 1, r.trtRestr, r.n3, r.trtPref, r.trtPrefFraca + r.n2 + r.overlap, Math.round(r.conflito * 10) / 10, r.liftsZero, r.expPerdidas, r.fora.length, r.usaDesc, r.mudancas]; } },
+  compacta: { nome: function () { return 'Semana compacta'; },
+           chave: function (r) { return [r.viavel ? 0 : 1, r.trtRestr, r.n3, r.trtPref, r.fora.length, r.liftsZero, r.expPerdidas, r.trtPrefFraca + r.n2 + r.overlap, r.usaDesc, r.mudancas, -r.nCortes]; } }
+};
+function cmpChave(a, b) { for (let i = 0; i < a.length; i++) { if (a[i] < b[i] - 1e-9) return -1; if (a[i] > b[i] + 1e-9) return 1; } return 0; }
+function assinSched(sched, cortes) { return DAYS.map(function (d) { return sched[d] + (cortes && cortes[d] && cortes[d].length ? '-' + cortes[d].length : ''); }).join(','); }
+
+// Assinatura do ESTADO (o que o motor viu): reaparece igual depois de
+// recarregar, então uma proposta descartada não volta sozinha.
+function planoAssinatura(ctx) {
+  const e = ctx.est;
+  const r = DAYS.map(function (d) { const rs = ctx.restr[d]; return rs.nivel + (rs.afeta || ''); }).join(',');
+  return [STATE.mode, ctx.week, semanaCalAtual().inicio, DAYS.map(function (d) { return e.atual[d] + ':' + e.dias[d].status.st + ':' + e.dias[d].marca; }).join(','), r, e.hoje].join('|');
+}
+
+// Gera, avalia e escolhe até 3 opções distintas. Nunca inventa: se nada
+// respeita as restrições, devolve a impossibilidade explicada.
+function planoSugerir(week, opts) {
+  opts = opts || {};
+  const ctx = planoContexto(week, opts);
+  const atualAv = planoAvaliar(ctx, ctx.est.atual, cortesAtuais(week));
+  const cands = planoGerar(ctx);
+  const avs = [];
+  const visto = {};
+  cands.forEach(function (sc) {
+    const k = assinSched(sc); if (visto[k]) return; visto[k] = 1;
+    avs.push(planoAvaliar(ctx, sc, {}));
+  });
+  // variantes reduzidas: só nos dias livres com sessão de força
+  const reduz = function (r) {
+    const c = {};
+    ctx.livres.forEach(function (d) { if (sessaoForca(r.sched[d])) { const cp = cortesPossiveis(r.sched[d], week); if (cp.length) c[d] = cp; } });
+    return Object.keys(c).length ? planoAvaliar(ctx, r.sched, c) : null;
+  };
+  const melhorPor = function (perfil, lista) {
+    let m = null;
+    lista.forEach(function (r) { if (!m || cmpChave(PLANO_PERFIS[perfil].chave(r), PLANO_PERFIS[perfil].chave(m)) < 0) m = r; });
+    return m;
+  };
+  const viaveis = avs.filter(function (r) { return r.viavel; });
+  const ops = [];
+  if (viaveis.length) {
+    const f = melhorPor('forca', viaveis);
+    // recuperação: entre as grades que mantêm tantas sessões quanto a melhor
+    // (e no máximo um levantamento a menos), a de menor conflito estimado —
+    // descansar mais não vira desculpa para tirar o treino todo.
+    const minFora = Math.min.apply(null, viaveis.map(function (r) { return r.fora.length; }));
+    const minZero = Math.min.apply(null, viaveis.map(function (r) { return r.liftsZero; }));
+    const minExp = Math.min.apply(null, viaveis.map(function (r) { return r.expPerdidas; }));
+    const rc = melhorPor('recuperacao', viaveis.filter(function (r) { return r.fora.length <= minFora && r.liftsZero <= minZero && r.expPerdidas <= minExp + 1; }));
+    // compacta: as 12 melhores de recuperação/força com acessórios reduzidos
+    const top = viaveis.slice().sort(function (a, b) { return cmpChave(PLANO_PERFIS.forca.chave(a), PLANO_PERFIS.forca.chave(b)); }).slice(0, 12);
+    const red = top.map(reduz).filter(function (r) { return r && r.viavel; });
+    const cp = red.length ? melhorPor('compacta', red) : null;
+    [['forca', f], ['recuperacao', rc], ['compacta', cp]].forEach(function (p) {
+      if (!p[1]) return;
+      // compacta só entra se de fato preserva mais do que as outras ou baixa conflito
+      if (p[0] === 'compacta' && f && !(p[1].fora.length < f.fora.length || p[1].n2 + p[1].overlap < f.n2 + f.overlap)) return;
+      const k = assinSched(p[1].sched, p[1].cortes);
+      const ja = ops.find(function (o) { return o.assin === k; });
+      if (ja) { ja.perfis.push(p[0]); return; }
+      ops.push({ perfil: p[0], perfis: [p[0]], assin: k, av: p[1] });
+    });
+  }
+  // a semana atual já é a melhor? (mesma grade da opção principal)
+  const assinAtual = assinSched(ctx.est.atual, cortesAtuais(week));
+  ops.forEach(function (o) { o.igualAtual = o.assin === assinAtual; o.nome = nomeOpcao(o); });
+  const melhoraReal = ops.some(function (o) {
+    if (o.igualAtual) return false;
+    const pk = PLANO_PERFIS[o.perfil].chave;
+    return cmpChave(pk(o.av), pk(atualAv)) < 0;
+  });
+  const res = { ctx: ctx, atual: atualAv, opcoes: ops.filter(function (o) { return !o.igualAtual; }).slice(0, 3), melhoraReal: melhoraReal,
+                impossivel: !viaveis.length, assinatura: planoAssinatura(ctx), eventos: planoEventos(ctx, atualAv) };
+  res.opcoes.forEach(function (o) { o.exp = planoExplicar(ctx, atualAv, o); });
+  // o que fica de fora caberia num descanso fixo? Só informa — liberar é decisão do Pedro.
+  const refFora = res.opcoes.length ? res.opcoes[0].av.fora : atualAv.fora;
+  if (!opts.semLiberar && refFora.length) {
+    res.liberar = [];
+    DAYS.forEach(function (d) {
+      if (ctx.porque[d] !== 'descanso_fixo') return;
+      const a = {}; a[d] = true;
+      const r2 = planoSugerir(week, Object.assign({}, opts, { autorizados: Object.assign({}, opts.autorizados || {}, a), semLiberar: true }));
+      const o2 = r2.opcoes[0];
+      if (o2 && o2.av.fora.length < refFora.length) res.liberar.push({ dia: d, cabe: refFora.filter(function (k) { return o2.av.fora.indexOf(k) < 0; }) });
+    });
+  }
+  return res;
+}
+function nomeOpcao(o) {
+  if (o.perfis.length > 1 && o.perfis.indexOf('forca') >= 0 && o.perfis.indexOf('recuperacao') >= 0) return PLANO_PERFIS.forca.nome() + ' e a recuperação';
+  return PLANO_PERFIS[o.perfil].nome();
+}
+function cortesAtuais(week) {
+  const c = {};
+  DAYS.forEach(function (d) { const x = corteDoDia(week, d); if (x) c[d] = x.fora.slice(); });
+  return c;
+}
+
+// ---- F. EXPLICADOR ----
+// Etiquetas: o que é dado registrado, estimativa do app, preferência do Pedro,
+// evidência ou hipótese. Só fatores que o cálculo usou.
+const ETQ = { reg: 'registrado', est: 'estimativa do app', pref: 'sua preferência', evid: 'evidência', hip: 'hipótese operacional' };
+function nomeSessao(k) { return String(sessionPanelLabel(k) || k).replace(/\s·.*$/, ''); }
+function planoEventos(ctx, atualAv) {
+  const ev = [];
+  const e = ctx.est;
+  DAYS.forEach(function (d) {
+    const x = e.dias[d]; const s = SESSIONS[x.sk];
+    if (x.passado && sessaoForca(x.sk) && x.status.st === 'nao') ev.push({ tipo: 'falta', dia: d, txt: DAY_LABELS_FULL[d] + ': ' + nomeSessao(x.sk) + ' sem registro', etq: ETQ.reg });
+    if (x.status.st === 'parcial') ev.push({ tipo: 'parcial', dia: d, txt: DAY_LABELS_FULL[d] + ': ' + x.status.feitas + ' de ' + x.status.tot + ' séries de ' + nomeSessao(x.sk) + (x.status.exPend.length ? ' (pendente: ' + x.status.exPend.map(function (p) { return p.ex.name.split(/ OU | \(/)[0]; }).slice(0, 3).join(', ') + ')' : ''), etq: ETQ.reg });
+    if (x.sk !== x.habitual) {
+      if (SESSIONS[x.sk] && SESSIONS[x.sk].rest) ev.push({ tipo: 'descanso', dia: d, txt: DAY_LABELS_FULL[d] + ': descanso no lugar de ' + nomeSessao(x.habitual), etq: ETQ.pref });
+      else if (SESSIONS[x.sk] && SESSIONS[x.sk].hyroxDay) ev.push({ tipo: 'hyrox', dia: d, txt: DAY_LABELS_FULL[d] + ': HYROX (habitual: ' + nomeSessao(x.habitual) + ')', etq: ETQ.pref });
+      else if (SESSIONS[x.sk] && SESSIONS[x.sk].skip) ev.push({ tipo: 'pulado', dia: d, txt: DAY_LABELS_FULL[d] + ': dia pulado', etq: ETQ.reg });
+      else ev.push({ tipo: 'troca', dia: d, txt: DAY_LABELS_FULL[d] + ': ' + nomeSessao(x.sk) + ' no lugar de ' + nomeSessao(x.habitual), etq: ETQ.pref });
+    }
+    if (x.marca) ev.push({ tipo: 'marca', dia: d, txt: DAY_LABELS_FULL[d] + ': ' + PLANO_MARCAS[x.marca].rot.toLowerCase(), etq: ETQ.pref });
+  });
+  // registro de aplicação/desconforto que pesa nos próximos dias
+  const vistos = {};
+  DAYS.forEach(function (d) {
+    const rs = ctx.restr[d];
+    const chaveR = (rs.sint ? rs.sint.id : '') + (rs.app ? rs.app.id : '') + rs.nivel;
+    if (e.dias[d].passado || rs.nivel === 'nenhuma' || vistos[chaveR]) return;
+    vistos[chaveR] = 1;
+    ev.push({ tipo: 'trt', nivel: rs.nivel, dia: d, txt: DAY_LABELS_FULL[d] + ': ' + rs.motivo, etq: rs.fonte === 'registrado' ? ETQ.reg : ETQ.pref });
+  });
+  if (atualAv && atualAv.fora.length) ev.push({ tipo: 'fora', txt: 'Sem lugar na grade atual: ' + atualAv.fora.map(nomeSessao).join(', '), etq: ETQ.reg });
+  return ev;
+}
+function planoDiffDias(ctx, op) {
+  const atual = ctx.est.atual, nova = op.av.sched, cortes = op.av.cortes || {};
+  const tags = {};
+  DAYS.forEach(function (d) {
+    const a = atual[d], n = nova[d];
+    if (ctx.est.dias[d].passado) { tags[d] = { tag: 'passado', de: a, para: n }; return; }
+    if (a === n) { tags[d] = { tag: cortes[d] && cortes[d].length ? 'reduzida' : (SESSIONS[n] && SESSIONS[n].rest ? 'descanso' : 'mantida'), de: a, para: n }; return; }
+    if (sessaoForca(n)) {
+      const deOnde = DAYS.find(function (x) { const dx = ctx.est.dias[x]; return x !== d && atual[x] === n && (!dx.passado || dx.status.st === 'nao') && nova[x] !== n; });
+      tags[d] = { tag: cortes[d] && cortes[d].length ? 'reduzida' : (deOnde ? 'transferida' : 'adicionada'), de: a, para: n, origem: deOnde || null };
+      return;
+    }
+    if (sessaoForca(a)) {
+      const para = DAYS.find(function (x) { return nova[x] === a && x !== d; });
+      tags[d] = { tag: para ? 'descanso' : 'retirada', de: a, para: n, destino: para || null };
+      return;
+    }
+    tags[d] = { tag: 'mantida', de: a, para: n };
+  });
+  return tags;
+}
+const LIFT_NOME = { agachamento: 'agachamento', supino: 'supino', terra: 'terra' };
+function planoExplicar(ctx, atualAv, op) {
+  const av = op.av, tags = planoDiffDias(ctx, op);
+  const L = function (d) { return DAY_LABELS_FULL[d]; };
+  const out = { mantem: [], move: [], retira: [], inclui: [], reduz: [], volume: '', prioridades: '', desvantagem: '', porque: [] };
+  DAYS.forEach(function (d) {
+    const t = tags[d];
+    if (t.tag === 'mantida' && sessaoForca(t.para)) out.mantem.push(L(d) + ': ' + nomeSessao(t.para));
+    if (t.tag === 'transferida') out.move.push(nomeSessao(t.para) + ': ' + L(t.origem) + ' → ' + L(d));
+    if (t.tag === 'adicionada') out.inclui.push(nomeSessao(t.para) + ' em ' + L(d));
+    if (t.tag === 'retirada') out.retira.push(nomeSessao(t.de) + ' (' + L(d) + ')');
+    if (t.tag === 'reduzida') {
+      const nomes = (av.cortes[d] || []).map(function (id) { const ex = (SESSIONS[t.para].exercises || []).find(function (e) { return e.id === id; }); return ex ? ex.name.split(/ OU | \(/)[0] : id; });
+      out.reduz.push(nomeSessao(t.para) + ' em ' + L(d) + (t.origem ? ' (vinda de ' + L(t.origem) + ')' : '') + ': sem ' + nomes.join(', '));
+    }
+  });
+  av.fora.forEach(function (k) { if (!out.retira.some(function (x) { return x.indexOf(nomeSessao(k)) === 0; })) out.retira.push(nomeSessao(k) + ' (não cabe nesta semana)'); });
+  const dS = av.series - atualAv.series;
+  out.volume = 'Séries da semana (feitas + previstas): ' + Math.round(atualAv.series) + ' → ' + Math.round(av.series) + (dS ? ' (' + (dS > 0 ? '+' : '') + Math.round(dS) + ')' : ' (igual)') + '. Séries não feitas não contam como volume.';
+  const lifts = av.estimulo.lifts;
+  if (STATE.mode !== 'hyper') out.prioridades = 'Exposições dos levantamentos: ' + ['agachamento', 'supino', 'terra'].map(function (l) { return LIFT_NOME[l] + ' ' + (lifts[l] || 0) + '×'; }).join(' · ');
+  else {
+    const fx = faixasVol('hyper'); const baixo = [];
+    MUSCULOS.forEach(function (m) { const f = fx[m.id]; if (!f) return; const dir = av.estimulo.dir[m.id] || 0; if (dir < f[0] - 0.5 && (av.estimulo.musc[m.id] || 0) < f[0] - 0.5) baixo.push(m.nome + ' ' + fmtSeries(dir)); });
+    out.prioridades = baixo.length ? 'Abaixo da faixa (séries diretas): ' + baixo.slice(0, 4).join(', ') + '. A indireta entra ponderada, sem fechar a conta sozinha.' : 'Grupos musculares dentro das faixas planejadas, contando séries diretas.';
+  }
+  // desvantagem principal
+  if (av.liftsPerdidos.length) out.desvantagem = 'Menos exposições de ' + av.liftsPerdidos.map(function (l) { return LIFT_NOME[l] + ' (' + (av.estimulo.lifts[l] || 0) + ' de ' + (ctx.liftsHab[l] || 0) + ')'; }).join(' e ') + ' nesta semana — perda pontual, sem empurrar séries para os dias seguintes.';
+  else if (av.fora.length) out.desvantagem = 'Fica de fora: ' + av.fora.map(nomeSessao).join(', ') + '.';
+  else if (av.nCortes) out.desvantagem = 'Acessórios a menos (' + av.nCortes + ' exercício' + (av.nCortes > 1 ? 's' : '') + '): menos volume dos grupos menores nesta semana.';
+  else if (av.n2 || av.overlap) out.desvantagem = 'Ainda há ' + (av.n2 + av.overlap) + ' ponto(s) de conflito possível entre sessões (estimativa do app).';
+  else if (av.mudancas > 1) out.desvantagem = 'Mexe em ' + av.mudancas + ' dias da semana.';
+  else out.desvantagem = 'Sem perda relevante identificada.';
+  // por quê: só fatores usados no cálculo
+  DAYS.forEach(function (d) {
+    const rs = ctx.restr[d]; const t = tags[d];
+    if (ctx.est.dias[d].passado || rs.nivel === 'nenhuma' || !rs.afeta) return;
+    const ex = exigencia(av.sched[d], rs.afeta, ctx.week, d, av.cortes[d]);
+    const regTxt = rs.afeta === 'pernas' ? 'membros inferiores' : 'ombros';
+    if (rs.nivel === 'alerta') out.porque.push({ t: L(d) + ': ' + rs.motivo + '. Isso pede avaliação médica — o app não resolve só reorganizando o treino. Nenhuma sessão intensa de ' + regTxt + ' foi proposta.', etq: ETQ.reg });
+    else if (rs.nivel === 'restricao') out.porque.push({ t: L(d) + ': ' + rs.motivo + '. Sem sessão intensa de ' + regTxt + ' nesse dia' + (ex === 'alta' ? ' — ATENÇÃO: o dia é fixo e ainda tem exigência alta' : '') + '.' + (rs.pedeAtualizar ? ' Registre como está hoje para o app reavaliar.' : ''), etq: rs.fonte === 'registrado' ? ETQ.reg : ETQ.pref });
+    else if (rs.nivel === 'atencao') out.porque.push({ t: L(d) + ': ' + rs.motivo + '. ' + (ex === 'alta' ? 'Fica uma sessão exigente de ' + regTxt + ' — se o desconforto aparecer, prefira trocar.' : 'Preferência por sessão sem exigência alta de ' + regTxt + (t && sessaoForca(t.para) ? ' (' + nomeSessao(t.para) + ')' : '') + '. Não é regra fixa: depende de como você estiver.'), etq: rs.fonte === 'registrado' ? ETQ.reg : ETQ.pref });
+  });
+  if (av.n3 || av.n2) out.porque.push({ t: 'Conflito estimado entre sessões: ' + (av.n3 ? av.n3 + ' alto, ' : '') + av.n2 + ' possível (era ' + (atualAv.n3 ? atualAv.n3 + ' alto, ' : '') + atualAv.n2 + ').', etq: ETQ.est });
+  else if (atualAv.n3 || atualAv.n2) out.porque.push({ t: 'Tira o conflito estimado entre sessões que a semana atual tinha (' + (atualAv.n3 + atualAv.n2) + ').', etq: ETQ.est });
+  if (av.expPerdidas < atualAv.expPerdidas) out.porque.push({ t: 'Recupera ' + (atualAv.expPerdidas - av.expPerdidas) + ' exposição(ões) de levantamento que a semana atual perderia.', etq: ETQ.est });
+  if (STATE.mode !== 'hyper' && (lifts.agachamento || 0) + (lifts.terra || 0) > 0) out.porque.push({ t: 'Não acumula as séries perdidas nos dias seguintes nem transforma sessão técnica ou de volume em máxima: a progressão do bloco segue (semana ' + weekLabel(ctx.week) + ').', etq: ETQ.evid });
+  if (ctx.week === 'deload') out.porque.push({ t: 'Semana de deload: nada é compensado; o objetivo é recuperar.', etq: ETQ.evid });
+  return out;
+}
+
+// ---- G. APLICADOR ----
+function planoAplicar(week, op, assinEstado) {
+  const k = excChave(STATE.mode, week);
+  const cal = semanaCalAtual().inicio;
+  const antes = { exc: EXCECOES[k] ? JSON.parse(JSON.stringify(EXCECOES[k])) : null, cortes: {} };
+  DAYS.forEach(function (d) { const ck = corteChave(week, d); if (PLANO.cortes[ck]) antes.cortes[ck] = JSON.parse(JSON.stringify(PLANO.cortes[ck])); });
+  const ultimo = PLANO.hist.length ? PLANO.hist[PLANO.hist.length - 1] : null;
+  if (ultimo && !ultimo.desfeita && ultimo.semanaCal === cal && ultimo.modo === STATE.mode && ultimo.week === week && ultimo.assin === op.assin) return ultimo;   // repetir não duplica
+  gravarExcecao(week, op.av.sched, 'plano: ' + op.nome);
+  DAYS.forEach(function (d) {
+    const ck = corteChave(week, d);
+    delete PLANO.cortes[ck];
+    const c = (op.av.cortes || {})[d];
+    if (c && c.length) PLANO.cortes[ck] = { semanaCal: cal, sk: op.av.sched[d], fora: c.slice(), motivo: op.nome };
+  });
+  const h = { id: 'p' + Date.now().toString(36), quando: new Date().toISOString(), semanaCal: cal, modo: STATE.mode, week: week, nome: op.nome, assin: op.assin, antes: antes, sched: Object.assign({}, op.av.sched) };
+  PLANO.hist.push(h);
+  if (assinEstado) PLANO.decisoes[assinEstado] = { decisao: 'aplicada', semanaCal: cal, quando: h.quando };
+  planoSave();
+  return h;
+}
+function planoUltimoAplicado(week) {
+  const cal = semanaCalAtual().inicio;
+  for (let i = PLANO.hist.length - 1; i >= 0; i--) { const h = PLANO.hist[i]; if (h.semanaCal === cal && h.modo === STATE.mode && h.week === week && !h.desfeita) return h; }
+  return null;
+}
+function planoDesfazer(week) {
+  const h = planoUltimoAplicado(week); if (!h) return false;
+  const k = excChave(STATE.mode, week);
+  if (h.antes.exc) EXCECOES[k] = h.antes.exc; else delete EXCECOES[k];
+  excSave();
+  DAYS.forEach(function (d) { delete PLANO.cortes[corteChave(week, d)]; });
+  Object.keys(h.antes.cortes || {}).forEach(function (ck) { PLANO.cortes[ck] = h.antes.cortes[ck]; });
+  h.desfeita = new Date().toISOString();
+  planoSave();
+  return true;
+}
+function planoDescartar(assin) { PLANO.decisoes[assin] = { decisao: 'descartada', semanaCal: semanaCalAtual().inicio, quando: new Date().toISOString() }; planoSave(); }
+function planoReporCorte(week, day) { delete PLANO.cortes[corteChave(week, day)]; planoSave(); }
+// Indicador: há proposta melhor que a semana atual e que não foi recusada?
+let PLANO_CACHE = null;
+function planoAvaliarAgora() {
+  const chave = JSON.stringify([STATE.mode, STATE.week, semanaResolvida(STATE.week), JSON.stringify(STATE.setProgress), JSON.stringify(STATE.cardioDone || {}), PLANO.dias, PLANO.cortes, TRT_REG.eventos.length, TRT_REG.eventos.length ? TRT_REG.eventos[TRT_REG.eventos.length - 1].quando : '', TRT_REG.prefs, idxHoje(), isoDe(new Date())]);
+  if (PLANO_CACHE && PLANO_CACHE.chave === chave) return PLANO_CACHE.res;
+  let res = null;
+  try { res = planoSugerir(STATE.week); } catch (e) { console.warn('planejador', e); res = null; }
+  PLANO_CACHE = { chave: chave, res: res };
+  return res;
+}
+function planoTemSugestao(res) {
+  if (!res) return false;
+  const dec = PLANO.decisoes[res.assinatura];
+  if (dec) return false;
+  if (res.impossivel) return true;
+  return res.opcoes.length > 0 && res.melhoraReal;
+}
+
+
+// ---- INTERFACE DO PLANEJADOR (v26) ----
+// Tela principal: uma linha discreta quando há proposta; painel com até 3
+// opções (semana atual → sugerida), justificativas sob demanda. Nada muda
+// sem toque de confirmação.
+const PLANO_TAG = {
+  mantida: { ic: '=', rot: 'mantida' }, transferida: { ic: '→', rot: 'transferida' }, reduzida: { ic: '↓', rot: 'reduzida' },
+  adicionada: { ic: '+', rot: 'adicionada' }, descanso: { ic: '◦', rot: 'descanso' }, retirada: { ic: '×', rot: 'retirada' }, passado: { ic: '', rot: 'já passou' }
+};
+let PLANO_RES = null;      // resultado mostrado no painel
+let PLANO_CONFIRMA = null; // opção à espera do 2º toque
+const PLANO_CURTO = { bench: 'Sup.', lower_pl: 'A+T', volume_pl: 'Vol.', squat: 'Agach', deadlift: 'Terra', upper_hiper: 'Upper',
+  hyper_supA: 'Sup A', hyper_supB: 'Sup B', hyper_terra: 'T+P', cardio_mid: 'Z2', cardio_long: 'Z2+', hyrox: 'HX', hyrox_forca: 'HX', rest: '—', skip: 'Pulo' };
+function curtoSessao(k) {
+  if (PLANO_CURTO[k]) return PLANO_CURTO[k];
+  const s = SESSIONS[k];
+  if (!s) return '—';
+  if (s.rest) return 'Desc.';
+  if (s.skip) return 'Pulo';
+  if (s.hyroxDay) return 'HYROX';
+  try { return nomeCurtoSessao(k); } catch (e) { return nomeSessao(k); }
+}
+function trtAlertaAtivo() {
+  try { const s = trtSituacao(isoDe(new Date())); return s.nivel === 'alerta' ? s : null; } catch (e) { return null; }
+}
+function planoAvisoHtml() {
+  try {
+    let h = '';
+    const al = trtAlertaAtivo();
+    if (al) h += '<div class="plano-alerta" role="alert"><b>Procure avaliação médica.</b> Você registrou ' + al.motivo.replace(/^sinais registrados: /, '') + '. O app não resolve isso reorganizando treino: nenhuma sessão intensa de ' + (al.afeta === 'ombros' ? 'ombros' : 'membros inferiores') + ' é proposta enquanto o registro estiver assim. <button type="button" class="plano-link" data-trt-abrir="novo">Atualizar registro</button></div>';
+    const res = planoAvaliarAgora();
+    if (!res) return h;
+    const x = res.ctx.est.dias[STATE.day];
+    const dec = PLANO.decisoes[res.assinatura];
+    if (x && x.passado && sessaoForca(x.sk) && x.status.st === 'nao' && !dec) {
+      h += '<div class="plano-falta"><span>Treino sem registro neste dia.</span>'
+        + '<button type="button" class="plano-chip" data-plano="abrir">Reorganizar a semana</button>'
+        + '<button type="button" class="plano-chip ghost" data-plano="manter">Manter o plano</button>'
+        + '<button type="button" class="plano-chip ghost" data-plano="falta">Só registrar a falta</button></div>';
+      return h;
+    }
+    if (planoTemSugestao(res)) {
+      const ev = res.eventos[0];
+      h += '<button type="button" class="plano-aviso" data-plano="abrir"><span class="pa-ic" aria-hidden="true">⟳</span><span class="pa-txt">Há sugestões para reorganizar sua semana'
+        + (ev ? '<small>' + ev.txt + '</small>' : '') + '</span><span class="pa-seta" aria-hidden="true">›</span></button>';
+    }
+    return h;
+  } catch (e) { console.warn('aviso do plano', e); return ''; }
+}
+function planoTiraHtml(ctx, op) {
+  const tags = op ? planoDiffDias(ctx, op) : null;
+  const linha = function (rot, sched, comTag) {
+    return '<div class="pt-linha"><span class="pt-rot">' + rot + '</span>' + DAYS.map(function (d) {
+      const t = tags ? tags[d] : null;
+      const mudou = comTag && t && t.tag !== 'mantida' && t.tag !== 'passado' && !(t.tag === 'descanso' && t.de === t.para);
+      const cls = 'pt-dia' + (ctx.est.dias[d].passado ? ' passado' : '') + (mudou ? ' muda t-' + t.tag : '');
+      return '<span class="' + cls + '"><b>' + DAY_LABELS[d] + '</b><i>' + curtoSessao(sched[d]) + '</i>' + (mudou ? '<em aria-label="' + PLANO_TAG[t.tag].rot + '">' + PLANO_TAG[t.tag].ic + '</em>' : '') + '</span>';
+    }).join('') + '</div>';
+  };
+  return '<div class="plano-tira">' + linha('Atual', ctx.est.atual, false) + (op ? linha('Sugerida', op.av.sched, true) : '') + '</div>';
+}
+function listaHtml(tit, itens) { return itens && itens.length ? '<div class="pe-bloco"><b>' + tit + '</b><ul>' + itens.map(function (i) { return '<li>' + i + '</li>'; }).join('') + '</ul></div>' : ''; }
+function planoOpcaoHtml(ctx, op, i) {
+  const e = op.exp;
+  const conf = PLANO_CONFIRMA === i;
+  return '<div class="plano-op" data-plano-op="' + i + '"><div class="po-cab"><span class="po-n">Opção ' + (i + 1) + '</span><span class="po-nome">' + op.nome + '</span></div>'
+    + planoTiraHtml(ctx, op)
+    + '<p class="po-desv"><b>Principal desvantagem:</b> ' + e.desvantagem + '</p>'
+    + '<details class="po-mais"><summary>O que muda e por quê<span class="dp-seta" aria-hidden="true">▾</span></summary><div class="po-corpo">'
+    + listaHtml('Mantém', e.mantem) + listaHtml('Move', e.move) + listaHtml('Reduz', e.reduz) + listaHtml('Inclui', e.inclui) + listaHtml('Retira', e.retira)
+    + '<p>' + e.volume + '</p><p>' + e.prioridades + '</p>'
+    + (e.porque.length ? '<div class="pe-bloco"><b>Por quê</b><ul>' + e.porque.map(function (p) { return '<li>' + p.t + ' <span class="etq">' + p.etq + '</span></li>'; }).join('') + '</ul></div>' : '')
+    + '</div></details>'
+    + '<div class="po-acoes"><button type="button" class="fad-btn' + (conf ? ' confirmando' : '') + '" data-plano="aplicar" data-plano-i="' + i + '">' + (conf ? 'TOQUE DE NOVO PARA APLICAR' : 'APLICAR ESTA OPÇÃO') + '</button>'
+    + '<button type="button" class="fad-btn ghost" data-plano="personalizar" data-plano-i="' + i + '">PERSONALIZAR</button></div></div>';
+}
+function planoMarcasHtml(ctx) {
+  return '<div class="plano-marcas"><span class="pm-tit">Seus dias nesta semana <small>toque para marcar: indisponível → descanso obrigatório → bloqueado</small></span><div class="pm-dias">'
+    + DAYS.map(function (d) {
+      const x = ctx.est.dias[d];
+      const m = x.marca;
+      return '<button type="button" class="pm-dia' + (m ? ' m-' + m : '') + '"' + (x.passado ? ' disabled' : '') + ' data-plano-marca="' + d + '" aria-label="' + DAY_LABELS_FULL[d] + ': ' + (m ? PLANO_MARCAS[m].rot : 'sem marca') + '"><b>' + DAY_LABELS[d] + '</b><i>' + (m ? PLANO_MARCAS[m].curto : (x.passado ? 'passou' : '—')) + '</i></button>';
+    }).join('') + '</div></div>';
+}
+function renderPlanoPanel() {
+  const box = document.getElementById('planoCorpo'); if (!box) return;
+  PLANO_RES = planoSugerir(STATE.week);
+  const res = PLANO_RES, ctx = res.ctx;
+  let h = '';
+  if (res.eventos.length) h += '<div class="plano-ev"><b>O que o app viu</b><ul>' + res.eventos.slice(0, 6).map(function (e) { return '<li>' + e.txt + ' <span class="etq">' + e.etq + '</span></li>'; }).join('') + '</ul></div>';
+  h += planoMarcasHtml(ctx);
+  if (res.impossivel) {
+    h += '<div class="plano-vazio"><b>Nenhuma combinação respeita as restrições desta semana.</b> O app não inventa uma saída: preserve o descanso e reduza o planejamento (deixe sessões para a semana que vem). Mantém-se o que está na grade.</div>';
+  } else if (!res.opcoes.length) {
+    h += '<div class="plano-vazio">Sua semana atual já é a melhor distribuição que o app encontrou para os dias e restrições informados.'
+      + (res.atual.fora.length ? ' Sem lugar nesta semana: ' + res.atual.fora.map(nomeSessao).join(', ') + ' — perda pontual; nada é empurrado para os dias seguintes.' : '') + '</div>' + planoTiraHtml(ctx, null);
+  } else {
+    if (!res.melhoraReal) h += '<p class="plano-nota">Nenhuma opção é claramente melhor que a semana atual; as alternativas abaixo trocam uma coisa por outra.</p>';
+    h += res.opcoes.map(function (o, i) { return planoOpcaoHtml(ctx, o, i); }).join('');
+    h += '<p class="plano-legenda">= mantida · → transferida · ↓ reduzida · + adicionada · ◦ descanso · × retirada</p>';
+  }
+  if (res.liberar && res.liberar.length) h += '<p class="plano-nota">' + res.liberar.map(function (l) { return DAY_LABELS_FULL[l.dia] + ' é descanso fixo nas suas regras; liberado, caberia ' + l.cabe.map(nomeSessao).join(', '); }).join('. ') + '. Para isso, mude a regra do dia no painel da semana.</p>';
+  const ult = planoUltimoAplicado(STATE.week);
+  h += '<div class="plano-rodape"><button type="button" class="fad-btn ghost" data-plano="manter">MANTER MINHA PROGRAMAÇÃO</button>'
+    + (ult ? '<button type="button" class="fad-btn ghost" data-plano="desfazer">DESFAZER “' + ult.nome.toUpperCase() + '”</button>' : '')
+    + '<button type="button" class="plano-link" data-trt-abrir="novo">Registrar aplicação ou desconforto</button></div>'
+    + '<p class="plano-nota">Índices de fadiga são estimativas do app, não medidas do corpo. Nada é aplicado sem o seu toque de confirmação.</p>';
+  box.innerHTML = h;
+}
+function abrirPlano() { PLANO_CONFIRMA = null; renderPlanoPanel(); openModalEl(document.getElementById('planoModal')); }
+function fecharPlano() { closeModalEl(document.getElementById('planoModal')); }
+function planoRefresh() { PLANO_CACHE = null; try { renderDayTabs(); renderHeatmap(); } catch (e) {} renderMain(); }
+document.addEventListener('click', function (e) {
+  const t = e.target && e.target.closest ? e.target : null; if (!t) return;
+  const b = t.closest('[data-plano]');
+  const mk = t.closest('[data-plano-marca]');
+  if (mk) { e.preventDefault(); const d = mk.dataset.planoMarca; const ordem = ['', 'indisp', 'descanso', 'bloq']; const m = planoMarca(d); planoMarcar(d, ordem[(ordem.indexOf(m) + 1) % ordem.length] || ''); PLANO_CACHE = null; PLANO_CONFIRMA = null; renderPlanoPanel(); return; }
+  if (!b) return;
+  const acao = b.dataset.plano;
+  e.preventDefault();
+  if (acao === 'abrir') { abrirPlano(); return; }
+  if (acao === 'manter') {
+    const res = PLANO_RES && document.getElementById('planoModal').classList.contains('open') ? PLANO_RES : planoAvaliarAgora();
+    if (res) planoDescartar(res.assinatura);
+    fecharPlano(); planoRefresh(); return;
+  }
+  if (acao === 'falta') {
+    const s = Object.assign({}, semanaResolvida(STATE.week)); s[STATE.day] = 'skip';
+    gravarExcecao(STATE.week, s, 'falta registrada');
+    PLANO_CACHE = null;
+    const r2 = planoAvaliarAgora(); if (r2) planoDescartar(r2.assinatura);
+    planoRefresh(); return;
+  }
+  if (acao === 'desfazer') { planoDesfazer(STATE.week); fecharPlano(); planoRefresh(); return; }
+  const i = parseInt(b.dataset.planoI, 10);
+  const op = PLANO_RES && PLANO_RES.opcoes[i];
+  if (!op) return;
+  if (acao === 'aplicar') {
+    if (PLANO_CONFIRMA !== i) { PLANO_CONFIRMA = i; renderPlanoPanel(); return; }
+    planoAplicar(STATE.week, op, PLANO_RES.assinatura);
+    PLANO_CONFIRMA = null;
+    if (navigator.vibrate) navigator.vibrate([10, 30, 10]);
+    fecharPlano(); planoRefresh(); return;
+  }
+  if (acao === 'personalizar') {
+    fecharPlano();
+    openSessionSwapModal();
+    weekDraft = Object.assign({}, op.av.sched);
+    try { renderWeekPanel(); } catch (er) {}
+    return;
+  }
+});
+// Desfazer também pela linha da semana excepcional, quando veio do plano.
+function planoNotaCorteHtml() {
+  const c = corteDoDia(STATE.week, STATE.day);
+  if (!c) return '';
+  const s = SESSIONS[c.sk] || {};
+  const nomes = c.fora.map(function (id) { const ex = (s.exercises || []).find(function (x) { return x.id === id; }); return ex ? ex.name.split(/ OU | \(/)[0] : id; });
+  return '<div class="plano-corte">Sessão reduzida pelo planejador (' + c.motivo + '): fora hoje ' + nomes.join(', ') + '. <button type="button" class="plano-link" data-plano-repor="1">Repor</button></div>';
+}
+document.addEventListener('click', function (e) {
+  const b = e.target && e.target.closest ? e.target.closest('[data-plano-repor]') : null;
+  if (!b) return;
+  e.preventDefault(); planoReporCorte(STATE.week, STATE.day); planoRefresh();
+});
+
+// ---- Registro de aplicação e desconforto (opcional, privado, editável) ----
+let TRT_FORM = null;
+function trtFormNovo(tipo) {
+  const agora = new Date(); const p = function (n) { return String(n).padStart(2, '0'); };
+  return { tipo: tipo || 'sintoma', quando: isoDe(agora) + 'T' + p(agora.getHours()) + ':' + p(agora.getMinutes()), regiao: 'coxa', lado: '', dor: tipo === 'aplicacao' ? null : 0, limitacao: 'nenhuma', origem: 'nao_sei', alerta: [], nota: '' };
+}
+function segHtml(campo, mapa, atual) {
+  return '<div class="trt-seg">' + Object.keys(mapa).map(function (k) { return '<button type="button" class="trt-op' + (atual === k ? ' sel' : '') + '" data-trt-campo="' + campo + '" data-trt-valor="' + k + '">' + mapa[k] + '</button>'; }).join('') + '</div>';
+}
+function renderTrtForm() {
+  const box = document.getElementById('trtCorpo'); if (!box) return;
+  const f = TRT_FORM;
+  const regioes = {}; Object.keys(TRT_REGIOES).forEach(function (k) { regioes[k] = TRT_REGIOES[k].rot; });
+  let h = segHtml('tipo', { aplicacao: 'Aplicação', sintoma: 'Desconforto' }, f.tipo)
+    + '<label class="trt-rot">Quando<input type="datetime-local" class="trt-in" id="trtQuando" value="' + f.quando + '"></label>'
+    + '<span class="trt-rot">Região</span>' + segHtml('regiao', regioes, f.regiao)
+    + '<span class="trt-rot">Lado</span>' + segHtml('lado', { esq: 'Esquerdo', dir: 'Direito', '': 'Não se aplica' }, f.lado);
+  if (f.tipo === 'sintoma') {
+    const dores = {}; for (let i = 0; i <= 10; i++) dores[i] = String(i);
+    h += '<span class="trt-rot">Desconforto (0 = nenhum, 10 = máximo)</span><div class="trt-seg trt-dor">' + Object.keys(dores).map(function (k) { return '<button type="button" class="trt-op' + (String(f.dor) === k ? ' sel' : '') + '" data-trt-campo="dor" data-trt-valor="' + k + '">' + k + '</button>'; }).join('') + '</div>'
+      + '<span class="trt-rot">Limitação</span>' + segHtml('limitacao', TRT_LIMITACAO, f.limitacao)
+      + '<span class="trt-rot">De onde parece vir</span>' + segHtml('origem', TRT_ORIGEM, f.origem)
+      + '<span class="trt-rot">Sinais (marque se houver)</span><div class="trt-alertas">' + Object.keys(TRT_ALERTAS).map(function (k) { return '<button type="button" class="trt-op' + (f.alerta.indexOf(k) >= 0 ? ' sel' : '') + '" data-trt-alerta="' + k + '">' + TRT_ALERTAS[k] + '</button>'; }).join('') + '</div>';
+  } else {
+    h += '<p class="trt-nota">Só o momento e o local. Dose e medicamento não são pedidos: o app não usa isso e não orienta o tratamento.</p>';
+  }
+  h += '<label class="trt-rot">Nota (opcional)<input type="text" class="trt-in" id="trtNota" maxlength="140" value="' + escAttr(f.nota || '') + '"></label>'
+    + '<div class="po-acoes"><button type="button" class="fad-btn" data-trt-salvar="1">SALVAR</button>' + (f.id ? '<button type="button" class="fad-btn ghost" data-trt-apagar="' + f.id + '">APAGAR</button>' : '') + '</div>'
+    + (f.tipo === 'sintoma' && f.alerta.length ? '<p class="plano-alerta">Com esses sinais, procure avaliação médica. O app não diagnostica e não troca a avaliação por reorganização de treino.</p>' : '');
+  box.innerHTML = h;
+}
+function abrirTrt(id) {
+  const ev = id && id !== 'novo' ? TRT_REG.eventos.find(function (x) { return x.id === id; }) : null;
+  TRT_FORM = ev ? JSON.parse(JSON.stringify(ev)) : trtFormNovo('sintoma');
+  if (!Array.isArray(TRT_FORM.alerta)) TRT_FORM.alerta = [];
+  renderTrtForm(); openModalEl(document.getElementById('trtModal'));
+}
+function trtListaHtml() {
+  const ev = TRT_REG.eventos.slice(-12).reverse();
+  if (!ev.length) return '<p class="settings-label-desc">Nenhum registro.</p>';
+  return '<ul class="trt-lista">' + ev.map(function (e) {
+    const q = e.quando.replace('T', ' ');
+    return '<li><button type="button" class="trt-item" data-trt-abrir="' + e.id + '"><b>' + (e.tipo === 'aplicacao' ? 'Aplicação' : 'Desconforto ' + (e.dor != null ? e.dor + '/10' : '')) + '</b> · ' + (TRT_REGIOES[e.regiao] || TRT_REGIOES.outro).rot + (e.lado ? ' ' + (e.lado === 'dir' ? 'dir.' : 'esq.') : '') + '<small>' + fmtDiaMes(q.slice(0, 10)) + ' ' + q.slice(11, 16) + '</small></button></li>';
+  }).join('') + '</ul>';
+}
+function renderTrtAjustes() {
+  const box = document.getElementById('ajTrt'); if (!box) return;
+  const pad = trtPadraoCoxa();
+  box.innerHTML = '<div class="settings-label" style="margin-bottom:10px;"><span class="settings-label-title">Aplicação e desconforto (opcional)</span>'
+    + '<span class="settings-label-desc">Privado e removível. Serve só para distribuir os treinos: o app não orienta dose, local, horário ou via, e não diagnostica a dor. Padrão usado para a coxa: ' + (pad.aprendido ? 'cerca de ' + pad.dias + ' dia(s), pelos seus registros' : '2 a 3 dias (sua observação)') + '; glúteo só pesa com desconforto registrado.</span></div>'
+    + '<div class="settings-row"><div class="settings-label"><span class="settings-label-title">Usar no planejamento</span></div><button class="settings-toggle" role="switch" aria-checked="' + !!TRT_REG.prefs.usar + '" data-trt-pref="usar" aria-label="Usar no planejamento"><span class="settings-toggle-track"><span class="settings-toggle-thumb"></span></span></button></div>'
+    + '<div class="settings-row" style="margin-top:10px;"><div class="settings-label"><span class="settings-label-title">Preferir superiores depois de aplicação na coxa</span></div><button class="settings-toggle" role="switch" aria-checked="' + !!TRT_REG.prefs.superioresAposCoxa + '" data-trt-pref="superioresAposCoxa" aria-label="Preferir superiores depois de aplicação na coxa"><span class="settings-toggle-track"><span class="settings-toggle-thumb"></span></span></button></div>'
+    + '<div class="po-acoes" style="margin-top:12px;"><button type="button" class="fad-btn ghost" data-trt-novo="aplicacao">REGISTRAR APLICAÇÃO</button><button type="button" class="fad-btn ghost" data-trt-novo="sintoma">REGISTRAR DESCONFORTO</button></div>'
+    + trtListaHtml();
+}
+document.addEventListener('click', function (e) {
+  const t = e.target && e.target.closest ? e.target : null; if (!t) return;
+  const ab = t.closest('[data-trt-abrir]'); if (ab) { e.preventDefault(); abrirTrt(ab.dataset.trtAbrir); return; }
+  const nv = t.closest('[data-trt-novo]'); if (nv) { e.preventDefault(); TRT_FORM = trtFormNovo(nv.dataset.trtNovo); renderTrtForm(); openModalEl(document.getElementById('trtModal')); return; }
+  const pf = t.closest('[data-trt-pref]'); if (pf) { e.preventDefault(); const k = pf.dataset.trtPref; TRT_REG.prefs[k] = !TRT_REG.prefs[k]; trtSave(); renderTrtAjustes(); PLANO_CACHE = null; return; }
+  if (!TRT_FORM) return;
+  const lerCampos = function () { const q = document.getElementById('trtQuando'), n = document.getElementById('trtNota'); if (q && q.value) TRT_FORM.quando = q.value.slice(0, 16); if (n) TRT_FORM.nota = n.value; };
+  const c = t.closest('[data-trt-campo]');
+  if (c) { e.preventDefault(); lerCampos(); const k = c.dataset.trtCampo; let v = c.dataset.trtValor; if (k === 'dor') v = parseInt(v, 10); TRT_FORM[k] = v; if (k === 'tipo' && v === 'sintoma' && TRT_FORM.dor == null) TRT_FORM.dor = 0; renderTrtForm(); return; }
+  const a = t.closest('[data-trt-alerta]');
+  if (a) { e.preventDefault(); lerCampos(); const k = a.dataset.trtAlerta; const i = TRT_FORM.alerta.indexOf(k); if (i >= 0) TRT_FORM.alerta.splice(i, 1); else TRT_FORM.alerta.push(k); renderTrtForm(); return; }
+  if (t.closest('[data-trt-salvar]')) {
+    e.preventDefault(); lerCampos();
+    const ev = Object.assign({}, TRT_FORM);
+    if (ev.tipo === 'aplicacao') { delete ev.dor; delete ev.limitacao; delete ev.origem; ev.alerta = []; }
+    trtSalvar(ev); TRT_FORM = null;
+    closeModalEl(document.getElementById('trtModal'));
+    renderTrtAjustes(); PLANO_CACHE = null;
+    if (document.getElementById('planoModal').classList.contains('open')) renderPlanoPanel();
+    renderMain(); return;
+  }
+  const del = t.closest('[data-trt-apagar]');
+  if (del) {
+    e.preventDefault();
+    if (!del.classList.contains('confirmando')) { del.classList.add('confirmando'); del.textContent = 'TOQUE DE NOVO PARA APAGAR'; return; }
+    trtRemover(del.dataset.trtApagar); TRT_FORM = null;
+    closeModalEl(document.getElementById('trtModal'));
+    renderTrtAjustes(); PLANO_CACHE = null; renderMain(); return;
+  }
+});
 
 // ---------- 6. AJUSTE DO DIA (confirmável e reversível) ----------
 let AJUSTES = {};   // 'modo::semana::dia' -> { nivel, regioes, origem, semanaCal, decisao, criado }
@@ -11965,7 +13151,7 @@ function volumeSemana(sched, week, peso) {
     if (!s || !s.exercises || s.hyroxDay || s.cardio) return;
     if (week === 'deload' && s.deloadCutAll) return;
     s.exercises.forEach(function (ex) {
-      if (week === 'deload' && shouldHideOnDeload(ex)) return;
+      if (exFora(week, d, ex)) return;
       const pesos = pesosEx(ex);
       if (!pesos) { if (!ex.metric) semMapa.push(ex.id); return; }
       const padrao = pesosPadrao(ex) || {};
@@ -12131,6 +13317,8 @@ function motorLoad() {
   try { matrizLoad(); } catch (e) { MATRIZ_USER = {}; }
   try { prioLoad(); } catch (e) {}
   try { papelLoad(); } catch (e) { DIAS_PAPEL = null; }
+  try { planoLoad(); } catch (e) { PLANO = { dias: {}, decisoes: {}, cortes: {}, hist: [] }; }
+  try { trtLoad(); } catch (e) { TRT_REG = { eventos: [], prefs: { usar: true, superioresAposCoxa: true } }; }
   try { montarSessoesHiper(); } catch (e) {}
 }
 
@@ -12211,7 +13399,9 @@ function bannerExcecaoHtml(week) {
       + '<span class="exc-txt">' + dias + '</span><span class="dp-seta" aria-hidden="true">▾</span></summary>'
       + '<div class="exc-corpo"><p class="exc-nota">A grade habitual está guardada e volta sozinha na semana que vem — não se repete no próximo ciclo.</p>'
       + '<div class="exc-acoes"><button type="button" class="fad-btn ghost" data-exc-acao="restaurar">VOLTAR AO HABITUAL</button>'
-      + '<button type="button" class="fad-btn ghost" data-exc-acao="editar">REORGANIZAR</button></div></div></details>';
+      + '<button type="button" class="fad-btn ghost" data-exc-acao="editar">REORGANIZAR</button>'
+      + (/^plano:/.test(e.motivo || '') && planoUltimoAplicado(week) ? '<button type="button" class="fad-btn ghost" data-plano="desfazer">DESFAZER O PLANO</button>' : '')
+      + '<button type="button" class="fad-btn ghost" data-plano="abrir">SUGESTÕES</button></div></div></details>';
   } catch (err) { return ''; }
 }
 
@@ -12403,7 +13593,7 @@ function cartaoFadigaHtml(week, day) {
     const alvos = ajValido && aj.decisao === 'aplicar' ? (aj.alvos || {}) : alvosDoConflito(c, sk);
     const linhas = [];
     (s.exercises || []).forEach(function (ex) {
-      if (week === 'deload' && shouldHideOnDeload(ex)) return;
+      if (exFora(week, day, ex)) return;
       const base = getPrescription(ex, week);
       const novo = aplicarAjuste(ex, base, { alvos: alvos });
       if (!novo.ajustado) return;
@@ -12468,12 +13658,34 @@ function prontidaoHtml(week, day) {
         }).join('') + '</div>' : '';
     const extras = p.nivel ? linha('sono', PRONT_SONO, 'Sono') + linha('dor', PRONT_DOR, 'Dor muscular') : '';
     const ctx = contextoProntidao(week, day);
-    return '<div class="pront" role="group" aria-label="Como você chega hoje"><span class="pront-rot">Como você chega hoje?</span><div class="pront-ops">' + ops + '</div>'
+    const corpo = '<span class="pront-rot">Como você chega hoje?</span><div class="pront-ops">' + ops + '</div>'
       + extras + regs
       + (ctx ? '<div class="pront-ctx">' + ctx + '</div>' : '')
       + (p.nivel ? '<div class="pront-nota">É a sua percepção. O app usa para sugerir carga e volume, não para dizer o que acontece no corpo.</div>' : '')
-      + '</div>';
+      + ((p.dor === 'leve' || p.dor === 'forte') && TRT_REG.prefs.usar ? '<button type="button" class="plano-link" data-trt-abrir="novo">Dor no local de uma aplicação? Registrar</button>' : '');
+    // RODADA DE UX (v25.2): sem resposta, a pergunta aparece inteira (é um
+    // pedido). Respondida, vira uma linha com o que foi dito; abre para
+    // alterar. Fica aberta enquanto você responde e recolhe ao voltar ao dia.
+    if (p.nivel) {
+      // fechada: "Prontidão · <resumo> · alterar"; aberta: a própria pergunta
+      // no topo (sem repetir o resumo, que as opções marcadas já mostram)
+      return '<details class="pront pront-feita" data-ui-painel="pront" role="group" aria-label="Como você chega hoje"' + (painelAberto('pront') ? ' open' : '') + '>'
+        + '<summary><span class="pront-tit"><span class="pt-f">Prontidão</span><span class="pt-a">Como você chega hoje?</span></span>'
+        + '<span class="pront-res">' + prontResumoTxt(p) + '</span>'
+        + '<span class="pront-alt"><span class="pt-f">alterar</span><span class="pt-a">recolher</span><span class="dp-seta" aria-hidden="true">▾</span></span></summary>'
+        + '<div class="pront-corpo">' + corpo + '</div></details>';
+    }
+    return '<div class="pront" role="group" aria-label="Como você chega hoje">' + corpo + '</div>';
   } catch (e) { return ''; }
+}
+// "Moderadamente cansado · sono ruim · dor leve · pernas, lombar"
+function prontResumoTxt(p) {
+  const min = s => String(s || '').toLocaleLowerCase('pt-BR');
+  const partes = [rotuloSentenca(PRONT_NIVEIS[p.nivel].rot)];
+  if (p.sono && PRONT_SONO[p.sono]) partes.push('sono ' + min(PRONT_SONO[p.sono]));
+  if (p.dor && PRONT_DOR[p.dor]) partes.push(p.dor === 'nenhuma' ? 'sem dor' : 'dor ' + min(PRONT_DOR[p.dor]));
+  if (p.regioes && p.regioes.length) partes.push(p.regioes.map(r => REGIAO_NOME[r] || r).join(', '));
+  return partes.join(' · ');
 }
 
 // Exposição de cada principal: força, volume ou técnica.
@@ -12730,6 +13942,7 @@ document.addEventListener('click', function (e) {
     const atual = PRONTIDAO[k] && prontValida(PRONTIDAO[k]) ? PRONTIDAO[k] : null;
     if (atual && atual.nivel === pr.dataset.pront) delete PRONTIDAO[k];
     else PRONTIDAO[k] = { nivel: pr.dataset.pront, regioes: (atual && atual.regioes) || [], data: isoDe(new Date()) };
+    UI_PAINEIS.pront = true;   // v25.2: segue aberta enquanto você responde
     prontSave(); renderMain();
     return;
   }
@@ -12742,6 +13955,7 @@ document.addEventListener('click', function (e) {
     p.regioes = p.regioes || [];
     const i = p.regioes.indexOf(r);
     if (i >= 0) p.regioes.splice(i, 1); else p.regioes.push(r);
+    UI_PAINEIS.pront = true;
     prontSave(); renderMain();
     return;
   }
@@ -12782,6 +13996,7 @@ document.addEventListener('click', function (e) {
     const p = (PRONTIDAO[k] && prontValida(PRONTIDAO[k])) ? PRONTIDAO[k] : { regioes: [], data: isoDe(new Date()) };
     const campo = pc.dataset.prontCampo, valor = pc.dataset.prontValor;
     if (p[campo] === valor) delete p[campo]; else p[campo] = valor;
+    UI_PAINEIS.pront = true;
     PRONTIDAO[k] = p; prontSave(); renderMain();
     return;
   }
@@ -13595,7 +14810,9 @@ function repsRowHtml(exId, presc, load, nome) {
     const rpeManda = rpeReal != null && rpeAlvo && Math.abs(rpeReal - rpeAlvo) >= 1;
     const nota = rpeManda && !usaRpe ? '' : usaRpe
       ? ((feitas.length >= maxSets && STATE.week !== 'deload' && rpeRealGet(STATE.week, STATE.day, exId) == null)
-          ? '<div class="reps-nota">Reps completas. Num lift por RPE, completar não basta para subir: registre o RPE real da série mais pesada e o app compara com o alvo.</div>' : '')
+          // v25.2: mesma mensagem, mais curta — "série mais pesada" e o alvo
+          // já estão escritos ao lado do campo de RPE real, logo abaixo.
+          ? '<div class="reps-nota">Reps completas. Num lift por RPE, isso não basta para subir: registre o RPE real.</div>' : '')
       : notaTendenciaHtml(exId, load, alvo, feitas, maxSets, nome);
     return '<div class="reps-linha"><span class="reps-rotulo">Reps</span>'
       + '<div class="reps-chips">' + chips + '</div>'
@@ -13764,7 +14981,7 @@ function isDayFullyComplete(week, day) {
   
   let total = 0, done = 0;
   session.exercises.forEach(ex => {
-    if (isDeload && shouldHideOnDeload(ex)) return;
+    if (exFora(week, day, ex)) return;
     total++;
     const maxSets = parseInt(getPrescription(ex, week, day).sets, 10) || 3;
     if (getSetProgress(week, day, ex.id) >= maxSets) done++;
@@ -14546,7 +15763,7 @@ function getDayHeatStatus(week, day) {
   const isDeload = week === 'deload';
   let total = 0, done = 0, anyProgress = false;
   session.exercises.forEach(ex => {
-    if (isDeload && shouldHideOnDeload(ex)) return;
+    if (exFora(week, day, ex)) return;
     total++;
     const maxSets = parseInt(getPrescription(ex, week, day).sets, 10) || 3;
     const cur = getSetProgress(week, day, ex.id);
@@ -14711,7 +15928,7 @@ function renderMain() {
   // O estado do dia é concluído ou não — e quem diz isso é o botão.
   if (day.exercises && !ehDiaMarcavel(day) && !(isDeload && day.deloadCutAll)) {
     day.exercises.forEach(ex => {
-      if (isDeload && shouldHideOnDeload(ex)) return;
+      if (exFora(STATE.week, STATE.day, ex)) return;
       totalEx++;
       if (isChecked(STATE.week, STATE.day, ex.id)) doneEx++;
     });
@@ -14784,6 +16001,7 @@ function renderMain() {
   // Alertas e prontidão. REVISÃO 2: o motor de fadiga substitui a regra fixa
   // de 24/48 h. REVISÃO DE DESIGN (v25.1): conflito relevante aparece ANTES
   // da prontidão (visível na primeira tela); "monitorar" vem depois dela.
+  html += planoAvisoHtml();   // v26: planejador (linha discreta) e sinais de alerta registrados
   const cartao = cartaoFadigaHtml(STATE.week, STATE.day);
   const cartaoCritico = /class="fad-card n[23]/.test(cartao);
   if (cartaoCritico) html += cartao;
@@ -14948,52 +16166,16 @@ function renderMain() {
           Cargas, recordes, Poder/nível e a sequência 🔥 <strong>são mantidos</strong>.
         </div>
       </div>
-      <div class="export-section fade-in">
-        <div class="export-divider">Versão</div>
-        <div class="build-stamp" id="buildStamp">
-          <span class="build-rot">build</span> <b class="build-num">${PWR_BUILD}</b>
-          <span class="build-sw">cache: —</span>
-        </div>
-        <details class="changelog"><summary>Histórico de alterações</summary>${PWR_CHANGELOG.map(c => '<h4>' + c.v + '</h4><ul>' + c.itens.map(i => '<li>' + i + '</li>').join('') + '</ul>').join('')}</details>
-        <div class="export-hint" style="margin-bottom:22px;">
-          Se este número não bater com o da última entrega,<br>
-          o aparelho ainda está com a versão anterior:<br>
-          recarregue a página com a internet ligada.
-        </div>
-        <div class="export-divider">Backup completo</div>
-        <button class="export-btn" id="shareBtn" style="display:none;">ENVIAR BACKUP</button>
-        <button class="export-btn" id="exportBtn">EXPORTAR BACKUP</button>
-        <div class="export-last" id="exportLast">${(() => {
-          const lb = getLastBackup();
-          if (!lb) return 'Nenhum backup exportado ainda';
-          const d = daysBetweenKeys(lb, localDateKey(new Date()));
-          if (d <= 0) return 'Último backup: hoje';
-          if (d === 1) return 'Último backup: ontem';
-          return 'Último backup: ' + fmtDateKeyBR(lb) + ' (' + d + ' dias)';
-        })()}</div>
-        <div class="export-hint">
-          Gera arquivo único com TODO o histórico:<br>
-          cargas, checks, substituições, skips com<br>
-          justificativa, notas semanais, métricas de<br>
-          aderência. Formato .md humano + JSON<br>
-          estruturado pra análise programática.
-        </div>
-        <div class="export-divider" style="margin-top:22px;">Restaurar</div>
-        <button class="export-btn" id="importBtn">IMPORTAR BACKUP</button>
-        <input type="file" id="importFile" accept=".md,.json,.txt,application/json,text/markdown,text/plain" style="display:none;" aria-hidden="true">
-        <div id="importConfirm" role="status" aria-live="polite"></div>
-        <div class="export-hint">
-          Reinstalou o app e perdeu o progresso?<br>
-          Escolha um backup exportado aqui pra<br>
-          <strong>restaurar tudo</strong>: cargas, recordes,<br>
-          Poder/nível, sequência 🔥 e feitos.<br>
-          Substitui o estado atual — exporte antes.
-        </div>
+      <!-- RODADA DE UX (v25.2): versão, backup e restauração moram em
+           Ajustes (acessíveis de qualquer dia). Aqui fica o status do último
+           backup e um atalho direto para a seção. -->
+      <div class="rest-backup fade-in">
+        <span class="rest-backup-txt" id="restBackupStatus">${textoUltimoBackup()}</span>
+        <button type="button" class="rest-backup-btn" id="abrirBackupBtn">Backup e versão</button>
       </div>
     `;
     main.innerHTML = html;
     attachWeekResetHandler();
-    attachExportHandlers();
     return;
   }
   
@@ -15015,9 +16197,10 @@ function renderMain() {
   }
   
   // Exercises
+  html += planoNotaCorteHtml();
   html += '<div class="exercises" role="list">';
   day.exercises.forEach((ex, idx) => {
-    if (isDeload && shouldHideOnDeload(ex)) return;
+    if (exFora(STATE.week, STATE.day, ex)) return;
     
     const presc = getPrescription(ex, STATE.week, STATE.day);
     const maxSets = parseInt(presc.sets, 10) || 3;
@@ -15037,7 +16220,8 @@ function renderMain() {
     
     // Build prescription stats
     const stats = [];
-    stats.push(`<div class="ex-stat"><div class="ex-stat-label">Sets</div><div class="ex-stat-value">${String(presc.sets).padStart(2,'0')}</div></div>`);
+    // RODADA DE UX (v25.2): "4", não "04" — o zero à esquerda era ornamento
+    stats.push(`<div class="ex-stat"><div class="ex-stat-label">Sets</div><div class="ex-stat-value">${presc.sets}</div></div>`);
     stats.push(`<div class="ex-stat"><div class="ex-stat-label">Reps</div><div class="ex-stat-value">${presc.reps}</div></div>`);
     if (presc.intensity) {
       stats.push(`<div class="ex-stat intensity"><div class="ex-stat-label">Intens</div><div class="ex-stat-value">${presc.intensity}</div></div>`);
@@ -15929,10 +17113,38 @@ function closeRpeModal() {
 // GYM HOURS MODAL
 // ============================================================
 const gymModal = document.getElementById('gymModal');
-document.getElementById('gymInfoBtn').addEventListener('click', () => {
+// RODADA DE UX (v25.2): Ajustes guarda também backup, restauração e o
+// histórico de versões. Abrir atualiza o status do último backup; o atalho
+// do dia de descanso abre já na seção de backup.
+function abrirAjustes(secaoId) {
   renderModeSwitch();
+  atualizarStatusBackup();
+  try { renderTrtAjustes(); } catch (e) {}
   openModalEl(gymModal);
+  if (!secaoId) return;
+  // depois do foco inicial do modal (50 ms), que rolaria de volta ao topo
+  setTimeout(() => {
+    const m = gymModal.querySelector('.modal'), s = document.getElementById(secaoId);
+    if (!m || !s) return;
+    m.scrollTop += s.getBoundingClientRect().top - m.getBoundingClientRect().top - 12;
+    const alvo = [...s.querySelectorAll('button')].find(b => b.offsetParent);
+    if (alvo) { try { alvo.focus({ preventScroll: true }); } catch (e) {} }
+  }, 120);
+}
+document.getElementById('gymInfoBtn').addEventListener('click', () => abrirAjustes());
+document.addEventListener('click', (e) => {
+  const b = e.target && e.target.closest ? e.target.closest('#abrirBackupBtn') : null;
+  if (!b) return;
+  e.preventDefault();
+  abrirAjustes('ajBackup');
 });
+(function () {
+  const h = document.getElementById('ajChangelog');
+  if (h) h.insertAdjacentHTML('beforeend', PWR_CHANGELOG.map(c => '<h4>' + c.v + '</h4><ul>' + c.itens.map(i => '<li>' + i + '</li>').join('') + '</ul>').join(''));
+})();
+attachExportHandlers();   // botões fixos em Ajustes: liga uma vez só
+document.getElementById('planoModalClose').addEventListener('click', function () { closeModalEl(document.getElementById('planoModal')); });
+document.getElementById('trtModalClose').addEventListener('click', function () { TRT_FORM = null; closeModalEl(document.getElementById('trtModal')); });
 document.getElementById('gymModalClose').addEventListener('click', closeGymModal);
 gymModal.addEventListener('click', (e) => {
   if (e.target === gymModal) closeGymModal();
@@ -16008,6 +17220,45 @@ document.querySelectorAll('#modeSwitch .mode-opt').forEach(btn => {
     const ss = String(s % 60).padStart(2, '0');
     return String(m).padStart(2, '0') + ':' + ss;
   }
+  // RODADA DE UX (v25.2): com o modal fechado, nada mostrava o descanso
+  // correndo. O tempo passa a ficar no topo, no lugar da marca, enquanto
+  // corre ou está pausado; ao terminar avisa "Vai!" por alguns segundos.
+  // ZERAR (ou escolher outro tempo) tira. Continua sem disparar sozinho.
+  const chip = document.getElementById('descansoChip');
+  const chipT = document.getElementById('descansoChipT');
+  const chipIc = chip ? chip.querySelector('.dc-ic') : null;
+  const chipLinha = chip ? chip.closest('.header-row') : null;
+  const CHIP_FIM_MS = 6000;
+  let chipFimT = null, chipUltimo = '';
+  function chipMostra(estado) {
+    if (!chip) return;
+    if (chipFimT) { clearTimeout(chipFimT); chipFimT = null; }
+    if (!estado) {
+      chip.hidden = true; chip.dataset.estado = ''; chip.classList.remove('quase'); chipUltimo = '';
+      if (chipLinha) chipLinha.classList.remove('com-descanso');
+      return;
+    }
+    chip.dataset.estado = estado;
+    chip.hidden = false;
+    if (chipLinha) chipLinha.classList.add('com-descanso');
+    chipPinta();
+  }
+  function chipPinta() {
+    if (!chip || chip.hidden) return;
+    const est = chip.dataset.estado;
+    const t = est === 'fim' ? 'Vai!' : fmt(remaining);
+    const ic = est === 'pausa' ? '⏸' : (est === 'fim' ? '✓' : '⏱');
+    if (est + t !== chipUltimo) {
+      chipUltimo = est + t;
+      chipT.textContent = t;
+      if (chipIc) chipIc.textContent = ic;
+      chip.setAttribute('aria-label', est === 'fim' ? 'Descanso concluído. Tocar para abrir o cronômetro.'
+        : (est === 'pausa' ? 'Descanso pausado em ' + t : 'Descanso: ' + t + ' restantes') + '. Tocar para abrir o cronômetro.');
+    }
+    chip.classList.toggle('quase', est === 'corre' && remaining > 0 && remaining <= 10);
+  }
+  if (chip) chip.addEventListener('click', () => { selectTab('timer'); openModalEl(modal); });
+
   function paint() {
     disp.textContent = fmt(remaining);
     // NÍVEL 1/2 — tensão acumulando: o mostrador esquenta nos últimos
@@ -16017,9 +17268,11 @@ document.querySelectorAll('#modeSwitch .mode-opt').forEach(btn => {
       disp.classList.toggle('tense', running && r > 3 && r <= 10);
       disp.classList.toggle('critical', running && r > 0 && r <= 3);
     } catch (e) {}
+    chipPinta();
   }
   function setTotal(sec) {
     total = sec; remaining = sec; stop(false);
+    chipMostra(null);
     disp.classList.remove('done');
     sub.textContent = 'Descanso entre séries';
     paint();
@@ -16042,6 +17295,7 @@ document.querySelectorAll('#modeSwitch .mode-opt').forEach(btn => {
     disp.classList.remove('done');
     sub.textContent = 'Contando…';
     toggleBtn.textContent = 'PAUSAR';
+    chipMostra('corre');
     if (raf) cancelAnimationFrame(raf);
     raf = requestAnimationFrame(tick);
   }
@@ -16056,6 +17310,7 @@ document.querySelectorAll('#modeSwitch .mode-opt').forEach(btn => {
     remaining = Math.max(0, (endAt - Date.now()) / 1000);
     stop(true);
     sub.textContent = 'Pausado';
+    chipMostra('pausa');
     paint();
   }
   function finish() {
@@ -16072,6 +17327,8 @@ document.querySelectorAll('#modeSwitch .mode-opt').forEach(btn => {
     disp.classList.add('done');
     sub.textContent = 'Descanso concluído — vai!';
     toggleBtn.textContent = 'INICIAR';
+    chipMostra('fim');
+    chipFimT = setTimeout(() => chipMostra(null), CHIP_FIM_MS);
     buzz();
   }
   function buzz() {
@@ -16105,6 +17362,8 @@ document.querySelectorAll('#modeSwitch .mode-opt').forEach(btn => {
     remaining = Math.max(0, remaining) + 15;
     if (running) endAt = Date.now() + remaining * 1000;
     disp.classList.remove('done');
+    // +15 s depois do fim (ou com o tempo parado no meio) = descanso pausado
+    if (!running && chip && !chip.hidden) chipMostra('pausa');
     paint();
   });
   presetsWrap.querySelectorAll('.pwrtimer-preset').forEach(p => {
@@ -17062,9 +18321,27 @@ function updateBackupBanner() {
   });
 }
 
+// Status do último backup (Ajustes e a linha do dia de descanso).
+function textoUltimoBackup() {
+  const lb = getLastBackup();
+  if (!lb) return 'Nenhum backup exportado ainda';
+  const d = daysBetweenKeys(lb, localDateKey(new Date()));
+  if (d <= 0) return 'Último backup: hoje';
+  if (d === 1) return 'Último backup: ontem';
+  return 'Último backup: ' + fmtDateKeyBR(lb) + ' (' + d + ' dias)';
+}
+function atualizarStatusBackup() {
+  const t = textoUltimoBackup();
+  ['exportLast', 'restBackupStatus'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = t; });
+}
+
 function attachExportHandlers() {
+  // v25.2: os botões moram em Ajustes (HTML fixo) — ligar duas vezes
+  // baixaria dois arquivos por toque. A marca fica no próprio botão.
   const btn = document.getElementById('exportBtn');
-  if (btn) btn.addEventListener('click', generateAndDownloadReport);
+  if (!btn || btn.dataset.ligado) return;
+  btn.dataset.ligado = '1';
+  btn.addEventListener('click', generateAndDownloadReport);
 
   // "Enviar" só aparece onde o celular sabe compartilhar arquivo —
   // não adianta oferecer um botão que não faz nada no desktop.
@@ -17614,8 +18891,7 @@ function markBackupDone(now) {
     setLastBackup(localDateKey(now || new Date()));
     setBackupSnooze('');
     updateBackupBanner();
-    const lastEl = document.getElementById('exportLast');
-    if (lastEl) lastEl.textContent = 'Último backup: hoje';
+    atualizarStatusBackup();   // "Último backup: hoje" em Ajustes e no descanso
   } catch (e) {}
 }
 
@@ -18386,7 +19662,7 @@ function evaluateDayStatus(week, day) {
     const isDeload = week === 'deload';
     let total = 0, done = 0;
     session.exercises.forEach(ex => {
-      if (isDeload && shouldHideOnDeload(ex)) return;
+      if (exFora(week, day, ex)) return;
       total++;
       const ms = parseInt(getPrescription(ex, week, day).sets, 10) || 3;
       if (getSetProgress(week, day, ex.id) >= ms) done++;
@@ -18975,6 +20251,18 @@ function fmtFeatWhen(ts) {
   } catch (e) { return ''; }
 }
 function enqueueFeat(feat) { _featQueue.push(feat); pumpFeats(); }
+// RODADA DE UX (v25.2): o aviso mora no pé da tela; enquanto houver aviso,
+// o fim da página ganha a altura dele, para o último controle (RESET DIA
+// ATUAL) poder subir acima do aviso em vez de ficar preso embaixo.
+function respiroDoAviso() {
+  try {
+    const wrap = document.getElementById('featToastWrap');
+    const esp = document.getElementById('respiroAviso');
+    if (!esp) return;
+    const h = wrap && wrap.children.length ? Math.ceil(wrap.getBoundingClientRect().height) + 12 : 0;
+    esp.style.height = h ? h + 'px' : '';
+  } catch (e) {}
+}
 function pumpFeats() {
   const wrap = document.getElementById('featToastWrap');
   if (!wrap) return;
@@ -19004,11 +20292,13 @@ function showFeatToast(feat) {
     + `<span class="feat-xp">+${xp} ⚡</span>`
     + (featReward(feat) ? `<span class="feat-reward">🎖 ${featReward(feat)}</span>` : '')
     + `<span class="feat-when">${fmtFeatWhen(ts)}</span>`
-    + '</div>'
+    // RODADA DE UX (v25.2): OK na mesma linha da data — o cartão perde ~40 px
     + '<button class="feat-ok" type="button">OK</button>'
+    + '</div>'
     + '</div>';
   wrap.appendChild(t);
   _featVisible++;
+  respiroDoAviso();
   requestAnimationFrame(() => t.classList.add('show'));
   if (navigator.vibrate) navigator.vibrate([15, 30, 60]);
 
@@ -19016,7 +20306,7 @@ function showFeatToast(feat) {
   const dismiss = () => {
     if (dismissed) return; dismissed = true;
     t.style.transition = ''; t.classList.remove('show'); t.classList.add('hide');
-    setTimeout(() => { t.remove(); _featVisible = Math.max(0, _featVisible - 1); pumpFeats(); }, 380);
+    setTimeout(() => { t.remove(); _featVisible = Math.max(0, _featVisible - 1); respiroDoAviso(); pumpFeats(); }, 380);
   };
   t.querySelector('.feat-close').addEventListener('click', dismiss);
   t.querySelector('.feat-ok').addEventListener('click', dismiss);
@@ -19847,7 +21137,7 @@ function montarDeslizeDeCards() {
 function fecharCardAberto(bd) {
   if (!bd) return;
   const especifico = {
-    rpeModal: 'rpeModalClose', gymModal: 'gymModalClose', equipModal: 'equipModalClose',
+    rpeModal: 'rpeModalClose', gymModal: 'gymModalClose', equipModal: 'equipModalClose', planoModal: 'planoModalClose', trtModal: 'trtModalClose',
     toolsModal: 'toolsModalClose', runeModal: 'runeModalClose', skipModal: 'skipModalClose',
     swapModal: 'swapModalClose', rankModal: 'rankModalClose', achModal: 'achClose',
     diffModal: 'diffModalClose'
