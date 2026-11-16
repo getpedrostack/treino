@@ -8458,18 +8458,18 @@
      teclado tem contorno visível. Nada pulsa; texto comum não brilha.
      ================================================================== */
   :root { --neon-rgb: 232, 190, 110; --r-sm: 8px; --r-md: 12px; --toque: 44px; --dur-ui: 0.15s; }
-  .fad-btn, .plano-chip, .rest-backup-btn, .info-btn, .hud-chip, .ex-abrir, .descanso-chip, .plano-aviso, .pm-dia,
+  .fad-btn, .plano-chip, .rest-backup-btn, .info-btn, .hud-chip, .descanso-chip, .plano-aviso, .pm-dia,
   .trt-op, .pront-op, .pront-reg, .rep-chip, .ex-desc, .ex-equip, .export-btn, .feat-ok, .pwrtool-btn, .pwrtool-tab,
   .pwrtimer-preset, .mode-opt, .ex-notes-toggle, .ex-swaps-toggle, .ex-warm-toggle, .reps-op, .trt-item, .week-reset-btn,
   .dia-painel, details.pront-feita, .po-mais, details.exc-banner, .plano-op {
     transition: box-shadow var(--dur-ui) ease, border-color var(--dur-ui) ease, transform 0.08s ease;
   }
-  .fad-btn, .plano-chip, .rest-backup-btn, .info-btn, .hud-chip, .ex-abrir, .descanso-chip, .plano-aviso, .pm-dia,
+  .fad-btn, .plano-chip, .rest-backup-btn, .info-btn, .hud-chip, .descanso-chip, .plano-aviso, .pm-dia,
   .trt-op, .pront-op, .pront-reg, .rep-chip, .ex-equip, .export-btn, .pwrtool-btn, .pwrtool-tab, .pwrtimer-preset, .mode-opt,
   .reps-op, .trt-item, .week-reset-btn, .dia-painel, details.pront-feita, details.exc-banner {
     box-shadow: 0 0 0 1px rgba(var(--neon-rgb), 0.12);   /* repouso: anel fino, sem brilho — o brilho fica para toque, seleção e o exercício ativo */
   }
-  .fad-btn:active, .plano-chip:active, .rest-backup-btn:active, .info-btn:active, .hud-chip:active, .ex-abrir:active, .descanso-chip:active,
+  .fad-btn:active, .plano-chip:active, .rest-backup-btn:active, .info-btn:active, .hud-chip:active, .descanso-chip:active,
   .plano-aviso:active, .pm-dia:active, .trt-op:active, .pront-op:active, .pront-reg:active, .rep-chip:active, .ex-equip:active,
   .export-btn:active, .pwrtool-btn:active, .pwrtool-tab:active, .pwrtimer-preset:active, .mode-opt:active, .reps-op:active,
   .trt-item:active, .week-reset-btn:active, .week-btn:active, .day-tab:active, .set-tracker:active, .ex-desc:active,
@@ -8483,33 +8483,161 @@
   button:disabled, button[disabled], .pm-dia[disabled] { box-shadow: none !important; opacity: 0.45; cursor: default; }
   :is(button, summary, [role="button"], input, a):focus-visible { outline: 2px solid rgba(var(--neon-rgb), 0.95); outline-offset: 2px; }
   @media (hover: hover) {
-    .fad-btn:hover, .plano-chip:hover, .info-btn:hover, .ex-abrir:hover, .plano-aviso:hover, .pm-dia:hover:not([disabled]), .trt-op:hover,
+    .fad-btn:hover, .plano-chip:hover, .info-btn:hover, .plano-aviso:hover, .pm-dia:hover:not([disabled]), .trt-op:hover,
     .pront-op:hover, .rep-chip:hover, .export-btn:hover, .dia-painel > summary:hover, .trt-item:hover { box-shadow: 0 0 0 1px rgba(var(--neon-rgb), 0.3), 0 0 12px rgba(var(--neon-rgb), 0.24); }
   }
 
-  /* ---- Cartão de exercício por estado ---- */
-  .ex-name-row { display: flex; align-items: flex-start; gap: 8px; }
+  /* ==================================================================
+     v26.2 — CARTÃO DO EXERCÍCIO
+     Um controle só (chevron) em todo cartão e em qualquer estado; o
+     cabeçalho inteiro é a área de toque, o ícone fica pequeno. Recolhido =
+     uma linha de resumo com o estado à direita, por escrito. Trilho à
+     esquerda por estado: atual (forte), em andamento, concluído (suave).
+     ================================================================== */
+  .ex-head { position: relative; }
+  .ex-name-row { display: flex; align-items: flex-start; gap: 6px; }
   .ex-name-row .ex-name { flex: 1 1 auto; min-width: 0; margin-bottom: 0; }
-  .ex-name-row + * { margin-top: 8px; }
-  .ex-abrir { flex-shrink: 0; min-height: var(--toque); min-width: 64px; margin: -10px -6px -8px 0; padding: 0 10px; border: 1px solid var(--border-bright);
-    border-radius: var(--r-sm); background: transparent; color: var(--gold-bright); font-family: 'Inter', sans-serif; font-size: var(--fs-small); font-weight: 600; cursor: pointer; }
-  .exercise:not(.compacto) .ex-abrir span { display: inline-block; }
-  .ex-resumo { display: none; font-family: 'Inter', sans-serif; font-size: var(--fs-small); color: var(--text-2); line-height: 1.4; }
-  .ex-resumo b { color: var(--text); font-weight: 600; }
-  .ex-resumo .ok { color: var(--ok, #7ee0a0); } .ex-resumo .pend { color: var(--text-3); }
-  .exercise.compacto .ex-resumo { display: block; margin-top: 4px; }
-  .exercise.compacto .ex-bloco, .exercise.compacto .ex-load, .exercise.compacto .ex-load-hint, .exercise.compacto .ex-reps,
-  .exercise.compacto .rpe-real, .exercise.compacto .reps-nota, .exercise.compacto .ex-actions-row, .exercise.compacto .ex-notes,
-  .exercise.compacto .ex-swaps, .exercise.compacto .ex-expo, .exercise.compacto .set-reset-btn { display: none !important; }
-  .exercise.est-feito.compacto .ex-prescription { display: none; }
+  .ex-toggle {
+    position: static; flex: 0 0 auto;
+    display: inline-flex; align-items: center; justify-content: center;
+    /* caixa de 44 px (alvo mínimo) com margens negativas: a linha do nome não cresce;
+       o que se vê é só o ícone de 16 px e, ao tocar, um círculo de 28 px */
+    width: 44px; height: 44px; margin: -12px -14px -12px -4px; padding: 0;
+    border: 0; border-radius: 50%; background: transparent; color: var(--text-3);
+    cursor: pointer; -webkit-tap-highlight-color: transparent;
+    transition: background-color var(--dur-1) ease, color var(--dur-1) ease;
+  }
+  /* a área de toque é o cabeçalho todo (nome + resumo), não só o ícone */
+  .ex-toggle::after { content: ''; position: absolute; top: -12px; right: -14px; bottom: -8px; left: -4px; z-index: 1; }
+  .ex-toggle .dp-seta { width: 16px; height: 16px; -webkit-mask-size: 16px 16px; mask-size: 16px 16px; color: inherit; }
+  .ex-toggle[aria-expanded="true"] .dp-seta { transform: rotate(180deg); }
+  .ex-head:active .ex-toggle { background: radial-gradient(circle, rgba(var(--neon-rgb), 0.16) 0 14px, transparent 14.5px); color: var(--gold-bright); }
+  @media (hover: hover) {
+    .ex-head:hover .ex-toggle { background: radial-gradient(circle, rgba(255,255,255,0.06) 0 14px, transparent 14.5px); color: var(--text-2); }
+  }
+  .ex-toggle:focus-visible { outline: none; }
+  .ex-head:has(.ex-toggle:focus-visible) { outline: 2px solid rgba(var(--neon-rgb), 0.95); outline-offset: 6px; border-radius: 4px; }
+  @supports not selector(:has(*)) { .ex-toggle:focus-visible { outline: 2px solid rgba(var(--neon-rgb), 0.95); outline-offset: 2px; } }
+
+  /* resumo do cartão recolhido */
+  .ex-meta { display: none; }
+  .exercise.compacto .ex-meta {
+    display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 10px; row-gap: 2px;
+    margin-top: 4px; font-family: 'Inter', sans-serif; font-size: 13px; line-height: 1.4;
+    color: var(--text-2); font-variant-numeric: tabular-nums;
+  }
+  .em-info { min-width: 0; }
+  .em-info b { color: var(--text); font-weight: 600; }
+  .em-sep, .em-ant { color: var(--text-3); }
+  .em-st { margin-left: auto; font-size: 12px; font-weight: 600; letter-spacing: 0.01em; white-space: nowrap; }
+  .em-agora, .em-and, .em-rpe { color: var(--gold-bright); }
+  .em-ok { color: var(--ok); }
+
+  /* corpo: aberto mostra tudo; recolhido mostra só a linha */
+  .ex-detalhe { margin-top: 10px; }
+  .exercise.compacto .ex-detalhe, .exercise.compacto .set-reset-btn { display: none; }
+  .exercise.compacto { align-items: center; }
+  .exercise.compacto .ex-side { padding: 8px 0; }
   .exercise.compacto .ex-body { padding-top: 12px; padding-bottom: 12px; }
-  .exercise.compacto .ex-prescription { margin-top: 8px; margin-bottom: 0; }
-  .exercise.compacto .ex-side { padding-top: 10px; }
   .exercise.compacto .set-tracker { width: 44px; height: 44px; }
-  .exercise.est-futuro.compacto .ex-name { color: var(--text-2); }
-  .exercise.est-ativo { box-shadow: inset 2px 0 0 rgba(var(--neon-rgb), 0.85), 0 0 0 1px rgba(var(--neon-rgb), 0.18); }
-  .exercise.est-ativo .set-tracker { box-shadow: 0 0 0 1px rgba(var(--neon-rgb), 0.35), 0 0 14px rgba(var(--neon-rgb), 0.25); }
-  .exercise.est-feito.compacto { opacity: 0.92; }
+  .exercise.compacto .ex-name { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .exercise.ex-abrindo .ex-detalhe { animation: exDetalheEntra 0.22s var(--ease-out) both; }
+  @keyframes exDetalheEntra { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+  /* trilho à esquerda por estado (no lugar do brilho dourado antigo) */
+  .exercise.done::before, .exercise.in-progress::before { box-shadow: none; opacity: 1; }
+  .exercise.est-atual::before, .exercise.est-rpe::before, .exercise.est-parcial::before, .exercise.est-feito::before {
+    content: ''; position: absolute; left: 0; top: 10px; bottom: 10px; width: 2px;
+    border-radius: 0 2px 2px 0; box-shadow: none; opacity: 1;
+  }
+  .exercise.est-atual::before, .exercise.est-rpe::before { width: 3px; background: var(--gold-bright); }
+  .exercise.est-parcial::before { background: var(--gold); opacity: 0.7; }
+  .exercise.est-feito::before { background: var(--gold-deep); }
+  .exercise.est-atual, .exercise.est-rpe {
+    background: linear-gradient(90deg, rgba(200,155,60,0.08) 0%, rgba(200,155,60,0.025) 40%, transparent 80%);
+  }
+  .exercise.est-feito .ex-name { color: var(--text-2); opacity: 1; }
+  .exercise.est-rpe .ex-name { opacity: 1; }
+
+  /* re-render do mesmo dia: sem repetir entrada, sem "pop" nos concluídos */
+  #main.sem-entrada .fade-in { animation: none; }
+  .set-tracker.complete { animation: none; }
+  .set-tracker.complete.acabou { animation: setComplete 0.6s ease-out; }
+  .set-tracker-laurel { animation: none; }
+
+  /* um só ícone de abrir/recolher no app inteiro (chevron de traço, não ▾) */
+  .dp-seta {
+    display: inline-block; width: 14px; height: 14px; flex-shrink: 0;
+    font-size: 0 !important; line-height: 0; vertical-align: middle;
+    background-color: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 6l4.5 4.5L12.5 6' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 14px 14px no-repeat;
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 6l4.5 4.5L12.5 6' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 14px 14px no-repeat;
+  }
+  details.exc-banner > summary .dp-seta { margin-top: -7px; }
+
+
+  /* ==================================================================
+     v26.2 — CORPO DO CARTÃO: campos numa coluna de rótulos (CARGA, REPS
+     e RPE REAL com o mesmo rótulo e o valor na mesma coluna); textos
+     auxiliares numa fonte só; ações do rodapé no mesmo estilo, com ícone
+     de traço — sem mistura de mono/serifa/maiúsculas na mesma linha.
+     ================================================================== */
+  :root { --ex-rot: 64px; }
+  .ex-load { border-top: 1px solid var(--border); margin-top: 14px; padding-top: 14px; column-gap: 8px; }
+  .ex-load-label, .reps-rotulo, .rpe-real-rot {
+    flex: 0 0 var(--ex-rot); width: var(--ex-rot); text-align: left;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-deep);
+  }
+  .ex-load-hint { margin-left: calc(var(--ex-rot) + 8px); margin-top: 6px; font-size: 12px; }
+  .reps-linha { display: grid; grid-template-columns: var(--ex-rot) minmax(0, 1fr); column-gap: 8px; row-gap: 0; margin-top: 10px; align-items: start; }
+  .reps-linha .reps-rotulo { grid-column: 1; grid-row: 1; align-self: end; line-height: 15px; }
+  .reps-linha .reps-alvo { grid-column: 1; grid-row: 2; align-self: start; margin: 2px 0 0; width: auto; line-height: 15px; }
+  .reps-linha .reps-chips { grid-column: 2; grid-row: 1 / span 2; min-width: 0; }   /* os chips quebram DENTRO da coluna dos valores */
+  /* alvo na coluna dos rótulos, logo abaixo do nome do campo (não ocupa linha a mais) */
+  .reps-alvo, .rpe-real-alvo, .rpe-real-dica { font-family: 'Inter', sans-serif; font-size: 11.5px; letter-spacing: 0; text-transform: none; font-weight: 500; color: var(--text-3); }
+  .rpe-real-alvo { display: block; margin-top: 2px; line-height: 15px; }
+  .rpe-real-rot { line-height: 15px; }
+  .rpe-real-dica { flex: 1 1 90px; margin: 0; line-height: 1.35; }
+  .rpe-real { margin-top: 10px; column-gap: 8px; row-gap: 0; }
+  .rpe-real-btn { padding: 0; gap: 8px; border: 0; background: none; align-items: center; min-height: 44px; }
+  .rpe-real-btn b {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 92px; height: 44px; border-radius: var(--r-ctl); font-size: 16px;
+    border: 1px dashed var(--border-bright); box-shadow: var(--well);
+    background: linear-gradient(180deg, #050403 0%, #0e0b09 100%);
+  }
+  .rpe-real-btn.sel b { border-style: solid; border-color: var(--gold-deep); }
+  .rpe-real-btn:active b { border-color: var(--gold); }
+  .rpe-real-btn:focus-visible { outline-offset: 4px; }
+  .reps-nota { font-family: 'Inter', sans-serif; font-style: normal; font-size: 13px; line-height: 1.5; padding: 9px 12px; }
+
+  .ex-actions-row { flex-wrap: wrap; column-gap: 22px; row-gap: 0; margin-top: 6px; }
+  .ex-notes-toggle, .ex-warm-toggle, .ex-swaps-toggle {
+    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0;
+    text-transform: none; color: var(--text-2); gap: 7px; text-shadow: none;
+    padding: 12px 0; min-height: 44px;
+  }
+  .ex-notes-toggle:active, .ex-warm-toggle:active, .ex-swaps-toggle:active,
+  .ex-notes-toggle.open, .ex-swaps-toggle.open { color: var(--gold-bright); text-shadow: none; }
+  @media (hover: hover) {
+    .ex-notes-toggle:hover, .ex-warm-toggle:hover, .ex-swaps-toggle:hover { color: var(--text); text-shadow: none; }
+  }
+  .ex-notes-toggle .arrow, .ex-warm-toggle .warm-icon, .ex-swaps-toggle .swap-icon {
+    display: inline-block; width: 15px; height: 15px; flex-shrink: 0;
+    font-size: 0 !important; line-height: 0; background-color: var(--gold);
+    -webkit-mask-position: center; mask-position: center;
+    -webkit-mask-size: 15px 15px; mask-size: 15px 15px;
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  }
+  .ex-notes-toggle .arrow { -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 6l4.5 4.5L12.5 6' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 6l4.5 4.5L12.5 6' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); transform: rotate(-90deg); }
+  .ex-notes-toggle.open .arrow { transform: rotate(0deg); }
+  .ex-warm-toggle .warm-icon { -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 14.3c-2.3 0-4.1-1.6-4.1-3.9 0-2.5 2.1-3.6 2.5-6.6 1.6 1 2.4 2.5 2.2 4 .8-.5 1.3-1.4 1.4-2.4 1.6 1.4 2.2 3.1 2.2 5 0 2.3-1.9 3.9-4.2 3.9z' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 14.3c-2.3 0-4.1-1.6-4.1-3.9 0-2.5 2.1-3.6 2.5-6.6 1.6 1 2.4 2.5 2.2 4 .8-.5 1.3-1.4 1.4-2.4 1.6 1.4 2.2 3.1 2.2 5 0 2.3-1.9 3.9-4.2 3.9z' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+  .ex-swaps-toggle .swap-icon { -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2.8 5.3h9.6M10 2.9l2.4 2.4L10 7.7M13.2 10.7H3.6M6 8.3l-2.4 2.4L6 13.1' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2.8 5.3h9.6M10 2.9l2.4 2.4L10 7.7M13.2 10.7H3.6M6 8.3l-2.4 2.4L6 13.1' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+  .ex-swaps-toggle.open .swap-icon { transform: none; }
+  @media (prefers-reduced-motion: reduce) { .ex-notes-toggle .arrow { transition: none; } }
+  /* 320 px: o selo do equipamento desce de linha — alinhado à coluna dos valores, não solto à direita */
+  @media (max-width: 340px) { .ex-load .ex-equip { margin-left: calc(var(--ex-rot) + 8px); } }
 
   /* ---- Aviso de conquista: uma linha (nome · +XP · OK); toque abre os detalhes ---- */
   .feat-toast { padding: 6px 40px 6px 10px; min-height: 52px; }
@@ -8548,12 +8676,89 @@
 
   /* ---- Texto ampliado e movimento reduzido ---- */
   @media (prefers-reduced-motion: reduce) {
-    .fad-btn, .plano-chip, .ex-abrir, .dia-painel, .plano-op, .feat-toast { transition: none !important; }
+    .fad-btn, .plano-chip, .dia-painel, .plano-op, .feat-toast, .ex-toggle, .dp-seta { transition: none !important; }
+    .exercise.ex-abrindo .ex-detalhe { animation: none; }
   }
   @media (max-width: 340px) {
     .pt-linha { grid-template-columns: 40px repeat(7, minmax(0, 1fr)); }
     .pt-dia i { font-size: 9px; }
   }
+
+  /* ==================================================================
+     v26.3 — PRONTIDÃO: nenhum rótulo corta o botão
+     "Moderadamente" é uma palavra só e não cabia na coluna de 1/3: saía
+     12 px para fora do botão a 320 px e 4,5 px a 375 px (no selecionado,
+     as letras de fora ficavam escuras sobre o fundo escuro). Cada coluna
+     agora tem no mínimo a largura da palavra mais longa; com espaço, as
+     três continuam iguais. Mesmos botões, textos e dados.
+     ================================================================== */
+  .pront-ops { grid-template-columns: repeat(3, minmax(min-content, 1fr)); }
+
+  /* ==================================================================
+     v26.3 — CONTRASTE DOS RÓTULOS PEQUENOS (medido no pixel, 390 px)
+     Rótulos mono de 9,5–11 px abaixo de 4,5:1 (WCAG 1.4.3):
+     · cartão do exercício (01, SÉRIES, REPS, RPE, CARGA, RPE REAL), em
+       --gold-deep: 4,45:1 no PL e 4,32–4,36:1 na Hipertrofia;
+     · HYROX (DISTÂNCIA, CARGA, TEMPO, "Prova: …", "por mão"), em --text-3
+       sobre o painel da estação: 4,12–4,30:1.
+     Mesma tonalidade, um pouco mais clara, só nesses rótulos (as bordas e
+     os demais usos de --gold-deep/--text-3 não mudam). Alvo ≥ 4,8:1 com
+     folga para o cartão ativo.
+     ================================================================== */
+  :root { --rot-ouro: #ae8522; --rot-hx: #b09d7e; }
+  body.mode-hyper { --rot-ouro: #ab8c36; }
+  .ex-name .ex-num, .ex-stat-label, .ex-load-label, .reps-rotulo, .rpe-real-rot { color: var(--rot-ouro); }
+  .hx-rot, .hx-ref, .hx-val small { color: var(--rot-hx); }
+
+  /* ==================================================================
+     v26.4 — HYROX E SELOS DO CARTÃO LEGÍVEIS (mínimo de 11 px)
+     O registro do HYROX é feito na academia, com o celular na mão e a
+     respiração alta, e tinha os menores textos do app: rótulos dos campos
+     da edição em 8,5 px; selo da estação 9 px; DISTÂNCIA/CARGA/TEMPO
+     9,5 px; opções de "Como foi", EDITAR DADOS, metas e "Prova: …" em
+     10–10,5 px. No cartão do exercício, o selo BARRA/HALTER e o título das
+     alternativas estavam em 9 px. Tudo isso agora tem 11 px, com um pouco
+     menos de espaçamento entre letras para caber no mesmo lugar.
+     Mesmos controles, textos, cores, alturas e dados.
+     ================================================================== */
+  .hyrox-hero-tag, .hyrox-det-meta, .hyrox-est-curto,
+  .hx-rot, .hx-ref, .hx-ref small, .hx-val small,
+  .hx-comofoi-rot, .hx-opt, .hx-editar,
+  .hx-meta, .hx-meta small, .hx-delta,
+  .ex-equip, .ex-swaps-title { font-size: 11px; }
+  .hx-rot { letter-spacing: 0.1em; }
+  .hx-comofoi-rot { letter-spacing: 0.1em; flex-basis: 70px; }
+  .hx-opt { letter-spacing: 0.06em; }
+  .hyrox-est-curto, .ex-equip, .ex-swaps-title { letter-spacing: 0.1em; }
+  /* Rótulos da edição: 8,5 → 11 px, na cor dos demais rótulos do HYROX.
+     "CARGA (KG) POR MÃO" pode ocupar duas linhas; os campos da mesma linha
+     ficam alinhados pela base. */
+  .hx-campo span { font-size: 11px; letter-spacing: 0.06em; color: var(--rot-hx); }
+  .hx-form { align-items: flex-end; }
+  /* O texto de exemplo "não informado" (17 px, negrito) era cortado em
+     "não infor" no campo de meia largura; agora cabe inteiro. O valor
+     digitado continua em 17 px. */
+  .hx-campo input::placeholder { font-size: 13px; font-weight: 400; }
+  @media (max-width: 380px) {
+    .hx-comofoi-rot { flex-basis: 100%; }
+    .hx-opt { font-size: 11px; letter-spacing: 0.04em; }
+  }
+
+  /* ==================================================================
+     v26.5 — TREINO EM CURSO LEGÍVEL (mínimo de 11 px)
+     O que se lê entre uma série e outra, com o celular na mão: os rótulos
+     do cartão do exercício (SÉRIES, REPS, RPE · RIR, DESCANSO, CARGA,
+     RPE REAL) estavam em 10 px e o selo "Exposição de força" em 10,5 px;
+     o chip da semana do ciclo ("Acúmulo · RPE 7", o RPE da semana) em
+     9,5 px; as abas do KIT (Descanso, 1RM, Evolução, Barra, Aquecer) em
+     10 px. Tudo isso agora tem 11 px, com um pouco menos de espaçamento
+     entre letras para caber no mesmo lugar. Mesmos controles, textos,
+     cores, alturas e dados.
+     ================================================================== */
+  .ex-stat-label, .ex-load-label, .reps-rotulo, .rpe-real-rot { font-size: 11px; letter-spacing: 0.08em; }
+  .ex-expo, .ex-ajuste-tag { font-size: 11px; letter-spacing: 0.04em; }
+  .diff-crest-sub { font-size: 11px; letter-spacing: 0.02em; }
+  #toolsModal .pwrtool-tab { font-size: 11px; letter-spacing: 0.06em; }
 
 </style>
 </head>
@@ -9372,9 +9577,35 @@
 // ============================================================
 // Número da versão publicada. Aparece em Ajustes (GYM), com o histórico de
 // alterações. Mudou o app? Mude aqui e o CACHE_VERSION do sw.js.
-const PWR_BUILD = '2026-11-14.2';
+const PWR_BUILD = '2026-11-16.1';
 // Histórico de alterações (o mais novo primeiro). Aparece em Versão.
 const PWR_CHANGELOG = [
+  { v: '2026-11-16.1 · v26.5 (treino legível)', itens: [
+    'O que se lê entre uma série e outra ficou maior: no cartão do exercício, SÉRIES, REPS, RPE · RIR, DESCANSO, CARGA e RPE REAL passaram de 10 para 11 px, e o selo "Exposição de força" de 10,5 para 11 px',
+    'O RPE da semana no chip do ciclo ("Acúmulo · RPE 7") passou de 9,5 para 11 px',
+    'As abas do KIT (Descanso, 1RM, Evolução, Barra, Aquecer) passaram de 10 para 11 px',
+    'Mesmos controles, textos, cores e alturas. Sem mudança em treino, progressões, planejador, dados ou TRT'
+  ] },
+  { v: '2026-11-15.2 · v26.4 (HYROX legível)', itens: [
+    'Dia de HYROX mais legível na academia: nenhum texto abaixo de 11 px. Os rótulos dos campos ao editar uma estação estavam em 8,5 px; DISTÂNCIA, CARGA e TEMPO em 9,5 px; as opções de "Como foi" e EDITAR DADOS em 10 px',
+    'No cartão do exercício, o selo do equipamento (BARRA, HALTER…) e o título das alternativas passaram de 9 para 11 px',
+    'Ao editar uma estação, os campos da mesma linha ficam alinhados mesmo quando um rótulo ocupa duas linhas, e o texto de exemplo "não informado" não é mais cortado ("não infor")',
+    'Sem mudança em treino, progressões, planejador, dados ou TRT'
+  ] },
+  { v: '2026-11-15.1 · v26.3 (leitura)', itens: [
+    'Correção: em telas estreitas, "Moderadamente cansado" saía do botão da prontidão (12 px a 320 px, 4,5 px a 375 px); no selecionado, as letras de fora sumiam no fundo escuro. Agora cada botão tem ao menos a largura da palavra mais longa; com espaço, os três continuam iguais',
+    'Rótulos pequenos mais legíveis: no cartão do exercício (01, SÉRIES, REPS, RPE, CARGA, RPE REAL) e nas estações do HYROX (DISTÂNCIA, CARGA, TEMPO, "Prova: …"), o contraste estava entre 4,1 e 4,45:1, medido na tela, abaixo do mínimo de 4,5:1. Mesma cor, um tom mais clara: 4,8:1 ou mais',
+    'Sem mudança em treino, progressões, planejador, dados ou TRT'
+  ] },
+  { v: '2026-11-14.3 · v26.2 (cartões)', itens: [
+    'Abrir/recolher: o botão grande "Abrir/Editar" deu lugar a um ícone pequeno (⌄) em TODO cartão, em qualquer estado; o cabeçalho inteiro (nome e resumo) é a área de toque',
+    'Correção: o controle sumia quando o exercício virava o atual, e um re-render atrasado abria e fechava cartões sem toque neles. Agora o estado muda na hora do toque e nada some',
+    'Cartão recolhido em uma linha: séries × reps · RPE · carga; em andamento, falta o RPE ou concluído aparecem por escrito à direita',
+    'Ao registrar o RPE real, o exercício vira uma linha logo abaixo do topo e o próximo aparece aberto — a tela não salta para o meio do cartão seguinte',
+    'Campos alinhados: CARGA, REPS e RPE REAL com o mesmo rótulo e o valor na mesma coluna; o alvo fica sob o rótulo; ações Notas, Aquecer e Substituir no mesmo estilo, com ícones de traço',
+    'Menos movimento: o cabeçalho do treino não pisca a cada exercício concluído e o "pop" de conclusão não se repete nos já concluídos',
+    'Mesmo ícone de abrir/recolher em todos os painéis do app'
+  ] },
   { v: '2026-11-14.2 · v26.1 (interface)', itens: [
     'Cartão do exercício por estado: o que está em execução fica aberto e marcado; os próximos aparecem recolhidos (nome, séries×reps, carga, "Pendente"); o concluído recolhe sozinho ("4/4 séries · RPE 7 · Concluído") e abre em Editar para corrigir. Parcial continua aberto para retomar. Campo em edição nunca recolhe',
     'Aviso de conquista em uma linha (nome · +XP · OK), um por vez, com "+N" na fila; toque no texto mostra descrição e data',
@@ -12712,21 +12943,22 @@ function proximoTreinoHtml(week, dia) {
   } catch (e) { return ''; }
 }
 
-// ---- v26.1: abrir/recolher cartão de exercício (no lugar, sem pular a página) ----
+// ---- v26.2: abrir/recolher cartão de exercício (no lugar, sem pular a página) ----
+// Um controle só (▾) em todo cartão; o cabeçalho inteiro é a área de toque.
 document.addEventListener('click', function (e) {
-  const b = e.target && e.target.closest ? e.target.closest('[data-ex-abrir]') : null;
+  const b = e.target && e.target.closest ? e.target.closest('[data-ex-toggle]') : null;
   if (!b) return;
   e.preventDefault();
-  const id = b.dataset.exAbrir;
   const card = b.closest('.exercise');
+  if (!card) return;
+  const id = b.dataset.exToggle;
   const abrir = card.classList.contains('compacto');
-  UI_PAINEIS['ex:' + id] = abrir;
+  UI_PAINEIS['ex:' + id] = { v: abrir, feito: card.classList.contains('est-feito') };
   card.classList.toggle('compacto', !abrir);
   b.setAttribute('aria-expanded', String(abrir));
-  const feito = card.classList.contains('est-feito');
-  b.querySelector('span').textContent = (abrir ? 'Recolher' : (feito ? 'Editar' : 'Abrir')) + ' ▾';
-  b.setAttribute('aria-label', b.getAttribute('aria-label').replace(/^(Abrir|Recolher)/, abrir ? 'Recolher' : 'Abrir'));
-  const r = card.querySelector('.ex-resumo'); if (r) r.setAttribute('aria-hidden', String(abrir));
+  const m = card.querySelector('.ex-meta'); if (m) m.setAttribute('aria-hidden', String(abrir));
+  if (abrir) exAnimarAbertura(card);
+  EX_ABERTO_ANT[id] = abrir;
 });
 
 // ---- INTERFACE DO PLANEJADOR (v26) ----
@@ -13586,8 +13818,8 @@ function rpeRealHtml(ex, presc) {
     const fixa = !!(ar && ar.min === ar.max);
     return '<div class="rpe-real" data-rpe-for="' + ex.id + '">'
       + '<button type="button" class="rpe-real-btn' + (v != null ? ' sel' : '') + '" data-rpe-abrir="' + ex.id + '" aria-label="RPE real da série mais pesada' + (v != null ? ': ' + fmtRpe(v) : ', não registrado') + '. Tocar para registrar.">'
-      + '<span class="rpe-real-rot">RPE real</span><b>' + (v != null ? fmtRpe(v) : '—') + '</b></button>'
-      + '<span class="rpe-real-dica">' + (alvo ? 'alvo ' + fmtRpe(alvo) + ' · ' : '') + 'série mais pesada</span></div>'
+      + '<span class="rpe-real-rot">RPE real' + (alvo ? '<small class="rpe-real-alvo">alvo ' + fmtRpe(alvo) + '</small>' : '') + '</span><b>' + (v != null ? fmtRpe(v) : '—') + '</b></button>'
+      + '<span class="rpe-real-dica">da série mais pesada</span></div>'
       + ((v != null && (fixa || (alvo && Math.abs(v - alvo) >= 1))) ? notaRpeHtml(ex.id, getLoad(STATE.week, STATE.day, ex.id), presc, ex.name) : '');
   } catch (e) { return ''; }
 }
@@ -15716,6 +15948,140 @@ function paineisReiniciar(chave) {
   if (UI_PAINEIS_CHAVE === chave) return;
   UI_PAINEIS_CHAVE = chave;
   UI_PAINEIS = {};
+  EX_ABERTO_ANT = {};
+}
+
+// ---- v26.2: ESTADO DO CARTÃO DE EXERCÍCIO (fonte única) ----
+// futuro  = nenhuma série e não é o atual        → recolhido
+// atual   = primeiro exercício não concluído      → aberto
+// parcial = tem série feita, mas não é o atual    → recolhido (mostra o progresso)
+// rpe     = séries completas, falta o RPE real    → aberto
+// feito   = concluído                             → recolhido
+// A escolha manual (▾) vale até o cartão virar ou deixar de ser "feito";
+// concluir recolhe, e o próximo exercício abre — na hora do toque.
+var EX_ABERTO_ANT = {};
+var EX_ESTADOS = ['futuro', 'atual', 'parcial', 'rpe', 'feito'];
+var EX_TOQUE = { id: null, t: 0 };
+function exContexto(exVis) {
+  const atual = exVis.find(ex => {
+    const pr = getPrescription(ex, STATE.week, STATE.day);
+    return getSetProgress(STATE.week, STATE.day, ex.id) < (parseInt(pr.sets, 10) || 3);
+  });
+  return { idAtual: atual ? atual.id : null, parDoAtual: atual && atual.pareadoCom ? atual.pareadoCom : null };
+}
+function exEstadoInfo(ex, ctx) {
+  const presc = getPrescription(ex, STATE.week, STATE.day);
+  const maxSets = parseInt(presc.sets, 10) || 3;
+  const feitas = Math.min(getSetProgress(STATE.week, STATE.day, ex.id), maxSets);
+  const checked = feitas >= maxSets;
+  const rpePend = checked && STATE.week !== 'deload' && querRpeReal(ex, presc) && rpeRealGet(STATE.week, STATE.day, ex.id) == null;
+  const estado = checked ? (rpePend ? 'rpe' : 'feito') : (ex.id === ctx.idAtual ? 'atual' : (feitas > 0 ? 'parcial' : 'futuro'));
+  return { presc: presc, maxSets: maxSets, feitas: feitas, checked: checked, rpePend: rpePend, estado: estado };
+}
+function exAbertoPadrao(ex, info, ctx) {
+  if (info.estado === 'atual' || info.estado === 'rpe') return true;
+  return info.estado !== 'feito' && ctx.parDoAtual === ex.id;
+}
+function exAberto(ex, info, ctx) {
+  const k = 'ex:' + ex.id, o = UI_PAINEIS[k], feito = info.estado === 'feito';
+  if (o && typeof o === 'object') {
+    if (o.feito === feito) return !!o.v;
+    delete UI_PAINEIS[k];   // virou (ou deixou de ser) concluído: volta ao padrão
+  }
+  return exAbertoPadrao(ex, info, ctx);
+}
+function exFixarAberto(id, info, v) { UI_PAINEIS['ex:' + id] = { v: !!v, feito: info.estado === 'feito' }; }
+function exIdComFoco() {
+  try {
+    const ae = document.activeElement;
+    const c = ae && ae.closest && ae.closest('.exercise[data-ex-id]');
+    return (c && /INPUT|TEXTAREA|SELECT/.test(ae.tagName)) ? c.dataset.exId : null;
+  } catch (e) { return null; }
+}
+function exNum(v) { return String(v).replace('.', ','); }
+// Linha do cartão recolhido: à esquerda o essencial, à direita o estado (com texto, não só cor)
+function exMetaHtml(ex, info, load, nome) {
+  const p = info.presc;
+  const unid = (EQUIP_META[getEquip(ex.id, nome || ex.name)] || EQUIP_META.barra).unit;
+  const kg = load ? exNum(load) + ' ' + unid : '';
+  const partes = [];
+  let st = '';
+  if (info.estado === 'futuro' || (info.estado === 'atual' && !info.feitas)) {
+    partes.push('<b>' + p.sets + ' × ' + p.reps + '</b>');
+    if (p.intensity) partes.push(p.intensity); else if (p.rpe) partes.push('RPE ' + p.rpe);
+    if (kg) partes.push(kg);
+    else { const c = cargaAnterior(STATE.week, STATE.day, ex.id); if (c) partes.push('<span class="em-ant">antes ' + exNum(c.valor) + ' ' + unid + '</span>'); }
+    if (info.estado === 'atual') st = '<span class="em-st em-agora">Próximo</span>';
+  } else {
+    partes.push('<b>' + info.feitas + '/' + info.maxSets + ' séries</b>');
+    if (kg) partes.push(kg);
+    const r = rpeRealGet(STATE.week, STATE.day, ex.id);
+    if (r != null) partes.push('RPE ' + exNum(r));
+    if (info.estado === 'parcial' || info.estado === 'atual') st = '<span class="em-st em-and">Em andamento</span>';
+    else if (info.estado === 'rpe') st = '<span class="em-st em-rpe">Falta o RPE real</span>';
+    else st = '<span class="em-st em-ok"><span aria-hidden="true">✓ </span>Concluído</span>';
+  }
+  return '<span class="em-info">' + partes.join('<span class="em-sep" aria-hidden="true"> · </span>') + '</span>' + st;
+}
+function exAnimarAbertura(card) {
+  card.classList.remove('ex-abrindo'); void card.offsetWidth; card.classList.add('ex-abrindo');
+  clearTimeout(card._exAnim);
+  card._exAnim = setTimeout(function () { card.classList.remove('ex-abrindo'); }, 360);
+}
+// Recalcula o estado de todos os cartões do dia e aplica no DOM existente.
+function exSincronizarCartoes() {
+  const day = getSessionForDay(STATE.day);
+  if (!day || !day.exercises) return;
+  const exVis = day.exercises.filter(ex => !exFora(STATE.week, STATE.day, ex));
+  const ctx = exContexto(exVis);
+  exVis.forEach(function (ex) {
+    const card = document.querySelector('.exercise[data-ex-id="' + ex.id + '"]');
+    if (!card) return;
+    const info = exEstadoInfo(ex, ctx);
+    const aberto = exAberto(ex, info, ctx);
+    const antes = !card.classList.contains('compacto');
+    EX_ESTADOS.forEach(function (e) { card.classList.toggle('est-' + e, e === info.estado); });
+    card.classList.toggle('compacto', !aberto);
+    card.classList.toggle('done', info.checked);
+    card.classList.toggle('in-progress', info.feitas > 0 && !info.checked);
+    const t = card.querySelector('.ex-toggle'); if (t) t.setAttribute('aria-expanded', String(aberto));
+    const m = card.querySelector('.ex-meta');
+    if (m) {
+      const sw = getExerciseSwap(STATE.week, STATE.day, ex.id);
+      m.innerHTML = exMetaHtml(ex, info, getLoad(STATE.week, STATE.day, ex.id), sw ? sw.name : ex.name);
+      m.setAttribute('aria-hidden', String(aberto));
+    }
+    if (aberto && !antes) exAnimarAbertura(card);
+    EX_ABERTO_ANT[ex.id] = aberto;
+  });
+}
+// Onde a pessoa estava mexendo: se esse cartão recolher no re-render
+// (ex.: registrou o RPE real), a página não salta para o meio do próximo.
+document.addEventListener('pointerdown', function (e) {
+  const c = e.target && e.target.closest ? e.target.closest('.exercise[data-ex-id]') : null;
+  if (c) EX_TOQUE = { id: c.dataset.exId, t: Date.now() };
+}, { passive: true, capture: true });
+function exAncoraAntes() {
+  try {
+    if (!EX_TOQUE.id || Date.now() - EX_TOQUE.t > 20000) return null;
+    const c = document.querySelector('.exercise[data-ex-id="' + EX_TOQUE.id + '"]');
+    if (!c) return null;
+    return { id: EX_TOQUE.id, aberto: !c.classList.contains('compacto') };
+  } catch (e) { return null; }
+}
+function exPosRender(ancora) {
+  try {
+    document.querySelectorAll('#main .exercise.ex-abrindo').forEach(function (c) {
+      c._exAnim = setTimeout(function () { c.classList.remove('ex-abrindo'); }, 360);
+    });
+    if (!ancora || !ancora.aberto) return;
+    const c = document.querySelector('.exercise[data-ex-id="' + ancora.id + '"]');
+    if (!c || !c.classList.contains('compacto')) return;
+    const hd = document.querySelector('header');
+    const topo = (hd ? hd.getBoundingClientRect().bottom : 0) + 8;
+    const r = c.getBoundingClientRect();
+    if (r.top < topo) window.scrollBy(0, r.top - topo);
+  } catch (e) {}
 }
 // Qualquer <details data-ui-painel="k"> guarda o próprio estado aqui.
 document.addEventListener('toggle', function (e) {
@@ -15985,6 +16351,9 @@ function renderMain() {
   // (dia/semana/sessão/modo). renderMain também roda ao completar série e no
   // 5º toque (reset) — nesses casos a chave não muda, então NÃO re-anima.
   const navKey = STATE.mode + '|' + STATE.week + '|' + STATE.day + '|' + sessionKey;
+  // v26.2: re-render do MESMO dia (completar série, registrar RPE) não
+  // repete animação de entrada — era o "pisca" do topo a cada exercício.
+  if (main) main.classList.toggle('sem-entrada', navKey === _lastNavKey);
   if (main && fxOn() && navKey !== _lastNavKey) {
     main.classList.remove('main-enter'); void main.offsetWidth; main.classList.add('main-enter');
   }
@@ -16365,42 +16734,41 @@ function renderMain() {
   // Exercises
   html += planoNotaCorteHtml();
   html += '<div class="exercises" role="list">';
-  // v26.1: estados do cartão. "Ativo" = o primeiro exercício ainda não
-  // concluído (ou qualquer um em andamento): controles à vista. Futuro e
-  // concluído ficam compactos e abrem com um toque. Concluído com RPE real
-  // pendente NÃO recolhe (o registro decide a progressão).
+  // v26.2: o estado do cartão é calculado num lugar só (exEstadoInfo e
+  // exAberto) — aqui e na atualização no lugar (marcar série não refaz o dia).
+  // Todo cartão tem o mesmo controle ▾, em qualquer estado: nada aparece nem
+  // some sozinho. Aberto por padrão: o exercício atual (primeiro não
+  // concluído), o par dele num bi-set e o que espera RPE real.
   const exVis = day.exercises.filter(ex => !exFora(STATE.week, STATE.day, ex));
-  const idAtivo = (exVis.find(ex => { const pr = getPrescription(ex, STATE.week, STATE.day); return getSetProgress(STATE.week, STATE.day, ex.id) < (parseInt(pr.sets, 10) || 3); }) || {}).id;
-  try { const ae = document.activeElement; const c = ae && ae.closest && ae.closest('.exercise[data-ex-id]'); if (c && /INPUT|TEXTAREA|SELECT/.test(ae.tagName)) UI_PAINEIS['ex:' + c.dataset.exId] = true; } catch (e) {}
+  const exCtx = exContexto(exVis);
+  const exFoco = exIdComFoco();
   day.exercises.forEach((ex, idx) => {
     if (exFora(STATE.week, STATE.day, ex)) return;
-    
-    const presc = getPrescription(ex, STATE.week, STATE.day);
-    const maxSets = parseInt(presc.sets, 10) || 3;
+
+    const info = exEstadoInfo(ex, exCtx);
+    const presc = info.presc;
+    const maxSets = info.maxSets;
     // Com ajuste do dia (ou onda nova do bloco) o máximo pode ter caído:
     // o contador nunca mostra "4/3".
-    const setsCompleted = Math.min(getSetProgress(STATE.week, STATE.day, ex.id), maxSets);
-    const checked = setsCompleted >= maxSets;
+    const setsCompleted = info.feitas;
+    const checked = info.checked;
     const load = getLoad(STATE.week, STATE.day, ex.id);
     const prevLoad = getPrevLoad(STATE.week, STATE.day, ex.id);
     const activeSwap = getExerciseSwap(STATE.week, STATE.day, ex.id);
-    
+
     const classes = ['exercise'];
     if (checked) classes.push('done');
     if (ex.primary) classes.push('primary');
     if (activeSwap) classes.push('swapped');
     if (setsCompleted > 0 && !checked) classes.push('in-progress');
-    const rpePend = checked && STATE.week !== 'deload' && querRpeReal(ex, presc) && rpeRealGet(STATE.week, STATE.day, ex.id) == null;
-    const estado = checked ? (rpePend ? 'rpe' : 'feito') : (setsCompleted > 0 || ex.id === idAtivo ? 'ativo' : 'futuro');
-    const aberto = painelAberto('ex:' + ex.id);
-    classes.push('est-' + estado);
-    const compacto = (estado === 'feito' || estado === 'futuro') && !aberto;
-    if (compacto) classes.push('compacto');
-    const podeAbrir = estado === 'feito' || estado === 'futuro';
-    const resumoEx = estado === 'feito'
-      ? `<div class="ex-resumo" aria-hidden="${!compacto}"><b>${setsCompleted}/${maxSets} séries</b>${load ? ' · ' + load + ' ' + EQUIP_META[getEquip(ex.id, ex.name)].unit : ''}${rpeRealGet(STATE.week, STATE.day, ex.id) != null ? ' · RPE ' + String(rpeRealGet(STATE.week, STATE.day, ex.id)).replace('.', ',') : ''} · <span class="ok">Concluído</span></div>`
-      : (estado === 'futuro' ? `<div class="ex-resumo" aria-hidden="${!compacto}">${load ? 'Carga ' + load + ' ' + EQUIP_META[getEquip(ex.id, ex.name)].unit : (prevLoad ? 'Última carga ' + prevLoad : 'Carga a definir')} · <span class="pend">Pendente</span></div>` : '');
-    
+    if (ex.id === exFoco) exFixarAberto(ex.id, info, true);   // campo em edição nunca recolhe
+    const aberto = exAberto(ex, info, exCtx);
+    classes.push('est-' + info.estado);
+    if (!aberto) classes.push('compacto');
+    if (aberto && EX_ABERTO_ANT[ex.id] === false) classes.push('ex-abrindo');
+    EX_ABERTO_ANT[ex.id] = aberto;
+    const metaEx = `<div class="ex-meta" aria-hidden="${aberto}">${exMetaHtml(ex, info, load, activeSwap ? activeSwap.name : ex.name)}</div>`;
+
     // Build prescription stats
     const stats = [];
     // RODADA DE UX (v25.2): "4", não "04" — o zero à esquerda era ornamento
@@ -16479,9 +16847,12 @@ function renderMain() {
           ${setsCompleted > 0 ? `<button class="set-reset-btn" data-ex-id="${ex.id}" aria-label="Resetar séries">↺</button>` : ''}
         </div>
         <div class="ex-body">
+          <div class="ex-head">
+            <div class="ex-name-row"><div class="ex-name"><span class="ex-num">${num}</span>${displayName}</div><button type="button" class="ex-toggle" data-ex-toggle="${ex.id}" aria-expanded="${aberto}" aria-controls="exd-${ex.id}" aria-label="Detalhes: ${escAttr(displayName)}"><span class="dp-seta" aria-hidden="true">▾</span></button></div>
+            ${metaEx}
+          </div>
+          <div class="ex-detalhe" id="exd-${ex.id}">
           ${originalIndicator}
-          <div class="ex-name-row"><div class="ex-name"><span class="ex-num">${num}</span>${displayName}</div>${podeAbrir ? `<button type="button" class="ex-abrir" data-ex-abrir="${ex.id}" aria-expanded="${!compacto}" aria-label="${compacto ? 'Abrir' : 'Recolher'} ${escAttr(displayName)}${estado === 'feito' ? ' (concluído: consultar ou corrigir)' : ''}"><span aria-hidden="true">${compacto ? (estado === 'feito' ? 'Editar' : 'Abrir') : 'Recolher'} ▾</span></button>` : ''}</div>
-          ${resumoEx}
           ${STATE.mode !== 'hyper' ? exposicaoTagHtml(ex, presc) : ''}
           ${presc.ajustado ? `<span class="ex-ajuste-tag">AJUSTE DO DIA · era ${presc.ajustado.setsDe}×${presc.ajustado.repsDe ? presc.ajustado.repsDe : ''} RPE ${String(presc.ajustado.rpeDe).replace('.', ',')}</span>` : ''}
           ${ex.pareadoCom ? `<span class="ex-ajuste-tag" style="color:var(--gold-pale);border-color:var(--gold-deep);background:none">BI-SET com o próximo</span>` : ''}
@@ -16549,6 +16920,7 @@ function renderMain() {
               </div>
             </div>
           ` : ''}
+          </div>
         </div>
       </div>
     `;
@@ -16560,8 +16932,10 @@ function renderMain() {
     html += buildAscendedSection(sessionKey, isBossFight);
   }
   
+  const exAncora = exAncoraAntes();
   main.innerHTML = html;
   attachExerciseHandlers();
+  exPosRender(exAncora);
 }
 
 // Constrói a seção de ascensão temática por reino
@@ -16812,8 +17186,12 @@ function updateSetTrackerInPlace(btn, exId, newCount, maxSets) {
   btn.style.setProperty('--fire-step', newCount);
   // Classes active/complete
   const complete = newCount >= maxSets;
+  const jaCompleto = btn.classList.contains('complete');
   btn.classList.toggle('active', newCount > 0 && !complete);
   btn.classList.toggle('complete', complete);
+  // v26.2: o "pop" de conclusão só no marcador que acabou de completar
+  // (antes ele se repetia em todos os concluídos a cada re-render)
+  if (complete && !jaCompleto) btn.classList.add('acabou');
   // Contador
   const cur = btn.querySelector('.set-tracker-current');
   if (cur) cur.textContent = newCount;
@@ -16848,6 +17226,8 @@ function updateSetTrackerInPlace(btn, exId, newCount, maxSets) {
       }
     }
   }
+  // v26.2: estado dos cartões na hora do toque (não 850 ms depois)
+  try { exSincronizarCartoes(); } catch (e) {}
 }
 
 // === FOLHA DE ESCOLHA DO EQUIPAMENTO ========================
