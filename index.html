@@ -8760,6 +8760,45 @@
   .diff-crest-sub { font-size: 11px; letter-spacing: 0.02em; }
   #toolsModal .pwrtool-tab { font-size: 11px; letter-spacing: 0.06em; }
 
+  /* ==================================================================
+     v26.6 — GERENCIAR SEMANA LEGÍVEL E ESTÁVEL
+     Os 4 botões de ação (Padrão, Semana ant., Tudo descanso, Menor custo)
+     estavam em 9,5 px e mudavam de arranjo conforme a largura: a 375 e
+     390 px ficavam 3 numa linha e "Menor custo" sozinho, esticado na
+     largura toda; a 430 px os 4 numa linha com 3 textos quebrados em
+     duas. Agora: grade 2 × 2 no celular e 4 lado a lado a partir de
+     600 px, sempre do mesmo tamanho, texto em 11 px numa linha só.
+     CANCELAR e o tipo do dia (força, volume, cond.) 10 → 11 px.
+     O ▼ de texto da linha do dia vira o mesmo chevron de traço (.dp-seta)
+     dos outros painéis. Mesmos botões, textos, ações e dados.
+     ================================================================== */
+  .wk-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .wk-action { min-width: 0; font-size: 11px; letter-spacing: 0.04em; white-space: nowrap; }
+  @media (min-width: 600px) { .wk-actions { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .wk-cancel { font-size: 11px; }
+  .wk-tag { font-size: 11px; letter-spacing: 0.04em; }
+  .wk-session-btn .wk-chevron.dp-seta { margin-left: auto; }
+  .wk-session-btn { gap: 7px; } /* devolve ao nome da sessão os px do selo e do ícone maiores */
+
+  /* ==================================================================
+     v26.7 — AJUSTES (GYM) LEGÍVEL
+     Foco do treino ("Força · Nórdico", "Volume · Olímpico") 9 → 11 px;
+     cabeçalho da tabela das academias (ACADEMIA, HORÁRIO) 9 → 11 px;
+     dias da tabela (SEG–SEX, SÁBADO…) 10 → 11 px e na cor dos outros
+     rótulos dourados (estavam a 4,1:1 no pixel, abaixo de 4,5:1);
+     build e cache 9–10 → 11 px. Registro TRT: REGISTRAR APLICAÇÃO e
+     REGISTRAR DESCONFORTO quebravam em duas linhas a 375–390 px e tinham
+     42 px de altura; agora 11 px, texto inteiro numa linha, 44 px, lado a
+     lado quando cabem e um sobre o outro quando não. Mesmos botões,
+     textos, ações e dados; nada muda na lógica de TRT.
+     ================================================================== */
+  #gymModal .mode-opt-sub { font-size: 11px; letter-spacing: 0; white-space: nowrap; }
+  @media (max-width: 360px) { #gymModal .mode-opt { padding-left: 4px; padding-right: 4px; } }
+  #gymModal .gym-row.header .gym-col-name, #gymModal .gym-row.header .gym-col-hours { font-size: 11px; letter-spacing: 0.12em; }
+  #gymModal .gym-day { font-size: 11px; letter-spacing: 0.1em; color: var(--rot-ouro); }
+  #gymModal .build-rot, #gymModal .build-sw { font-size: 11px; }
+  #ajTrt .po-acoes .fad-btn { flex: 1 1 200px; min-height: 44px; font-size: 11px; letter-spacing: 0.06em; white-space: nowrap; }
+
 </style>
 </head>
 <body>
@@ -9577,9 +9616,21 @@
 // ============================================================
 // Número da versão publicada. Aparece em Ajustes (GYM), com o histórico de
 // alterações. Mudou o app? Mude aqui e o CACHE_VERSION do sw.js.
-const PWR_BUILD = '2026-11-16.1';
+const PWR_BUILD = '2026-11-17.2';
 // Histórico de alterações (o mais novo primeiro). Aparece em Versão.
 const PWR_CHANGELOG = [
+  { v: '2026-11-17.2 · v26.7 (Ajustes legível)', itens: [
+    'Ajustes (GYM) sem texto abaixo de 11 px: o subtítulo do foco do treino ("Força · Nórdico", "Volume · Olímpico") e o cabeçalho da tabela das academias passaram de 9 para 11 px; os dias da tabela (SEG–SEX, SÁBADO…) de 10 para 11 px; build e cache de 9–10 para 11 px',
+    'Os dias da tabela das academias ficaram na cor dos outros rótulos dourados: estavam com contraste abaixo do mínimo (4,1:1)',
+    'Registro TRT: REGISTRAR APLICAÇÃO e REGISTRAR DESCONFORTO não quebram mais em duas linhas (375–390 px) e têm 44 px de altura; ficam um sobre o outro quando não cabem lado a lado',
+    'Mesmos botões, textos e ações. Sem mudança em treino, progressões, planejador, dados ou TRT'
+  ] },
+  { v: '2026-11-17.1 · v26.6 (semana legível)', itens: [
+    'Gerenciar Semana: os 4 botões (Padrão, Semana ant., Tudo descanso, Menor custo) ficam sempre do mesmo tamanho, em 2 × 2 no celular e lado a lado no tablet e no computador. Antes, a 375 e 390 px, "Menor custo" ficava sozinho numa linha, esticado, e a 430 px três textos quebravam em duas linhas',
+    'O texto desses botões passou de 9,5 para 11 px, numa linha só; CANCELAR e o tipo do dia (força, volume, cond.) de 10 para 11 px',
+    'A seta de abrir cada dia é a mesma dos outros painéis (traço, não ▼). Os nomes das sessões continuam com o mesmo espaço',
+    'Mesmos botões, textos e ações. Sem mudança em treino, progressões, planejador, dados ou TRT'
+  ] },
   { v: '2026-11-16.1 · v26.5 (treino legível)', itens: [
     'O que se lê entre uma série e outra ficou maior: no cartão do exercício, SÉRIES, REPS, RPE · RIR, DESCANSO, CARGA e RPE REAL passaram de 10 para 11 px, e o selo "Exposição de força" de 10,5 para 11 px',
     'O RPE da semana no chip do ciclo ("Acúmulo · RPE 7") passou de 9,5 para 11 px',
@@ -19741,7 +19792,7 @@ function renderWeekPanel(expandedDay) {
           <span class="wk-session-title">${sessionPanelLabel(sk)}</span>
           ${nivel ? `<span class="wk-sev" role="img" aria-label="${catConflito(nivel).rot}">⚠</span>` : ''}
           ${tipo ? `<span class="wk-tag">${tipo}</span>` : ''}
-          <span class="wk-chevron">▼</span>
+          <span class="wk-chevron dp-seta" aria-hidden="true">▾</span>
         </button>
       </div>
       ${expanded ? `<div class="wk-selector">${chips}</div>` : ''}
