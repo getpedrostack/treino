@@ -9616,9 +9616,14 @@
 // ============================================================
 // Número da versão publicada. Aparece em Ajustes (GYM), com o histórico de
 // alterações. Mudou o app? Mude aqui e o CACHE_VERSION do sw.js.
-const PWR_BUILD = '2026-11-17.2';
+const PWR_BUILD = '2026-11-18.1';
 // Histórico de alterações (o mais novo primeiro). Aparece em Versão.
 const PWR_CHANGELOG = [
+  { v: '2026-11-18.1 · v26.8 (TRT 3×/sem)', itens: [
+    'Dias de TRT passam de seg/qui para ter/qui/sáb (a partir de 19/11/2026), fora dos dias de Hyrox. O marcador de TRT na semana e no Gerenciar Semana segue os dias novos',
+    'Protocolo no backup atualizado: enantato 0,15 mL SC 3×/sem (ter/qui glúteo, sáb coxa), mesma dose semanal do 2×/sem anterior',
+    'Registros de aplicação e desconforto antigos ficam como estão. Sem mudança em treino, progressões ou planejador'
+  ] },
   { v: '2026-11-17.2 · v26.7 (Ajustes legível)', itens: [
     'Ajustes (GYM) sem texto abaixo de 11 px: o subtítulo do foco do treino ("Força · Nórdico", "Volume · Olímpico") e o cabeçalho da tabela das academias passaram de 9 para 11 px; os dias da tabela (SEG–SEX, SÁBADO…) de 10 para 11 px; build e cache de 9–10 para 11 px',
     'Os dias da tabela das academias ficaram na cor dos outros rótulos dourados: estavam com contraste abaixo do mínimo (4,1:1)',
@@ -11426,8 +11431,9 @@ const HYPER_SESSION_ORDER = ['hyrox', 'hyper_supA', 'hyper_terra', 'hyper_supB',
 function modeSessionOrder() { return STATE.mode === 'hyper' ? HYPER_SESSION_ORDER : SESSION_ORDER; }
 function modeCoreSessions() { return STATE.mode === 'hyper' ? ['hyrox', 'hyper_supA', 'hyper_terra', 'hyper_supB'] : ['hyrox', 'bench', 'lower_pl', 'volume_pl']; }
 
-// Dias em que TRT é aplicada (seg/qui, independe do treino do dia)
-const TRT_DAYS = ['seg', 'qui'];
+// Dias em que TRT é aplicada (ter/qui/sáb desde 19/11/2026; antes seg/qui).
+// Fora dos dias de Hyrox (seg/sex). Locais: ter/qui glúteo, sáb coxa (domingo é descanso).
+const TRT_DAYS = ['ter', 'qui', 'sab'];
 
 // ============================================================
 // === MOTOR DE TREINO v2 — revisão 11/2026 ===================
@@ -19108,7 +19114,7 @@ function buildFullBackup() {
         weight: 108,
         height: 180,
         program: isHyper ? "Hipertrofia + Hyrox — Cenário C (Hyrox seg/sex, superiores ter/sáb, terra + joelho qua)" : "Powerlifting + Hyrox (Hyrox seg/sex, supino ter/sáb, agachamento + terra qua)",
-        trt: "2×/sem (seg/qui) — dose e éster conforme prescrição vigente",
+        trt: "Enantato 0,15 mL SC 3×/sem (ter/qui glúteo, sáb coxa) desde 19/11/2026 — antes 0,225 mL 2×/sem seg/qui; mesma dose semanal",
         cardiovascularRisk: "elevated (ApoB, histórico desde infância)"
       }
     },
