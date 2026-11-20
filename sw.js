@@ -24,7 +24,8 @@
      (ver registro no index.html), não só ao abrir do zero.
    ============================================================ */
 
-const CACHE_VERSION = 'pwr-v26.8';
+const CACHE_PREFIXO = 'pwr-';
+const CACHE_VERSION = CACHE_PREFIXO + 'v26.10';
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -52,7 +53,9 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(keys.map((k) => (k !== CACHE_VERSION ? caches.delete(k) : null)));
+    // Só os caches do próprio PWR: os outros apps de getpedrostack.github.io
+    // dividem o mesmo CacheStorage e não podem ter o modo offline apagado.
+    await Promise.all(keys.map((k) => (k.startsWith(CACHE_PREFIXO) && k !== CACHE_VERSION ? caches.delete(k) : null)));
     await self.clients.claim();
   })());
 });

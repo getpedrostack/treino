@@ -8799,6 +8799,31 @@
   #gymModal .build-rot, #gymModal .build-sw { font-size: 11px; }
   #ajTrt .po-acoes .fad-btn { flex: 1 1 200px; min-height: 44px; font-size: 11px; letter-spacing: 0.06em; white-space: nowrap; }
 
+  /* ==================================================================
+     v26.8 — BOTÕES DE AÇÃO COM ALVO DE 44 PX
+     O bloco v25.1 deixou .fad-btn em 42 px de altura e 10,5 px de texto,
+     abaixo do alvo de 44 px do app. Ele aparece no ajuste do dia
+     (APLICAR AJUSTE, MANTER O PLANO, DESFAZER), no planejador (APLICAR
+     ESTA OPÇÃO, PERSONALIZAR, MANTER MINHA PROGRAMAÇÃO), no registro TRT
+     (SALVAR, APAGAR), na semana excepcional e no HYROX. Agora 44 px e
+     11 px, com um pouco menos de espaçamento entre letras para caber no
+     mesmo lugar. Mesmos botões, textos e ações.
+     ================================================================== */
+  .fad-btn { min-height: 44px; padding: 9px 12px; font-size: 11px; letter-spacing: 0.06em; }
+
+  /* ==================================================================
+     v26.9 — PAINEL DA SEMANA: MESMO ÍCONE, FOCO PRESERVADO
+     O botão "Regras, prioridades e volume por músculo" usava ▸/▾ de
+     texto; passa a usar o mesmo chevron de traço (.dp-seta) dos outros
+     painéis, à direita, oculto do leitor de tela (o botão já diz
+     aria-expanded) e girando ao abrir. Mesmo texto, altura e ação.
+     ================================================================== */
+  .wk-det-toggle { display: flex; align-items: center; gap: 8px; }
+  .wk-det-toggle .wk-det-txt { flex: 1 1 auto; min-width: 0; }
+  .wk-det-toggle .dp-seta { margin-left: auto; transition: transform 0.2s ease; }
+  .wk-det-toggle[aria-expanded="true"] .dp-seta { transform: rotate(180deg); }
+  @media (prefers-reduced-motion: reduce) { .wk-det-toggle .dp-seta { transition: none; } }
+
 </style>
 </head>
 <body>
@@ -9616,13 +9641,21 @@
 // ============================================================
 // Número da versão publicada. Aparece em Ajustes (GYM), com o histórico de
 // alterações. Mudou o app? Mude aqui e o CACHE_VERSION do sw.js.
-const PWR_BUILD = '2026-11-18.1';
+const PWR_BUILD = '2026-11-19.2';
 // Histórico de alterações (o mais novo primeiro). Aparece em Versão.
 const PWR_CHANGELOG = [
-  { v: '2026-11-18.1 · v26.8 (TRT 3×/sem)', itens: [
-    'Dias de TRT passam de seg/qui para ter/qui/sáb (a partir de 19/11/2026), fora dos dias de Hyrox. O marcador de TRT na semana e no Gerenciar Semana segue os dias novos',
-    'Protocolo no backup atualizado: enantato 0,15 mL SC 3×/sem (ter/qui glúteo, sáb coxa), mesma dose semanal do 2×/sem anterior',
-    'Registros de aplicação e desconforto antigos ficam como estão. Sem mudança em treino, progressões ou planejador'
+  { v: '2026-11-19.2 · v26.10 (modo offline dos outros apps)', itens: [
+    'Ao atualizar, o PWR apagava também a cópia offline dos outros apps publicados no mesmo endereço (Brew, Agenda). Agora só apaga as versões antigas dele mesmo',
+    'Sem mudança em treino, progressões, planejador, dados ou TRT'
+  ] },
+  { v: '2026-11-19.1 · v26.9 (painel da semana)', itens: [
+    'Gerenciar Semana: o botão "Regras, prioridades e volume por músculo" passou a usar o mesmo ícone de abrir/recolher dos outros painéis (chevron à direita, que gira ao abrir), no lugar do ▸/▾ de texto',
+    'Quem usa teclado não perde mais o lugar no painel da semana: ao abrir os detalhes, abrir um dia, escolher uma sessão ou usar Padrão / Semana ant. / Tudo descanso, o foco continua no mesmo botão (ou volta ao dia, depois de escolher a sessão). Antes ia para o início da página',
+    'Mesmos botões, textos e ações. Sem mudança em treino, progressões, planejador, dados ou TRT'
+  ] },
+  { v: '2026-11-18.1 · v26.8 (botões de ação)', itens: [
+    'Botões de ação com o mesmo alvo de toque do resto do app: APLICAR AJUSTE, MANTER O PLANO e DESFAZER (ajuste do dia), APLICAR ESTA OPÇÃO, PERSONALIZAR e MANTER MINHA PROGRAMAÇÃO (planejador), SALVAR e APAGAR (registro TRT), os da semana excepcional e do HYROX passaram de 42 para 44 px de altura e de 10,5 para 11 px de texto',
+    'Mesmos botões, textos e ações. Sem mudança em treino, progressões, planejador, dados ou TRT'
   ] },
   { v: '2026-11-17.2 · v26.7 (Ajustes legível)', itens: [
     'Ajustes (GYM) sem texto abaixo de 11 px: o subtítulo do foco do treino ("Força · Nórdico", "Volume · Olímpico") e o cabeçalho da tabela das academias passaram de 9 para 11 px; os dias da tabela (SEG–SEX, SÁBADO…) de 10 para 11 px; build e cache de 9–10 para 11 px',
@@ -11431,9 +11464,8 @@ const HYPER_SESSION_ORDER = ['hyrox', 'hyper_supA', 'hyper_terra', 'hyper_supB',
 function modeSessionOrder() { return STATE.mode === 'hyper' ? HYPER_SESSION_ORDER : SESSION_ORDER; }
 function modeCoreSessions() { return STATE.mode === 'hyper' ? ['hyrox', 'hyper_supA', 'hyper_terra', 'hyper_supB'] : ['hyrox', 'bench', 'lower_pl', 'volume_pl']; }
 
-// Dias em que TRT é aplicada (ter/qui/sáb desde 19/11/2026; antes seg/qui).
-// Fora dos dias de Hyrox (seg/sex). Locais: ter/qui glúteo, sáb coxa (domingo é descanso).
-const TRT_DAYS = ['ter', 'qui', 'sab'];
+// Dias em que TRT é aplicada (seg/qui, independe do treino do dia)
+const TRT_DAYS = ['seg', 'qui'];
 
 // ============================================================
 // === MOTOR DE TREINO v2 — revisão 11/2026 ===================
@@ -14357,7 +14389,7 @@ function levantamentosHtml() {
 function painelExtrasHtml(an) {
   const det = WK_DETALHES
     ? '<div class="wk-det">' + regrasDiasHtml() + prioridadesHtml() + volumeTabelaHtml(weekDraft, STATE.week) + levantamentosHtml() + '</div>' : '';
-  return '<button type="button" class="wk-det-toggle" data-wk-detalhes="1" aria-expanded="' + WK_DETALHES + '">' + (WK_DETALHES ? '▾' : '▸') + ' Regras, prioridades e volume por músculo' + (STATE.mode === 'hyper' ? '' : ' · levantamentos') + '</button>' + det;
+  return '<button type="button" class="wk-det-toggle" data-wk-detalhes="1" aria-expanded="' + WK_DETALHES + '"><span class="wk-det-txt">Regras, prioridades e volume por músculo' + (STATE.mode === 'hyper' ? '' : ' · levantamentos') + '</span><span class="dp-seta" aria-hidden="true">▾</span></button>' + det;
 }
 
 // ---------- DELEGAÇÃO DE EVENTOS DO MOTOR ----------
@@ -19114,7 +19146,7 @@ function buildFullBackup() {
         weight: 108,
         height: 180,
         program: isHyper ? "Hipertrofia + Hyrox — Cenário C (Hyrox seg/sex, superiores ter/sáb, terra + joelho qua)" : "Powerlifting + Hyrox (Hyrox seg/sex, supino ter/sáb, agachamento + terra qua)",
-        trt: "Enantato 0,15 mL SC 3×/sem (ter/qui glúteo, sáb coxa) desde 19/11/2026 — antes 0,225 mL 2×/sem seg/qui; mesma dose semanal",
+        trt: "2×/sem (seg/qui) — dose e éster conforme prescrição vigente",
         cardiovascularRisk: "elevated (ApoB, histórico desde infância)"
       }
     },
@@ -19760,8 +19792,33 @@ function computeWeekWarnings(draft) {
   return w;
 }
 
+// v26.9 — o painel da semana é redesenhado inteiro a cada toque; quem usa
+// teclado perdia o foco (ia para o início da página). Guarda qual controle
+// estava em foco (id ou atributos data-*) e devolve o foco a ele depois;
+// se ele não existe mais (chip de sessão escolhido), volta ao botão do dia.
+function wkFocoChave(modal) {
+  var a = document.activeElement;
+  if (!a || !modal || a === modal || !modal.contains(a)) return null;
+  var esc = function (v) { return String(v).replace(/["\\]/g, '\\$&'); };
+  if (a.id) return { sel: '[id="' + esc(a.id) + '"]', dia: null };
+  var ds = a.dataset || {}; var ks = Object.keys(ds);
+  if (!ks.length) return null;
+  var c1 = (a.classList && a.classList[0]) ? '.' + (window.CSS && CSS.escape ? CSS.escape(a.classList[0]) : a.classList[0]) : '';
+  return { sel: a.tagName.toLowerCase() + c1 + ks.map(function (k) {
+    return '[data-' + k.replace(/[A-Z]/g, function (c) { return '-' + c.toLowerCase(); }) + '="' + esc(ds[k]) + '"]';
+  }).join(''), dia: ds.day || null };
+}
+function wkFocoDevolver(modal, chave) {
+  if (!chave || !modal) return;
+  try {
+    var el = modal.querySelector(chave.sel);
+    if (!el && chave.dia) el = modal.querySelector('.wk-session-btn[data-day="' + chave.dia + '"]');
+    if (el && !el.disabled && el.focus) el.focus({ preventScroll: true });
+  } catch (e) {}
+}
 function renderWeekPanel(expandedDay) {
   const modal = document.getElementById('swapModal');
+  var focoAntes = wkFocoChave(modal);
   const committed = getCurrentSchedule();
   const prevKey = getPreviousWeekKey(STATE.week);
   const weekLabel = STATE.week === 'deload' ? 'DELOAD' : 'W' + STATE.week;
@@ -19842,6 +19899,7 @@ function renderWeekPanel(expandedDay) {
   `;
   
   wireWeekPanel(expandedDay);
+  wkFocoDevolver(modal, focoAntes);
 }
 
 function wireWeekPanel(expandedDay) {
